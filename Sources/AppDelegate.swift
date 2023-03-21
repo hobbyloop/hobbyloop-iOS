@@ -1,6 +1,4 @@
 import UIKit
-import HobbyloopIOSKit
-import HobbyloopIOSUI
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,8 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         viewController.view.backgroundColor = .white
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
-        HobbyloopIOSKit.hello()
-        HobbyloopIOSUI.hello()
 
         return true
     }

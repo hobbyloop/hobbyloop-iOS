@@ -7,70 +7,85 @@ import ProjectDescription
 
 extension Project {
     /// Helper function to create the Project for this ExampleApp
-    public static func app(name: String, platform: Platform, additionalTargets: [String]) -> Project {
-        var targets = makeAppTargets(name: name,
-                                     platform: platform,
-                                     dependencies: additionalTargets.map { TargetDependency.target(name: $0) })
-        targets += additionalTargets.flatMap({ makeFrameworkTargets(name: $0, platform: platform) })
-        return Project(name: name,
-                       organizationName: "tuist.io",
-                       targets: targets)
-    }
-
-    // MARK: - Private
-
-    /// Helper function to create a framework target and an associated unit test target
-    private static func makeFrameworkTargets(name: String, platform: Platform) -> [Target] {
-        let sources = Target(name: name,
-                platform: platform,
-                product: .framework,
-                bundleId: "io.tuist.\(name)",
-                infoPlist: .default,
-                sources: ["Targets/\(name)/Sources/**"],
-                resources: [],
-                dependencies: [])
-        let tests = Target(name: "\(name)Tests",
-                platform: platform,
-                product: .unitTests,
-                bundleId: "io.tuist.\(name)Tests",
-                infoPlist: .default,
-                sources: ["Targets/\(name)/Tests/**"],
-                resources: [],
-                dependencies: [.target(name: name)])
-        return [sources, tests]
-    }
-
-    /// Helper function to create the application target and the unit test target.
-    private static func makeAppTargets(name: String, platform: Platform, dependencies: [TargetDependency]) -> [Target] {
-        let platform: Platform = platform
-        let infoPlist: [String: InfoPlist.Value] = [
-            "CFBundleShortVersionString": "1.0",
-            "CFBundleVersion": "1",
-            "UIMainStoryboardFile": "",
-            "UILaunchStoryboardName": "LaunchScreen"
-            ]
-
-        let mainTarget = Target(
+    public static func app(
+        name: String,
+        bundleId: String = "",
+        products: [Product],
+        infoExtensions: [String: InfoPlist.Value] = [:],
+        settings: Settings? = .default,
+        packages: [ProjectDescription.Package] = [],
+        testDependencies: [TargetDependency] = [],
+        dependencies: [TargetDependency] = []
+    ) -> Project {
+        var targets: [Target] = []
+        var schemes: [Scheme] = []
+        
+        var infoPlist: InfoPlist = .base(name: name)
+        
+        
+        if products.contains(.app) {
+            let appTarget: Target = .init(
+                name: name,
+                platform: .iOS,
+                product: .app,
+                bundleId: bundleId.isEmpty ? "com.sideproj.\(name)" : bundleId,
+                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                infoPlist: infoPlist,
+                sources: ["Sources/**"],
+                resources: ["Resources/**"],
+                dependencies: dependencies,
+                settings: settings
+            )
+            targets.append(appTarget)
+        }
+        
+        let appScheme: Scheme = .init(
             name: name,
-            platform: platform,
-            product: .app,
-            bundleId: "io.tuist.\(name)",
-            infoPlist: .extendingDefault(with: infoPlist),
-            sources: ["Targets/\(name)/Sources/**"],
-            resources: ["Targets/\(name)/Resources/**"],
-            dependencies: dependencies
+            shared: true,
+            hidden: false,
+            buildAction: .init(targets: ["\(name)"]),
+            runAction: .runAction(executable: "\(name)")
         )
-
-        let testTarget = Target(
+        
+        
+        if products.contains(.unitTests) {
+          
+          var dependencies: [TargetDependency] = [.target(name: name), .xctest]
+          dependencies += testDependencies
+          
+          let target: Target = .init(
             name: "\(name)Tests",
-            platform: platform,
+            platform: .iOS,
             product: .unitTests,
-            bundleId: "io.tuist.\(name)Tests",
+            bundleId: "com.sideproj.\(name)Tests",
             infoPlist: .default,
-            sources: ["Targets/\(name)/Tests/**"],
-            dependencies: [
-                .target(name: "\(name)")
-        ])
-        return [mainTarget, testTarget]
+            sources: ["\(name)Tests/**"],
+            resources: ["\(name)Tests/**"],
+            dependencies: dependencies
+          )
+          targets.append(target)
+        }
+        
+        if products.contains(.uiTests) {
+          let target: Target = .init(
+            name: "\(name)UITests",
+            platform: .iOS,
+            product: .uiTests,
+            bundleId: "com.sideproj.\(name)UITests",
+            sources: "\(name)UITests/**",
+            dependencies: [.target(name: name)]
+          )
+          targets.append(target)
+        }
+        
+        schemes.append(appScheme)
+        
+        
+        return Project(
+            name: name,
+            packages: packages,
+            targets: targets,
+            schemes: schemes
+        )
     }
 }
