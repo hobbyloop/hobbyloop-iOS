@@ -22,7 +22,7 @@ import ProjectDescriptionHelpers
 // Local plugin loaded
 
 // Creates our project using a helper function defined in ProjectDescriptionHelpers
-let project = Project.app(
+let project = Project.makeModule(
     name: "Hobbyloop",
     bundleId: "com.sideproj.Hobbyloop",
     products: [.app, .unitTests, .uiTests],

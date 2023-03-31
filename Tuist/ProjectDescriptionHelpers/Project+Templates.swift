@@ -7,7 +7,7 @@ import ProjectDescription
 
 extension Project {
     /// Helper function to create the Project for this ExampleApp
-    public static func app(
+    public static func makeModule(
         name: String,
         bundleId: String = "",
         products: [Product],
