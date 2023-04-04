@@ -10,7 +10,7 @@ extension Project {
     public static func makeModule(
         name: String,
         bundleId: String = "",
-        products: [Product],
+        products: [HPProduct],
         infoExtensions: [String: InfoPlist.Value] = [:],
         settings: Settings? = .default,
         packages: [ProjectDescription.Package] = [],
@@ -76,6 +76,41 @@ extension Project {
             dependencies: [.target(name: name)]
           )
           targets.append(target)
+        }
+        
+        
+        if products.filter({ $0.isLibrary}).count != 0 {
+            let libraryTarget: Target = .init(
+                name: name,
+                platform: .iOS,
+                product: products.contains(.library(.static)) ? .staticLibrary : .dynamicLibrary,
+                bundleId: "com.sideproj.\(name)",
+                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                infoPlist: infoPlist,
+                sources: ["Sources/**"],
+                resources: ["Resources/**"],
+                dependencies: dependencies,
+                settings: settings
+            )
+            
+            targets.append(libraryTarget)
+        }
+        
+        if products.filter({ $0.isFramework }).count != 0 {
+            let frameworkTarget: Target = .init(
+                name: name,
+                platform: .iOS,
+                product: products.contains(.framework(.static)) ? .staticFramework : .framework,
+                bundleId: "com.sideproj.\(name)",
+                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                infoPlist: infoPlist,
+                sources: ["Sources/**"],
+                resources: products.contains(.framework(.dynamic)) ? ["Resources/**"] : nil,
+                dependencies: dependencies,
+                settings: settings
+            )
+            
+            targets.append(frameworkTarget)
         }
         
         schemes.append(appScheme)

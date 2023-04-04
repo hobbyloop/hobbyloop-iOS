@@ -27,5 +27,7 @@ let project = Project.makeModule(
     bundleId: "com.sideproj.Hobbyloop",
     products: [.app, .unitTests, .uiTests],
     infoExtensions: [:],
-    dependencies: []
+    dependencies: [
+        .Project.Core.thirdParty
+    ]
 )
