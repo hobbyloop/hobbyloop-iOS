@@ -1,0 +1,22 @@
+disabled_rules:
+    - force_cast
+    - force_unwrapping
+    - trailing_newline
+    - trailing_comma
+
+line_length: 100
+identifier_name:
+  excluded: # excluded via string array
+    - id
+
+opt_in_rules:
+    - empty_count
+    - empty_string
+    - closure_spacing
+
+excluded:
+    - Project.swift
+    - Tuist/Config.swift
+    - Tuist/ProjectDescriptionHelpers/Project+Templates.swift
+    - Plugins/HobbyloopIOS/Plugin.swift
+    - Targets/HobbyloopIOS/Sources/AppDelegate.swift
