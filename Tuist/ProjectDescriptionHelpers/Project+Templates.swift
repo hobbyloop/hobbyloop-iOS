@@ -33,6 +33,7 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
+                scripts: [.swiftLintScriptPath],
                 dependencies: dependencies,
                 settings: settings
             )
