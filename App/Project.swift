@@ -28,6 +28,7 @@ let project = Project.makeModule(
     products: [.app, .unitTests, .uiTests],
     infoExtensions: [:],
     dependencies: [
-        .Project.Core.thirdParty
+        .Project.Core.thirdParty,
+        .Project.Core.foundation
     ]
 )
