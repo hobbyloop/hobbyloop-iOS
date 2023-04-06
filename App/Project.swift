@@ -1,6 +1,5 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
-import MyPlugin
 
 /*
                 +-------------+
@@ -21,9 +20,15 @@ import MyPlugin
 // MARK: - Project
 
 // Local plugin loaded
-let localHelper = LocalHelper(name: "MyPlugin")
 
 // Creates our project using a helper function defined in ProjectDescriptionHelpers
-let project = Project.app(name: "HobbyloopIOS",
-                          platform: .iOS,
-                          additionalTargets: ["HobbyloopIOSKit", "HobbyloopIOSUI"])
+let project = Project.makeModule(
+    name: "Hobbyloop",
+    bundleId: "com.sideproj.Hobbyloop",
+    products: [.app, .unitTests, .uiTests],
+    infoExtensions: [:],
+    dependencies: [
+        .Project.Core.thirdParty,
+        .Project.Core.foundation
+    ]
+)
