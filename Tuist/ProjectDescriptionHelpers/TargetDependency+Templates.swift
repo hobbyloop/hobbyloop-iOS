@@ -12,6 +12,7 @@ import ProjectDescriptionHelpers
 extension TargetDependency {
     public struct Project {
         public struct Core {}
+        public struct UI {}
     }
     
     public struct ThirdParty {
@@ -53,6 +54,14 @@ extension TargetDependency.Project.Core {
         path: .relativeToRoot("Core/HPManager")
     )
     
+}
+
+
+extension TargetDependency.Project.UI {
+    public static let common: TargetDependency = .project(
+        target: "HPCommonUI",
+        path: .relativeToRoot("UI/HPCommonUI")
+    )
 }
 
 
