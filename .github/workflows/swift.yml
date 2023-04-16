@@ -19,8 +19,9 @@ jobs:
       with:
         command: 'build'
         arguments: ''
-    - name: tuist fetch
+    - name: tuist fetch 🛠️
       run: |
         tuist build -v
         tuist fetch
         tuist generate
+        xcodebuild clean test -project hobbyloop-iOS/Hobbyloop.xcworkspace -scheme Hobbyloop -destination 'platform=iOS Simulator,name=iPhone 13 mini,OS=latest'
