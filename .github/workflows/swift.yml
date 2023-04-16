@@ -14,14 +14,19 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v3     # Tuist Fetch 1️⃣
     - uses: tuist/tuist-action@0.13.0
+      with:
+        command: 'fetch'
+        arguments: ''
+    - uses: tuist/tuist-action@0.13.0 # Tuist generate 2️⃣
+      with:
+        command: 'generate'
+        arguments: ''
+    - uses: tuist/tuist-action@0.13.0 # Tuist Build 📲
       with:
         command: 'build'
         arguments: ''
-    - name: tuist fetch 🛠️
+    - name: xcode build 🛠️
       run: |
-        tuist build -v
-        tuist fetch
-        tuist generate
         xcodebuild clean test -project hobbyloop-iOS/Hobbyloop.xcworkspace -scheme Hobbyloop -destination 'platform=iOS Simulator,name=iPhone 13 mini,OS=latest'
