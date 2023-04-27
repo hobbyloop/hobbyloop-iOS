@@ -14,16 +14,16 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3     # Tuist Fetch 1️⃣
-    - uses: tuist/tuist-action@0.13.0
+    - uses: actions/checkout@v1     # Tuist Fetch 1️⃣
+    - uses: tuist/tuist-action@0.1.0
       with:
         command: 'fetch'
         arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Tuist generate 2️⃣
+    - uses: tuist/tuist-action@0.1.0 # Tuist generate 2️⃣
       with:
         command: 'generate'
         arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Tuist Build 📲
+    - uses: tuist/tuist-action@0.1.0 # Tuist Build 📲
       with:
         command: 'build'
         arguments: ''
