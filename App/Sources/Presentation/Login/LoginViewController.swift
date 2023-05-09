@@ -14,17 +14,17 @@ import ReactorKit
 final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     //MARK: Property
-    
+
     
     //MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configure()
     }
     
-    //MARK: Configure
+    // MARK: Configure
     private func configure(){
-        
-        
+
     }
     
     public override func bind(reactor: LoginViewReactor) {
