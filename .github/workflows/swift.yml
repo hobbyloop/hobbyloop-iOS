@@ -29,4 +29,4 @@ jobs:
         arguments: ''
     - name: xcode build 🛠️
       run: |
-        xcodebuild clean test -project Hobbyloop.xcworkspace -scheme Hobbyloop -destination 'platform=iOS Simulator,name=iPhone 13 mini,OS=latest'
+        xcodebuild clean test -workspace hobbyloop-iOS/Hobbyloop.xcworkspace -scheme Hobbyloop -destination 'platform=iOS Simulator,name=iPhone 13 mini,OS=latest'
