@@ -29,6 +29,7 @@ let project = Project.makeModule(
     infoExtensions: [:],
     dependencies: [
         .Project.Core.thirdParty,
-        .Project.Core.foundation
+        .Project.Core.foundation,
+        .Project.UI.common
     ]
 )
