@@ -29,6 +29,11 @@ extension TargetDependency.Project.Core {
         path: .relativeToRoot("Core/HPThirdParty")
     )
     
+    public static let common: TargetDependency = .project(
+        target: "HPCommon",
+        path: .relativeToRoot("Core/HPCommon")
+    )
+    
     public static let network: TargetDependency = .project(
         target: "HPNetwork",
         path: .relativeToRoot("Core/HPNetwork")

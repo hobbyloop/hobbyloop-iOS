@@ -9,16 +9,18 @@ import UIKit
 
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 
 public final class HPButton: UIButton {
     
     private var cornerRadius: CGFloat = 10.0
     private var borderColor: CGColor?
+    private var disposeBag: DisposeBag = DisposeBag()
     
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
-        
         self.layer.cornerRadius = cornerRadius
         self.layer.masksToBounds = true
     }
@@ -43,6 +45,11 @@ public final class HPButton: UIButton {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    public func didTapHPButton(borderColor: UIColor) {
+        self.layer.borderColor = borderColor.cgColor
     }
     
     

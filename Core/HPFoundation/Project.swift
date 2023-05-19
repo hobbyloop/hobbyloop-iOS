@@ -7,6 +7,7 @@ let foundation = Project.makeModule(
     products: [.framework(.dynamic)],
     dependencies: [
         .Project.Core.extensions,
-        .Project.Core.manager,
+        .Project.Core.common,
+        .Project.Core.manager
     ]
 )
