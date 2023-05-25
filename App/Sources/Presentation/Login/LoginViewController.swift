@@ -127,5 +127,14 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .drive(indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
         
+        kakaoLoginButton
+            .rx.tap
+            .asDriver()
+            .drive(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                let signUpContainer = SignUpDIContainer().makeViewController()
+                self.navigationController?.pushViewController(signUpContainer, animated: true)
+            }).disposed(by: disposeBag)
+        
     }
 }
