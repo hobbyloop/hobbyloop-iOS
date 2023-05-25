@@ -1,22 +1,22 @@
 //
-//  LoginViewReactor.swift
+//  SignUpViewReactor.swift
 //  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/05/08.
+//  Created by Kim dohyun on 2023/05/25.
 //
 
 import Foundation
 
+
 import ReactorKit
 import RxSwift
 
-
-final class LoginViewReactor: Reactor {
+final class SignUpViewReactor: Reactor {
     
     //MARK: Property
+    
     var initialState: State
-   
-    //MARK: Action
+    
     enum Action {
         case viewDidLoad
     }
@@ -25,13 +25,10 @@ final class LoginViewReactor: Reactor {
         case setLoading(Bool)
     }
     
-    //MARK: State
     struct State {
         @Pulse var isLoading: Bool
     }
     
-    
-    //MARK: InitialState
     init() {
         self.initialState = State(
             isLoading: false
@@ -39,8 +36,8 @@ final class LoginViewReactor: Reactor {
     }
     
     
-    //MARK: SideEffect
     public func mutate(action: Action) -> Observable<Mutation> {
+    
         
         switch action {
         case .viewDidLoad:
@@ -52,20 +49,16 @@ final class LoginViewReactor: Reactor {
                 endLoading
             )
         }
-        
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
-        
         var newState = state
+        
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-            
         }
         
         return newState
     }
-    
-    
 }

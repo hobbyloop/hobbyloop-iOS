@@ -19,6 +19,12 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.axis = .vertical
         $0.spacing = 15
     }
+    
+    private lazy var indicatorView: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium).then {
+        $0.color = .gray
+    }
+    
+    
     private let logoImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal)
         $0.contentMode = .scaleToFill
@@ -48,8 +54,6 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.lightSeparator.color
     }
     
-    
-    
     override init(reactor: LoginViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -73,13 +77,18 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Configure
     private func configure() {
         
-        [backgroundImageView, logoImageView ,loginStckView, underLineView].forEach {
+        [backgroundImageView ,logoImageView ,loginStckView, underLineView, indicatorView].forEach {
             view.addSubview($0)
         }
         
         [kakaoLoginButton, googleLoginButton, naverLoginButton, appleLoginButton].forEach {
             loginStckView.addArrangedSubview($0)
         }
+        
+        indicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
         backgroundImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -106,5 +115,17 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
     }
     
-    public override func bind(reactor: LoginViewReactor) { }
+    public override func bind(reactor: LoginViewReactor) {
+        
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$isLoading)
+            .asDriver(onErrorJustReturn: false)
+            .drive(indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+    }
 }

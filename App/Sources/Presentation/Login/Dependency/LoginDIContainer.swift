@@ -15,14 +15,14 @@ final class LoginDIContainer: DIContainer {
 
     //MARK: Property
     public typealias ViewController = LoginViewController
-    public typealias Repository = LoginViewRepository
+    public typealias Repository = LoginViewRepo
     public typealias Reactor = LoginViewReactor
     
     func makeViewController() -> LoginViewController {
         return LoginViewController(reactor: makeReactor())
     }
     
-    func makeRepository() -> LoginViewRepository {
+    func makeRepository() -> LoginViewRepo {
         return LoginViewRepository()
     }
     

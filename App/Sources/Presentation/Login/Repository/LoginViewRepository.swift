@@ -12,7 +12,7 @@ public protocol LoginViewRepo {
 }
 
 
-public final class LoginViewRepository {
+public final class LoginViewRepository: LoginViewRepo {
     
     
 }

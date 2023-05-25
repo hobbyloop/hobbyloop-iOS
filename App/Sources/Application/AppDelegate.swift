@@ -11,7 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
         let loginDIContainer = LoginDIContainer()
-        window?.rootViewController = loginDIContainer.makeViewController()
+        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
         window?.makeKeyAndVisible()
         
         return true
