@@ -8,6 +8,7 @@
 import UIKit
 
 import HPCommonUI
+import HPCommon
 import HPFoundation
 import ReactorKit
 
@@ -24,12 +25,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.attributedText(
             targetString: "반가워요 회원님!",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 22),
-            color: HPCommonUIColors.Color.black,
+            color: HPCommonUIAsset.black.color,
             paragraphStyle: paragraphStyle,
             spacing: 10,
             aligment: .center
         )
     }
+    
+    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .name)
     
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
@@ -53,7 +56,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private func configure() {
         self.view.backgroundColor = .white
         
-        [descriptionLabel].forEach {
+        [descriptionLabel, nickNameView].forEach {
             view.addSubview($0)
         }
         
@@ -61,6 +64,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             $0.height.equalTo(62)
             $0.centerX.equalToSuperview()
+        }
+        
+        nickNameView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(25)
+            $0.left.equalToSuperview().offset(15)
+            $0.right.equalToSuperview().offset(-15)
+            $0.height.equalTo(100)
         }
     }
     
