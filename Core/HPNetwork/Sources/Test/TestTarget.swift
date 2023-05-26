@@ -14,7 +14,7 @@ public enum TestTarget {
 
 extension TestTarget: TargetType {
     public var baseURL: String {
-        return "https://www.apiTest.com"
+        return "https://jsonplaceholder.typicode.com/todos"
     }
     
     public var method: Alamofire.HTTPMethod {
@@ -25,13 +25,13 @@ extension TestTarget: TargetType {
     
     public var path: String {
         switch self {
-        case .test: return "/test"
+        case .test: return "1"
         }
     }
     
     public var parameters: RequestParams {
         switch self {
-        case .test(let request): return .body(request)
+        case .test: return .none
         }
     }
     

@@ -8,16 +8,20 @@
 import Foundation
 
 public struct TestResponse: Codable {
-    let statusCode: Int?
-    let data: [String]?
+    public let userId: Int
+    public let id: Int
+    public let title: String
+    public let completed: Bool
     
     enum CodingKeys: CodingKey {
-        case statusCode, data
+        case userId, id, title, completed
     }
     
     public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        statusCode = try? values.decode(Int.self, forKey: .statusCode)
-        data = try? values.decode([String].self, forKey: .data)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.userId = try container.decode(Int.self, forKey: .userId)
+        self.id = try container.decode(Int.self, forKey: .id)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.completed = try container.decode(Bool.self, forKey: .completed)
     }
 }
