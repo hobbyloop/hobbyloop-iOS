@@ -88,9 +88,12 @@ public final class SignUpInfoView: UIView {
         textFiledView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.left.right.equalToSuperview()
-            $0.height.equalTo(50)
+            $0.bottom.equalToSuperview()
         }
         
+        self.snp.makeConstraints {
+            $0.height.equalTo(80)
+        }
         
     }
     
