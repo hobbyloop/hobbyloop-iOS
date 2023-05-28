@@ -241,10 +241,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 }
             }).disposed(by: disposeBag)
         
+        birthDayPickerView
+            
         
         birthDayPickerView.rx
             .value
-            .asDriver()
+            .skip(1)
+            .asDriver(onErrorJustReturn: Date())
             .drive(onNext: { [weak self] date in
                 guard let `self` = self else { return }
                 self.birthDayView.textFiledView.text = date.convertToString()
