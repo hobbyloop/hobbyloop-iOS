@@ -19,6 +19,7 @@ extension TargetDependency {
         public struct Reactive {}
         public struct UI {}
         public struct Network {}
+        public struct SDK {}
     }
 }
 
@@ -84,5 +85,8 @@ extension TargetDependency.ThirdParty.UI {
 
 extension TargetDependency.ThirdParty.Network {
     public static let alamofire: TargetDependency = .external(name: "Alamofire")
-    
+}
+
+extension TargetDependency.ThirdParty.SDK {
+    public static let kakao: TargetDependency = .external(name: "KakaoSDKUser")
 }

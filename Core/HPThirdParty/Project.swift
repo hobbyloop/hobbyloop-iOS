@@ -17,6 +17,7 @@ let thirdParty = Project.makeModule(
         .ThirdParty.Reactive.rxGesture,
         .ThirdParty.UI.then,
         .ThirdParty.UI.snapKit,
-        .ThirdParty.Network.alamofire
+        .ThirdParty.Network.alamofire,
+        .ThirdParty.SDK.kakao
     ]
 )
