@@ -9,14 +9,13 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
-import HPFoundation
 import ReactorKit
 
 
 
 final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
-    
+    // MARK: Property
     private let descriptionLabel: UILabel = UILabel().then {
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         $0.text = "반가워요 회원님!\n회원님의 정보를 입력 해주세요."
@@ -110,7 +109,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    //MARK: LifeCycle
+    // MARK: LifeCycle
     override func viewDidLoad() {
         configure()
     }

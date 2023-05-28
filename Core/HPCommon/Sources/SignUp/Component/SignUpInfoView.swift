@@ -48,8 +48,14 @@ public final class SignUpInfoView: UIView {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .justified
     }
+        
+    private let rightImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.downarrow.image
+        $0.contentMode = .scaleAspectFit
+        $0.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+    }
     
-    public let textFiledView: UITextField = UITextField().then {
+    public lazy var textFiledView: UITextField = UITextField().then {
         $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.masksToBounds = true
@@ -62,6 +68,14 @@ public final class SignUpInfoView: UIView {
     public init(titleType: SignUpType) {
         self.titleType = titleType
         super.init(frame: .zero)
+        
+        switch titleType {
+        case .birthDay:
+            textFiledView.isUserInteractionEnabled = false
+            textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
+        default:
+            textFiledView.isUserInteractionEnabled = true
+        }
         configure()
     }
     
@@ -96,9 +110,18 @@ public final class SignUpInfoView: UIView {
         }
         
     }
-    
-    
-    
-    
-    
+}
+
+
+// MARK: Extensions
+public extension UITextField {
+    func setupRightImage(image: UIImage){
+        let imageView = UIImageView(frame: CGRect(x: 10, y: 10, width: 24, height: 24))
+        imageView.image = image
+        let imageContainerView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 55, height: 40))
+        imageContainerView.addSubview(imageView)
+        rightView = imageContainerView
+        rightViewMode = .always
+        self.tintColor = .lightGray
+    }
 }
