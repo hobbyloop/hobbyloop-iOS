@@ -231,28 +231,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(onNext: { vc, isSelected in
                 if isSelected {
                     vc.birthDayPickerView.isHidden = !isSelected
-                    UIView.animate(withDuration: 0.1,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.5,
-                                   initialSpringVelocity: 1,
-                                   options: .curveEaseInOut,
-                                   animations: {
-                        vc.birthDayPickerView.snp.updateConstraints {
-                            $0.height.equalTo(138)
-                        }
-                    }, completion: nil)
+                    vc.birthDayPickerView.didTapAnimation(constraints: 138)
                 } else {
                     vc.birthDayPickerView.isHidden = isSelected
-                    UIView.animate(withDuration: 0.3,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.5,
-                                   initialSpringVelocity: 1,
-                                   options: .curveEaseInOut,
-                                   animations: {
-                        vc.birthDayPickerView.snp.updateConstraints {
-                            $0.height.equalTo(0)
-                        }
-                    }, completion: nil)
+                    vc.birthDayPickerView.didTapAnimation(constraints: 0)
                 }
             }).disposed(by: disposeBag)
     }

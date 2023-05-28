@@ -7,6 +7,7 @@
 
 import UIKit
 import HPCommonUI
+import SnapKit
 
 
 
@@ -34,6 +35,20 @@ public final class SignUpDatePickerView: UIDatePicker {
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
         _ = self.subviews.map { $0.setValue(HPCommonUIColors.Color.clear, forKey: "magnifierLineColor")}
+    }
+    
+    
+    public func didTapAnimation(constraints: ConstraintRelatableTarget ) {
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            usingSpringWithDamping: 0.5,
+            initialSpringVelocity: 1,
+            options: .curveEaseInOut) {
+                self.snp.updateConstraints {
+                    $0.height.equalTo(constraints)
+                }
+            }
     }
 
 
