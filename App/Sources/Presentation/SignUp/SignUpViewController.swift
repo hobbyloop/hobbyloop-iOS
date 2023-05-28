@@ -81,6 +81,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
+    private let modifyDescriptionLabel: UILabel = UILabel().then {
+        $0.text = "입력 하신 정보들은 마이페이지에서 언제든 수정 가능해요."
+        $0.textColor = HPCommonUIAsset.mediumSeparator.color
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 11)
+        $0.textAlignment = .justified
+        $0.numberOfLines = 1
+    }
+    
+    private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
+        $0.setTitle("시작하기", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+    }
     
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
@@ -106,7 +120,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton].forEach {
+         phoneView, certificationButton, modifyDescriptionLabel, confirmButton].forEach {
             view.addSubview($0)
         }
         
@@ -170,6 +184,19 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.width.equalTo(83)
             $0.top.equalTo(phoneView.textFiledView)
             $0.right.equalToSuperview().offset(-15)
+        }
+        
+        modifyDescriptionLabel.snp.makeConstraints {
+            $0.height.equalTo(13)
+            $0.width.equalTo(250)
+            $0.top.equalTo(phoneView.snp.bottom).offset(25)
+            $0.centerX.equalToSuperview()
+        }
+        
+        confirmButton.snp.makeConstraints {
+            $0.top.equalTo(modifyDescriptionLabel.snp.bottom).offset(12)
+            $0.left.right.equalTo(birthDayView)
+            $0.height.equalTo(66)
         }
         
 
