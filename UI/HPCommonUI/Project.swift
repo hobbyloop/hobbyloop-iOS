@@ -5,7 +5,6 @@ let common = Project.makeModule(
     name: "HPCommonUI",
     products: [.framework(.dynamic)],
     dependencies: [
-        .Project.Core.thirdParty,
-        .Project.Core.foundation
+        .Project.Core.thirdParty
     ]
 )
