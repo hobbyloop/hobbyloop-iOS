@@ -13,25 +13,28 @@ import RxSwift
 
 final class SignUpViewReactor: Reactor {
     
-    //MARK: Property
-    
+    // MARK: Property
     var initialState: State
     
     enum Action {
         case viewDidLoad
+        case didTapBirthDayButton
     }
     
     enum Mutation {
         case setLoading(Bool)
+        case didTapBirthDayButton(Bool)
     }
     
     struct State {
         @Pulse var isLoading: Bool
+        @Pulse var isSelected: Bool
     }
     
     init() {
         self.initialState = State(
-            isLoading: false
+            isLoading: false,
+            isSelected: false
         )
     }
     
@@ -48,6 +51,11 @@ final class SignUpViewReactor: Reactor {
                 startLoading,
                 endLoading
             )
+            
+        case .didTapBirthDayButton:
+            let didSelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isSelected))
+            
+            return didSelectedButton
         }
     }
     
@@ -57,6 +65,8 @@ final class SignUpViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+        case let .didTapBirthDayButton(isSelected):
+            newState.isSelected = !isSelected
         }
         
         return newState

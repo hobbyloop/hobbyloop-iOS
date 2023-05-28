@@ -9,6 +9,7 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
+import RxGesture
 import ReactorKit
 
 
@@ -88,6 +89,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.numberOfLines = 1
     }
     
+    private let birthDayPickerView: SignUpDatePickerView = SignUpDatePickerView().then {
+        $0.isHidden = true
+    }
+    
     private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
         $0.setTitle("시작하기", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
@@ -119,13 +124,15 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, modifyDescriptionLabel, confirmButton].forEach {
+         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView].forEach {
             view.addSubview($0)
         }
         
         [genderOfManButton, genderOfGirlButton].forEach {
             horizontalGenderStackView.addArrangedSubview($0)
         }
+        
+        birthDayPickerView.backgroundColor = .white
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
@@ -192,6 +199,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.centerX.equalToSuperview()
         }
         
+        birthDayPickerView.snp.makeConstraints {
+            $0.top.equalTo(birthDayView.snp.bottom)
+            $0.left.right.equalTo(birthDayView)
+            $0.height.equalTo(0)
+        }
+        
         confirmButton.snp.makeConstraints {
             $0.top.equalTo(modifyDescriptionLabel.snp.bottom).offset(12)
             $0.left.right.equalTo(birthDayView)
@@ -202,5 +215,45 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    override func bind(reactor: SignUpViewReactor) {}
+    override func bind(reactor: SignUpViewReactor) {
+        
+        birthDayView.rx
+            .tapGesture()
+            .when(.recognized)
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .map { _ in Reactor.Action.didTapBirthDayButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$isSelected)
+            .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(onNext: { vc, isSelected in
+                if isSelected {
+                    vc.birthDayPickerView.isHidden = !isSelected
+                    UIView.animate(withDuration: 0.1,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.5,
+                                   initialSpringVelocity: 1,
+                                   options: .curveEaseInOut,
+                                   animations: {
+                        vc.birthDayPickerView.snp.updateConstraints {
+                            $0.height.equalTo(138)
+                        }
+                    }, completion: nil)
+                } else {
+                    vc.birthDayPickerView.isHidden = isSelected
+                    UIView.animate(withDuration: 0.3,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.5,
+                                   initialSpringVelocity: 1,
+                                   options: .curveEaseInOut,
+                                   animations: {
+                        vc.birthDayPickerView.snp.updateConstraints {
+                            $0.height.equalTo(0)
+                        }
+                    }, completion: nil)
+                }
+            }).disposed(by: disposeBag)
+    }
 }
