@@ -8,6 +8,7 @@
 import UIKit
 
 import HPCommonUI
+import HPFoundation
 import Then
 import SnapKit
 import ReactorKit
@@ -24,15 +25,20 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.color = .gray
     }
     
-    
     private let logoImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal)
         $0.contentMode = .scaleToFill
     }
+    
+    private let dashLineView: UIView = UIView().then {
+        $0.backgroundColor = HPCommonUIColors.Color.clear
+    }
+    
     private let backgroundImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.background.image.withRenderingMode(.alwaysOriginal)
         $0.contentMode = .scaleToFill
     }
+    
     private let kakaoLoginButton: UIButton = UIButton(type: .custom).then {
         $0.setImage(HPCommonUIAsset.kakao.image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
@@ -51,7 +57,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     private let underLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightSeparator.color
+        $0.backgroundColor = HPCommonUIAsset.deepWhite.color
     }
     
     override init(reactor: LoginViewReactor?) {
@@ -67,17 +73,26 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         debugPrint(#function)
     }
     
-    //MARK: LifeCycle
+    // MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         configure()
     }
     
+    override func viewDidLayoutSubviews() {
+        dashLineView.makeDashedBorder(
+            start: CGPoint(x: dashLineView.bounds.minX, y: dashLineView.bounds.minY),
+            end: CGPoint(x: dashLineView.bounds.size.width, y: dashLineView.bounds.maxY),
+            color: HPCommonUIAsset.deepWhite.color.cgColor
+        )
+    }
+    
     // MARK: Configure
     private func configure() {
         
-        [backgroundImageView ,logoImageView ,loginStckView, underLineView, indicatorView].forEach {
+        [backgroundImageView, logoImageView, loginStckView,
+         underLineView, indicatorView, dashLineView].forEach {
             view.addSubview($0)
         }
         
@@ -96,23 +111,31 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         logoImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(80)
             $0.centerX.equalToSuperview()
-            $0.width.height.equalTo(50)
+            $0.width.equalTo(80)
+            $0.height.equalTo(65)
+        }
+        
+        dashLineView.snp.makeConstraints {
+            $0.top.equalTo(logoImageView.snp.bottom).offset(50)
+            $0.left.equalToSuperview().offset(35)
+            $0.right.equalToSuperview().offset(-35)
+            $0.height.equalTo(1)
         }
         
         loginStckView.snp.makeConstraints {
+            $0.top.equalTo(dashLineView.snp.bottom).offset(103)
             $0.left.equalToSuperview().offset(45)
             $0.right.equalToSuperview().offset(-45)
-            $0.bottom.equalTo(underLineView.snp.top).offset(-25)
             $0.height.equalTo(245)
         }
         
         underLineView.snp.makeConstraints {
+            $0.top.equalTo(loginStckView.snp.bottom).offset(50)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-42)
             $0.height.equalTo(1)
         }
-        
+                
     }
     
     public override func bind(reactor: LoginViewReactor) {
