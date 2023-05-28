@@ -18,6 +18,16 @@ import ReactorKit
 final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     // MARK: Property
+    private lazy var scrollView: UIScrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    private let containerView: UIView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
+    
+    
     private let descriptionLabel: UILabel = UILabel().then {
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         $0.text = "반가워요 회원님!\n회원님의 정보를 입력 해주세요."
@@ -157,20 +167,34 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private func configure() {
         self.view.backgroundColor = .white
         
-        [descriptionLabel, nameView, nickNameView,
-         genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView].forEach {
-            view.addSubview($0)
+        self.view.addSubview(scrollView)
+        
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        scrollView.addSubview(containerView)
+        
+        containerView.snp.makeConstraints {
+            $0.left.right.top.bottom.equalTo(scrollView.contentLayoutGuide)
+            $0.height.width.equalTo(scrollView.frameLayoutGuide)
         }
         
         [genderOfManButton, genderOfGirlButton].forEach {
             horizontalGenderStackView.addArrangedSubview($0)
         }
         
+        [descriptionLabel, nameView, nickNameView,
+         genederDescriptionLabel, horizontalGenderStackView, birthDayView,
+         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView].forEach {
+            containerView.addSubview($0)
+        }
+        
+        
         birthDayPickerView.backgroundColor = .white
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            $0.top.equalToSuperview()
             $0.height.equalTo(62)
             $0.centerX.equalToSuperview()
         }
