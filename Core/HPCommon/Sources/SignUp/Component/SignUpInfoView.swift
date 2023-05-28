@@ -19,10 +19,10 @@ public enum SignUpType: String {
     
     func setTitleLabelText() -> String {
         switch self {
-        case .name: return "이름"
-        case .nickname: return "닉네임"
-        case .birthDay: return "출생년도"
-        case .phone: return "전화번호"
+        case .name: return "이름 *"
+        case .nickname: return "닉네임 *"
+        case .birthDay: return "출생년도 *"
+        case .phone: return "전화번호 *"
         }
     }
     

@@ -9,7 +9,7 @@ import UIKit
 
 public extension UILabel {
     
-    func attributedText(
+    func setAttributedText(
         targetString: String,
         font: UIFont,
         color: UIColor,
@@ -38,5 +38,24 @@ public extension UILabel {
         
         self.attributedText = attributedString
     }
+    
+    func setSubScriptAttributed(
+        targetString: String,
+        font: UIFont,
+        color: UIColor,
+        offset: CGFloat
+    ) {
+            let defaultText = self.text ?? ""
+            let attributedString = NSMutableAttributedString(string: defaultText)
+            let targetTextRange = (defaultText as NSString).range(of: targetString)
+            
+            attributedString.addAttributes([
+                .font: font,
+                .foregroundColor: color,
+                .baselineOffset: offset
+            ], range: targetTextRange)
+            
+            self.attributedText = attributedString
+        }
     
 }

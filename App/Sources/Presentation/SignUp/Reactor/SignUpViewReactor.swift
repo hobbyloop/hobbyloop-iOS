@@ -19,22 +19,26 @@ final class SignUpViewReactor: Reactor {
     enum Action {
         case viewDidLoad
         case didTapBirthDayButton
+        case didTapGenderButton
     }
     
     enum Mutation {
         case setLoading(Bool)
         case didTapBirthDayButton(Bool)
+        case didTapGenderButton(Bool)
     }
     
     struct State {
         @Pulse var isLoading: Bool
-        @Pulse var isSelected: Bool
+        @Pulse var isGenderSelected: Bool
+        @Pulse var isBirthDaySelected: Bool
     }
     
     init() {
         self.initialState = State(
             isLoading: false,
-            isSelected: false
+            isGenderSelected: false,
+            isBirthDaySelected: false
         )
     }
     
@@ -52,10 +56,15 @@ final class SignUpViewReactor: Reactor {
                 endLoading
             )
             
-        case .didTapBirthDayButton:
-            let didSelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isSelected))
+        case .didTapGenderButton:
+            let didGenderSelectedButton = Observable<Mutation>.just(.didTapGenderButton(currentState.isGenderSelected))
             
-            return didSelectedButton
+            return didGenderSelectedButton
+            
+        case .didTapBirthDayButton:
+            let didBirthdaySelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isBirthDaySelected))
+            
+            return didBirthdaySelectedButton
         }
     }
     
@@ -65,8 +74,12 @@ final class SignUpViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-        case let .didTapBirthDayButton(isSelected):
-            newState.isSelected = !isSelected
+            
+        case let .didTapGenderButton(isGenderSelected):
+            newState.isGenderSelected = isGenderSelected
+            
+        case let .didTapBirthDayButton(isBirthDaySelected):
+            newState.isBirthDaySelected = !isBirthDaySelected
         }
         
         return newState

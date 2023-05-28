@@ -23,7 +23,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.text = "반가워요 회원님!\n회원님의 정보를 입력 해주세요."
         $0.textAlignment = .center
         $0.numberOfLines = 0
-        $0.attributedText(
+        $0.setAttributedText(
             targetString: "반가워요 회원님!",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 22),
             color: HPCommonUIAsset.black.color,
@@ -33,15 +33,35 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         )
     }
     
-    private let nameView: SignUpInfoView = SignUpInfoView(titleType: .name)
+    private let nameView: SignUpInfoView = SignUpInfoView(titleType: .name).then {
+        $0.titleLabel.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
+    }
     
-    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .nickname)
+    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .nickname).then {
+        $0.titleLabel.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
+    }
     
     private let genederDescriptionLabel: UILabel = UILabel().then {
-        $0.text = "성별"
+        $0.text = "성별 *"
         $0.textColor = HPCommonUIAsset.black.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .justified
+        $0.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
     }
     
     private let genderOfManButton: HPButton = HPButton(
@@ -69,9 +89,23 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.distribution = .equalSpacing
     }
     
-    private let birthDayView: SignUpInfoView = SignUpInfoView(titleType: .birthDay)
+    private let birthDayView: SignUpInfoView = SignUpInfoView(titleType: .birthDay).then {
+        $0.titleLabel.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
+    }
     
-    private let phoneView: SignUpInfoView = SignUpInfoView(titleType: .phone)
+    private let phoneView: SignUpInfoView = SignUpInfoView(titleType: .phone).then {
+        $0.titleLabel.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
+    }
     
     private let certificationButton: HPButton = HPButton(
         cornerRadius: 10,
@@ -226,7 +260,19 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        reactor.pulse(\.$isSelected)
+        genderOfManButton
+            .rx.tap
+            .map { Reactor.Action.didTapGenderButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        genderOfGirlButton
+            .rx.tap
+            .map { Reactor.Action.didTapGenderButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$isBirthDaySelected)
             .withUnretained(self)
             .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { vc, isSelected in
@@ -240,9 +286,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                     vc.birthDayPickerView.didTapAnimation(constraints: 0)
                 }
             }).disposed(by: disposeBag)
-        
-        birthDayPickerView
-            
         
         birthDayPickerView.rx
             .value
