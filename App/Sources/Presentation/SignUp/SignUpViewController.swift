@@ -9,6 +9,7 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
+import HPExtensions
 import RxGesture
 import ReactorKit
 
@@ -231,11 +232,23 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(onNext: { vc, isSelected in
                 if isSelected {
                     vc.birthDayPickerView.isHidden = !isSelected
+                    vc.birthDayView.textFiledView.setupRightImage(image: HPCommonUIAsset.uparrow.image)
                     vc.birthDayPickerView.didTapAnimation(constraints: 138)
                 } else {
                     vc.birthDayPickerView.isHidden = isSelected
+                    vc.birthDayView.textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
                     vc.birthDayPickerView.didTapAnimation(constraints: 0)
                 }
             }).disposed(by: disposeBag)
+        
+        
+        birthDayPickerView.rx
+            .value
+            .asDriver()
+            .drive(onNext: { [weak self] date in
+                guard let `self` = self else { return }
+                self.birthDayView.textFiledView.text = date.convertToString()
+            }).disposed(by: disposeBag)
+        
     }
 }
