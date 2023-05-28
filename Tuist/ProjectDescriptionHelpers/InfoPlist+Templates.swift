@@ -21,6 +21,12 @@ extension InfoPlist {
             "UILaunchStoryboardName" : .string("Launch Screen"),
             "UISupportedInterfaceOrientations" : .array([.string("UIInterfaceOrientationPortrait")]),
             "UIUserInterfaceStyle" : .string("Light"),
+            "LSApplicationQueriesSchemes": .array([.string("kakaokompassauth")]),
+            "CFBundleURLTypes": .array([
+                .dictionary([
+                    "CFBundleURLSchemes": .array(["kakaoe8e2221cc437bed1a098ce95fee11f1d"])
+                ])
+            ]),
             "UIApplicationSceneManifest" : .dictionary([
                 "UIApplicationSupportsMultipleScenes" : .boolean(false),
                 "UISceneConfigurations" : .dictionary([
