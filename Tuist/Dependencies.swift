@@ -18,7 +18,8 @@ let dependencies = Dependencies(
         Package.snapKit,
         Package.then,
         Package.alamofire,
-        Package.kakaoSDK
+        Package.kakaoSDK,
+        Package.cryptoSwift
     ]),
     platforms: [.iOS]
 )

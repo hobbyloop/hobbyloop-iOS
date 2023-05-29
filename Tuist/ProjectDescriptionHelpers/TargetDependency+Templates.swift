@@ -20,6 +20,7 @@ extension TargetDependency {
         public struct UI {}
         public struct Network {}
         public struct SDK {}
+        public struct Util {}
     }
 }
 
@@ -88,5 +89,10 @@ extension TargetDependency.ThirdParty.Network {
 }
 
 extension TargetDependency.ThirdParty.SDK {
-    public static let kakao: TargetDependency = .external(name: "KakaoSDKUser")
+    public static let kakao: TargetDependency = .external(name: "RxKakaoSDKUser")
+}
+
+
+extension TargetDependency.ThirdParty.Util {
+    public static let cryptoSwift: TargetDependency = .external(name: "CryptoSwift")
 }
