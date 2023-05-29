@@ -11,30 +11,37 @@ import ReactorKit
 import RxSwift
 
 
-final class LoginViewReactor: Reactor {
+public final class LoginViewReactor: Reactor {
     
     //MARK: Property
-    var initialState: State
-   
+    public var initialState: State
+    private var loginRepository: LoginViewRepo
+    
     //MARK: Action
-    enum Action {
+    public enum Action {
         case viewDidLoad
+        case didTapKakaoLogin
     }
     
-    enum Mutation {
+    public enum Mutation {
         case setLoading(Bool)
+        case setKakaoAccessToken(String)
     }
     
     //MARK: State
-    struct State {
+    public struct State {
         @Pulse var isLoading: Bool
+        @Pulse var kakaoToken: String
     }
     
     
     //MARK: InitialState
-    init() {
+    init(loginRepository: LoginViewRepo) {
+        
+        self.loginRepository = loginRepository
         self.initialState = State(
-            isLoading: false
+            isLoading: false,
+            kakaoToken: ""
         )
     }
     
@@ -51,6 +58,15 @@ final class LoginViewReactor: Reactor {
                 startLoading,
                 endLoading
             )
+        case .didTapKakaoLogin:
+            let startLoading = Observable<Mutation>.just(.setLoading(true))
+            let endLoading = Observable<Mutation>.just(.setLoading(false))
+            
+            return .concat(
+                startLoading,
+                loginRepository.responseKakaoLogin(),
+                endLoading
+            )
         }
         
     }
@@ -62,6 +78,8 @@ final class LoginViewReactor: Reactor {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
             
+        case let .setKakaoAccessToken(accessToken):
+            newState.kakaoToken = accessToken
         }
         
         return newState

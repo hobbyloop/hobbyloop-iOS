@@ -9,6 +9,8 @@ import UIKit
 
 import HPCommonUI
 import HPFoundation
+import RxKakaoSDKAuth
+import KakaoSDKUser
 import Then
 import SnapKit
 import ReactorKit
@@ -152,12 +154,18 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         kakaoLoginButton
             .rx.tap
+            .map { Reactor.Action.didTapKakaoLogin }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        appleLoginButton
+            .rx.tap
             .asDriver()
             .drive(onNext: { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = `self` else { return }
                 let signUpContainer = SignUpDIContainer().makeViewController()
                 self.navigationController?.pushViewController(signUpContainer, animated: true)
             }).disposed(by: disposeBag)
-        
     }
 }

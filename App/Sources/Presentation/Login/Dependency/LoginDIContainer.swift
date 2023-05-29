@@ -27,7 +27,7 @@ final class LoginDIContainer: DIContainer {
     }
     
     func makeReactor() -> LoginViewReactor {
-        return LoginViewReactor()
+        return LoginViewReactor(loginRepository: makeRepository())
     }
     
     
