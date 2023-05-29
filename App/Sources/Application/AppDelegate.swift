@@ -1,4 +1,5 @@
 import UIKit
+import HPCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
