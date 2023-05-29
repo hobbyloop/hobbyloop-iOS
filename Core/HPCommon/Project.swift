@@ -11,6 +11,8 @@ import ProjectDescriptionHelpers
 let common = Project.makeModule(
   name: "HPCommon",
   products: [.framework(.static)],
-  dependencies: []
+  dependencies: [
+    .Project.UI.common
+  ]
 )
 

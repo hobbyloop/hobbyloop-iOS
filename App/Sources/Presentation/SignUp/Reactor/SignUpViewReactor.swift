@@ -11,30 +11,30 @@ import Foundation
 import ReactorKit
 import RxSwift
 
-final class SignUpViewReactor: Reactor {
+public final class SignUpViewReactor: Reactor {
     
     // MARK: Property
-    var initialState: State
+    public var initialState: State
     
-    enum Action {
+    public enum Action {
         case viewDidLoad
         case didTapBirthDayButton
         case didTapGenderButton
     }
     
-    enum Mutation {
+    public enum Mutation {
         case setLoading(Bool)
         case didTapBirthDayButton(Bool)
         case didTapGenderButton(Bool)
     }
     
-    struct State {
+    public struct State {
         @Pulse var isLoading: Bool
         @Pulse var isGenderSelected: Bool
         @Pulse var isBirthDaySelected: Bool
     }
     
-    init() {
+    public init() {
         self.initialState = State(
             isLoading: false,
             isGenderSelected: false,
