@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import KakaoSDKUser
 
 public final class SignUpViewReactor: Reactor {
     
@@ -27,12 +28,14 @@ public final class SignUpViewReactor: Reactor {
         case setLoading(Bool)
         case didTapBirthDayButton(Bool)
         case didTapGenderButton(Bool)
+        case setKakaoUserEntity(User)
     }
     
     public struct State {
         @Pulse var isLoading: Bool
         @Pulse var isGenderSelected: Bool
         @Pulse var isBirthDaySelected: Bool
+        @Pulse var kakaoUserEntity: User?
     }
     
     public init(signUpRepository: SignUpViewRepo) {
@@ -40,7 +43,8 @@ public final class SignUpViewReactor: Reactor {
         self.initialState = State(
             isLoading: false,
             isGenderSelected: false,
-            isBirthDaySelected: false
+            isBirthDaySelected: false,
+            kakaoUserEntity: nil
         )
     }
     
@@ -83,6 +87,10 @@ public final class SignUpViewReactor: Reactor {
             
         case let .didTapBirthDayButton(isBirthDaySelected):
             newState.isBirthDaySelected = !isBirthDaySelected
+            
+        case let .setKakaoUserEntity(kakaoEntity):
+            newState.kakaoUserEntity = kakaoEntity
+            debugPrint("newState Kakao Profile Entity: \(newState.kakaoUserEntity)")
         }
         
         return newState

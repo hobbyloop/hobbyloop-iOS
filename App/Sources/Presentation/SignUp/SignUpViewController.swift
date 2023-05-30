@@ -325,5 +325,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 self.birthDayView.textFiledView.text = date.convertToString()
             }).disposed(by: disposeBag)
         
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.profile?.nickname}
+            .filter { !($0?.isEmpty ?? false) }
+            .asDriver(onErrorJustReturn: "")
+            .drive(nameView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+        
     }
 }

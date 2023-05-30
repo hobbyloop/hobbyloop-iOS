@@ -23,25 +23,17 @@ public final class SignUpViewRepository: SignUpViewRepo {
     
     public var disposeBag: DisposeBag = DisposeBag()
     
+    
+    /// 카카오 사용자 프로필 조회 메서드
+    /// - note: 로그인 성공후 사용자 프로필 정보 조회 하기 위한 메서드
+    /// - parameters: none Parameters
     public func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation> {
-        UserApi.shared.rx.me()
-            .map { user in
-                var scopes = [String]()
-                if (user.kakaoAccount?.profileNeedsAgreement == true) { scopes.append("profile") }
-                if (user.kakaoAccount?.emailNeedsAgreement == true) { scopes.append("account_email") }
-                if (user.kakaoAccount?.birthdayNeedsAgreement == true) { scopes.append("birthday") }
-                if (user.kakaoAccount?.birthyearNeedsAgreement == true) { scopes.append("birthyear") }
-                if (user.kakaoAccount?.genderNeedsAgreement == true) { scopes.append("gender") }
-                if (user.kakaoAccount?.phoneNumberNeedsAgreement == true) { scopes.append("phone_number") }
-                
-                return user
-            }.retry(when: AuthApiCommon.shared.rx.incrementalAuthorizationRequired())
-            .subscribe(onSuccess: { user in
-                print("success User data: \(user)")
-            }, onFailure: { error in
-                print("Failure User Error: \(error)")
-            }).disposed(by: disposeBag)
-        return .empty()
+        
+       return UserApi.shared.rx.me()
+            .asObservable()
+            .flatMap { user -> Observable<SignUpViewReactor.Mutation> in
+                return .just(.setKakaoUserEntity(user))
+            }
     }
     
 }
