@@ -48,8 +48,9 @@ public final class HPButton: UIButton {
     }
     
     
-    public func didTapHPButton(borderColor: UIColor) {
-        self.layer.borderColor = borderColor.cgColor
+    public func didTapHPButton(_ color: UIColor) {
+        self.layer.borderColor = color.cgColor
+        self.setTitleColor(color, for: .normal)
     }
     
     

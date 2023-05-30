@@ -85,10 +85,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let genderOfGirlButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+        borderColor: HPCommonUIAsset.separator.color.cgColor
     ).then {
         $0.setTitle("여", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -331,6 +331,26 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .filter { $0.rawValue == "male" }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfManButton.didTapHPButton(color)
+            }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .filter { $0.rawValue == "female" }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfGirlButton.didTapHPButton(color)
+            }).disposed(by: disposeBag)
+        
+        
         
     }
 }
