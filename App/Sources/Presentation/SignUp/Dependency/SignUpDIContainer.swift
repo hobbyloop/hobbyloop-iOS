@@ -29,7 +29,7 @@ final class SignUpDIContainer: DIContainer {
     }
     
     func makeReactor() -> SignUpViewReactor {
-        return SignUpViewReactor()
+        return SignUpViewReactor(signUpRepository: makeRepository())
     }
     
 }

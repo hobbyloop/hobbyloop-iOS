@@ -15,6 +15,7 @@ public final class SignUpViewReactor: Reactor {
     
     // MARK: Property
     public var initialState: State
+    private var signUpRepository: SignUpViewRepo
     
     public enum Action {
         case viewDidLoad
@@ -34,7 +35,8 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var isBirthDaySelected: Bool
     }
     
-    public init() {
+    public init(signUpRepository: SignUpViewRepo) {
+        self.signUpRepository = signUpRepository
         self.initialState = State(
             isLoading: false,
             isGenderSelected: false,
@@ -53,6 +55,7 @@ public final class SignUpViewReactor: Reactor {
             
             return .concat(
                 startLoading,
+                signUpRepository.responseKakaoProfile(),
                 endLoading
             )
             

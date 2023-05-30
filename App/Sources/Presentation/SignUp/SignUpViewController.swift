@@ -276,6 +276,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     override func bind(reactor: SignUpViewReactor) {
         
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         birthDayView.rx
             .tapGesture()
             .when(.recognized)
