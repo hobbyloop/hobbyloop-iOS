@@ -167,5 +167,30 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
                 let signUpContainer = SignUpDIContainer().makeViewController()
                 self.navigationController?.pushViewController(signUpContainer, animated: true)
             }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { !$0.kakaoToken.isEmpty }
+            .debug("kakao Token isExpired")
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { _ in
+                
+            }).disposed(by: disposeBag)
+            
     }
+}
+
+
+
+extension LoginViewController: LoginDelegate {
+    
+    /// 카카오 로그인 성공시 호출 되는 메서드
+    public func successKakoLogin() {
+        print("call success Kakao Login method")
+        let signUpContainer = SignUpDIContainer().makeViewController()
+        self.navigationController?.pushViewController(signUpContainer, animated: true)
+    }
+    
+    /// 카카오 로그인 실패시 호출 되는 메서드
+    public func failureKakaoLogin() {}
 }
