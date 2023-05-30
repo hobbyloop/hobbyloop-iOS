@@ -80,6 +80,7 @@ public final class LoginViewReactor: Reactor {
             
         case let .setKakaoAccessToken(accessToken):
             newState.kakaoToken = accessToken
+            debugPrint("set Kakao Token accessToken: \(newState.kakaoToken)")
         }
         
         return newState

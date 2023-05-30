@@ -172,9 +172,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         reactor.pulse(\.$kakaoToken)
             .filter { !$0.isEmpty }
-            .debug("Kakao Token Check")
             .map { _ in () }
-            .debug("kakao Token isExpired")
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 let signUpContainer = SignUpDIContainer().makeViewController()

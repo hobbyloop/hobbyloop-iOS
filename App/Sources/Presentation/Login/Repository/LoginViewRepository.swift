@@ -27,11 +27,13 @@ public protocol LoginViewRepo {
 public final class LoginViewRepository: LoginViewRepo {
     
     public var disposeBag: DisposeBag = DisposeBag()
+    
+    
     /// 카카오 에서 발급 받은 Access Token  값이 유효한지 확인하는 메서드
     /// - note: suceess에 떨어지는 경우 accessToken 값이 유효 한 경우, 혹은 필요시 Access Token 값을 갱신 해줌
     /// - parameters: none Parameters
     public func isExpiredKakaoToken() -> Void {
-                
+        
         if (AuthApi.hasToken()) {
             UserApi.shared.rx.accessTokenInfo()
                 .subscribe(onSuccess: { accessToken in
@@ -52,25 +54,23 @@ public final class LoginViewRepository: LoginViewRepo {
     ///  - note: 로그인이 필요한 경우 일때 호출 해야하는 메서드
     ///  - parameters: none Parameters
     public func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
-        var cipherToken: String = ""
-        
         if (UserApi.isKakaoTalkLoginAvailable()) {
-            UserApi.shared.rx.loginWithKakaoTalk()
-                .subscribe(onNext: { accessToken in
-                    print("success Kakao Login with AccessToken: \(accessToken)")
+            return UserApi.shared.rx.loginWithKakaoTalk()
+                .asObservable()
+                .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                     do {
-                        cipherToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
-                        UserDefaults.standard.set(cipherToken, forKey: .accessToken)
+                        let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
+                        UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                         UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
-                        debugPrint("암호화 토큰 : \(cipherToken)")
+                        debugPrint("암호화 토큰 : \(chiperToken)")
+                        return .just(.setKakaoAccessToken(chiperToken))
                     } catch {
                         debugPrint(error.localizedDescription)
                     }
-                    
-                }).disposed(by: disposeBag)
+                    return .empty()
+                }
         }
-        
-        return .just(.setKakaoAccessToken(cipherToken))
+        return .empty()
     }
     
     /// 카카오 토큰을 리프레쉬 하기 위한 메서드
@@ -80,6 +80,8 @@ public final class LoginViewRepository: LoginViewRepo {
         
         var cipherRefreshToken: String = ""
         guard let expiredAt: Date = UserDefaults.standard.object(forKey: .expiredAt) as? Date else { return }
+        
+        
         if Date().converToExpiredoDate().dateCompare(fromDate: expiredAt) == "Past" {
             AuthApi.shared.rx.refreshToken()
                 .debug()
@@ -98,7 +100,7 @@ public final class LoginViewRepository: LoginViewRepo {
                 }).disposed(by: disposeBag)
         }
     }
-        
+    
 }
 
 
