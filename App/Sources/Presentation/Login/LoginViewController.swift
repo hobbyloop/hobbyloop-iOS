@@ -14,6 +14,7 @@ import KakaoSDKUser
 import Then
 import SnapKit
 import ReactorKit
+import HPExtensions
 
 final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Property
@@ -169,28 +170,15 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             }).disposed(by: disposeBag)
         
         
-        reactor.state
-            .map { !$0.kakaoToken.isEmpty }
+        reactor.pulse(\.$kakaoToken)
+            .filter { !$0.isEmpty }
+            .debug("Kakao Token Check")
+            .map { _ in () }
             .debug("kakao Token isExpired")
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { _ in
-                
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                let signUpContainer = SignUpDIContainer().makeViewController()
+                vc.navigationController?.pushViewController(signUpContainer, animated: true)
             }).disposed(by: disposeBag)
-            
     }
-}
-
-
-
-extension LoginViewController: LoginDelegate {
-    
-    /// 카카오 로그인 성공시 호출 되는 메서드
-    public func successKakoLogin() {
-        print("call success Kakao Login method")
-        let signUpContainer = SignUpDIContainer().makeViewController()
-        self.navigationController?.pushViewController(signUpContainer, animated: true)
-    }
-    
-    /// 카카오 로그인 실패시 호출 되는 메서드
-    public func failureKakaoLogin() {}
 }

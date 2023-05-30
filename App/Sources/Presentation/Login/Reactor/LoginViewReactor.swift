@@ -64,7 +64,6 @@ public final class LoginViewReactor: Reactor {
             
             return .concat(
                 startLoading,
-                loginRepository.isExpiredKakaoToken(),
                 loginRepository.responseKakaoLogin(),
                 endLoading
             )
