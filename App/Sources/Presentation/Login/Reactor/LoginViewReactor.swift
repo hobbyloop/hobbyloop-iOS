@@ -28,12 +28,14 @@ public final class LoginViewReactor: Reactor {
         case setLoading(Bool)
         case setKakaoAccessToken(String)
         case setNaverLogin(Void)
+        case setNaverAccessToken(String)
     }
     
     //MARK: State
     public struct State {
         @Pulse var isLoading: Bool
         @Pulse var kakaoToken: String
+        @Pulse var naverToken: String
         @Pulse var isShowNaverLogin: Void?
     }
     
@@ -45,6 +47,7 @@ public final class LoginViewReactor: Reactor {
         self.initialState = State(
             isLoading: false,
             kakaoToken: "",
+            naverToken: "",
             isShowNaverLogin: nil
         )
     }
@@ -91,6 +94,10 @@ public final class LoginViewReactor: Reactor {
         case let .setKakaoAccessToken(accessToken):
             newState.kakaoToken = accessToken
             debugPrint("set Kakao Token accessToken: \(newState.kakaoToken)")
+            
+        case let .setNaverAccessToken(accessToken):
+            newState.naverToken = accessToken
+            debugPrint("set Naver access Token: \(newState.naverToken)")
             
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow

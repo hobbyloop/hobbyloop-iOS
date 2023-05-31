@@ -20,6 +20,7 @@ import NaverThirdPartyLogin
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
+    var naverAccessToken: PublishSubject<String> { get }
     
     /// 카카오 로그인을 위한 implementation
     func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
@@ -35,7 +36,7 @@ public protocol LoginViewRepo {
 
 
 public final class LoginViewRepository: NSObject, LoginViewRepo {
-
+    public var naverAccessToken: PublishSubject<String> = PublishSubject()
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
@@ -161,7 +162,10 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
         // TODO: 로그인 성공시 access Token 값 Mutation 으로 방출
-        print("test test \(naverLoginInstance.accessToken)")
+        // TODO: 토큰이 유효하면 Main 화면으로 화면 전환 하도록 구현
+        if let accessToken = naverLoginInstance.accessToken {
+            naverAccessToken.onNext(accessToken)
+        }
     }
     
     /// 네이버 로그인 토큰 갱신을 하기 위한 메서드
