@@ -11,11 +11,13 @@ extension Project {
         name: String,
         bundleId: String = "",
         products: [HPProduct],
+        isExcludedFramework: Bool = false,
         infoExtensions: [String: InfoPlist.Value] = [:],
         settings: Settings? = .default,
         packages: [ProjectDescription.Package] = [],
         testDependencies: [TargetDependency] = [],
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        externalDependencies: [TargetDependency] = []
     ) -> Project {
         var targets: [Target] = []
         var schemes: [Scheme] = []
@@ -34,7 +36,7 @@ extension Project {
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
                 scripts: [],
-                dependencies: dependencies,
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: settings
             )
             targets.append(appTarget)
@@ -90,7 +92,7 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                dependencies: dependencies,
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: settings
             )
             
@@ -107,7 +109,7 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: products.contains(.framework(.dynamic)) ? ["Resources/**"] : nil,
-                dependencies: dependencies,
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: settings
             )
             
