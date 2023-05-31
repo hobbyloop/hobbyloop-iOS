@@ -10,6 +10,7 @@ import UIKit
 import KakaoSDKAuth
 import RxKakaoSDKAuth
 import RxKakaoSDKCommon
+import NaverThirdPartyLogin
 
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -29,6 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
             setOpenURLKakaoLoign(open: url)
+            setOpenURLKakaoLoign(open: url)
         }
     }
 }
@@ -40,5 +42,11 @@ private extension SceneDelegate {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             _ = AuthController.rx.handleOpenUrl(url: url)
         }
+    }
+    
+    func setOpenURLNaverLogin(open url: URL) {
+        NaverThirdPartyLoginConnection
+            .getSharedInstance()
+            .receiveAccessToken(url)
     }
 }

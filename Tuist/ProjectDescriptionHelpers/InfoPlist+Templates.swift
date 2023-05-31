@@ -21,8 +21,14 @@ extension InfoPlist {
             "UILaunchStoryboardName" : .string("Launch Screen"),
             "UISupportedInterfaceOrientations" : .array([.string("UIInterfaceOrientationPortrait")]),
             "UIUserInterfaceStyle" : .string("Light"),
-            "LSApplicationQueriesSchemes": .array([.string("kakaokompassauth")]),
+            "LSApplicationQueriesSchemes": .array(
+                [.string("kakaokompassauth"), .string("naversearchapp") ,.string("naversearchthirdlogin")]
+            ),
             "CFBundleURLTypes": .array([
+                .dictionary([
+                    "CFBundleURLSchemes": .array(["hobbyloop"]),
+                    "CFBundleURLName": .string("hobbyloop")
+                ]),
                 .dictionary([
                     "CFBundleURLSchemes": .array(["kakaoe8e2221cc437bed1a098ce95fee11f1d"])
                 ])

@@ -21,17 +21,20 @@ public final class LoginViewReactor: Reactor {
     public enum Action {
         case viewDidLoad
         case didTapKakaoLogin
+        case didTapNaverLogin
     }
     
     public enum Mutation {
         case setLoading(Bool)
         case setKakaoAccessToken(String)
+        case setNaverLogin(Void)
     }
     
     //MARK: State
     public struct State {
         @Pulse var isLoading: Bool
         @Pulse var kakaoToken: String
+        @Pulse var isShowNaverLogin: Void?
     }
     
     
@@ -41,7 +44,8 @@ public final class LoginViewReactor: Reactor {
         self.loginRepository = loginRepository
         self.initialState = State(
             isLoading: false,
-            kakaoToken: ""
+            kakaoToken: "",
+            isShowNaverLogin: nil
         )
     }
     
@@ -49,22 +53,28 @@ public final class LoginViewReactor: Reactor {
     //MARK: SideEffect
     public func mutate(action: Action) -> Observable<Mutation> {
         
+        let startLoading = Observable<Mutation>.just(.setLoading(true))
+        let endLoading = Observable<Mutation>.just(.setLoading(false))
+        
         switch action {
         case .viewDidLoad:
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
             
             return .concat(
                 startLoading,
                 endLoading
             )
         case .didTapKakaoLogin:
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
             
             return .concat(
                 startLoading,
                 loginRepository.resultKakaoLogin(),
+                endLoading
+            )
+            
+        case .didTapNaverLogin:
+            return .concat(
+                startLoading,
+                loginRepository.responseNaverLogin(),
                 endLoading
             )
         }
@@ -81,6 +91,9 @@ public final class LoginViewReactor: Reactor {
         case let .setKakaoAccessToken(accessToken):
             newState.kakaoToken = accessToken
             debugPrint("set Kakao Token accessToken: \(newState.kakaoToken)")
+            
+        case let .setNaverLogin(isShow):
+            newState.isShowNaverLogin = isShow
         }
         
         return newState

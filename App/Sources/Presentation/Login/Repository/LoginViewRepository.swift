@@ -15,20 +15,30 @@ import RxKakaoSDKAuth
 import KakaoSDKCommon
 import HPCommon
 import HPExtensions
+import NaverThirdPartyLogin
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
+    var naverLoginInstance: NaverThirdPartyLoginConnection { get }
+    
+    /// 카카오 로그인을 위한 implementation
     func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
     func responseKakaoWebLogin() -> Observable<LoginViewReactor.Mutation>
     func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation>
     func responseRefreshKakaoToken() -> Void
     func isExpiredKakaoToken() -> Void
+
+    /// 네이버 로그인을 위한 implementation
+    func responseNaverLogin() -> Observable<LoginViewReactor.Mutation>
+    
 }
 
 
 public final class LoginViewRepository: LoginViewRepo {
     
     public var disposeBag: DisposeBag = DisposeBag()
+    
+    public var naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
     
     
     /// 카카오 에서 발급 받은 Access Token  값이 유효한지 확인하는 메서드
@@ -129,6 +139,11 @@ public final class LoginViewRepository: LoginViewRepo {
                     debugPrint(error.localizedDescription)
                 }).disposed(by: disposeBag)
         }
+    }
+    
+    /// 네이버 로그인창을 띄우기 위한 메서드
+    public func responseNaverLogin() -> Observable<LoginViewReactor.Mutation> {
+        return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
     }
     
 }
