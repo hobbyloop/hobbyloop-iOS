@@ -73,6 +73,8 @@ public final class SignUpInfoView: UIView {
         case .birthDay:
             textFiledView.isUserInteractionEnabled = false
             textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
+        case .phone:
+            textFiledView.keyboardType = .numberPad
         default:
             textFiledView.isUserInteractionEnabled = true
         }
