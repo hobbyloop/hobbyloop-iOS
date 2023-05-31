@@ -19,6 +19,8 @@ import HPExtensions
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
+    func responseKakaoWebLogin() -> Observable<LoginViewReactor.Mutation>
+    func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation>
     func responseRefreshKakaoToken() -> Void
     func isExpiredKakaoToken() -> Void
 }
@@ -49,30 +51,58 @@ public final class LoginViewRepository: LoginViewRepo {
         }
     }
     
+    /// 최종적으로 카카오톡 실치 여부를 확인 하여 로그인을 실행하는 메서드
+    /// - note: 카카오톡 설치 여부에 따라 웹 로그인 또는 in-App 로그인을 실행 하는 메서드
+    /// - parameters: none Parameters
+    public func resultKakaoLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
+        if (UserApi.isKakaoTalkLoginAvailable()) {
+            return responseKakaoLogin()
+        } else {
+            return responseKakaoWebLogin()
+        }
+    }
     
     /// 카카오 로그인창 창을 띄우기 위한 메서드
     ///  - note: 로그인이 필요한 경우 일때 호출 해야하는 메서드
     ///  - parameters: none Parameters
     public func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
-        if (UserApi.isKakaoTalkLoginAvailable()) {
-            return UserApi.shared.rx.loginWithKakaoTalk()
-                .asObservable()
-                .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                    do {
-                        let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
-                        UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                        UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
-                        debugPrint("암호화 토큰 : \(chiperToken)")
-                        return .just(.setKakaoAccessToken(chiperToken))
-                    } catch {
-                        debugPrint(error.localizedDescription)
-                    }
-                    return .empty()
+        return UserApi.shared.rx.loginWithKakaoTalk()
+            .asObservable()
+            .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
+                do {
+                    let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
+                    UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                    UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
+                    debugPrint("암호화 토큰 : \(chiperToken)")
+                    return .just(.setKakaoAccessToken(chiperToken))
+                } catch {
+                    debugPrint(error.localizedDescription)
                 }
-        }
-        return .empty()
+                return .empty()
+            }
     }
     
+    
+    /// 카카오 웹로그인 창을 띄우기 위한 메서드
+    /// - note: 로그인이 필요한 경우 및 사용자가 카카오톡이 깔려 있지 않는 경우 웹 브라우저를 띄운다.
+    /// - parameters: none Parameters
+    public func responseKakaoWebLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
+        return UserApi.shared.rx.loginWithKakaoAccount()
+            .asObservable()
+            .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
+                do {
+                    let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
+                    UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                    UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
+                    debugPrint("웹 로그인 암호화 토큰 : \(chiperToken)")
+                    return .just(.setKakaoAccessToken(chiperToken))
+                } catch {
+                    debugPrint(error.localizedDescription)
+                }
+                return .empty()
+            }
+    }
+        
     /// 카카오 토큰을 리프레쉬 하기 위한 메서드
     /// - note: 기존 accessToken, refreshToek을 refresh 하기 위한 메서드
     /// - Parameters: none Parameters
