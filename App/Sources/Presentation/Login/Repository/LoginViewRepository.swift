@@ -34,12 +34,18 @@ public protocol LoginViewRepo {
 }
 
 
-public final class LoginViewRepository: LoginViewRepo {
-    
+public final class LoginViewRepository: NSObject, LoginViewRepo {
+
     public var disposeBag: DisposeBag = DisposeBag()
     
-    public var naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
+    public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
     
+    
+    
+    public override init() {
+        super.init()
+        self.naverLoginInstance.delegate = self
+    }
     
     /// 카카오 에서 발급 받은 Access Token  값이 유효한지 확인하는 메서드
     /// - note: suceess에 떨어지는 경우 accessToken 값이 유효 한 경우, 혹은 필요시 Access Token 값을 갱신 해줌
@@ -150,3 +156,22 @@ public final class LoginViewRepository: LoginViewRepo {
 
 
 
+extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
+    
+    /// 네이버 로그인 성공 시 호출되는 메서드
+    public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
+        // TODO: 로그인 성공시 access Token 값 Mutation 으로 방출
+        print("test test \(naverLoginInstance.accessToken)")
+    }
+    
+    /// 네이버 로그인 토큰 갱신을 하기 위한 메서드
+    public func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {}
+    
+    /// 네이버 로그아웃 시 호출 되는 메서드
+    public func oauth20ConnectionDidFinishDeleteToken() {}
+    
+    /// 네이버 로그인 실패 시 호출되는 메서드
+    public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
+        print("Naver Login Error: \(error)")
+    }
+}

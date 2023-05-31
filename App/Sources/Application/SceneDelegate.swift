@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
             setOpenURLKakaoLoign(open: url)
-            setOpenURLKakaoLoign(open: url)
+            setOpenURLNaverLogin(open: url)
         }
     }
 }

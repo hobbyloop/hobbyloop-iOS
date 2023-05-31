@@ -22,11 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         naverLoginInstance.isNaverAppOauthEnable = true
         naverLoginInstance.isInAppOauthEnable = true
-        naverLoginInstance.isOnlyPortraitSupportedInIphone()
-        naverLoginInstance.serviceUrlScheme = kServiceAppUrlScheme
-        naverLoginInstance.consumerKey = kConsumerKey
-        naverLoginInstance.consumerSecret = kConsumerSecret
-        naverLoginInstance.appName = kServiceAppName
+        naverLoginInstance.setOnlyPortraitSupportInIphone(true)
+        naverLoginInstance.serviceUrlScheme = "hobbyloop"
+        naverLoginInstance.consumerKey = "rJ3H0X4fD2g_42SnItZq"
+        naverLoginInstance.consumerSecret = "JrQwoAXsRX"
+        naverLoginInstance.appName = "Hobbyloop"
         
         window?.makeKeyAndVisible()
         

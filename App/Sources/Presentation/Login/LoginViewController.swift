@@ -96,7 +96,6 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     // MARK: Configure
     private func configure() {
-        naverLoginInstance.delegate = self
         [backgroundImageView, logoImageView, loginStckView,
          underLineView, indicatorView, dashLineView].forEach {
             view.addSubview($0)
@@ -187,22 +186,5 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
                 let signUpContainer = SignUpDIContainer().makeViewController()
                 vc.navigationController?.pushViewController(signUpContainer, animated: true)
             }).disposed(by: disposeBag)
-    }
-}
-
-
-
-extension LoginViewController: NaverThirdPartyLoginConnectionDelegate {
-    
-    func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
-        print("Success] : Success Naver Login")
-    }
-    
-    func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {}
-    
-    func oauth20ConnectionDidFinishDeleteToken() {}
-    
-    func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
-        print("Naver Login Error: \(error)")
     }
 }
