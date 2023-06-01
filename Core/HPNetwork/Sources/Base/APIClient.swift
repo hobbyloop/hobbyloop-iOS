@@ -12,8 +12,13 @@ import HPExtensions
 import Alamofire
 import RxSwift
 
-public struct APIClient {
-    public static func request<T: Decodable>(_ response: T.Type, _ router: TargetType) -> Single<T> {
+public final class APIClient {
+    
+    public static let shared: APIClient = APIClient()
+    
+    private init() {}
+    
+    public func request<T: Decodable>(_ response: T.Type, _ router: Router) -> Single<T> {
         return Single<T>.create { single -> Disposable in
             AF.request(router)
                 .responseDecodable(of: response) { response in
