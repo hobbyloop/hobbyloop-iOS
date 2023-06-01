@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 public enum TestTarget {
-    case test(TestRequest)
+    case test
 }
 
 extension TestTarget: TargetType {
