@@ -11,11 +11,11 @@ import HPCommonUI
 
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    private let firstVC = NavigationViewController(rootViewController: HomeViewController())
-    private let dummyView = NavigationViewController(rootViewController: UIViewController())
-    private let dummyView2 = NavigationViewController(rootViewController: UIViewController())
-    private let dummyView3 = NavigationViewController(rootViewController: UIViewController())
-    private let dummyView4 = NavigationViewController(rootViewController: UIViewController())
+    private let firstVC = CustomNavigationViewController(rootViewController: HomeViewController())
+    private let dummyView = CustomNavigationViewController(rootViewController: UIViewController())
+    private let dummyView2 = CustomNavigationViewController(rootViewController: UIViewController())
+    private let dummyView3 = CustomNavigationViewController(rootViewController: UIViewController())
+    private let dummyView4 = CustomNavigationViewController(rootViewController: UIViewController())
     
     private var shapeLayer: CALayer?
     private let font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
