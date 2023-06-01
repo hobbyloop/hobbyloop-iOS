@@ -24,6 +24,12 @@ extension Project {
         
         var infoPlist: InfoPlist = .base(name: name)
         
+        let targetSettings: Settings = .settings(
+            base: [
+                "OTHER_LDFLAGS": "-ObjC",
+                "HEADER_SEARCH_PATHS": ["$(inherited) $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/Public $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuth $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuthCore $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Source/SwiftPackage $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/../../ $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth"]
+            ]
+        )
         
         if products.contains(.app) {
             let appTarget: Target = .init(
@@ -37,7 +43,7 @@ extension Project {
                 resources: ["Resources/**"],
                 scripts: [],
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
-                settings: settings
+                settings: targetSettings
             )
             targets.append(appTarget)
         }
@@ -93,7 +99,7 @@ extension Project {
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
-                settings: settings
+                settings: targetSettings
             )
             
             targets.append(libraryTarget)
@@ -110,7 +116,7 @@ extension Project {
                 sources: ["Sources/**"],
                 resources: products.contains(.framework(.dynamic)) ? ["Resources/**"] : nil,
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
-                settings: settings
+                settings: targetSettings
             )
             
             targets.append(frameworkTarget)

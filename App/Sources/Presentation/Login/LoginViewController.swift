@@ -16,6 +16,7 @@ import SnapKit
 import ReactorKit
 import HPExtensions
 import NaverThirdPartyLogin
+import GoogleSignIn
 
 final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Property
@@ -150,7 +151,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        reactor.pulse(\.$isLoading)
+        reactor.state
+            .map { $0.isLoading }
             .asDriver(onErrorJustReturn: false)
             .drive(indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
@@ -166,6 +168,16 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .map { Reactor.Action.didTapNaverLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        googleLoginButton
+            .rx.tap
+            .asDriver()
+            .drive(onNext: { [weak self] _ in
+                guard let self = `self` else { return }
+                // TODO: Reactor Action 으로 수정 및 비즈니스 로직은 Repository로 구현
+                let configuration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
+                GIDSignIn.sharedInstance.signIn(with: configuration, presenting: self)
+            }).disposed(by: disposeBag)
         
         
         appleLoginButton

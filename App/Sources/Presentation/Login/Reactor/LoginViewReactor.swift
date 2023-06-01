@@ -41,7 +41,7 @@ public final class LoginViewReactor: Reactor {
     
     //MARK: State
     public struct State {
-        @Pulse var isLoading: Bool
+        var isLoading: Bool
         @Pulse var kakaoToken: String
         @Pulse var naverToken: String
         @Pulse var isShowNaverLogin: Void?
