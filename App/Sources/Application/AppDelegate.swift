@@ -4,6 +4,7 @@ import KakaoSDKAuth
 import RxKakaoSDKAuth
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -37,33 +38,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
-        setOpenURLNaverLogin(app, open: url, options: options)
+        /// 네이버 로그인 처리
+        if NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options) == true {
+            return true
+        }
         
-        return setOpenURLKakaoLoign(open: url)
-    }
-
-}
-
-
-
-private extension AppDelegate {
-    
-
-    
-    func setOpenURLKakaoLoign(open url: URL) -> Bool {
-        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+        /// 카카오 로그인 처리
+        if AuthApi.isKakaoTalkLoginUrl(url) == true {
             return AuthController.rx.handleOpenUrl(url: url)
         }
-        return true
+        
+        /// 구글 로그인 처리
+        if GIDSignIn.sharedInstance.handle(url) {
+            return true
+        }
+        
+        return false
+        
     }
-    
-    
-    func setOpenURLNaverLogin(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])  {
-        NaverThirdPartyLoginConnection
-            .getSharedInstance()
-            .application(app, open: url, options: options)
-    }
-    
-    
+
 }
 

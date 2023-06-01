@@ -19,6 +19,7 @@ let dependencies = Dependencies(
         Package.then,
         Package.alamofire,
         Package.kakaoSDK,
+        Package.googleSDK,
         Package.cryptoSwift
     ]),
     platforms: [.iOS]

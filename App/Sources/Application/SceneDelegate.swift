@@ -11,7 +11,7 @@ import KakaoSDKAuth
 import RxKakaoSDKAuth
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
-
+import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -31,6 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let url = URLContexts.first?.url {
             setOpenURLKakaoLoign(open: url)
             setOpenURLNaverLogin(open: url)
+            setOpenURLGoogleLogin(open: url)
         }
     }
 }
@@ -48,5 +49,9 @@ private extension SceneDelegate {
         NaverThirdPartyLoginConnection
             .getSharedInstance()
             .receiveAccessToken(url)
+    }
+    
+    func setOpenURLGoogleLogin(open url: URL) {
+        GIDSignIn.sharedInstance.handle(url)
     }
 }

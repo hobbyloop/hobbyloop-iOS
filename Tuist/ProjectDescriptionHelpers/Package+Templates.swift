@@ -22,5 +22,6 @@ public extension Package {
     static let then = Self.remote(repo: "devxoul/Then", version: "3.0.0")
     static let alamofire = Self.remote(repo: "Alamofire/Alamofire", version: "5.6.1")
     static let kakaoSDK = Self.remote(repo: "kakao/kakao-ios-sdk-rx", version: "2.15.0")
+    static let googleSDK = Self.remote(repo: "google/GoogleSignIn-iOS", version: "7.0.0")
     static let cryptoSwift = Self.remote(repo: "krzyzanowskim/CryptoSwift", version: "1.7.1")
 }
