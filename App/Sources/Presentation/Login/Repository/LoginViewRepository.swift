@@ -161,18 +161,37 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
-        // TODO: 로그인 성공시 access Token 값 Mutation 으로 방출
-        // TODO: 토큰이 유효하면 Main 화면으로 화면 전환 하도록 구현
         if let accessToken = naverLoginInstance.accessToken {
-            naverAccessToken.onNext(accessToken)
+            do {
+                let chiperToken = try CryptoUtil.makeEncryption(accessToken)
+                let expiredAt = naverLoginInstance.accessTokenExpireDate
+                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
+            } catch {
+                print(error.localizedDescription)
+            }
+            LoginViewStream.event.onNext(.responseNaverAccessToken(accessToken))
         }
     }
     
     /// 네이버 로그인 토큰 갱신을 하기 위한 메서드
-    public func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {}
+    public func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {
+        if let refreshToken = naverLoginInstance.accessToken {
+            do {
+                let chiperToken = try CryptoUtil.makeEncryption(refreshToken)
+                let expiredAt = naverLoginInstance.accessTokenExpireDate
+                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
     
     /// 네이버 로그아웃 시 호출 되는 메서드
-    public func oauth20ConnectionDidFinishDeleteToken() {}
+    public func oauth20ConnectionDidFinishDeleteToken() {
+        // TODO: 마이페이지 구현에서 로그아웃 버튼 클릭시 호출 되도록 구현
+    }
     
     /// 네이버 로그인 실패 시 호출되는 메서드
     public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {

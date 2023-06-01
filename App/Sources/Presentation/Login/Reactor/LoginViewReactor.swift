@@ -7,8 +7,16 @@
 
 import Foundation
 
+import HPExtensions
 import ReactorKit
 import RxSwift
+
+public enum LoginViewStream: HPStreamType {
+    public enum Event {
+        case responseNaverAccessToken(_ accessToken: String)
+    }
+    case none
+}
 
 
 public final class LoginViewReactor: Reactor {
@@ -84,6 +92,15 @@ public final class LoginViewReactor: Reactor {
         
     }
     
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let fromNaverLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
+            self?.requestNaverAccessToken(from: event) ?? .empty()
+        }
+
+        return Observable.of(mutation, fromNaverLoginMutation).merge()
+    }
+    
+    
     public func reduce(state: State, mutation: Mutation) -> State {
         
         var newState = state
@@ -106,5 +123,17 @@ public final class LoginViewReactor: Reactor {
         return newState
     }
     
+    
+}
+
+
+public extension LoginViewReactor {
+    
+    func requestNaverAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .responseNaverAccessToken(accessToken):
+            return .just(.setNaverAccessToken(accessToken))
+        }
+    }
     
 }

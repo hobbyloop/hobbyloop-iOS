@@ -28,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         naverLoginInstance.consumerSecret = "JrQwoAXsRX"
         naverLoginInstance.appName = "Hobbyloop"
         
+        // TODO: 추후 accessToken값이 유효하다면 MainController로 화면 전환 하도록 구현
+        
         window?.makeKeyAndVisible()
         
         return true

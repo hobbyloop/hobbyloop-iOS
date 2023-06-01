@@ -183,8 +183,25 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
-                let signUpContainer = SignUpDIContainer().makeViewController()
-                vc.navigationController?.pushViewController(signUpContainer, animated: true)
+                vc.didShowSingUpController()
+            }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverToken)
+            .filter { !$0.isEmpty }
+            .map { _ in () }
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.didShowSingUpController()
             }).disposed(by: disposeBag)
     }
+}
+
+
+private extension LoginViewController {
+    
+    func didShowSingUpController() {
+        let signUpContainer = SignUpDIContainer().makeViewController()
+        self.navigationController?.pushViewController(signUpContainer, animated: true)
+    }
+    
 }
