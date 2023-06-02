@@ -11,17 +11,25 @@ extension Project {
         name: String,
         bundleId: String = "",
         products: [HPProduct],
+        isExcludedFramework: Bool = false,
         infoExtensions: [String: InfoPlist.Value] = [:],
         settings: Settings? = .default,
         packages: [ProjectDescription.Package] = [],
         testDependencies: [TargetDependency] = [],
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        externalDependencies: [TargetDependency] = []
     ) -> Project {
         var targets: [Target] = []
         var schemes: [Scheme] = []
         
         var infoPlist: InfoPlist = .base(name: name)
         
+        let targetSettings: Settings = .settings(
+            base: [
+                "OTHER_LDFLAGS": "-ObjC",
+                "HEADER_SEARCH_PATHS": ["$(inherited) $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/Public $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuth $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuthCore $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Source/SwiftPackage $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/../../ $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth"]
+            ]
+        )
         
         if products.contains(.app) {
             let appTarget: Target = .init(
@@ -33,9 +41,9 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                scripts: [.swiftLintScriptPath],
-                dependencies: dependencies,
-                settings: settings
+                scripts: [],
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
+                settings: targetSettings
             )
             targets.append(appTarget)
         }
@@ -90,8 +98,8 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                dependencies: dependencies,
-                settings: settings
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
+                settings: targetSettings
             )
             
             targets.append(libraryTarget)
@@ -107,8 +115,8 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: products.contains(.framework(.dynamic)) ? ["Resources/**"] : nil,
-                dependencies: dependencies,
-                settings: settings
+                dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
+                settings: targetSettings
             )
             
             targets.append(frameworkTarget)

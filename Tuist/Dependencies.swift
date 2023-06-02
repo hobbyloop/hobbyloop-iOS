@@ -14,6 +14,7 @@ let dependencies = Dependencies(
     swiftPackageManager: SwiftPackageManagerDependencies([
         Package.reactorKit,
         Package.rxSwift,
+        Package.rxGesture,
         Package.snapKit,
         Package.then,
         Package.alamofire

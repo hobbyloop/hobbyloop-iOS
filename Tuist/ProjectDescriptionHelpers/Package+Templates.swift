@@ -17,6 +17,7 @@ private extension Package {
 public extension Package {
     static let reactorKit = Self.remote(repo: "ReactorKit/ReactorKit", version: "3.2.0")
     static let rxSwift = Self.remote(repo: "ReactiveX/RxSwift", version: "6.5.0")
+    static let rxGesture = Self.remote(repo: "RxSwiftCommunity/RxGesture", version: "4.0.3")
     static let snapKit = Self.remote(repo: "SnapKit/SnapKit", version: "5.6.0")
     static let then = Self.remote(repo: "devxoul/Then", version: "3.0.0")
     static let alamofire = Self.remote(repo: "Alamofire/Alamofire", version: "5.6.1")
