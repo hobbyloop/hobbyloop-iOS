@@ -21,7 +21,7 @@ final class ExerciseView: UIView {
     ])
     let disposeBag = DisposeBag()
     
-    private lazy var backgroundView: UIView = {
+    public lazy var backgroundView: UIView = {
         return UIView().then {
             addSubview($0)
             $0.backgroundColor = .white
