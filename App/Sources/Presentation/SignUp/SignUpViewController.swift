@@ -351,6 +351,59 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }).disposed(by: disposeBag)
         
         
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .map { $0.name }
+            .asDriver(onErrorJustReturn: "")
+            .drive(nameView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+        
+
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .filter { $0.gender == "M" }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfManButton.didTapHPButton(color)
+            }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .filter { $0.gender == "F" }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfManButton.didTapHPButton(color)
+            }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .map { $0.mobile }
+            .asDriver(onErrorJustReturn: "")
+            .drive(phoneView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+
+        //TODO: String Extension 으로 년,월,일 Method로 수정 하도록 추가
+        Observable.zip(
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
+        ).filter { !$0.0.isEmpty && !$0.1.isEmpty  }
+            .map { "\($0.1)년 \($0.0.replacingOccurrences(of: "-", with: "월 "))일"}
+            .asDriver(onErrorJustReturn: "")
+            .drive(birthDayView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+        
+        self.scrollView
+            .rx.willBeginDragging
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.view.endEditing(true)
+            }).disposed(by: disposeBag)
         
     }
 }

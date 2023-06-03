@@ -14,6 +14,7 @@ import RxSwift
 public enum LoginViewStream: HPStreamType {
     public enum Event {
         case responseNaverAccessToken(_ accessToken: String)
+        case requestNaverLogin
     }
     case none
 }
@@ -100,6 +101,13 @@ public final class LoginViewReactor: Reactor {
         return Observable.of(mutation, fromNaverLoginMutation).merge()
     }
     
+    public func transform(action: Observable<Action>) -> Observable<Action> {
+        let fromNaverLoginAction = LoginViewStream.event.flatMap { [weak self] event in
+            self?.requestNaverLoginAction(from: event) ?? .empty()
+        }
+        return Observable.of(action, fromNaverLoginAction).merge()
+    }
+    
     
     public func reduce(state: State, mutation: Mutation) -> State {
         
@@ -133,7 +141,18 @@ public extension LoginViewReactor {
         switch event {
         case let .responseNaverAccessToken(accessToken):
             return .just(.setNaverAccessToken(accessToken))
+        default:
+            return .empty()
         }
     }
     
+    
+    func requestNaverLoginAction(from event: LoginViewStream.Event) -> Observable<Action> {
+        switch event {
+        case .requestNaverLogin:
+            return .just(.didTapNaverLogin)
+        default:
+            return .empty()
+        }
+    }
 }

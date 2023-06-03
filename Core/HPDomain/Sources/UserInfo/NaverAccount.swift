@@ -10,14 +10,26 @@ import Foundation
 public struct NaverAccount: Decodable {
     
     /// Naver 응답 상태 Code
-    public let resultCode: String
+    public let resultcode: String
     
     /// Naver 응답 상태 Message
     public let message: String
     
     /// Naver 응답 결과 data
-    public let response: NaverResponseInfo
+    public let response: NaverResponseInfo?
     
+    public enum CodingKeys: String, CodingKey {
+        case resultcode, message
+        case response
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.resultcode = try container.decode(String.self, forKey: .resultcode)
+        self.message = try container.decode(String.self, forKey: .message)
+        self.response = try container.decodeIfPresent(NaverResponseInfo.self, forKey: .response) ?? nil
+        
+    }
     
     
 }
@@ -50,11 +62,12 @@ public struct NaverResponseInfo: Identifiable ,Decodable {
     public let birthyear: String
     
     
-    enum CodingKeys: CodingKey {
+    enum CodingKeys: String, CodingKey {
         case id, gender, name
-        case mobile, regionMobile
+        case mobile
+        case regionMobile = "mobile_e164"
         case birthday, birthyear
-        case profileImage
+        case profileImage = "profile_image"
     }
     
     public init(from decoder: Decoder) throws {

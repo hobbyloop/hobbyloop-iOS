@@ -8,6 +8,7 @@
 import Foundation
 
 import HPDomain
+import HPCommon
 import ReactorKit
 import RxSwift
 import KakaoSDKUser
@@ -17,6 +18,7 @@ public final class SignUpViewReactor: Reactor {
     // MARK: Property
     public var initialState: State
     private var signUpRepository: SignUpViewRepo
+    private var accountType: AccountType
     
     public enum Action {
         case viewDidLoad
@@ -40,8 +42,9 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var naverUserEntity: NaverAccount?
     }
     
-    public init(signUpRepository: SignUpViewRepo) {
+    public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
         self.signUpRepository = signUpRepository
+        self.accountType = accountType
         self.initialState = State(
             isLoading: false,
             isGenderSelected: false,
@@ -59,10 +62,18 @@ public final class SignUpViewReactor: Reactor {
         case .viewDidLoad:
             let startLoading = Observable<Mutation>.just(.setLoading(true))
             let endLoading = Observable<Mutation>.just(.setLoading(false))
+            var requestProfile = Observable<Mutation>.empty()
+            
+            if accountType == .kakao {
+                requestProfile = signUpRepository.responseKakaoProfile()
+            } else if accountType == .naver {
+                requestProfile = signUpRepository.responseNaverProfile()
+            }
+            //TODO: Google, Apple Mutaion 추가
             
             return .concat(
                 startLoading,
-                signUpRepository.responseKakaoProfile(),
+                requestProfile,
                 endLoading
             )
             

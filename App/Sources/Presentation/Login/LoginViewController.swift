@@ -9,12 +9,14 @@ import UIKit
 
 import HPCommonUI
 import HPFoundation
+import HPExtensions
+import HPNetwork
+import HPCommon
 import RxKakaoSDKAuth
 import KakaoSDKUser
 import Then
 import SnapKit
 import ReactorKit
-import HPExtensions
 import NaverThirdPartyLogin
 import GoogleSignIn
 
@@ -185,8 +187,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self = `self` else { return }
-                let signUpContainer = SignUpDIContainer().makeViewController()
-                self.navigationController?.pushViewController(signUpContainer, animated: true)
+                self.didShowSingUpController(accountType: .apple)
             }).disposed(by: disposeBag)
         
         
@@ -195,7 +196,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController()
+                vc.didShowSingUpController(accountType: .kakao)
             }).disposed(by: disposeBag)
         
         reactor.pulse(\.$naverToken)
@@ -203,7 +204,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController()
+                vc.didShowSingUpController(accountType: .naver)
             }).disposed(by: disposeBag)
     }
 }
@@ -211,8 +212,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
 
 private extension LoginViewController {
     
-    func didShowSingUpController() {
-        let signUpContainer = SignUpDIContainer().makeViewController()
+    func didShowSingUpController(accountType: AccountType) {
+        let signUpContainer = SignUpDIContainer(signUpClient: APIClient.shared, signUpAccountType: accountType).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     

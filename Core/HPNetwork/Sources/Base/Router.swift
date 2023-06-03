@@ -48,7 +48,7 @@ extension Router {
     public func asURLRequest() throws -> URLRequest {
         let url = try baseURL.asURL()
         var urlRequest = try URLRequest(url: url.appendingPathComponent(path), method: method)
-        urlRequest.setValue(ContentType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+        urlRequest.headers = headers
 
         switch parameters {
         case .query(let data):
