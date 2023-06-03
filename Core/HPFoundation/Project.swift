@@ -8,5 +8,6 @@ let foundation = Project.makeModule(
     dependencies: [
         .Project.Core.extensions,
         .Project.Core.manager,
+        .Project.Core.common
     ]
 )

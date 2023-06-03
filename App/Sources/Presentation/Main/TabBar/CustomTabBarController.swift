@@ -7,6 +7,7 @@
 
 import UIKit
 
+import HPCommon
 import HPCommonUI
 
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {

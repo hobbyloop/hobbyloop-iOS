@@ -7,12 +7,13 @@
 
 import UIKit
 
+import HPCommonUI
 import RxSwift
 import RxCocoa
 
-class CustomNavigationViewController: UINavigationController {
+public class CustomNavigationViewController: UINavigationController {
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         navigationBar.isHidden = true
     }

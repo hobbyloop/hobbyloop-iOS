@@ -65,6 +65,14 @@ final class ExerciseView: UIView {
     
     init() {
         super.init(frame: .zero)
+        configure()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configure() {
         listObserver
             .observe(on: MainScheduler.instance)
             .bind(to: tableView.rx.items) { tableView, row, item in
@@ -78,9 +86,6 @@ final class ExerciseView: UIView {
             .disposed(by: disposeBag)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 extension ExerciseView: UITableViewDelegate {

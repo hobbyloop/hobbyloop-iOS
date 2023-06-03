@@ -8,6 +8,7 @@
 import UIKit
 
 import HPThirdParty
+import SnapKit
 
 class ExerciseCell: UITableViewCell {
     private lazy var stackView: UIStackView = {

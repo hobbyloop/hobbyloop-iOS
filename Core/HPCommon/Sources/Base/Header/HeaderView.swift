@@ -19,7 +19,7 @@ public enum HeaderType {
     case detail
 }
 
-final class HeaderView: UIView {
+public final class HeaderView: UIView {
     
     public lazy var signatureLabel: UIImageView = {
         return UIImageView().then {
@@ -92,7 +92,7 @@ final class HeaderView: UIView {
     
     private var storeName: String?
     
-    init(type: HeaderType, storeName: String? = nil) {
+    public init(type: HeaderType, storeName: String? = nil) {
         super.init(frame: .zero)
         configure(type, storeName)
     }
