@@ -17,6 +17,7 @@ import SnapKit
 public enum HeaderType {
     case main
     case detail
+    case none
 }
 
 public final class HeaderView: UIView {
@@ -34,10 +35,15 @@ public final class HeaderView: UIView {
         filled.imagePlacement = .trailing
         return UIButton(configuration: filled, primaryAction: nil).then {
             addSubview($0)
+            
+            let text = "필라테스"
+            let range = (text as NSString).range(of: text)
+            let attributedString = NSMutableAttributedString(string: text)
+            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: range)
+            $0.setAttributedTitle(attributedString, for: .normal)
+            
             $0.tintColor = .white
-            $0.setTitle("필라테스", for: .normal)
             $0.setImage(UIImage(systemName: "chevron.down")?.withRenderingMode(.alwaysTemplate), for: .normal)
-            $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
         }
     }()
     
@@ -150,6 +156,8 @@ public final class HeaderView: UIView {
                 $0.trailing.equalToSuperview().offset(-20)
             }
             
+        case .none:
+            break
         }
     }
     
