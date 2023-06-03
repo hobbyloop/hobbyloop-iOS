@@ -30,17 +30,6 @@ public class CouponView: UIView {
     
     private let countLabel: UILabel = {
         let label = UILabel()
-        label.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
-        label.textColor = UIColor(red: 0xDC / 255, green: 0xFF / 255, blue: 0x05 / 255, alpha: 1)
-        
-        return label
-    }()
-    
-    private let countUnitLabel: UILabel = {
-        let label = UILabel()
-        label.text = "회"
-        label.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = .white
         
         return label
     }()
@@ -57,7 +46,7 @@ public class CouponView: UIView {
         super.init(frame: .infinite)
         
         companyNameLabel.text = companyName
-        countLabel.text = "\(count)"
+        updateCountLabel(to: count)
         
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "YYYY.MM.dd"
@@ -73,20 +62,12 @@ public class CouponView: UIView {
     }
     
     private func layout() {
-        let countLabelStack = UIStackView()
-        countLabelStack.axis = .horizontal
-        countLabelStack.alignment = .center
-        countLabelStack.spacing = 4
-        
-        countLabelStack.addArrangedSubview(countLabel)
-        countLabelStack.addArrangedSubview(countUnitLabel)
-        
         let labelsStack = UIStackView()
         labelsStack.axis = .vertical
         labelsStack.alignment = .leading
         labelsStack.spacing = 9
         
-        [companyNameLabel, countLabelStack, periodLabel].forEach(labelsStack.addArrangedSubview(_:))
+        [companyNameLabel, countLabel, periodLabel].forEach(labelsStack.addArrangedSubview(_:))
         
         let contentStack = UIStackView()
         contentStack.axis = .horizontal
@@ -101,5 +82,19 @@ public class CouponView: UIView {
             make.centerX.equalTo(self.snp.centerX).offset(10)
             make.centerY.equalTo(self.snp.centerY)
         }
+    }
+    
+    private func updateCountLabel(to count: Int) {
+        let newString = "\(count) 회"
+        let countLabelRange = (newString as NSString).range(of: "\(count)")
+        let countUnitLabelRange = (newString as NSString).range(of: "회")
+        
+        let attributedString = NSMutableAttributedString(string: newString)
+        attributedString.addAttribute(.foregroundColor, value: UIColor(red: 0xDC / 255, green: 0xFF / 255, blue: 0x05 / 255, alpha: 1), range: countLabelRange)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: countLabelRange)
+        attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: countUnitLabelRange)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 12), range: countUnitLabelRange)
+        
+        countLabel.attributedText = attributedString
     }
 }
