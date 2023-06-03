@@ -7,7 +7,7 @@
 
 import Foundation
 
-
+import HPDomain
 import ReactorKit
 import RxSwift
 import KakaoSDKUser
@@ -29,6 +29,7 @@ public final class SignUpViewReactor: Reactor {
         case didTapBirthDayButton(Bool)
         case didTapGenderButton(Bool)
         case setKakaoUserEntity(User)
+        case setNaverUserEntity(NaverAccount)
     }
     
     public struct State {
@@ -36,6 +37,7 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var isGenderSelected: Bool
         @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
+        @Pulse var naverUserEntity: NaverAccount?
     }
     
     public init(signUpRepository: SignUpViewRepo) {
@@ -44,7 +46,8 @@ public final class SignUpViewReactor: Reactor {
             isLoading: false,
             isGenderSelected: false,
             isBirthDaySelected: false,
-            kakaoUserEntity: nil
+            kakaoUserEntity: nil,
+            naverUserEntity: nil
         )
     }
     
@@ -91,6 +94,10 @@ public final class SignUpViewReactor: Reactor {
         case let .setKakaoUserEntity(kakaoEntity):
             newState.kakaoUserEntity = kakaoEntity
             debugPrint("newState Kakao Profile Entity: \(newState.kakaoUserEntity)")
+            
+        case let .setNaverUserEntity(naverEntity):
+            newState.naverUserEntity = naverEntity
+            debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
         }
         
         return newState

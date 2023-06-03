@@ -7,20 +7,19 @@
 
 import Foundation
 
+import HPCommon
+import HPExtensions
 import ReactorKit
 import KakaoSDKUser
 import KakaoSDKAuth
 import RxKakaoSDKUser
 import RxKakaoSDKAuth
 import KakaoSDKCommon
-import HPCommon
-import HPExtensions
 import NaverThirdPartyLogin
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
-    var naverAccessToken: PublishSubject<String> { get }
     
     /// 카카오 로그인을 위한 implementation
     func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
@@ -36,7 +35,6 @@ public protocol LoginViewRepo {
 
 
 public final class LoginViewRepository: NSObject, LoginViewRepo {
-    public var naverAccessToken: PublishSubject<String> = PublishSubject()
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()

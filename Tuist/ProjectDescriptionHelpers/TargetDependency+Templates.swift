@@ -56,11 +56,6 @@ extension TargetDependency.Project.Core {
         path: .relativeToRoot("Core/HPDomain")
     )
     
-    public static let manager: TargetDependency = .project(
-        target: "HPManager",
-        path: .relativeToRoot("Core/HPManager")
-    )
-    
 }
 
 
