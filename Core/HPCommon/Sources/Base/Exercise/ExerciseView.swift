@@ -11,15 +11,15 @@ import HPThirdParty
 import RxSwift
 import Then
 
-final class ExerciseView: UIView {
-    let items: CGFloat = 4
-    let listObserver = Observable.of([
+public final class ExerciseView: UIView {
+    private let items: CGFloat = 4
+    private let listObserver = Observable.of([
         testItem(name: "헬스/PT", image: UIImage(systemName: "chevron.up.circle")!),
         testItem(name: "필라테스", image: UIImage(systemName: "chevron.down")!),
         testItem(name: "테니스", image: UIImage(systemName: "chevron.down.circle")!),
         testItem(name: "골프", image: UIImage(systemName: "chevron.down.square.fill")!)
     ])
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     public lazy var backgroundView: UIView = {
         return UIView().then {
@@ -63,7 +63,7 @@ final class ExerciseView: UIView {
         }
     }()
     
-    init() {
+    public init() {
         super.init(frame: .zero)
         configure()
     }
@@ -89,7 +89,7 @@ final class ExerciseView: UIView {
 }
 
 extension ExerciseView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         74
     }
 }
