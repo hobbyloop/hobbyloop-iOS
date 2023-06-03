@@ -12,14 +12,17 @@ import HPCommonUI
 
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    private let firstVC = CustomNavigationViewController(rootViewController: HomeViewController())
-    private let dummyView = CustomNavigationViewController(rootViewController: UIViewController())
+    private let firstVC = CustomNavigationViewController(rootViewController: HomeDIContainer().makeViewController())
+    private let dummyView = CustomNavigationViewController(rootViewController: TicketViewController(HeaderType: .main))
     private let dummyView2 = CustomNavigationViewController(rootViewController: UIViewController())
     private let dummyView3 = CustomNavigationViewController(rootViewController: UIViewController())
     private let dummyView4 = CustomNavigationViewController(rootViewController: UIViewController())
     
     private var shapeLayer: CALayer?
     private let font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+    private var toggle: Bool = false
+    
+    private let menuButton = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,43 +35,42 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         let systemFontAttributes = [NSAttributedString.Key.font: font]
         UITabBarItem.appearance().setTitleTextAttributes(systemFontAttributes, for: .normal)
         
-        firstVC.tabBarItem.selectedImage = UIImage(named: "Home_filled")
+        firstVC.tabBarItem.selectedImage = HPCommonUIAsset.homeFilled.image.withRenderingMode(.alwaysOriginal)
         firstVC.tabBarItem.title = "홈"
-        firstVC.tabBarItem.image = UIImage(named: "Home_outlined")
+        firstVC.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        dummyView.tabBarItem.selectedImage = UIImage(named: "Ticket")
+        dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
         dummyView.view.backgroundColor = .gray
         dummyView.tabBarItem.title = "이용권"
-        dummyView.tabBarItem.image = UIImage(named: "Ticket")
+        dummyView.tabBarItem.image = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
         
         dummyView2.view.backgroundColor = .red
         dummyView2.tabBarItem.title = "수업예약"
+        setupMiddleButton()
         
         dummyView3.view.backgroundColor = .blue
-        dummyView3.tabBarItem.selectedImage = UIImage(named: "Archive_filled")
+        dummyView3.tabBarItem.selectedImage = HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal)
         dummyView3.tabBarItem.title = "보관함"
-        dummyView3.tabBarItem.image = UIImage(named: "Archive_outlined")
+        dummyView3.tabBarItem.image = HPCommonUIAsset.archiveOutlined.image.withRenderingMode(.alwaysOriginal)
 
-        dummyView4.tabBarItem.selectedImage = UIImage(named: "My_filled")
+        dummyView4.tabBarItem.selectedImage = HPCommonUIAsset.myFilled.image.withRenderingMode(.alwaysOriginal)
         dummyView4.view.backgroundColor = .green
         dummyView4.tabBarItem.title = "마이페이지"
-        dummyView4.tabBarItem.image = UIImage(named: "My_outlined")
+        dummyView4.tabBarItem.image = HPCommonUIAsset.myOutlined.image.withRenderingMode(.alwaysOriginal)
         
         viewControllers = [firstVC, dummyView, dummyView2, dummyView3, dummyView4]
         
         object_setClass(self.tabBar, CustomTabBar.self)
-        setupMiddleButton()
         tabBarAddLine()
     }
     
     private func setupMiddleButton() {
-        let menuButton = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         var menuButtonFrame = menuButton.frame
         menuButtonFrame.origin.y = view.bounds.height - menuButtonFrame.height - 50
         menuButtonFrame.origin.x = view.bounds.width/2 - menuButtonFrame.size.width/2
         menuButton.frame = menuButtonFrame
-        let image = UIImage(named: "Calendar_outlined")?.withRenderingMode(.alwaysTemplate)
-        let selectImage = UIImage(named: "Calendar_filled")?.withRenderingMode(.alwaysTemplate)
+        let image = HPCommonUIAsset.calendarOutlined.image.withRenderingMode(.alwaysOriginal)
+        let selectImage = HPCommonUIAsset.calendarFilled.image.withRenderingMode(.alwaysOriginal)
         //
         menuButton.contentMode = .scaleAspectFill
         //shadows
@@ -77,7 +79,7 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         menuButton.layer.shadowOpacity = 0.25
         //
         menuButton.setImage(image, for: .normal)
-        menuButton.setBackgroundImage(UIImage(named: "Circle_Orange"), for: .normal)
+        menuButton.setBackgroundImage(HPCommonUIAsset.circleOrange.image.withRenderingMode(.alwaysOriginal), for: .normal)
         menuButton.setImage(selectImage, for: .selected)
         menuButton.tintColor = .white
         menuButton.layer.cornerRadius = menuButtonFrame.height
@@ -87,6 +89,8 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     }
     
     @objc func menuButtonAction(_ sender: UIButton) {
+        toggle.toggle()
+        sender.isSelected = toggle
         selectedIndex = 2
     }
     
@@ -116,6 +120,15 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         path.close()
         
         return path.cgPath
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        if tabBar.items?[2] == item {
+            toggle = true
+        } else {
+            toggle = false
+        }
+        menuButton.isSelected = toggle
     }
     
 }
