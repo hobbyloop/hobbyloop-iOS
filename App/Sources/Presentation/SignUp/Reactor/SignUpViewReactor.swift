@@ -136,7 +136,6 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setGoogleUserEntity(googleEntity):
             newState.googleUserEntity = googleEntity
-            debugPrint("newState gogole Profile Entity: \(newState.googleUserEntity?.profile?.email)")
             
         }
         
