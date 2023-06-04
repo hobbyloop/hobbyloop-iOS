@@ -31,12 +31,14 @@ public final class LoginViewReactor: Reactor {
         case viewDidLoad
         case didTapKakaoLogin
         case didTapNaverLogin
+        case didTapGoogleLogin(AnyObject)
     }
     
     public enum Mutation {
         case setLoading(Bool)
         case setKakaoAccessToken(String)
         case setNaverLogin(Void)
+        case setGoogleLogin(Void)
         case setNaverAccessToken(String)
     }
     
@@ -46,6 +48,7 @@ public final class LoginViewReactor: Reactor {
         @Pulse var kakaoToken: String
         @Pulse var naverToken: String
         @Pulse var isShowNaverLogin: Void?
+        @Pulse var isShowGoogleLogin: Void?
     }
     
     
@@ -57,7 +60,8 @@ public final class LoginViewReactor: Reactor {
             isLoading: false,
             kakaoToken: "",
             naverToken: "",
-            isShowNaverLogin: nil
+            isShowNaverLogin: nil,
+            isShowGoogleLogin: nil
         )
     }
     
@@ -87,6 +91,13 @@ public final class LoginViewReactor: Reactor {
             return .concat(
                 startLoading,
                 loginRepository.responseNaverLogin(),
+                endLoading
+            )
+            
+        case let .didTapGoogleLogin(viewController):
+            return .concat(
+                startLoading,
+                loginRepository.responseGoogleLogin(to: viewController),
                 endLoading
             )
         }
@@ -126,6 +137,9 @@ public final class LoginViewReactor: Reactor {
             
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
+            
+        case let .setGoogleLogin(isShow):
+            newState.isShowGoogleLogin = isShow
         }
         
         return newState

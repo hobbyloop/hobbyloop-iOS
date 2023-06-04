@@ -173,14 +173,9 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         googleLoginButton
             .rx.tap
-            .asDriver()
-            .drive(onNext: { [weak self] _ in
-                guard let self = `self` else { return }
-                // TODO: Reactor Action 으로 수정 및 비즈니스 로직은 Repository로 구현
-                let configuration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
-                GIDSignIn.sharedInstance.signIn(with: configuration, presenting: self)
-            }).disposed(by: disposeBag)
-        
+            .map { Reactor.Action.didTapGoogleLogin(self) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap

@@ -16,10 +16,12 @@ import RxKakaoSDKUser
 import RxKakaoSDKAuth
 import KakaoSDKCommon
 import NaverThirdPartyLogin
+import GoogleSignIn
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
+    var googleLoginInstance: GIDConfiguration { get }
     
     /// 카카오 로그인을 위한 implementation
     func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
@@ -31,6 +33,9 @@ public protocol LoginViewRepo {
     /// 네이버 로그인을 위한 implementation
     func responseNaverLogin() -> Observable<LoginViewReactor.Mutation>
     
+    /// 구글 로그인을 위한 implementation
+    func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation>
+    
 }
 
 
@@ -38,6 +43,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
+    public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
     
     
     
@@ -149,6 +155,16 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     /// 네이버 로그인창을 띄우기 위한 메서드
     public func responseNaverLogin() -> Observable<LoginViewReactor.Mutation> {
         return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
+    }
+    
+    
+    /// 구글 로그인창을 띄우기 위한 메서드
+    public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
+        if let loginController = viewController as? LoginViewController {
+            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController)))
+        }
+        
+        return .empty()
     }
     
 }
