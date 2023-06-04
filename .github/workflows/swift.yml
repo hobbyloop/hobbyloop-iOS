@@ -31,7 +31,7 @@ jobs:
         arguments: ''
     - name: install Dependencies
       run: |
-        pod install --clean-install --project-directory="hobbyloop-iOS"/
+        pod install --clean-install --project-directory="hobbyloop-iOS/"
     - name: xcode build 🛠️
       run: |
         xcodebuild clean build -workspace "Hobbyloop.xcworkspace" -scheme "Hobbyloop" -destination "platform=iOS Simulator,name=iPhone 13 mini,OS=latest"
