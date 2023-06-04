@@ -7,10 +7,10 @@
 
 import UIKit
 
-import Then
 import SnapKit
+import Then
 
-public class CouponView: UIView {
+public final class CouponView: UIView {
     private let logoImageView = UIImageView().then {
         $0.sizeToFit()
         $0.snp.makeConstraints { make in
