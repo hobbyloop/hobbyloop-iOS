@@ -6,47 +6,42 @@
 //
 
 import UIKit
+
+import Then
 import SnapKit
 
 public class CouponView: UIView {
-    private let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.sizeToFit()
-        imageView.snp.makeConstraints { make in
+    private let logoImageView = UIImageView().then {
+        $0.sizeToFit()
+        $0.snp.makeConstraints { make in
             make.width.equalTo(79)
             make.height.equalTo(62)
         }
-        
-        return imageView
-    }()
+    }
     
-    private let companyNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = HPCommonUIFontFamily.Pretendard.light.font(size: 10)
-        label.textColor = .white
-        
-        return label
-    }()
+    private let companyNameLabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.light.font(size: 10)
+        $0.textColor = .white
+    }
     
-    private let countLabel: UILabel = {
-        let label = UILabel()
-        
-        return label
-    }()
+    private let countLabel = UILabel()
     
-    private let periodLabel: UILabel = {
-        let label = UILabel()
-        label.font = HPCommonUIFontFamily.Pretendard.light.font(size: 9)
-        label.textColor = .white
-        
-        return label
-    }()
+    private let periodLabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.light.font(size: 9)
+        $0.textColor = .white
+    }
+    
+    var count: Int = 0 {
+        didSet {
+            updateCountLabel(to: count)
+        }
+    }
     
     public init(companyName: String, count: Int, start: Date, end: Date) {
         super.init(frame: .infinite)
         
         companyNameLabel.text = companyName
-        updateCountLabel(to: count)
+        self.count = count
         
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "YYYY.MM.dd"
