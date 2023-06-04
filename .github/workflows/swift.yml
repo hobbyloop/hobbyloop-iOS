@@ -21,10 +21,6 @@ jobs:
       with:
         command: 'fetch'
         arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Pod install 2️⃣
-      with:
-        command: 'pod install'
-        arguments: ''
     - uses: tuist/tuist-action@0.13.0 # Tuist generate 3️⃣
       with:
         command: 'generate'
@@ -33,6 +29,9 @@ jobs:
       with:
         command: 'build'
         arguments: ''
+    - name: install Dependencies
+      run: |
+        pod install
     - name: xcode build 🛠️
       run: |
         xcodebuild clean build -workspace "Hobbyloop.xcworkspace" -scheme "Hobbyloop" -destination "platform=iOS Simulator,name=iPhone 13 mini,OS=latest"
