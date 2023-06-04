@@ -21,7 +21,7 @@ jobs:
       with:
         command: 'fetch'
         arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Tuist generate 2️⃣
+    - uses: tuist/tuist-action@0.13.0 # Tuist generate 3️⃣
       with:
         command: 'generate'
         arguments: ''

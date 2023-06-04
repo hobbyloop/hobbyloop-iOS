@@ -19,6 +19,8 @@ extension TargetDependency {
         public struct Reactive {}
         public struct UI {}
         public struct Network {}
+        public struct SDK {}
+        public struct Util {}
     }
 }
 
@@ -27,6 +29,11 @@ extension TargetDependency.Project.Core {
     public static let thirdParty: TargetDependency = .project(
         target: "HPThirdParty",
         path: .relativeToRoot("Core/HPThirdParty")
+    )
+    
+    public static let common: TargetDependency = .project(
+        target: "HPCommon",
+        path: .relativeToRoot("Core/HPCommon")
     )
     
     public static let network: TargetDependency = .project(
@@ -49,11 +56,6 @@ extension TargetDependency.Project.Core {
         path: .relativeToRoot("Core/HPDomain")
     )
     
-    public static let manager: TargetDependency = .project(
-        target: "HPManager",
-        path: .relativeToRoot("Core/HPManager")
-    )
-    
 }
 
 
@@ -68,6 +70,7 @@ extension TargetDependency.Project.UI {
 extension TargetDependency.ThirdParty.Reactive {
     public static let rxCocoa: TargetDependency = .external(name: "RxCocoa")
     public static let reactorKit: TargetDependency = .external(name: "ReactorKit")
+    public static let rxGesture: TargetDependency = .external(name: "RxGesture")
 }
 
 extension TargetDependency.ThirdParty.UI {
@@ -78,5 +81,14 @@ extension TargetDependency.ThirdParty.UI {
 
 extension TargetDependency.ThirdParty.Network {
     public static let alamofire: TargetDependency = .external(name: "Alamofire")
-    
+}
+
+extension TargetDependency.ThirdParty.SDK {
+    public static let kakao: TargetDependency = .external(name: "RxKakaoSDKUser")
+    public static let google: TargetDependency = .external(name: "GoogleSignIn")
+}
+
+
+extension TargetDependency.ThirdParty.Util {
+    public static let cryptoSwift: TargetDependency = .external(name: "CryptoSwift")
 }

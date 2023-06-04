@@ -14,8 +14,12 @@ let thirdParty = Project.makeModule(
     dependencies: [
         .ThirdParty.Reactive.reactorKit,
         .ThirdParty.Reactive.rxCocoa,
+        .ThirdParty.Reactive.rxGesture,
         .ThirdParty.UI.then,
         .ThirdParty.UI.snapKit,
-        .ThirdParty.Network.alamofire
+        .ThirdParty.Network.alamofire,
+        .ThirdParty.SDK.kakao,
+        .ThirdParty.SDK.google,
+        .ThirdParty.Util.cryptoSwift
     ]
 )
