@@ -22,9 +22,9 @@ jobs:
         command: 'fetch'
         arguments: ''
     - uses: tuist/tuist-action@0.13.0 # Pod install 2️⃣
-        with:
-         command: 'pod install'
-         arguments: ''
+      with:
+        command: 'pod install'
+        arguments: ''
     - uses: tuist/tuist-action@0.13.0 # Tuist generate 3️⃣
       with:
         command: 'generate'
