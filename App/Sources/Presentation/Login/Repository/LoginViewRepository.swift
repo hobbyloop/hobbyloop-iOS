@@ -161,7 +161,26 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     /// 구글 로그인창을 띄우기 위한 메서드
     public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
         if let loginController = viewController as? LoginViewController {
-            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController)))
+
+            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { user, error in
+                var chiperToken = ""
+                if let user {
+                    do {
+                        chiperToken = try CryptoUtil.makeEncryption(user.authentication.clientID)
+                        UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                        LoginViewStream.event.onNext(.responseGoogleAccessToken(chiperToken))
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    SignUpViewStream.event.onNext(.requestGoogleLogin(user))
+                }
+                
+                
+                if error != nil {
+                    // TODO: Google 유저 정보 가져오기 실패시 에러 처리
+                    print("Google Login Error : \(error?.localizedDescription)")
+                }
+            })))
         }
         
         return .empty()
@@ -175,16 +194,17 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
+        var chiperToken = ""
         if let accessToken = naverLoginInstance.accessToken {
             do {
-                let chiperToken = try CryptoUtil.makeEncryption(accessToken)
+                chiperToken = try CryptoUtil.makeEncryption(accessToken)
                 let expiredAt = naverLoginInstance.accessTokenExpireDate
                 UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                 UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
             } catch {
                 print(error.localizedDescription)
             }
-            LoginViewStream.event.onNext(.responseNaverAccessToken(accessToken))
+            LoginViewStream.event.onNext(.responseNaverAccessToken(chiperToken))
         }
     }
     

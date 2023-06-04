@@ -9,9 +9,20 @@ import Foundation
 
 import HPDomain
 import HPCommon
+import HPExtensions
 import ReactorKit
 import RxSwift
 import KakaoSDKUser
+import GoogleSignIn
+
+
+public enum SignUpViewStream: HPStreamType {
+    public enum Event {
+        case requestGoogleLogin(_ profile: GIDGoogleUser)
+    }
+}
+
+
 
 public final class SignUpViewReactor: Reactor {
     
@@ -32,14 +43,16 @@ public final class SignUpViewReactor: Reactor {
         case didTapGenderButton(Bool)
         case setKakaoUserEntity(User)
         case setNaverUserEntity(NaverAccount)
+        case setGoogleUserEntity(GIDGoogleUser)
     }
     
     public struct State {
-        @Pulse var isLoading: Bool
+        var isLoading: Bool
         @Pulse var isGenderSelected: Bool
         @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
+        @Pulse var googleUserEntity: GIDGoogleUser?
     }
     
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
@@ -50,7 +63,8 @@ public final class SignUpViewReactor: Reactor {
             isGenderSelected: false,
             isBirthDaySelected: false,
             kakaoUserEntity: nil,
-            naverUserEntity: nil
+            naverUserEntity: nil,
+            googleUserEntity: nil
         )
     }
     
@@ -89,6 +103,16 @@ public final class SignUpViewReactor: Reactor {
         }
     }
     
+    
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let fromGoogleProfileMutation = SignUpViewStream.event.flatMap { [weak self] event in
+            self?.requestGoogleUserProfile(from: event) ?? .empty()
+        }
+        print("test Google Profile: \(fromGoogleProfileMutation)")
+        
+        return Observable.of(mutation, fromGoogleProfileMutation).merge()
+    }
+    
     public func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -109,8 +133,27 @@ public final class SignUpViewReactor: Reactor {
         case let .setNaverUserEntity(naverEntity):
             newState.naverUserEntity = naverEntity
             debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
+            
+        case let .setGoogleUserEntity(googleEntity):
+            newState.googleUserEntity = googleEntity
+            debugPrint("newState gogole Profile Entity: \(newState.googleUserEntity?.profile?.email)")
+            
         }
         
         return newState
     }
+}
+
+
+
+public extension SignUpViewReactor {
+    
+    func requestGoogleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .requestGoogleLogin(profile):
+            print("Google Event: \(profile)")
+            return .just(.setGoogleUserEntity(profile))
+        }
+    }
+    
 }

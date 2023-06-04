@@ -201,6 +201,14 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .naver)
             }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$googleToken)
+            .filter { !$0.isEmpty }
+            .map { _ in () }
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.didShowSingUpController(accountType: .google)
+            }).disposed(by: disposeBag)
     }
 }
 
