@@ -82,6 +82,7 @@ public class CouponView: UIView {
             make.centerX.equalTo(self.snp.centerX).offset(10)
             make.centerY.equalTo(self.snp.centerY)
         }
+        
     }
     
     private func updateCountLabel(to count: Int) {
@@ -96,5 +97,17 @@ public class CouponView: UIView {
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 12), range: countUnitLabelRange)
         
         countLabel.attributedText = attributedString
+    }
+    
+    public func applyCornerRadius() {
+        self.layer.cornerRadius = 10
+        
+        let maskPath = UIBezierPath(roundedRect: self.bounds,
+                                    byRoundingCorners: [.topLeft, .bottomLeft],
+                                    cornerRadii: CGSize(width: 40, height: 40))
+        
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = maskPath.cgPath
+        self.layer.mask = maskLayer
     }
 }

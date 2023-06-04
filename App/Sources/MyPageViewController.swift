@@ -10,19 +10,21 @@ import SnapKit
 import HPCommonUI
 
 class MyPageViewController: UIViewController {
+    let couponView = CouponView(companyName: "밸런스 스튜디오", count: 10, start: .now, end: .now)
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let couponView = CouponView(companyName: "밸런스 스튜디오", count: 10, start: .now, end: .now)
         view.addSubview(couponView)
-        
+
         couponView.snp.makeConstraints { make in
             make.width.equalTo(view.snp.width).offset(-58)
             make.height.equalTo(179)
             make.center.equalTo(view.snp.center)
         }
-        // Do any additional setup after loading the view.
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        couponView.applyCornerRadius()
+    }
 }
