@@ -40,7 +40,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         firstVC.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
         
         dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
-        dummyView.view.backgroundColor = .gray
         dummyView.tabBarItem.title = "이용권"
         dummyView.tabBarItem.image = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
         
