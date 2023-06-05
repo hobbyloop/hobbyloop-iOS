@@ -17,24 +17,10 @@ import RxGesture
 
 class HomeViewController: MainBaseViewController<HomeViewReactor> {
     
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView().then {
-            view.addSubview($0)
-        }
-    }()
-    
-    deinit {
-        debugPrint(#function)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         headerView = HeaderView(type: headerType)
         configure()
-        
-    }
-    
-    public override func bind(reactor: HomeViewReactor) {
         
     }
     
