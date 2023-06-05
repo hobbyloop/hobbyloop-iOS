@@ -214,6 +214,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             containerView.addSubview($0)
         }
         
+        containerView.bringSubviewToFront(birthDayPickerView)
         
         birthDayPickerView.backgroundColor = .white
         
@@ -450,6 +451,17 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 self.phoneView.textFiledView.text = phoneNumber.toPhoneNumber()
             }).disposed(by: disposeBag)
         
+        phoneView.textFiledView
+            .rx.value
+            .compactMap { $0?.count }
+            .map { $0 <= 13 }
+            .debug("max count PhoneNumber")
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { vc, isEditing in
+                guard !isEditing else { return }
+                vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
+            }).disposed(by: disposeBag)
         
     }
 }
