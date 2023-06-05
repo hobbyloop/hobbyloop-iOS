@@ -35,6 +35,7 @@ public final class SignUpViewReactor: Reactor {
         case viewDidLoad
         case didTapBirthDayButton
         case didTapGenderButton
+        case didTapAuthCodeButton
     }
     
     public enum Mutation {
@@ -100,6 +101,10 @@ public final class SignUpViewReactor: Reactor {
             let didBirthdaySelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isBirthDaySelected))
             
             return didBirthdaySelectedButton
+            
+        case .didTapAuthCodeButton:
+            
+            return .empty()
         }
     }
     

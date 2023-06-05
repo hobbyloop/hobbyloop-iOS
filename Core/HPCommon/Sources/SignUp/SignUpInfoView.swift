@@ -75,6 +75,7 @@ public final class SignUpInfoView: UIView {
             textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
         case .phone:
             textFiledView.keyboardType = .numberPad
+            textFiledView.textContentType = .oneTimeCode
         default:
             textFiledView.isUserInteractionEnabled = true
         }

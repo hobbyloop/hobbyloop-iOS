@@ -191,10 +191,18 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private func configure() {
         self.view.backgroundColor = .white
-        self.view.addSubview(scrollView)
+        
+        
+        [scrollView, confirmButton, birthDayPickerView, modifyDescriptionLabel].forEach {
+            self.view.addSubview($0)
+        }
+        
+        self.view.bringSubviewToFront(birthDayPickerView)
         
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalTo(confirmButton.snp.top).inset(-20)
         }
         
         scrollView.addSubview(containerView)
@@ -210,11 +218,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView, authCodeTextField, verifyButton].forEach {
+         phoneView, certificationButton, authCodeTextField, verifyButton].forEach {
             containerView.addSubview($0)
         }
         
-        containerView.bringSubviewToFront(birthDayPickerView)
         
         birthDayPickerView.backgroundColor = .white
         
@@ -276,27 +283,29 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.right.equalToSuperview().offset(-15)
         }
         
-        modifyDescriptionLabel.snp.makeConstraints {
-            $0.height.equalTo(13)
-            $0.width.equalTo(250)
-            $0.top.equalTo(phoneView.snp.bottom).offset(25)
-            $0.centerX.equalToSuperview()
-        }
-        
         birthDayPickerView.snp.makeConstraints {
             $0.top.equalTo(birthDayView.snp.bottom)
             $0.left.right.equalTo(birthDayView)
             $0.height.equalTo(0)
         }
         
+        modifyDescriptionLabel.snp.makeConstraints {
+            $0.height.equalTo(13)
+            $0.width.equalTo(250)
+            $0.bottom.equalTo(confirmButton.snp.top).offset(-12)
+            $0.centerX.equalToSuperview()
+        }
+        
         confirmButton.snp.makeConstraints {
-            $0.top.equalTo(modifyDescriptionLabel.snp.bottom).offset(12)
+            
+            $0.bottom.equalToSuperview().offset(-67)
             $0.left.right.equalTo(birthDayView)
             $0.height.equalTo(66)
         }
         
         self.view.layoutIfNeeded()
-
+        self.makeDismissKeyboardGesture()
+        
     }
     
     
@@ -435,6 +444,32 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .drive(birthDayPickerView.rx.date)
             .disposed(by: disposeBag)
 
+        NotificationCenter.default
+            .rx.notification(UIResponder.keyboardWillShowNotification)
+            .compactMap { $0.userInfo }
+            .map { userInfo -> CGFloat in
+                return (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height ?? 0
+            }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { vc, height in
+                UIView.animate(
+                    withDuration: 0.3,
+                    animations: {
+                        if vc.phoneView.textFiledView.isEditing {
+                            vc.view.frame.origin.y -= height
+                        }
+                    })
+            }).disposed(by: disposeBag)
+        
+        
+        NotificationCenter.default
+            .rx.notification(UIResponder.keyboardWillHideNotification)
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.view.frame.origin.y = 0
+            }).disposed(by: disposeBag)
 
 
         
@@ -444,14 +479,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
-            
-        
-        self.scrollView
-            .rx.willBeginDragging
-            .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.view.endEditing(true)
-            }).disposed(by: disposeBag)
         
         
         phoneView.textFiledView
