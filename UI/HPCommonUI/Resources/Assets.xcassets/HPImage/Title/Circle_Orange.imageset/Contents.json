@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ellipse 584.png",
+      "filename" : "Cricle_Orange.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Cricle_Orange@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Cricle_Orange@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
