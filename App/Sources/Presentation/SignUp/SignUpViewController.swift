@@ -414,16 +414,29 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .drive(phoneView.textFiledView.rx.text)
             .disposed(by: disposeBag)
 
-        //TODO: String Extension 으로 년,월,일 Method로 수정 하도록 추가
         Observable.zip(
             reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
             reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
         ).filter { !$0.0.isEmpty && !$0.1.isEmpty  }
-            .map { "\($0.1)년 \($0.0.replacingOccurrences(of: "-", with: "월 "))일"}
+            .map { "\($0.1+"-"+$0.0)".birthdayToString() }
+            .take(1)
             .asDriver(onErrorJustReturn: "")
             .drive(birthDayView.textFiledView.rx.text)
             .disposed(by: disposeBag)
         
+        
+        Observable.zip(
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
+        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
+            .map { "\($0.1+"-"+$0.0)".birthdayToString().birthdayToDate() }
+            .take(1)
+            .asDriver(onErrorJustReturn: Date())
+            .drive(birthDayPickerView.rx.date)
+            .disposed(by: disposeBag)
+
+
+
         
         reactor.pulse(\.$googleUserEntity)
             .filter { $0?.profile != nil }
