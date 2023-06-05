@@ -39,6 +39,8 @@ class MainBaseViewController<T: ReactorKit.Reactor>: BaseViewController<T>, UIGe
     open func configure() {
         if let headerView {
             view.addSubview(headerView)
+            view.bringSubviewToFront(headerView)
+            headerView.backgroundColor = .white
             headerView.snp.makeConstraints {
                 $0.leading.trailing.equalToSuperview()
                 $0.top.equalTo(self.view)
