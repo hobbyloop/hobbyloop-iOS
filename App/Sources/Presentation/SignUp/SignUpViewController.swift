@@ -191,7 +191,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private func configure() {
         self.view.backgroundColor = .white
-        
         self.view.addSubview(scrollView)
         
         scrollView.snp.makeConstraints {
@@ -439,6 +438,18 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .subscribe(onNext: { vc, _ in
                 vc.view.endEditing(true)
             }).disposed(by: disposeBag)
+        
+        
+        phoneView.textFiledView
+            .rx.text
+            .changed
+            .debug("changed PhoneNumber")
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { phoneNumber in
+                guard let phoneNumber else { return }
+                self.phoneView.textFiledView.text = phoneNumber.toPhoneNumber()
+            }).disposed(by: disposeBag)
+        
         
     }
 }
