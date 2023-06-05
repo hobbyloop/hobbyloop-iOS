@@ -10,6 +10,7 @@ import UIKit
 import HPCommonUI
 import HPCommon
 import HPExtensions
+import HPFoundation
 import RxGesture
 import ReactorKit
 
@@ -145,6 +146,25 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.deepOrange.color
     }
     
+    
+    private let authCodeTextField: UITextField = UITextField().then {
+        $0.placeholder = "인증번호를 입력 해주세요."
+        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
+        $0.borderStyle = .none
+        $0.leftViewMode = .always
+    }
+    
+    private let verifyButton: HPButton = HPButton(
+        cornerRadius: 10,
+        borderColor: HPCommonUIAsset.separator.color.cgColor
+    ).then {
+        $0.setTitle("인증확인", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
+        
+    }
+    
+    
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -156,6 +176,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     deinit {
         debugPrint(#function)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        authCodeTextField.makeUnderLineBorder(HPCommonUIAsset.separator.color.cgColor, width: 50)
     }
     
     
@@ -186,7 +211,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView].forEach {
+         phoneView, certificationButton, modifyDescriptionLabel, confirmButton, birthDayPickerView, authCodeTextField, verifyButton].forEach {
             containerView.addSubview($0)
         }
         
@@ -270,6 +295,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.height.equalTo(66)
         }
         
+        self.view.layoutIfNeeded()
 
     }
     
