@@ -12,9 +12,19 @@ public final class CouponListView: UIView {
     private lazy var collectionView = UICollectionView(frame: .infinite, collectionViewLayout: UICollectionViewFlowLayout()).then {
         $0.dataSource = self
         $0.delegate = self
+        $0.showsHorizontalScrollIndicator = false
     }
     
-    var currentIndex = 0
+    private lazy var pageControl = HPPageControl().then {
+        $0.numberOfPages = 3
+        $0.currentPage = 0
+    }
+    
+    var currentIndex = 0 {
+        didSet {
+            pageControl.currentPage = currentIndex
+        }
+    }
     
     public override var bounds: CGRect {
         didSet {
@@ -31,7 +41,14 @@ public final class CouponListView: UIView {
             $0.leading.equalTo(self.snp.leading)
             $0.trailing.equalTo(self.snp.trailing)
             $0.top.equalTo(self.snp.top)
-            $0.bottom.equalTo(179)
+            $0.height.equalTo(179)
+        }
+        
+        self.addSubview(pageControl)
+        
+        pageControl.snp.makeConstraints {
+            $0.top.equalTo(collectionView.snp.bottom).offset(24)
+            $0.centerX.equalTo(collectionView.snp.centerX)
         }
     }
     
@@ -41,6 +58,7 @@ public final class CouponListView: UIView {
         layout.itemSize = CGSize(width: self.bounds.width - 58, height: 179)
         layout.minimumLineSpacing = 14.5
         layout.scrollDirection = .horizontal
+        pageControl.backgroundStyle = .minimal
     }
     
     required init?(coder: NSCoder) {
