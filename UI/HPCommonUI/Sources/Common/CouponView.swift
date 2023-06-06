@@ -31,6 +31,12 @@ public final class CouponView: UIView {
         $0.textColor = .white
     }
     
+    public override var bounds: CGRect {
+        didSet {
+            applyCornerRadius()
+        }
+    }
+    
     var count: Int = 0 {
         didSet {
             updateCountLabel(to: count)
@@ -42,6 +48,7 @@ public final class CouponView: UIView {
         
         companyNameLabel.text = companyName
         self.count = count
+        updateCountLabel(to: count)
         
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "YYYY.MM.dd"
@@ -94,7 +101,7 @@ public final class CouponView: UIView {
         countLabel.attributedText = attributedString
     }
     
-    public func applyCornerRadius() {
+    private func applyCornerRadius() {
         self.layer.cornerRadius = 10
         
         let maskPath = UIBezierPath(roundedRect: self.bounds,
