@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 
 final class CouponCell: UICollectionViewCell {
-    private let couponView = CouponView(companyName: "발란스 스튜디오", count: 10, start: .now, end: .now)
+    var coupon: DummyCoupon!
     static let identifier = "CouponCell"
+    private lazy var couponView = CouponView(coupon: coupon)
         
     public override func layoutSubviews() {
         super.layoutSubviews()

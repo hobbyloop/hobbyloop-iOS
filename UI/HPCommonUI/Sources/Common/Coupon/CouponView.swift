@@ -43,17 +43,17 @@ public final class CouponView: UIView {
         }
     }
     
-    public init(companyName: String, count: Int, start: Date, end: Date) {
+    public init(coupon: DummyCoupon) {
         super.init(frame: .infinite)
         
-        companyNameLabel.text = companyName
-        self.count = count
-        updateCountLabel(to: count)
+        companyNameLabel.text = coupon.companyName
+        self.count = coupon.count
+        updateCountLabel(to: coupon.count)
         
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "YYYY.MM.dd"
         
-        periodLabel.text = "\(dateformatter.string(from: start)) - \(dateformatter.string(from: end))"
+        periodLabel.text = "\(dateformatter.string(from: coupon.start)) - \(dateformatter.string(from: coupon.end))"
         self.backgroundColor = .black
         
         layout()

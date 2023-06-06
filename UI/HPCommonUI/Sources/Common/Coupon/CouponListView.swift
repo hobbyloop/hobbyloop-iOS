@@ -16,13 +16,16 @@ public final class CouponListView: UIView {
     }
     
     private lazy var pageControl = HPPageControl().then {
-        $0.numberOfPages = 3
-        $0.currentPage = 0
+        $0.numberOfPages = coupons.count
+        if !coupons.isEmpty {
+            $0.currentPage = 0
+        }
     }
     
-    var currentIndex = 0 {
+    /// coupons 값만 바꾸면 collection view도 자동으로 reload
+    public var coupons: [DummyCoupon] {
         didSet {
-            pageControl.currentPage = currentIndex
+            reloadData()
         }
     }
     
@@ -32,7 +35,8 @@ public final class CouponListView: UIView {
         }
     }
         
-    public init() {
+    public init(coupons: [DummyCoupon]) {
+        self.coupons = coupons
         super.init(frame: .zero)
         collectionView.register(CouponCell.self, forCellWithReuseIdentifier: CouponCell.identifier)
         self.addSubview(collectionView)
@@ -65,19 +69,22 @@ public final class CouponListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func reloadData() {
+    private func reloadData() {
         collectionView.reloadData()
+        pageControl.numberOfPages = coupons.count
+        pageControl.currentPage = min(pageControl.numberOfPages - 1, pageControl.currentPage)
     }
 }
 
 extension CouponListView: UICollectionViewDataSource, UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return coupons.count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let couponCell = collectionView.dequeueReusableCell(withReuseIdentifier: CouponCell.identifier, for: indexPath) as! CouponCell
         
+        couponCell.coupon = coupons[indexPath.row]
         return couponCell
     }
 }
@@ -105,12 +112,12 @@ extension CouponListView: UIScrollViewDelegate {
             roundedIndex = round(index)
         }
         
-        if CGFloat(currentIndex) > roundedIndex {
-            currentIndex -= 1
-            roundedIndex = CGFloat(currentIndex)
-        } else if CGFloat(currentIndex) < roundedIndex {
-            currentIndex += 1
-            roundedIndex = CGFloat(currentIndex)
+        if CGFloat(pageControl.currentPage) > roundedIndex {
+            pageControl.currentPage -= 1
+            roundedIndex = CGFloat(pageControl.currentPage)
+        } else if CGFloat(pageControl.currentPage) < roundedIndex {
+            pageControl.currentPage += 1
+            roundedIndex = CGFloat(pageControl.currentPage)
         }
         
         // 위 코드를 통해 페이징 될 좌표값을 targetContentOffset에 대입하면 된다.
