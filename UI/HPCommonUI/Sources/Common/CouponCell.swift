@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-public final class CouponCell: UICollectionViewCell {
+final class CouponCell: UICollectionViewCell {
     private let couponView = CouponView(companyName: "발란스 스튜디오", count: 10, start: .now, end: .now)
     static let identifier = "CouponCell"
         
