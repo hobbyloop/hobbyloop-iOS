@@ -266,6 +266,26 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
     /// 애플 로그인 성공시 호출되는 메서드
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         
+        var chiperToken = ""
+        var chiperId = ""
+        
+        switch authorization.credential {
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            guard let token = appleIDCredential.identityToken,
+                  let identityToken = String(bytes: token, encoding: .utf8) else { return }
+            let userIdentifier = appleIDCredential.user
+            do {
+                chiperToken = try CryptoUtil.makeEncryption(identityToken)
+                chiperId = try CryptoUtil.makeEncryption(userIdentifier)
+                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                UserDefaults.standard.set(chiperId, forKey: .accessId)
+            } catch {
+                print(error.localizedDescription)
+            }
+        default:
+            break
+            
+        }
     }
     
     /// 애플 로그인 모달창을 호출하기 위한 메서드

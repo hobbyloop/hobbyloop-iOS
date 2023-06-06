@@ -1,10 +1,12 @@
 import UIKit
 
+import HPCommon
 import KakaoSDKAuth
 import RxKakaoSDKAuth
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
+import AuthenticationServices
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,9 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        let loginDIContainer = LoginDIContainer()
-        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
+        
+        self.makeRootViewController()
         RxKakaoSDK.initSDK(appKey: "e8e2221cc437bed1a098ce95fee11f1d")
         guard let naverLoginInstance = NaverThirdPartyLoginConnection.getSharedInstance() else { return true }
         
@@ -29,10 +30,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         naverLoginInstance.consumerSecret = "JrQwoAXsRX"
         naverLoginInstance.appName = "Hobbyloop"
         
+        var decryptionAppId = ""
+        do {
+            decryptionAppId = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessId))
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        let appleLoginProvider = ASAuthorizationAppleIDProvider()
+        appleLoginProvider.getCredentialState(forUserID: decryptionAppId) { credentialState, error in
+            
+            switch credentialState {
+            case .revoked:
+                self.makeRootViewController()
+            case .authorized: break
+                // TODO: 인증 성공 상태이므로 MainViewController 로 화면전환
+            default:
+                break
+            }
+        }
+        
+        
         // TODO: 추후 accessToken값이 유효하다면 MainController로 화면 전환 하도록 구현
-        
-        window?.makeKeyAndVisible()
-        
         return true
     }
     
@@ -59,3 +78,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+private extension AppDelegate {
+    
+    func makeRootViewController() {
+        let loginDIContainer = LoginDIContainer()
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
+        window?.makeKeyAndVisible()
+    }
+    
+}
