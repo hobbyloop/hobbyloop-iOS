@@ -193,7 +193,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         self.view.backgroundColor = .white
         
         
-        [scrollView, confirmButton, birthDayPickerView, modifyDescriptionLabel].forEach {
+        [scrollView, birthDayPickerView].forEach {
             self.view.addSubview($0)
         }
         
@@ -202,7 +202,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.left.right.equalToSuperview()
-            $0.bottom.equalTo(confirmButton.snp.top).inset(-20)
+            $0.bottom.equalToSuperview()
         }
         
         scrollView.addSubview(containerView)
@@ -218,7 +218,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, authCodeTextField, verifyButton].forEach {
+         phoneView, certificationButton, authCodeTextField, confirmButton, modifyDescriptionLabel ,verifyButton].forEach {
             containerView.addSubview($0)
         }
         
@@ -453,13 +453,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .subscribe(onNext: { vc, height in
-                UIView.animate(
-                    withDuration: 0.3,
-                    animations: {
-                        if vc.phoneView.textFiledView.isEditing {
-                            vc.view.frame.origin.y -= height
-                        }
-                    })
+                if vc.phoneView.textFiledView.isEditing {
+                    vc.containerView.frame.origin.y -= height
+                }
             }).disposed(by: disposeBag)
         
         
@@ -468,7 +464,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
-                vc.view.frame.origin.y = 0
+                vc.containerView.frame.origin.y = 0
             }).disposed(by: disposeBag)
 
 
