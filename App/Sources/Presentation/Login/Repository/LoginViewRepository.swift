@@ -279,6 +279,7 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
                 chiperId = try CryptoUtil.makeEncryption(userIdentifier)
                 UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                 UserDefaults.standard.set(chiperId, forKey: .accessId)
+                LoginViewStream.event.onNext(.responseAppleAccessToken(chiperToken))
             } catch {
                 print(error.localizedDescription)
             }

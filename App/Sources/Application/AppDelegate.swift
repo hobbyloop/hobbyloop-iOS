@@ -82,10 +82,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
     
     func makeRootViewController() {
-        let loginDIContainer = LoginDIContainer()
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
-        window?.makeKeyAndVisible()
+        DispatchQueue.main.async {
+            let loginDIContainer = LoginDIContainer()
+            self.window = UIWindow(frame: UIScreen.main.bounds)
+            self.window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
+            self.window?.makeKeyAndVisible()
+        }
     }
     
 }

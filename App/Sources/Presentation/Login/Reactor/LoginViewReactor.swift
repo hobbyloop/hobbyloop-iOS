@@ -16,6 +16,7 @@ public enum LoginViewStream: HPStreamType {
     public enum Event {
         case responseNaverAccessToken(_ accessToken: String)
         case responseGoogleAccessToken(_ accessToken: String)
+        case responseAppleAccessToken(_ accessToken: String)
         case requestNaverLogin
     }
 }
@@ -43,6 +44,7 @@ public final class LoginViewReactor: Reactor {
         case setGoogleLogin(Void)
         case setGoogleAccessToken(String)
         case setNaverAccessToken(String)
+        case setAppleAccessToken(String)
     }
     
     //MARK: State
@@ -51,6 +53,7 @@ public final class LoginViewReactor: Reactor {
         @Pulse var kakaoToken: String
         @Pulse var naverToken: String
         @Pulse var googleToken: String
+        @Pulse var appleToken: String
         @Pulse var isShowNaverLogin: Void?
         @Pulse var isShowGoogleLogin: Void?
     }
@@ -65,6 +68,7 @@ public final class LoginViewReactor: Reactor {
             kakaoToken: "",
             naverToken: "",
             googleToken: "",
+            appleToken: "",
             isShowNaverLogin: nil,
             isShowGoogleLogin: nil
         )
@@ -125,8 +129,12 @@ public final class LoginViewReactor: Reactor {
         let fromGoogleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
             self?.requestGoogleAccessToken(from: event) ?? .empty()
         }
+        
+        let fromAppleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
+            self?.requestAppleAccessToken(from: event) ?? .empty()
+        }
 
-        return Observable.of(mutation, fromNaverLoginMutation, fromGoogleLoginMutation).merge()
+        return Observable.of(mutation, fromNaverLoginMutation, fromGoogleLoginMutation, fromAppleLoginMutation).merge()
     }
     
     public func transform(action: Observable<Action>) -> Observable<Action> {
@@ -156,6 +164,10 @@ public final class LoginViewReactor: Reactor {
         case let .setGoogleAccessToken(accessToken):
             newState.googleToken = accessToken
             debugPrint("set Google access Token: \(newState.googleToken)")
+            
+        case let .setAppleAccessToken(accessToken):
+            newState.appleToken = accessToken
+            debugPrint("set Apple access Token: \(newState.appleToken)")
             
             
         case let .setNaverLogin(isShow):
@@ -188,6 +200,16 @@ public extension LoginViewReactor {
         switch event {
         case let .responseGoogleAccessToken(accessToken):
             return .just(.setGoogleAccessToken(accessToken))
+        default:
+            return .empty()
+        }
+    }
+    
+    
+    func requestAppleAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .responseAppleAccessToken(accessToken):
+            return .just(.setAppleAccessToken(accessToken))
         default:
             return .empty()
         }
