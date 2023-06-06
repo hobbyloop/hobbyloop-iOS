@@ -7,8 +7,8 @@
 
 import UIKit
 
-class HPPageControl: UIPageControl {
-    override var currentPage: Int {
+public final class HPPageControl: UIPageControl {
+    public override var currentPage: Int {
         didSet {
             for i in 0..<self.numberOfPages {
                 self.setIndicatorImage(HPCommonUIAsset.unselectedPage.image, forPage: i)
