@@ -33,6 +33,7 @@ public final class LoginViewReactor: Reactor {
         case didTapKakaoLogin
         case didTapNaverLogin
         case didTapGoogleLogin(AnyObject)
+        case didTapAppleLogin
     }
     
     public enum Mutation {
@@ -103,6 +104,14 @@ public final class LoginViewReactor: Reactor {
                 startLoading,
                 loginRepository.responseGoogleLogin(to: viewController),
                 endLoading
+            )
+            
+        case .didTapAppleLogin:
+            return .concat(
+                startLoading,
+                loginRepository.responseAppleLogin(),
+                endLoading
+            
             )
         }
         

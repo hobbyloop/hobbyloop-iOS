@@ -17,6 +17,7 @@ import RxKakaoSDKAuth
 import KakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
+import AuthenticationServices
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
@@ -36,6 +37,9 @@ public protocol LoginViewRepo {
     /// 구글 로그인을 위한 implementation
     func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation>
     
+    /// 애플 로그인을 위한 implementation
+    func responseAppleLogin() -> Observable<LoginViewReactor.Mutation>
+    
 }
 
 
@@ -44,7 +48,6 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
     public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
-    
     
     
     public override init() {
@@ -186,6 +189,29 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return .empty()
     }
     
+    
+    /// 애플 로그인창을 띄우기 위한 메서드
+    public func responseAppleLogin() -> Observable<LoginViewReactor.Mutation> {
+        
+        let appleLoginMutation = Observable<LoginViewReactor.Mutation>
+            .create { observer in
+                let appleLoginProvider = ASAuthorizationAppleIDProvider()
+                let loginRequest = appleLoginProvider.createRequest()
+                loginRequest.requestedScopes = [.email, .fullName]
+                
+                let appleLoginController = ASAuthorizationController(authorizationRequests: [loginRequest])
+                appleLoginController.delegate = self
+                appleLoginController.presentationContextProvider = self
+                appleLoginController.performRequests()
+                
+                return Disposables.create()
+            }
+            
+        
+        return appleLoginMutation
+    }
+    
+    
 }
 
 
@@ -231,4 +257,25 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
         print("Naver Login Error: \(error)")
     }
+}
+
+
+extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    
+    
+    /// 애플 로그인 성공시 호출되는 메서드
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        
+    }
+    
+    /// 애플 로그인 모달창을 호출하기 위한 메서드
+    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return UIApplication.keywindow ?? ASPresentationAnchor()
+    }
+        
+    /// 애플 로그인 실패시 호출되는 메서드
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Apple Login Error: \(error)")
+    }
+    
 }

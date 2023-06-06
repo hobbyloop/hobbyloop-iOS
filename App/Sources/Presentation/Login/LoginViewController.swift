@@ -179,12 +179,9 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         appleLoginButton
             .rx.tap
-            .asDriver()
-            .drive(onNext: { [weak self] _ in
-                guard let self = `self` else { return }
-                self.didShowSingUpController(accountType: .apple)
-            }).disposed(by: disposeBag)
-        
+            .map { Reactor.Action.didTapAppleLogin }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
         reactor.pulse(\.$kakaoToken)
             .filter { !$0.isEmpty }
