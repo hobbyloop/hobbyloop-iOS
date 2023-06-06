@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Cricle_Orange.png",
+      "filename" : "menu_Middle.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Cricle_Orange@2x.png",
+      "filename" : "menu_Middle@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Cricle_Orange@3x.png",
+      "filename" : "menu_Middle@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

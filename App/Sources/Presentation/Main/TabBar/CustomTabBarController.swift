@@ -22,8 +22,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     private let font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
     private var toggle: Bool = false
     
-    private let menuButton = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
@@ -45,7 +43,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         
         dummyView2.view.backgroundColor = .red
         dummyView2.tabBarItem.title = "수업예약"
-        setupMiddleButton()
         
         dummyView3.view.backgroundColor = .blue
         dummyView3.tabBarItem.selectedImage = HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal)
@@ -61,36 +58,13 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         
         object_setClass(self.tabBar, CustomTabBar.self)
         tabBarAddLine()
+        setupMiddleButton()
     }
     
     private func setupMiddleButton() {
-        var menuButtonFrame = menuButton.frame
-        menuButtonFrame.origin.y = view.bounds.height - menuButtonFrame.height - 50
-        menuButtonFrame.origin.x = view.bounds.width/2 - menuButtonFrame.size.width/2
-        menuButton.frame = menuButtonFrame
-        let image = HPCommonUIAsset.calendarOutlined.image.withRenderingMode(.alwaysOriginal)
-        let selectImage = HPCommonUIAsset.calendarFilled.image.withRenderingMode(.alwaysOriginal)
-        //
-        menuButton.contentMode = .scaleAspectFill
-        //shadows
-        menuButton.layer.shadowColor = UIColor.black.cgColor
-        menuButton.layer.shadowOffset = CGSize(width: 0, height: 1)
-        menuButton.layer.shadowOpacity = 0.25
-        //
-        menuButton.setImage(image, for: .normal)
-        menuButton.setBackgroundImage(HPCommonUIAsset.circleOrange.image.withRenderingMode(.alwaysOriginal), for: .normal)
-        menuButton.setImage(selectImage, for: .selected)
-        menuButton.tintColor = .white
-        menuButton.layer.cornerRadius = menuButtonFrame.height
-        view.addSubview(menuButton)
-        menuButton.addTarget(self, action: #selector(menuButtonAction), for: .touchUpInside)
-        view.layoutIfNeeded()
-    }
-    
-    @objc func menuButtonAction(_ sender: UIButton) {
-        toggle.toggle()
-        sender.isSelected = toggle
-        selectedIndex = 2
+        tabBar.items![2].image = HPCommonUIAsset.menuMiddle.image.withRenderingMode(.alwaysOriginal)
+        tabBar.items![2].selectedImage = HPCommonUIAsset.menuMiddle.image.withRenderingMode(.alwaysOriginal)
+        tabBar.items![2].imageInsets = UIEdgeInsets(top: -5, left: 0, bottom: 10, right: 0)
     }
     
     private func tabBarAddLine() {
@@ -112,22 +86,13 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     private func createPath() -> CGPath {
         let path = UIBezierPath()
         
-        path.move(to: CGPoint(x: 0, y: 5))
-        path.addLine(to: CGPoint(x: self.view.frame.width, y: 5))
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: self.view.frame.width, y: 0))
         path.addLine(to: CGPoint(x: self.view.frame.width, y: self.view.frame.height))
         path.addLine(to: CGPoint(x: 0, y: self.view.frame.height))
         path.close()
         
         return path.cgPath
-    }
-    
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        if tabBar.items?[2] == item {
-            toggle = true
-        } else {
-            toggle = false
-        }
-        menuButton.isSelected = toggle
     }
     
 }
