@@ -499,5 +499,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
         
+        reactor.state
+            .compactMap { $0.applefullName }
+            .filter { !$0.isEmpty }
+            .asDriver(onErrorJustReturn: "")
+            .drive(nameView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+        
     }
 }

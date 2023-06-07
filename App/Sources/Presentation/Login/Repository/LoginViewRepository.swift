@@ -271,7 +271,10 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
         
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            // TODO: Token, givenName, identityToken 값이 nil 일 경우 현재 로그인 상태 임을 알 수 있기에 return 을 MainViewController로 화면 전환하도록 구현
             guard let token = appleIDCredential.identityToken,
+                  let givenName = appleIDCredential.fullName?.givenName,
+                  let familyName = appleIDCredential.fullName?.familyName,
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
             do {
@@ -283,6 +286,8 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
             } catch {
                 print(error.localizedDescription)
             }
+            let resultName = "\(familyName)\(givenName)"
+            SignUpViewStream.event.onNext(.requestAppleLogin(resultName))
         default:
             break
             
