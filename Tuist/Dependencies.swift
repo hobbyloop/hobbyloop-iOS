@@ -17,7 +17,8 @@ let dependencies = Dependencies(
         Package.rxGesture,
         Package.snapKit,
         Package.then,
-        Package.alamofire
+        Package.alamofire,
+        Package.tabMan
     ]),
     platforms: [.iOS]
 )

@@ -81,6 +81,7 @@ extension TargetDependency.ThirdParty.Reactive {
 extension TargetDependency.ThirdParty.UI {
     public static let snapKit: TargetDependency = .external(name: "SnapKit")
     public static let then: TargetDependency = .external(name: "Then")
+    public static let tabMan: TargetDependency = .external(name: "Tabman")
 }
 
 
