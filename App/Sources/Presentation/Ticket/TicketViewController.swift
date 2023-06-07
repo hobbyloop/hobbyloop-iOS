@@ -66,11 +66,6 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
         //            }.disposed(by: disposeBag)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        collectionView.reloadData()
-    }
-    
     public override func bind(reactor: TicketViewReactor) {
         
     }
@@ -95,6 +90,12 @@ extension TicketViewController: UICollectionViewDataSource {
                 for: indexPath
               ) as? TicketCollectionReusableView else {return UICollectionReusableView()}
         return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let viewController = TicketDetailViewController()
+        self.navigationController?.pushViewController(viewController, animated: false)
+        
     }
 }
 
