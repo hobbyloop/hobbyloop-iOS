@@ -20,7 +20,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
         return UIStackView().then {
             addSubview($0)
             $0.axis = .vertical
-            $0.spacing = 8
+            $0.spacing = 14
             $0.alignment = .leading
             $0.distribution = .fill
             $0.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)

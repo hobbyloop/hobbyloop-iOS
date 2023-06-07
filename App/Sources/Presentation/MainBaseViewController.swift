@@ -44,7 +44,7 @@ class MainBaseViewController<T: ReactorKit.Reactor>: BaseViewController<T>, UIGe
             headerView.snp.makeConstraints {
                 $0.leading.trailing.equalToSuperview()
                 $0.top.equalTo(self.view)
-                $0.height.equalTo(60 + UIApplication.shared.safeAreaTop)
+                $0.height.equalTo(46 + UIApplication.shared.safeAreaTop)
             }
             bindRx()
         }

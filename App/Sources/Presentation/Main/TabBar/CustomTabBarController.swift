@@ -20,7 +20,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     
     private var shapeLayer: CALayer?
     private let font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-    private var toggle: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
