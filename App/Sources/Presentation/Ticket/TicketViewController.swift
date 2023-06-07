@@ -30,7 +30,7 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
             $0.dataSource = self
             $0.backgroundColor = .clear
             $0.automaticallyAdjustsScrollIndicatorInsets = false
-            $0.contentInset = UIEdgeInsets(top: 78, left: 10, bottom: 10, right: 10)
+            $0.contentInset = UIEdgeInsets(top: 18, left: 10, bottom: 10, right: 10)
             $0.register(TicketCollectionViewCell.self, forCellWithReuseIdentifier: "TicketCollectionViewCell")
             $0.register(
                 TicketCollectionReusableView.self,
@@ -52,7 +52,9 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
         super.configure()
         
         collectionView.snp.makeConstraints {
-            $0.top.bottom.leading.trailing.equalToSuperview()
+            guard let headerView else { return }
+            $0.bottom.leading.trailing.equalToSuperview()
+            $0.top.equalTo(headerView.snp.bottom)
         }
         //
         //        itemObservable
