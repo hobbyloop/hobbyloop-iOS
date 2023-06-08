@@ -24,26 +24,33 @@ public enum SignUpViewStream: HPStreamType {
 }
 
 
+public enum HPGender: String, Equatable {
+    case male
+    case female
+    case none
+}
+
+
 
 public final class SignUpViewReactor: Reactor {
     
     // MARK: Property
     public var initialState: State
     private var signUpRepository: SignUpViewRepo
-    private var accountType: AccountType
+    public var accountType: AccountType
     
     public enum Action {
         case viewDidLoad
         case didTapBirthDayButton
-        case didTapGenderButton
+        case didTapGenderButton(HPGender)
         case didTapAuthCodeButton
     }
     
     public enum Mutation {
         case setLoading(Bool)
         case didTapBirthDayButton(Bool)
-        case didTapGenderButton(Bool)
         case setKakaoUserEntity(User)
+        case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
         case setGoogleUserEntity(GIDGoogleUser)
         case setAppleUserFullName(String)
@@ -51,11 +58,11 @@ public final class SignUpViewReactor: Reactor {
     
     public struct State {
         var isLoading: Bool
-        @Pulse var isGenderSelected: Bool
         @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
         @Pulse var googleUserEntity: GIDGoogleUser?
+        var userGender: HPGender
         var applefullName: String
     }
     
@@ -64,11 +71,11 @@ public final class SignUpViewReactor: Reactor {
         self.accountType = accountType
         self.initialState = State(
             isLoading: false,
-            isGenderSelected: false,
             isBirthDaySelected: false,
             kakaoUserEntity: nil,
             naverUserEntity: nil,
             googleUserEntity: nil,
+            userGender: .none,
             applefullName: ""
         )
     }
@@ -95,11 +102,10 @@ public final class SignUpViewReactor: Reactor {
                 requestProfile,
                 endLoading
             )
+        case let .didTapGenderButton(gender):
+            let setUserInfoGender = Observable<Mutation>.just(.setUserGender(gender))
             
-        case .didTapGenderButton:
-            let didGenderSelectedButton = Observable<Mutation>.just(.didTapGenderButton(currentState.isGenderSelected))
-            
-            return didGenderSelectedButton
+            return setUserInfoGender
             
         case .didTapBirthDayButton:
             let didBirthdaySelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isBirthDaySelected))
@@ -134,9 +140,6 @@ public final class SignUpViewReactor: Reactor {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
             
-        case let .didTapGenderButton(isGenderSelected):
-            newState.isGenderSelected = isGenderSelected
-            
         case let .didTapBirthDayButton(isBirthDaySelected):
             newState.isBirthDaySelected = !isBirthDaySelected
             
@@ -153,6 +156,9 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName
+            
+        case let .setUserGender(gender):
+            newState.userGender = gender
         }
         
         return newState

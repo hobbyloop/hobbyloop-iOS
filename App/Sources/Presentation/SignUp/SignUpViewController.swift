@@ -326,15 +326,59 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         genderOfManButton
             .rx.tap
-            .map { Reactor.Action.didTapGenderButton }
+            .map { Reactor.Action.didTapGenderButton(.male) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         genderOfGirlButton
             .rx.tap
-            .map { Reactor.Action.didTapGenderButton }
+            .map { Reactor.Action.didTapGenderButton(.female) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
+            .filter { $0.userGender == .male }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfManButton.didTapHPButton(color)
+                HapticUtil.impact(.heavy).generate()
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
+            .filter {  $0.userGender == .female }
+            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.genderOfGirlButton.didTapHPButton(color)
+                HapticUtil.impact(.heavy).generate()
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
+            .filter {  $0.userGender != .male }
+            .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
+            .drive(onNext: { color in
+                self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                self.genderOfManButton.layer.borderColor = color
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
+            .filter {  $0.userGender != .female }
+            .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
+            .drive(onNext: { color in
+                self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                self.genderOfGirlButton.layer.borderColor = color
+            }).disposed(by: disposeBag)
+
         
         reactor.pulse(\.$isBirthDaySelected)
             .withUnretained(self)
@@ -505,6 +549,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
+        
+        
         
     }
 }
