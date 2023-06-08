@@ -12,6 +12,7 @@ import HPCommon
 
 public enum AccountRouter {
     case getNaverUserInfo
+    case getAccessToken
 }
 
 
@@ -19,18 +20,31 @@ public enum AccountRouter {
 extension AccountRouter: Router {
     
     public var baseURL: String {
-        return "https://openapi.naver.com"
+        switch self {
+        case .getNaverUserInfo:
+            return "https://openapi.naver.com"
+        case .getAccessToken:
+            return "http://13.125.114.152:8080"
+        }
     }
     
     public var method: Alamofire.HTTPMethod {
         switch self {
         case .getNaverUserInfo:
             return .get
+        case .getAccessToken:
+            return .get
         }
     }
     
     public var path: String {
-        return "/v1/nid/me"
+        switch self {
+        case .getNaverUserInfo:
+            return "/v1/nid/me"
+        case .getAccessToken:
+            return "/api/v1/user"
+        }
+        
     }
     
     public var headers: HTTPHeaders {

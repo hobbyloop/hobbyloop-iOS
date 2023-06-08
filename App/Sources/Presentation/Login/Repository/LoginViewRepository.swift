@@ -94,6 +94,8 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                 do {
+                    //TODO: 카카오 로그인 성공시 Server API 연동
+                    print("Kakao User AccessToken: \(accessToken.accessToken)")
                     let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
                     UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                     UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
@@ -115,6 +117,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                 do {
+                    //TODO: 카카오 로그인 성공시 Server API 연동
                     let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
                     UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                     UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
@@ -169,6 +172,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                 var chiperToken = ""
                 if let user {
                     do {
+                        //TODO: 구글 로그인 성공시 Server API 연동
                         chiperToken = try CryptoUtil.makeEncryption(user.authentication.clientID)
                         UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                         LoginViewStream.event.onNext(.responseGoogleAccessToken(chiperToken))
@@ -223,7 +227,9 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
         var chiperToken = ""
         if let accessToken = naverLoginInstance.accessToken {
             do {
+                //TODO: 네이버 로그인 성공시 Server API 연동
                 chiperToken = try CryptoUtil.makeEncryption(accessToken)
+                print("Naver Access Token : \(accessToken)")
                 let expiredAt = naverLoginInstance.accessTokenExpireDate
                 UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                 UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
