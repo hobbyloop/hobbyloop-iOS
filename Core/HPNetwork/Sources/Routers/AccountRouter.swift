@@ -42,7 +42,7 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "/v1/nid/me"
         case .getAccessToken:
-            return "/api/v1/user"
+            return "/login/oauth2/kakao"
         }
         
     }
