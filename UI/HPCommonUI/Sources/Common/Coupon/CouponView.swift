@@ -31,22 +31,29 @@ public final class CouponView: UIView {
         $0.textColor = .white
     }
     
+    public override var bounds: CGRect {
+        didSet {
+            applyCornerRadius()
+        }
+    }
+    
     var count: Int = 0 {
         didSet {
             updateCountLabel(to: count)
         }
     }
     
-    public init(companyName: String, count: Int, start: Date, end: Date) {
+    public init(coupon: DummyCoupon) {
         super.init(frame: .infinite)
         
-        companyNameLabel.text = companyName
-        self.count = count
+        companyNameLabel.text = coupon.companyName
+        self.count = coupon.count
+        updateCountLabel(to: coupon.count)
         
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "YYYY.MM.dd"
         
-        periodLabel.text = "\(dateformatter.string(from: start)) - \(dateformatter.string(from: end))"
+        periodLabel.text = "\(dateformatter.string(from: coupon.start)) - \(dateformatter.string(from: coupon.end))"
         self.backgroundColor = .black
         
         layout()
@@ -94,7 +101,7 @@ public final class CouponView: UIView {
         countLabel.attributedText = attributedString
     }
     
-    public func applyCornerRadius() {
+    private func applyCornerRadius() {
         self.layer.cornerRadius = 10
         
         let maskPath = UIBezierPath(roundedRect: self.bounds,
