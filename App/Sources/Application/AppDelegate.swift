@@ -37,6 +37,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print(error.localizedDescription)
         }
         
+        
+        if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+            // TODO: 이전 사용자 이력이 있기에 MainViewController로 화면 전환
+        } else {
+            self.makeRootViewController()
+        }
+        
         let appleLoginProvider = ASAuthorizationAppleIDProvider()
         appleLoginProvider.getCredentialState(forUserID: decryptionAppId) { credentialState, error in
             

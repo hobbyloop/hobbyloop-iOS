@@ -296,6 +296,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.centerX.equalToSuperview()
         }
         
+        authCodeTextField.snp.makeConstraints {
+            $0.top.equalTo(phoneView.snp.bottom).offset(20)
+            $0.left.right.equalTo(phoneView)
+            $0.height.equalTo(0)
+        }
+        
         confirmButton.snp.makeConstraints {
             
             $0.bottom.equalToSuperview().offset(-67)
@@ -542,6 +548,21 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 guard !isEditing else { return }
                 vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
+        
+        Observable
+            .combineLatest(
+                certificationButton.rx.tap.asObservable(),
+                phoneView.textFiledView.rx.text.values.asObservable()
+            ).filter { $0.1?.count == 13 }
+            .filter { $0.0 == () }
+            .debug("Check certificationButton")
+            .map {  _ in HPCommonUIAsset.deepOrange.color }
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .drive(onNext: { color in
+                self.certificationButton.didTapHPButton(color)
+            }).disposed(by: disposeBag)
+        
+        
         
         reactor.state
             .compactMap { $0.applefullName }
