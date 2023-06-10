@@ -97,6 +97,7 @@ public final class HeaderView: UIView {
     }()
     
     private var storeName: String?
+    public var type: HeaderType?
     
     public init(type: HeaderType, storeName: String? = nil) {
         super.init(frame: .zero)
@@ -109,6 +110,7 @@ public final class HeaderView: UIView {
     
     private func configure(_ type: HeaderType, _ name: String?) {
         storeName = name
+        self.type = type
         switch type {
             
         case .main:

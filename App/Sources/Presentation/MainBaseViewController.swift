@@ -38,6 +38,7 @@ class MainBaseViewController<T: ReactorKit.Reactor>: BaseViewController<T>, UIGe
     
     open func configure() {
         if let headerView {
+            headerType = headerView.type ?? .none
             view.addSubview(headerView)
             view.bringSubviewToFront(headerView)
             headerView.backgroundColor = .white

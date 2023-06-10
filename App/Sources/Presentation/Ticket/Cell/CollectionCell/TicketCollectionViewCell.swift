@@ -81,7 +81,7 @@ class TicketCollectionViewCell: UICollectionViewCell {
         }
     }()
     
-    private lazy var tableView: UITableView = {
+    public lazy var tableView: UITableView = {
         return UITableView().then {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.register(TicketTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: "HeaderCell")
