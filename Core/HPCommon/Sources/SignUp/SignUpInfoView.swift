@@ -74,15 +74,19 @@ public final class SignUpInfoView: UIView {
         
         switch titleType {
         case .birthDay:
+            configure()
             textFiledView.isUserInteractionEnabled = false
             textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
         case .phone:
+            configure()
             textFiledView.keyboardType = .numberPad
             textFiledView.textContentType = .oneTimeCode
+        case .authcode:
+            authConfigure()
         default:
+            configure()
             textFiledView.isUserInteractionEnabled = true
         }
-        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -113,6 +117,20 @@ public final class SignUpInfoView: UIView {
         
         self.snp.makeConstraints {
             $0.height.equalTo(80)
+        }
+        
+    }
+    
+    
+    private func authConfigure() {
+        self.addSubview(textFiledView)
+        
+        textFiledView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        self.snp.makeConstraints {
+            $0.height.equalTo(48)
         }
         
     }

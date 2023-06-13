@@ -15,6 +15,11 @@ import RxGesture
 import ReactorKit
 
 
+private protocol SignUpViewAnimatable {
+    @MainActor func dropdownAnimation()
+}
+
+
 
 final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
@@ -147,13 +152,15 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    private let authCodeView: SignUpInfoView = SignUpInfoView(titleType: .authcode).then {
-        $0.titleLabel.setSubScriptAttributed(
-            targetString: "*",
-            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
-            offset: 8
-        )
+    private let authCodeView: SignUpInfoView = SignUpInfoView(titleType: .authcode)
+    
+    private let authCodeButton: HPButton = HPButton(
+        cornerRadius: 0,
+        borderColor: HPCommonUIAsset.separator.color.cgColor
+    ).then {
+        $0.setTitle("인증확인", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
     
@@ -175,6 +182,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     override func viewDidLoad() {
         configure()
     }
+    
+    override func viewDidLayoutSubviews() {
+        self.authCodeButton.layer.cornerRadius = 10
+    }
+    
     
     private func configure() {
         self.view.backgroundColor = .white
@@ -205,7 +217,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, authCodeView, confirmButton, modifyDescriptionLabel].forEach {
+         phoneView, certificationButton, authCodeView, authCodeButton, confirmButton, modifyDescriptionLabel].forEach {
             containerView.addSubview($0)
         }
         
@@ -289,8 +301,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.height.equalTo(0)
         }
         
+        authCodeButton.snp.makeConstraints {
+            $0.height.equalTo(0)
+            $0.width.equalTo(0)
+            $0.top.equalTo(authCodeView.textFiledView)
+            $0.right.equalToSuperview().offset(-15)
+        }
+        
         confirmButton.snp.makeConstraints {
-            
             $0.bottom.equalToSuperview().offset(-67)
             $0.left.right.equalTo(birthDayView)
             $0.height.equalTo(66)
@@ -550,6 +568,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.certificationButton.didTapHPButton(color)
+                self.dropdownAnimation()
             }).disposed(by: disposeBag)
         
         
@@ -564,4 +583,26 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         
     }
+}
+
+
+
+extension SignUpViewController: SignUpViewAnimatable {
+    
+    func dropdownAnimation() {
+        UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
+            guard let self = `self` else { return }
+            self.authCodeView.snp.updateConstraints {
+                $0.height.equalTo(100)
+            }
+            
+            self.authCodeButton.snp.updateConstraints {
+                $0.width.equalTo(83)
+                $0.height.equalTo(50)
+            }
+            
+        })
+    }
+    
+    
 }
