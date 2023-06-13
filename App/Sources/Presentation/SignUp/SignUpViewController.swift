@@ -545,17 +545,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { vc, isEditing in
-                guard !isEditing else { return }
+                guard !isEditing else {
+                    self.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                    self.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                    return
+                }
                 vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
         
-        Observable
-            .combineLatest(
-                certificationButton.rx.tap.asObservable(),
+        
+        
+        certificationButton.rx.tap.asObservable()
+            .withLatestFrom(
                 phoneView.textFiledView.rx.text.values.asObservable()
-            ).filter { $0.1?.count == 13 }
-            .filter { $0.0 == () }
-            .debug("Check certificationButton")
+            ).filter { $0?.count == 13 }
             .map {  _ in HPCommonUIAsset.deepOrange.color }
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
