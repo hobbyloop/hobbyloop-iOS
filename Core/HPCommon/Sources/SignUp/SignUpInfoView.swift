@@ -16,13 +16,15 @@ public enum SignUpType: String {
     case nickname
     case birthDay
     case phone
+    case authcode
     
     func setTitleLabelText() -> String {
         switch self {
         case .name: return "이름 *"
         case .nickname: return "닉네임 *"
         case .birthDay: return "출생년도 *"
-        case .phone: return "전화번호 *"
+        case .phone: return "전화번호 인증*"
+        case .authcode: return ""
         }
     }
     
@@ -32,6 +34,7 @@ public enum SignUpType: String {
         case .nickname: return "자신만의 닉네임을 지어보세요!"
         case .birthDay: return "태어난 생년월일을 선택해주세요."
         case .phone: return "-를 제외한 번호를 입력해주세요."
+        case .authcode: return "인증번호를 입력해주세요"
         }
     }
 }

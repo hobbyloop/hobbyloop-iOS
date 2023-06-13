@@ -147,21 +147,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    private let authCodeTextField: UITextField = UITextField().then {
-        $0.placeholder = "인증번호를 입력 해주세요."
-        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
-        $0.borderStyle = .none
-        $0.leftViewMode = .always
-    }
-    
-    private let verifyButton: HPButton = HPButton(
-        cornerRadius: 10,
-        borderColor: HPCommonUIAsset.separator.color.cgColor
-    ).then {
-        $0.setTitle("인증확인", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
-        
+    private let authCodeView: SignUpInfoView = SignUpInfoView(titleType: .authcode).then {
+        $0.titleLabel.setSubScriptAttributed(
+            targetString: "*",
+            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
+            color: HPCommonUIAsset.boldRed.color,
+            offset: 8
+        )
     }
     
     
@@ -176,11 +168,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     deinit {
         debugPrint(#function)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        authCodeTextField.makeUnderLineBorder(HPCommonUIAsset.separator.color.cgColor, width: 50)
     }
     
     
@@ -218,7 +205,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, authCodeTextField, confirmButton, modifyDescriptionLabel ,verifyButton].forEach {
+         phoneView, certificationButton, authCodeView, confirmButton, modifyDescriptionLabel].forEach {
             containerView.addSubview($0)
         }
         
@@ -296,7 +283,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.centerX.equalToSuperview()
         }
         
-        authCodeTextField.snp.makeConstraints {
+        authCodeView.snp.makeConstraints {
             $0.top.equalTo(phoneView.snp.bottom).offset(20)
             $0.left.right.equalTo(phoneView)
             $0.height.equalTo(0)
