@@ -161,54 +161,66 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         kakaoLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapKakaoLogin }
+            .map { Reactor.Action.didTapKakaoLogin(.kakao) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         naverLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapNaverLogin }
+            .map { Reactor.Action.didTapNaverLogin(.naver) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         googleLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapGoogleLogin(self) }
+            .map { Reactor.Action.didTapGoogleLogin(self, .google) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapAppleLogin }
+            .map { Reactor.Action.didTapAppleLogin(.apple) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        reactor.pulse(\.$kakaoToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType },
+                reactor.state.map { $0.authToken}
+            ).filter { $0.0 == .kakao && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .kakao)
             }).disposed(by: disposeBag)
         
-        reactor.pulse(\.$naverToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType },
+                reactor.state.map { $0.authToken}
+            ).filter { $0.0 == .naver && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .naver)
             }).disposed(by: disposeBag)
         
-        reactor.pulse(\.$googleToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType },
+                reactor.state.map { $0.authToken}
+            ).filter { $0.0 == .google && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .google)
             }).disposed(by: disposeBag)
         
-        reactor.pulse(\.$appleToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType },
+                reactor.state.map { $0.authToken}
+            ).filter { $0.0 == .apple && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in

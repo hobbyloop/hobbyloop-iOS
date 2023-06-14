@@ -13,4 +13,5 @@ public enum AccountType: String, Equatable {
     case naver
     case google
     case apple
+    case none
 }

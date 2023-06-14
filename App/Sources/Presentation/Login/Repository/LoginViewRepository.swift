@@ -33,7 +33,7 @@ public protocol LoginViewRepo {
     func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation>
     func responseRefreshKakaoToken() -> Void
     func isExpiredKakaoToken() -> Void
-
+    
     /// 네이버 로그인을 위한 implementation
     func responseNaverLogin() -> Observable<LoginViewReactor.Mutation>
     
@@ -98,12 +98,16 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) {
-                    //TODO: Kakao User 등록 및 암호화 AccessToken 방출 (앱)
-                    print("Network Service App Kakao")
-                    
-                }
-                return .empty()
+                
+                let kakaoAuthMutation = Observable<LoginViewReactor.Mutation>
+                    .create { observer in
+                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) { authToken in
+                            observer.onNext(.setAccessToken(authToken))
+                            
+                        }
+                        return Disposables.create()
+                    }
+                return kakaoAuthMutation
             }
     }
     
@@ -115,14 +119,18 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) {
-                    //TODO: Kakao User 등록 및 암호화 AccessToken 방출 (웹)
-                    print("Network Service Web Kakao")
-                }
-                return .empty()
+                let kakaoWebAuthMutation = Observable<LoginViewReactor.Mutation>
+                    .create { observer in
+                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) { authToken in
+                            observer.onNext(.setAccessToken(authToken))
+                            
+                        }
+                        return Disposables.create()
+                    }
+                return kakaoWebAuthMutation
             }
     }
-        
+    
     /// 카카오 토큰을 리프레쉬 하기 위한 메서드
     /// - note: 기존 accessToken, refreshToek을 refresh 하기 위한 메서드
     /// - Parameters: none Parameters
@@ -160,15 +168,13 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     /// 구글 로그인창을 띄우기 위한 메서드
     public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
         if let loginController = viewController as? LoginViewController {
-
+            
             return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { user, error in
                 var chiperToken = ""
                 if let user {
                     do {
-                        //TODO: 구글 로그인 성공시 Server API 연동
-                        chiperToken = try CryptoUtil.makeEncryption(user.authentication.clientID)
-                        UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                        LoginViewStream.event.onNext(.responseGoogleAccessToken(chiperToken))
+                        //TODO: 구글 로그인 성공시 자체 JWT 반환
+                       
                     } catch {
                         print(error.localizedDescription)
                     }
@@ -203,7 +209,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                 
                 return Disposables.create()
             }
-            
+        
         
         return appleLoginMutation
     }
@@ -220,16 +226,17 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
         var chiperToken = ""
         if let accessToken = naverLoginInstance.accessToken {
             do {
-                //TODO: 네이버 로그인 성공시 Server API 연동
+                //TODO: 네이버 로그인 성공시 JWT 발급 및 반환
                 chiperToken = try CryptoUtil.makeEncryption(accessToken)
                 print("Naver Access Token : \(accessToken)")
                 let expiredAt = naverLoginInstance.accessTokenExpireDate
                 UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                 UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
+            
             } catch {
                 print(error.localizedDescription)
             }
-            LoginViewStream.event.onNext(.responseNaverAccessToken(chiperToken))
+            
         }
     }
     
@@ -277,11 +284,12 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
             do {
+                //TODO: 애플 로그인 성공시 JWT 발급 및 반환
                 chiperToken = try CryptoUtil.makeEncryption(identityToken)
                 chiperId = try CryptoUtil.makeEncryption(userIdentifier)
                 UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                 UserDefaults.standard.set(chiperId, forKey: .accessId)
-                LoginViewStream.event.onNext(.responseAppleAccessToken(chiperToken))
+                
             } catch {
                 print(error.localizedDescription)
             }
@@ -297,7 +305,7 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return UIApplication.keywindow ?? ASPresentationAnchor()
     }
-        
+    
     /// 애플 로그인 실패시 호출되는 메서드
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Apple Login Error: \(error)")

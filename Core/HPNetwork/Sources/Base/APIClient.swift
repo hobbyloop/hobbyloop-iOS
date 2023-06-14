@@ -17,7 +17,7 @@ import RxSwift
 /// - note: APIClient Object의 의존하지 않고 Protocol에 의존하도록 구현하기 위한 interface
 public protocol APIService {
     func request<T: Decodable>(_ response: T.Type, _ router: Router) -> Single<T>
-    func requestToAuthentication(_ router: Router, completion: @escaping () -> Void)
+    func requestToAuthentication(_ router: Router, completion: @escaping (String) -> Void)
 }
 
 
@@ -50,17 +50,18 @@ public final class APIClient: APIService {
     /// - parameters:
     ///   - Router 서버 요청시 필요한 공통 인터페이스 객체
     ///   - completion JWT 발급 후 호출해야할 메서드(정해진 메서드 없음)
-    public func requestToAuthentication(_ router: Router, completion: @escaping () -> Void) {
+    public func requestToAuthentication(_ router: Router, completion: @escaping (String) -> Void) {
         AF.request(router)
-            .responseString(emptyResponseCodes: [200, 204, 205],completionHandler: { response in
+            .responseString(emptyResponseCodes: [200, 204],completionHandler: { response in
+                var chiperToken = ""
                 switch response.result {
                 case .success(_):
                     do {
                         if let responseHeader = response.response?.value(forHTTPHeaderField: "Authorization") {
-                            let chiperToken = try CryptoUtil.makeEncryption(responseHeader)
+                            chiperToken = try CryptoUtil.makeEncryption(responseHeader)
                             UserDefaults.standard.set(chiperToken, forKey: .accessToken)
                         }
-                        completion()
+                        completion(chiperToken)
                     } catch {
                         debugPrint(error.localizedDescription)
                     }
