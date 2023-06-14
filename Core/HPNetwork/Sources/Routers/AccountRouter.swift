@@ -12,7 +12,7 @@ import HPCommon
 
 public enum AccountRouter {
     case getNaverUserInfo
-    case getAccessToken
+    case getAccessToken(String)
 }
 
 
@@ -48,15 +48,18 @@ extension AccountRouter: Router {
     }
     
     public var headers: HTTPHeaders {
-        // TODO: HTTPHeaders 값을 Custom으로 구현하여 AccessToken 값 만료 됬을때는 default로 호출되도록 하기
-        var decryption = ""
-        guard !UserDefaults.standard.string(forKey: .accessToken).isEmpty else { return .default }
-        do {
-            decryption = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-        } catch {
-            print(error.localizedDescription)
+
+        switch self {
+        case .getNaverUserInfo:
+            return [:]
+            
+        case let .getAccessToken(accessToken):
+            return [
+                "Authorization":"\(accessToken)",
+                "Accept": "*/*"
+            ]
+
         }
-        return ["Authorization":"bearer \(decryption)"]
     }
     
     

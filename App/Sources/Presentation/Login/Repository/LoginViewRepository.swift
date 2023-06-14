@@ -22,6 +22,8 @@ import AuthenticationServices
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
+    
+    var networkService: APIService { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     var googleLoginInstance: GIDConfiguration { get }
     
@@ -45,6 +47,8 @@ public protocol LoginViewRepo {
 
 
 public final class LoginViewRepository: NSObject, LoginViewRepo {
+    public var networkService: HPNetwork.APIService = APIClient.shared
+    
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
@@ -94,16 +98,10 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                do {
-                    //TODO: 카카오 로그인 성공시 Server API 연동
-                    print("Kakao User AccessToken: \(accessToken.accessToken)")
-                    let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
-                    UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                    UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
-                    debugPrint("암호화 토큰 : \(chiperToken)")
-                    return .just(.setKakaoAccessToken(chiperToken))
-                } catch {
-                    debugPrint(error.localizedDescription)
+                self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) {
+                    //TODO: Kakao User 등록 및 암호화 AccessToken 방출 (앱)
+                    print("Network Service App Kakao")
+                    
                 }
                 return .empty()
             }
@@ -117,15 +115,9 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                do {
-                    //TODO: 카카오 로그인 성공시 Server API 연동
-                    let chiperToken = try CryptoUtil.makeEncryption(accessToken.accessToken)
-                    UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                    UserDefaults.standard.set(accessToken.expiredAt, forKey: .expiredAt)
-                    debugPrint("웹 로그인 암호화 토큰 : \(chiperToken)")
-                    return .just(.setKakaoAccessToken(chiperToken))
-                } catch {
-                    debugPrint(error.localizedDescription)
+                self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) {
+                    //TODO: Kakao User 등록 및 암호화 AccessToken 방출 (웹)
+                    print("Network Service Web Kakao")
                 }
                 return .empty()
             }
