@@ -119,22 +119,13 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
         if let loginController = viewController as? LoginViewController {
             
-            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { user, error in
-                var chiperToken = ""
+            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { [weak self] user, error in
                 if let user {
-                    do {
-                        //TODO: 구글 로그인 성공시 자체 JWT 반환
-                       
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                    SignUpViewStream.event.onNext(.requestGoogleLogin(user))
-                }
-                
-                
-                if error != nil {
-                    // TODO: Google 유저 정보 가져오기 실패시 에러 처리
-                    print("Google Login Error : \(error?.localizedDescription)")
+                    self?.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .google, token: user.authentication.accessToken), completion: { authToken in
+                        LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
+                    })
+                } else {
+                    debugPrint(error?.localizedDescription)
                 }
             })))
         }

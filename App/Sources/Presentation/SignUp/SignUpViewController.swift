@@ -524,13 +524,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
 
         
-        reactor.pulse(\.$googleUserEntity)
-            .filter { $0?.profile != nil }
-            .compactMap { $0?.profile?.name }
-            .asDriver(onErrorJustReturn: "")
-            .drive(nameView.textFiledView.rx.text)
-            .disposed(by: disposeBag)
-        
         
         phoneView.textFiledView
             .rx.text

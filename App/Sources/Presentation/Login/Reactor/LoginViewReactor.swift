@@ -13,6 +13,14 @@ import ReactorKit
 import RxSwift
 import GoogleSignIn
 
+
+public enum LoginViewStream: HPStreamType {
+    public enum Event {
+        case responseAccessToken(token: String)
+    }
+}
+
+
 public final class LoginViewReactor: Reactor {
     
     //MARK: Property
@@ -57,6 +65,15 @@ public final class LoginViewReactor: Reactor {
             isShowNaverLogin: nil,
             isShowGoogleLogin: nil
         )
+    }
+    
+    
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let fromGoogleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
+            self?.requestGoogleAccessToken(from: event) ?? .empty()
+        }
+        
+        return Observable.of(mutation, fromGoogleLoginMutation).merge()
     }
     
     
@@ -142,6 +159,21 @@ public final class LoginViewReactor: Reactor {
         }
         
         return newState
+    }
+    
+    
+}
+
+
+
+
+private extension LoginViewReactor {
+    
+    func requestGoogleAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .responseAccessToken(token):
+            return .just(.setAccessToken(token))
+        }
     }
     
     

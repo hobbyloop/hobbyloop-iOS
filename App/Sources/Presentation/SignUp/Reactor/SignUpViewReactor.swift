@@ -18,7 +18,6 @@ import GoogleSignIn
 
 public enum SignUpViewStream: HPStreamType {
     public enum Event {
-        case requestGoogleLogin(_ profile: GIDGoogleUser)
         case requestAppleLogin(_ profie: String)
     }
 }
@@ -52,7 +51,6 @@ public final class SignUpViewReactor: Reactor {
         case setKakaoUserEntity(User)
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
-        case setGoogleUserEntity(GIDGoogleUser)
         case setAppleUserFullName(String)
     }
     
@@ -61,7 +59,6 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
-        @Pulse var googleUserEntity: GIDGoogleUser?
         var userGender: HPGender
         var applefullName: String
     }
@@ -74,7 +71,6 @@ public final class SignUpViewReactor: Reactor {
             isBirthDaySelected: false,
             kakaoUserEntity: nil,
             naverUserEntity: nil,
-            googleUserEntity: nil,
             userGender: .none,
             applefullName: ""
         )
@@ -120,17 +116,12 @@ public final class SignUpViewReactor: Reactor {
     
     
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        let fromGoogleProfileMutation = SignUpViewStream.event.flatMap { [weak self] event in
-            self?.requestGoogleUserProfile(from: event) ?? .empty()
-        }
         
         let fromAppleFullNameMutation = SignUpViewStream.event.flatMap { [weak self] event in
             self?.requestAppleUserProfile(from: event) ?? .empty()
         }
         
-        print("test Google Profile: \(fromGoogleProfileMutation)")
-        
-        return Observable.of(mutation, fromGoogleProfileMutation, fromAppleFullNameMutation).merge()
+        return Observable.of(mutation, fromAppleFullNameMutation).merge()
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -151,9 +142,6 @@ public final class SignUpViewReactor: Reactor {
             newState.naverUserEntity = naverEntity
             debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
             
-        case let .setGoogleUserEntity(googleEntity):
-            newState.googleUserEntity = googleEntity
-            
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName
             
@@ -168,16 +156,6 @@ public final class SignUpViewReactor: Reactor {
 
 
 public extension SignUpViewReactor {
-    
-    func requestGoogleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
-        switch event {
-        case let .requestGoogleLogin(profile):
-            print("Google Event: \(profile)")
-            return .just(.setGoogleUserEntity(profile))
-        default:
-            return .empty()
-        }
-    }
     
     
     func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {

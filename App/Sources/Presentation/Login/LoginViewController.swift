@@ -185,8 +185,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         Observable
             .zip(
-                reactor.state.map { $0.accountType },
-                reactor.state.map { $0.authToken}
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
             ).filter { $0.0 == .kakao && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
@@ -196,8 +196,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         Observable
             .zip(
-                reactor.state.map { $0.accountType },
-                reactor.state.map { $0.authToken}
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken }.distinctUntilChanged()
             ).filter { $0.0 == .naver && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
@@ -207,8 +207,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         Observable
             .zip(
-                reactor.state.map { $0.accountType },
-                reactor.state.map { $0.authToken}
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
             ).filter { $0.0 == .google && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
@@ -218,8 +218,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         Observable
             .zip(
-                reactor.state.map { $0.accountType },
-                reactor.state.map { $0.authToken}
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
             ).filter { $0.0 == .apple && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
