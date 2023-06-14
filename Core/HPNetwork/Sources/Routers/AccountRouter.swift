@@ -12,7 +12,7 @@ import HPCommon
 
 public enum AccountRouter {
     case getNaverUserInfo
-    case getAccessToken(String)
+    case getAccessToken(type: AccountType, token: String)
 }
 
 
@@ -41,8 +41,8 @@ extension AccountRouter: Router {
         switch self {
         case .getNaverUserInfo:
             return "/v1/nid/me"
-        case .getAccessToken:
-            return "/login/oauth2/kakao"
+        case let .getAccessToken(type, _):
+            return "/login/oauth2/\(type.rawValue)"
         }
         
     }
@@ -53,7 +53,7 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return [:]
             
-        case let .getAccessToken(accessToken):
+        case let .getAccessToken(_, accessToken):
             return [
                 "Authorization":"\(accessToken)",
                 "Accept": "*/*"

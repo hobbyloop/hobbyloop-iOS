@@ -79,7 +79,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                 
                 let kakaoAuthMutation = Observable<LoginViewReactor.Mutation>
                     .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) { authToken in
+                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
                             observer.onNext(.setAccessToken(authToken))
                             
                         }
@@ -99,7 +99,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                 let kakaoWebAuthMutation = Observable<LoginViewReactor.Mutation>
                     .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(accessToken.accessToken)) { authToken in
+                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
                             observer.onNext(.setAccessToken(authToken))
                             
                         }
