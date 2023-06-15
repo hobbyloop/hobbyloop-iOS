@@ -58,4 +58,24 @@ public extension UILabel {
             self.attributedText = attributedString
         }
     
+    
+    func setUnderLineAttributed(
+        targetString: String,
+        font: UIFont,
+        underlineColor: UIColor,
+        textColor: UIColor
+    ) {
+        let defaultText = self.text ?? ""
+        let attributedString = NSMutableAttributedString(string: defaultText)
+        let targetTextRange = (defaultText as NSString).range(of: targetString)
+        
+        attributedString.addAttributes([
+            .font: font,
+            .underlineColor: underlineColor,
+            .foregroundColor: textColor
+        ], range: targetTextRange)
+        
+        self.attributedText = attributedString
+    }
+    
 }
