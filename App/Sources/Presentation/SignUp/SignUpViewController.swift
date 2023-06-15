@@ -594,8 +594,10 @@ extension SignUpViewController: SignUpViewAnimatable {
     func dropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
-            self.authCodeView.snp.updateConstraints {
-                $0.height.equalTo(100)
+            self.authCodeView.snp.remakeConstraints {
+                $0.left.right.equalTo(self.phoneView)
+                $0.height.equalTo(48)
+                $0.bottom.equalTo(self.termsView.snp.top).offset(-36)
             }
             
             self.authCodeButton.snp.updateConstraints {
@@ -603,6 +605,20 @@ extension SignUpViewController: SignUpViewAnimatable {
                 $0.height.equalTo(50)
             }
             
+            
+            self.phoneView.snp.remakeConstraints {
+                $0.left.height.equalTo(self.nameView)
+                $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
+                $0.bottom.equalTo(self.authCodeView.snp.top).offset(-10)
+            }
+            
+            self.termsView.snp.remakeConstraints {
+                $0.left.right.equalTo(self.nameView)
+                $0.height.equalTo(160)
+                $0.bottom.equalTo(self.modifyDescriptionLabel.snp.bottom).offset(-34)
+            }
+            
+            self.view.layoutIfNeeded()
         })
     }
     
