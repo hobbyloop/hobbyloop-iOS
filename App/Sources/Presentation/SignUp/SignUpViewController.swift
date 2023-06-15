@@ -210,7 +210,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         containerView.snp.makeConstraints {
             $0.left.right.top.bottom.equalTo(scrollView.contentLayoutGuide)
-            $0.height.width.equalTo(scrollView.frameLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
         [genderOfManButton, genderOfGirlButton].forEach {
@@ -230,28 +230,30 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.top.equalToSuperview()
             $0.height.equalTo(62)
             $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(nameView.snp.top).offset(-36)
         }
         
         nameView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(25)
+            $0.bottom.equalTo(nickNameView.snp.top).offset(-36)
             $0.left.equalToSuperview().offset(15)
             $0.right.equalToSuperview().offset(-15)
             $0.height.equalTo(100)
         }
         
         nickNameView.snp.makeConstraints {
-            $0.top.equalTo(nameView.snp.bottom).offset(15)
+            $0.bottom.equalTo(genederDescriptionLabel.snp.top).offset(-36)
             $0.left.height.right.equalTo(nameView)
         }
         
         genederDescriptionLabel.snp.makeConstraints {
+            $0.bottom.equalTo(horizontalGenderStackView.snp.top).offset(-10)
             $0.top.equalTo(nickNameView.snp.bottom).offset(15)
             $0.left.equalToSuperview().offset(23)
             $0.height.equalTo(20)
         }
         
         horizontalGenderStackView.snp.makeConstraints {
-            $0.top.equalTo(genederDescriptionLabel.snp.bottom).offset(10)
+            $0.bottom.equalTo(birthDayView.snp.top).offset(-36)
             $0.left.equalTo(nickNameView)
             $0.width.equalTo(176)
             $0.height.equalTo(45)
@@ -266,21 +268,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         birthDayView.snp.makeConstraints {
-            $0.top.equalTo(horizontalGenderStackView.snp.bottom).offset(10)
+            $0.bottom.equalTo(phoneView.snp.top).offset(-36)
             $0.left.height.right.equalTo(nameView)
-            
         }
         
         phoneView.snp.makeConstraints {
-            $0.top.equalTo(birthDayView.snp.bottom).offset(10)
             $0.left.height.equalTo(nameView)
             $0.right.equalTo(certificationButton.snp.left).offset(-8)
+            $0.bottom.equalTo(termsView.snp.top).offset(-36)
         }
         
         certificationButton.snp.makeConstraints {
             $0.height.equalTo(50)
             $0.width.equalTo(83)
-            $0.top.equalTo(phoneView.textFiledView)
+            $0.bottom.equalTo(phoneView.textFiledView)
             $0.right.equalToSuperview().offset(-15)
         }
         
@@ -291,9 +292,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         termsView.snp.makeConstraints {
-            $0.top.equalTo(phoneView.snp.bottom).offset(36)
             $0.left.right.equalTo(nameView)
-            $0.height.equalTo(142)
+            $0.height.equalTo(160)
+            $0.bottom.equalTo(modifyDescriptionLabel.snp.bottom).offset(-34)
         }
         
         modifyDescriptionLabel.snp.makeConstraints {

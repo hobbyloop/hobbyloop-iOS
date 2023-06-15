@@ -146,6 +146,13 @@ public final class SignUpTermsCheckBoxView: UIView {
         $0.textColor = HPCommonUIAsset.originSeparator.color
         $0.textAlignment = .justified
         $0.numberOfLines = 1
+        $0.setUnderLineAttributed(
+            targetString: "자세히",
+            font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+            underlineColor: HPCommonUIAsset.originSeparator.color,
+            underlineStyle: .single,
+            textColor: HPCommonUIAsset.originSeparator.color
+        )
     }
     
     

@@ -63,6 +63,7 @@ public extension UILabel {
         targetString: String,
         font: UIFont,
         underlineColor: UIColor,
+        underlineStyle: NSUnderlineStyle,
         textColor: UIColor
     ) {
         let defaultText = self.text ?? ""
@@ -72,6 +73,7 @@ public extension UILabel {
         attributedString.addAttributes([
             .font: font,
             .underlineColor: underlineColor,
+            .underlineStyle: underlineStyle.rawValue,
             .foregroundColor: textColor
         ], range: targetTextRange)
         
