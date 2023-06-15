@@ -1,5 +1,5 @@
 //
-//  UIView+Foundation.swift
+//  UIView+Extensions.swift
 //  HPFoundation
 //
 //  Created by Kim dohyun on 2023/05/28.

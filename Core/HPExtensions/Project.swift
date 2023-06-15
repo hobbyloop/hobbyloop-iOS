@@ -6,6 +6,6 @@ let extensions = Project.makeModule(
     name: "HPExtensions",
     products: [.framework(.static)],
     dependencies: [
-        .Project.Core.thirdParty
+        .Project.UI.common
     ]
 )

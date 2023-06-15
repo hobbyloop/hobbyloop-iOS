@@ -163,6 +163,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
+    private let termsView: SignUpTermsView = SignUpTermsView()
+    
     
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
@@ -217,7 +219,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView, birthDayView,
-         phoneView, certificationButton, authCodeView, authCodeButton, confirmButton, modifyDescriptionLabel].forEach {
+         phoneView, certificationButton, authCodeView, authCodeButton, confirmButton, termsView, modifyDescriptionLabel].forEach {
             containerView.addSubview($0)
         }
         
@@ -288,10 +290,15 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.height.equalTo(0)
         }
         
+        termsView.snp.makeConstraints {
+            $0.top.equalTo(phoneView.snp.bottom).offset(36)
+            $0.left.right.equalTo(nameView)
+            $0.height.equalTo(142)
+        }
+        
         modifyDescriptionLabel.snp.makeConstraints {
             $0.height.equalTo(13)
             $0.width.equalTo(250)
-            $0.bottom.equalTo(confirmButton.snp.top).offset(-12)
             $0.centerX.equalToSuperview()
         }
         
@@ -309,7 +316,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         confirmButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().offset(-67)
+            $0.top.equalTo(modifyDescriptionLabel.snp.bottom).offset(14)
+            $0.bottom.equalToSuperview()
             $0.left.right.equalTo(birthDayView)
             $0.height.equalTo(66)
         }

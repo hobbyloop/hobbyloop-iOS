@@ -1,5 +1,5 @@
 //
-//  UILabel+Foundation.swift
+//  UILabel+Extensions.swift
 //  HPFoundation
 //
 //  Created by Kim dohyun on 2023/05/25.

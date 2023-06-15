@@ -7,7 +7,6 @@
 
 import UIKit
 
-import HPExtensions
 import ReactorKit
 import RxSwift
 import RxCocoa
@@ -37,6 +36,10 @@ open class BaseViewController<T: ReactorKit.Reactor>: UIViewController,ReactorKi
     
     public func makeDismissKeyboardGesture(){
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.endEditing)))
+    }
+    
+    @objc func endEditing() {
+        self.view.endEditing(true)
     }
     
     
