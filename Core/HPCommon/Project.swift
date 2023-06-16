@@ -12,7 +12,7 @@ let common = Project.makeModule(
   name: "HPCommon",
   products: [.framework(.static)],
   dependencies: [
-    .Project.UI.common
+    .Project.Core.extensions
   ]
 )
 

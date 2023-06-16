@@ -1,5 +1,5 @@
 //
-//  UILabel+Foundation.swift
+//  UILabel+Extensions.swift
 //  HPFoundation
 //
 //  Created by Kim dohyun on 2023/05/25.
@@ -57,5 +57,27 @@ public extension UILabel {
             
             self.attributedText = attributedString
         }
+    
+    
+    func setUnderLineAttributed(
+        targetString: String,
+        font: UIFont,
+        underlineColor: UIColor,
+        underlineStyle: NSUnderlineStyle,
+        textColor: UIColor
+    ) {
+        let defaultText = self.text ?? ""
+        let attributedString = NSMutableAttributedString(string: defaultText)
+        let targetTextRange = (defaultText as NSString).range(of: targetString)
+        
+        attributedString.addAttributes([
+            .font: font,
+            .underlineColor: underlineColor,
+            .underlineStyle: underlineStyle.rawValue,
+            .foregroundColor: textColor
+        ], range: targetTextRange)
+        
+        self.attributedText = attributedString
+    }
     
 }

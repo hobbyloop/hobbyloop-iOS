@@ -9,37 +9,58 @@ import Foundation
 
 import HPDomain
 import HPCommon
+import HPExtensions
 import ReactorKit
 import RxSwift
 import KakaoSDKUser
+import GoogleSignIn
+
+
+public enum SignUpViewStream: HPStreamType {
+    public enum Event {
+        case requestAppleLogin(_ profie: String)
+    }
+}
+
+
+public enum HPGender: String, Equatable {
+    case male
+    case female
+    case none
+}
+
+
 
 public final class SignUpViewReactor: Reactor {
     
     // MARK: Property
     public var initialState: State
     private var signUpRepository: SignUpViewRepo
-    private var accountType: AccountType
+    public var accountType: AccountType
     
     public enum Action {
         case viewDidLoad
         case didTapBirthDayButton
-        case didTapGenderButton
+        case didTapGenderButton(HPGender)
+        case didTapAuthCodeButton
     }
     
     public enum Mutation {
         case setLoading(Bool)
         case didTapBirthDayButton(Bool)
-        case didTapGenderButton(Bool)
         case setKakaoUserEntity(User)
+        case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
+        case setAppleUserFullName(String)
     }
     
     public struct State {
-        @Pulse var isLoading: Bool
-        @Pulse var isGenderSelected: Bool
+        var isLoading: Bool
         @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
+        var userGender: HPGender
+        var applefullName: String
     }
     
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
@@ -47,10 +68,11 @@ public final class SignUpViewReactor: Reactor {
         self.accountType = accountType
         self.initialState = State(
             isLoading: false,
-            isGenderSelected: false,
             isBirthDaySelected: false,
             kakaoUserEntity: nil,
-            naverUserEntity: nil
+            naverUserEntity: nil,
+            userGender: .none,
+            applefullName: ""
         )
     }
     
@@ -76,17 +98,30 @@ public final class SignUpViewReactor: Reactor {
                 requestProfile,
                 endLoading
             )
+        case let .didTapGenderButton(gender):
+            let setUserInfoGender = Observable<Mutation>.just(.setUserGender(gender))
             
-        case .didTapGenderButton:
-            let didGenderSelectedButton = Observable<Mutation>.just(.didTapGenderButton(currentState.isGenderSelected))
-            
-            return didGenderSelectedButton
+            return setUserInfoGender
             
         case .didTapBirthDayButton:
             let didBirthdaySelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isBirthDaySelected))
             
             return didBirthdaySelectedButton
+            
+        case .didTapAuthCodeButton:
+            
+            return .empty()
         }
+    }
+    
+    
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        
+        let fromAppleFullNameMutation = SignUpViewStream.event.flatMap { [weak self] event in
+            self?.requestAppleUserProfile(from: event) ?? .empty()
+        }
+        
+        return Observable.of(mutation, fromAppleFullNameMutation).merge()
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -95,9 +130,6 @@ public final class SignUpViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-            
-        case let .didTapGenderButton(isGenderSelected):
-            newState.isGenderSelected = isGenderSelected
             
         case let .didTapBirthDayButton(isBirthDaySelected):
             newState.isBirthDaySelected = !isBirthDaySelected
@@ -109,8 +141,31 @@ public final class SignUpViewReactor: Reactor {
         case let .setNaverUserEntity(naverEntity):
             newState.naverUserEntity = naverEntity
             debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
+            
+        case let .setAppleUserFullName(fullName):
+            newState.applefullName = fullName
+            
+        case let .setUserGender(gender):
+            newState.userGender = gender
         }
         
         return newState
     }
+}
+
+
+
+public extension SignUpViewReactor {
+    
+    
+    func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .requestAppleLogin(fullName):
+            print("Apple Event: \(fullName)")
+            return .just(.setAppleUserFullName(fullName))
+        default:
+            return .empty()
+        }
+    }
+    
 }

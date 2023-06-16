@@ -8,15 +8,16 @@
 import Foundation
 
 import HPExtensions
+import HPCommon
 import ReactorKit
 import RxSwift
+import GoogleSignIn
+
 
 public enum LoginViewStream: HPStreamType {
     public enum Event {
-        case responseNaverAccessToken(_ accessToken: String)
-        case requestNaverLogin
+        case responseAccessToken(token: String)
     }
-    case none
 }
 
 
@@ -29,24 +30,25 @@ public final class LoginViewReactor: Reactor {
     //MARK: Action
     public enum Action {
         case viewDidLoad
-        case didTapKakaoLogin
-        case didTapNaverLogin
-        case didTapGoogleLogin(AnyObject)
+        case didTapKakaoLogin(AccountType)
+        case didTapNaverLogin(AccountType)
+        case didTapGoogleLogin(AnyObject, AccountType)
+        case didTapAppleLogin(AccountType)
     }
     
     public enum Mutation {
         case setLoading(Bool)
-        case setKakaoAccessToken(String)
+        case setAccessToken(String)
+        case setAccountType(AccountType)
         case setNaverLogin(Void)
         case setGoogleLogin(Void)
-        case setNaverAccessToken(String)
     }
     
     //MARK: State
     public struct State {
         var isLoading: Bool
-        @Pulse var kakaoToken: String
-        @Pulse var naverToken: String
+        @Pulse var authToken: String
+        @Pulse var accountType: AccountType
         @Pulse var isShowNaverLogin: Void?
         @Pulse var isShowGoogleLogin: Void?
     }
@@ -58,11 +60,20 @@ public final class LoginViewReactor: Reactor {
         self.loginRepository = loginRepository
         self.initialState = State(
             isLoading: false,
-            kakaoToken: "",
-            naverToken: "",
+            authToken: "",
+            accountType: .none,
             isShowNaverLogin: nil,
             isShowGoogleLogin: nil
         )
+    }
+    
+    
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let fromGoogleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
+            self?.requestGoogleAccessToken(from: event) ?? .empty()
+        }
+        
+        return Observable.of(mutation, fromGoogleLoginMutation).merge()
     }
     
     
@@ -79,46 +90,51 @@ public final class LoginViewReactor: Reactor {
                 startLoading,
                 endLoading
             )
-        case .didTapKakaoLogin:
+        case let .didTapKakaoLogin(type):
+            let kakaoTypeMutation = Observable<Mutation>.just(.setAccountType(type))
+            
             
             return .concat(
                 startLoading,
+                kakaoTypeMutation,
                 loginRepository.resultKakaoLogin(),
                 endLoading
             )
             
-        case .didTapNaverLogin:
+        case let .didTapNaverLogin(type):
+            let naverTypeMutation = Observable<Mutation>.just(.setAccountType(type))
+            
             return .concat(
                 startLoading,
+                naverTypeMutation,
                 loginRepository.responseNaverLogin(),
                 endLoading
             )
             
-        case let .didTapGoogleLogin(viewController):
+        case let .didTapGoogleLogin(viewController, type):
+            let googleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
+            
+            
             return .concat(
                 startLoading,
+                googleTypeMutation,
                 loginRepository.responseGoogleLogin(to: viewController),
                 endLoading
+            )
+            
+        case let .didTapAppleLogin(type):
+            let appleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
+            
+            return .concat(
+                startLoading,
+                appleTypeMutation,
+                loginRepository.responseAppleLogin(),
+                endLoading
+            
             )
         }
         
     }
-    
-    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        let fromNaverLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
-            self?.requestNaverAccessToken(from: event) ?? .empty()
-        }
-
-        return Observable.of(mutation, fromNaverLoginMutation).merge()
-    }
-    
-    public func transform(action: Observable<Action>) -> Observable<Action> {
-        let fromNaverLoginAction = LoginViewStream.event.flatMap { [weak self] event in
-            self?.requestNaverLoginAction(from: event) ?? .empty()
-        }
-        return Observable.of(action, fromNaverLoginAction).merge()
-    }
-    
     
     public func reduce(state: State, mutation: Mutation) -> State {
         
@@ -127,17 +143,17 @@ public final class LoginViewReactor: Reactor {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
             
-        case let .setKakaoAccessToken(accessToken):
-            newState.kakaoToken = accessToken
-            debugPrint("set Kakao Token accessToken: \(newState.kakaoToken)")
+        case let .setAccountType(accountType):
+            newState.accountType = accountType
+            debugPrint("set Account Type : \(newState.accountType)")
             
-        case let .setNaverAccessToken(accessToken):
-            newState.naverToken = accessToken
-            debugPrint("set Naver access Token: \(newState.naverToken)")
+        case let .setAccessToken(accessToken):
+            newState.authToken = accessToken
+            debugPrint("set Kakao Token accessToken: \(newState.authToken)")
             
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
-            
+
         case let .setGoogleLogin(isShow):
             newState.isShowGoogleLogin = isShow
         }
@@ -149,24 +165,16 @@ public final class LoginViewReactor: Reactor {
 }
 
 
-public extension LoginViewReactor {
+
+
+private extension LoginViewReactor {
     
-    func requestNaverAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
+    func requestGoogleAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
         switch event {
-        case let .responseNaverAccessToken(accessToken):
-            return .just(.setNaverAccessToken(accessToken))
-        default:
-            return .empty()
+        case let .responseAccessToken(token):
+            return .just(.setAccessToken(token))
         }
     }
     
     
-    func requestNaverLoginAction(from event: LoginViewStream.Event) -> Observable<Action> {
-        switch event {
-        case .requestNaverLogin:
-            return .just(.didTapNaverLogin)
-        default:
-            return .empty()
-        }
-    }
 }

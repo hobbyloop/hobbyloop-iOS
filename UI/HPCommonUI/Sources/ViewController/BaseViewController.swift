@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 import ReactorKit
 import RxSwift
 import RxCocoa
@@ -35,9 +34,15 @@ open class BaseViewController<T: ReactorKit.Reactor>: UIViewController,ReactorKi
     open func bind(reactor: T) {}
     
     
+    public func makeDismissKeyboardGesture(){
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.endEditing)))
+    }
+    
+    @objc func endEditing() {
+        self.view.endEditing(true)
+    }
     
     
     
-    
-    
+
 }

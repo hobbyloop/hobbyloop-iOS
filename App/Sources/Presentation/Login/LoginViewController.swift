@@ -161,45 +161,70 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         kakaoLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapKakaoLogin }
+            .map { Reactor.Action.didTapKakaoLogin(.kakao) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         naverLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapNaverLogin }
+            .map { Reactor.Action.didTapNaverLogin(.naver) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         googleLoginButton
             .rx.tap
-            .map { Reactor.Action.didTapGoogleLogin(self) }
+            .map { Reactor.Action.didTapGoogleLogin(self, .google) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap
-            .asDriver()
-            .drive(onNext: { [weak self] _ in
-                guard let self = `self` else { return }
-                self.didShowSingUpController(accountType: .apple)
-            }).disposed(by: disposeBag)
+            .map { Reactor.Action.didTapAppleLogin(.apple) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        
-        reactor.pulse(\.$kakaoToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
+            ).filter { $0.0 == .kakao && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .kakao)
             }).disposed(by: disposeBag)
         
-        reactor.pulse(\.$naverToken)
-            .filter { !$0.isEmpty }
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken }.distinctUntilChanged()
+            ).filter { $0.0 == .naver && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
             .subscribe(onNext: { vc, _ in
                 vc.didShowSingUpController(accountType: .naver)
+            }).disposed(by: disposeBag)
+        
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
+            ).filter { $0.0 == .google && !$0.1.isEmpty }
+            .map { _ in () }
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.didShowSingUpController(accountType: .google)
+            }).disposed(by: disposeBag)
+        
+        Observable
+            .zip(
+                reactor.state.map { $0.accountType }.distinctUntilChanged(),
+                reactor.state.map { $0.authToken}.distinctUntilChanged()
+            ).filter { $0.0 == .apple && !$0.1.isEmpty }
+            .map { _ in () }
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                vc.didShowSingUpController(accountType: .apple)
             }).disposed(by: disposeBag)
     }
 }
