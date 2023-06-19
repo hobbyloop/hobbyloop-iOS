@@ -516,6 +516,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         phoneView.textFiledView
             .rx.text
             .changed
+            .filter { $0?.count == 11 }
             .debug("changed PhoneNumber")
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { phoneNumber in
@@ -531,11 +532,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { vc, isEditing in
-                guard !isEditing else {
-                    self.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-                    self.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
-                    return
+                if vc.phoneView.textFiledView.text?.count ?? 0 < 13 {
+                    vc.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                    vc.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
                 }
+                guard !isEditing else { return }
                 vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
         
