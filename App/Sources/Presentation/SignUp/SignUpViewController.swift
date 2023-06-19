@@ -139,10 +139,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.textAlignment = .justified
         $0.numberOfLines = 1
     }
-    
-    private let birthDayPickerView: SignUpDatePickerView = SignUpDatePickerView().then {
-        $0.isHidden = true
-    }
+
     
     private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
         $0.setTitle("시작하기", for: .normal)
@@ -193,12 +190,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private func configure() {
         self.view.backgroundColor = .white
         
-        
-        [scrollView, birthDayPickerView].forEach {
-            self.view.addSubview($0)
-        }
-        
-        self.view.bringSubviewToFront(birthDayPickerView)
+        self.view.addSubview(scrollView)
         
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -223,8 +215,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             containerView.addSubview($0)
         }
         
-        
-        birthDayPickerView.backgroundColor = .white
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
@@ -283,12 +273,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.width.equalTo(83)
             $0.bottom.equalTo(phoneView.textFiledView)
             $0.right.equalToSuperview().offset(-15)
-        }
-        
-        birthDayPickerView.snp.makeConstraints {
-            $0.top.equalTo(birthDayView.snp.bottom)
-            $0.left.right.equalTo(birthDayView)
-            $0.height.equalTo(0)
         }
         
         termsView.snp.makeConstraints {
@@ -404,25 +388,19 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .withUnretained(self)
             .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { vc, isSelected in
-                if isSelected {
-                    vc.birthDayPickerView.isHidden = !isSelected
-                    vc.birthDayView.textFiledView.setupRightImage(image: HPCommonUIAsset.uparrow.image)
-                    vc.birthDayPickerView.didTapAnimation(constraints: 138)
-                } else {
-                    vc.birthDayPickerView.isHidden = isSelected
-                    vc.birthDayView.textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
-                    vc.birthDayPickerView.didTapAnimation(constraints: 0)
-                }
+                // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
             }).disposed(by: disposeBag)
         
-        birthDayPickerView.rx
-            .value
-            .skip(1)
-            .asDriver(onErrorJustReturn: Date())
-            .drive(onNext: { [weak self] date in
-                guard let `self` = self else { return }
-                self.birthDayView.textFiledView.text = date.convertToString()
-            }).disposed(by: disposeBag)
+        
+        // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
+//        birthDayPickerView.rx
+//            .value
+//            .skip(1)
+//            .asDriver(onErrorJustReturn: Date())
+//            .drive(onNext: { [weak self] date in
+//                guard let `self` = self else { return }
+//                self.birthDayView.textFiledView.text = date.convertToString()
+//            }).disposed(by: disposeBag)
         
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.profile?.nickname}
@@ -498,15 +476,16 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        Observable.zip(
-            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
-            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
-        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
-            .map { "\($0.1+"-"+$0.0)".birthdayToString().birthdayToDate() }
-            .take(1)
-            .asDriver(onErrorJustReturn: Date())
-            .drive(birthDayPickerView.rx.date)
-            .disposed(by: disposeBag)
+        // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
+//        Observable.zip(
+//            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
+//            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
+//        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
+//            .map { "\($0.1+"-"+$0.0)".birthdayToString().birthdayToDate() }
+//            .take(1)
+//            .asDriver(onErrorJustReturn: Date())
+//            .drive(birthDayPickerView.rx.date)
+//            .disposed(by: disposeBag)
 
         NotificationCenter.default
             .rx.notification(UIResponder.keyboardWillShowNotification)
