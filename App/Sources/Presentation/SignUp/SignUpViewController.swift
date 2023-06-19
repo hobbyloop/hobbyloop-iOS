@@ -160,7 +160,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
-    private let termsView: SignUpTermsView = SignUpTermsView()
+    private let termsView: SignUpTermsView = SignUpTermsView(reactor: SignUpTermsViewReactor())
     
     
     override init(reactor: SignUpViewReactor?) {
@@ -189,7 +189,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private func configure() {
         self.view.backgroundColor = .white
-        
         self.view.addSubview(scrollView)
         
         scrollView.snp.makeConstraints {
