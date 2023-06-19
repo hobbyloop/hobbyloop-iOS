@@ -164,20 +164,12 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
-        var chiperToken = ""
         if let accessToken = naverLoginInstance.accessToken {
-            do {
-                //TODO: 네이버 로그인 성공시 JWT 발급 및 반환
-                chiperToken = try CryptoUtil.makeEncryption(accessToken)
-                print("Naver Access Token : \(accessToken)")
-                let expiredAt = naverLoginInstance.accessTokenExpireDate
-                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
             
-            } catch {
-                print(error.localizedDescription)
+            // TODO: Naver Access Token 발급시 JWT 발급 요청 및 Mutation 방출
+            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .naver, token: accessToken)) { authToken in
+                LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
             }
-            
         }
     }
     
