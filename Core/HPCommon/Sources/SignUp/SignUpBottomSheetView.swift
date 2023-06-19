@@ -20,6 +20,7 @@ public final class SignUpBottomSheetView: UIViewController {
         $0.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.masksToBounds = true
+        $0.backgroundColor = HPCommonUIAsset.white.color
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
     
@@ -49,7 +50,8 @@ public final class SignUpBottomSheetView: UIViewController {
         
         
         containerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.left.right.bottom.equalToSuperview()
+            $0.height.equalTo(271)
         }
         
         datePickerView.snp.makeConstraints {

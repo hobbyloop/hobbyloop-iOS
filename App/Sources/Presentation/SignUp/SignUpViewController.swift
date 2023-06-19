@@ -605,8 +605,8 @@ extension SignUpViewController: SignUpViewAnimatable {
     
     func showBottomSheetView() {
         let signUpBottomSheetView = SignUpBottomSheetView()
-        self.modalPresentationStyle = .overFullScreen
-        self.present(signUpBottomSheetView, animated: true)
+        signUpBottomSheetView.modalPresentationStyle = .overFullScreen
+        self.present(signUpBottomSheetView, animated: false)
     }
     
     
