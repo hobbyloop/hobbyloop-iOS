@@ -11,6 +11,7 @@ import HPCommonUI
 import HPExtensions
 import ReactorKit
 import SnapKit
+import RxGesture
 import Then
 
 
@@ -112,6 +113,61 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
             $0.right.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+        
+    }
+    
+    
+    public override func bind(reactor: SignUpTermsViewReactor) {
+        
+        termsAllView
+            .rx.tapGesture()
+            .when(.recognized)
+            .map { _ in Reactor.Action.didTapSelectBox(.all) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        termsReceiveView
+            .rx.tapGesture()
+            .when(.recognized)
+            .map { _ in Reactor.Action.didTapSelectBox(.receive) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        termsInfoView
+            .rx.tapGesture()
+            .when(.recognized)
+            .map { _ in Reactor.Action.didTapSelectBox(.info) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.termsType == .all }
+            .map { $0.termsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { type in
+                // TODO: All Select Design 변경
+                
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.termsType == .receive }
+            .map { $0.termsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { type in
+                // TODO: receive Select Design 변경
+                
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.termsType == .info }
+            .map { $0.termsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { type in
+                // TODO: info Select Design 변경
+                
+            }).disposed(by: disposeBag)
+        
+        
         
     }
     
