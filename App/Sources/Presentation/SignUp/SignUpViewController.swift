@@ -17,6 +17,7 @@ import ReactorKit
 
 private protocol SignUpViewAnimatable {
     @MainActor func dropdownAnimation()
+    @MainActor func showBottomSheetView()
 }
 
 
@@ -599,6 +600,13 @@ extension SignUpViewController: SignUpViewAnimatable {
             
             self.view.layoutIfNeeded()
         })
+    }
+    
+    
+    func showBottomSheetView() {
+        let signUpBottomSheetView = SignUpBottomSheetView()
+        self.modalPresentationStyle = .overFullScreen
+        self.present(signUpBottomSheetView, animated: true)
     }
     
     
