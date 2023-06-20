@@ -319,13 +319,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        birthDayView.rx
-            .tapGesture()
+        birthDayView
+            .rx.tapGesture()
             .when(.recognized)
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { _ in Reactor.Action.didTapBirthDayButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { vc, _ in
+                vc.showBottomSheetView()
+            }).disposed(by: disposeBag)
         
         genderOfManButton
             .rx.tap
@@ -382,14 +383,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 self.genderOfGirlButton.layer.borderColor = color
             }).disposed(by: disposeBag)
 
-        
-        reactor.pulse(\.$isBirthDaySelected)
-            .withUnretained(self)
-            .observe(on: MainScheduler.asyncInstance)
-            .bind(onNext: { vc, isSelected in
-                // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
-            }).disposed(by: disposeBag)
-        
         
         // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
 //        birthDayPickerView.rx
@@ -606,7 +599,7 @@ extension SignUpViewController: SignUpViewAnimatable {
     func showBottomSheetView() {
         let signUpBottomSheetView = SignUpBottomSheetView()
         signUpBottomSheetView.modalPresentationStyle = .overFullScreen
-        self.present(signUpBottomSheetView, animated: false)
+        self.present(signUpBottomSheetView, animated: true)
     }
     
     

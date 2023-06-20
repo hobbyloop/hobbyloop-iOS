@@ -40,14 +40,12 @@ public final class SignUpViewReactor: Reactor {
     
     public enum Action {
         case viewDidLoad
-        case didTapBirthDayButton
         case didTapGenderButton(HPGender)
         case didTapAuthCodeButton
     }
     
     public enum Mutation {
         case setLoading(Bool)
-        case didTapBirthDayButton(Bool)
         case setKakaoUserEntity(User)
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
@@ -56,7 +54,6 @@ public final class SignUpViewReactor: Reactor {
     
     public struct State {
         var isLoading: Bool
-        @Pulse var isBirthDaySelected: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
         var userGender: HPGender
@@ -68,7 +65,6 @@ public final class SignUpViewReactor: Reactor {
         self.accountType = accountType
         self.initialState = State(
             isLoading: false,
-            isBirthDaySelected: false,
             kakaoUserEntity: nil,
             naverUserEntity: nil,
             userGender: .none,
@@ -103,11 +99,6 @@ public final class SignUpViewReactor: Reactor {
             
             return setUserInfoGender
             
-        case .didTapBirthDayButton:
-            let didBirthdaySelectedButton = Observable<Mutation>.just(.didTapBirthDayButton(currentState.isBirthDaySelected))
-            
-            return didBirthdaySelectedButton
-            
         case .didTapAuthCodeButton:
             
             return .empty()
@@ -130,9 +121,6 @@ public final class SignUpViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-            
-        case let .didTapBirthDayButton(isBirthDaySelected):
-            newState.isBirthDaySelected = !isBirthDaySelected
             
         case let .setKakaoUserEntity(kakaoEntity):
             newState.kakaoUserEntity = kakaoEntity
