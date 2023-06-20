@@ -347,7 +347,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfManButton.didTapHPButton(color)
-                HapticUtil.impact(.heavy).generate()
+                HapticUtil.impact(.light).generate()
             }).disposed(by: disposeBag)
         
         reactor.state
@@ -357,7 +357,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.didTapHPButton(color)
-                HapticUtil.impact(.heavy).generate()
+                HapticUtil.impact(.light).generate()
             }).disposed(by: disposeBag)
         
         
@@ -548,6 +548,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map {  _ in HPCommonUIAsset.deepOrange.color }
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
+                HapticUtil.impact(.light).generate()
                 self.certificationButton.didTapHPButton(color)
                 self.dropdownAnimation()
             }).disposed(by: disposeBag)
