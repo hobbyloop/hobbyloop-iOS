@@ -18,7 +18,9 @@ let dependencies = Dependencies(
         Package.snapKit,
         Package.then,
         Package.alamofire,
-        Package.tabMan
+        Package.kakaoSDK,
+        Package.googleSDK,
+        Package.cryptoSwift
     ]),
     platforms: [.iOS]
 )

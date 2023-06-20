@@ -7,6 +7,12 @@
 
 import UIKit
 
+import KakaoSDKAuth
+import RxKakaoSDKAuth
+import RxKakaoSDKCommon
+import NaverThirdPartyLogin
+import GoogleSignIn
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     public var window: UIWindow?
@@ -15,11 +21,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
-        let viewController = CustomTabBarController()
-        viewController.view.backgroundColor = .white
-        window?.rootViewController = viewController
+        let loginDIContainer = LoginDIContainer()
+        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
         window?.makeKeyAndVisible()
         
     }
     
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            setOpenURLKakaoLoign(open: url)
+            setOpenURLNaverLogin(open: url)
+            setOpenURLGoogleLogin(open: url)
+        }
+    }
+}
+
+
+private extension SceneDelegate {
+    
+    func setOpenURLKakaoLoign(open url: URL) {
+        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            _ = AuthController.rx.handleOpenUrl(url: url)
+        }
+    }
+    
+    func setOpenURLNaverLogin(open url: URL) {
+        NaverThirdPartyLoginConnection
+            .getSharedInstance()
+            .receiveAccessToken(url)
+    }
+    
+    func setOpenURLGoogleLogin(open url: URL) {
+        GIDSignIn.sharedInstance.handle(url)
+    }
 }
