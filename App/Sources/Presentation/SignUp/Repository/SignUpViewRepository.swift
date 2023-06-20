@@ -21,6 +21,7 @@ public protocol SignUpViewRepo {
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation>
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
+    func createUserInformation(name: String, nickName: String, gender: String, birth: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
 }
 
 
@@ -63,5 +64,17 @@ public final class SignUpViewRepository: SignUpViewRepo {
                 }
         }
 
+    }
+    
+    /// 자체 서버에 사용자 등록 메서드
+    /// - note: 사용자에게 필요한 프로필 정보를 받으며 서버에게 등록하기 위한 메서드
+    /// - parameters:
+    ///   - name 사용자 이름
+    ///   - nickName 사용자 닉네임
+    ///   - gender 사용자 성별
+    ///   - birth 사용자 출생년도
+    ///   - phoneNumber 사용자 핸드폰 번호
+    public func createUserInformation(name: String, nickName: String, gender: String, birth: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation> {
+        return .empty()
     }
 }
