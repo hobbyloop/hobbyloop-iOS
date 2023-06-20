@@ -307,7 +307,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.height.equalTo(66)
         }
         
-        self.view.layoutIfNeeded()
         self.makeDismissKeyboardGesture()
         
     }

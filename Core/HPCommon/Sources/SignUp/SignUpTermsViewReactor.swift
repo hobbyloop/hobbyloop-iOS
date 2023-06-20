@@ -21,21 +21,31 @@ public final class SignUpTermsViewReactor: Reactor {
     
     // MARK: Action
     public enum Action {
-        case didTapSelectBox(SignUpTermsType)
+        case didTapAllSelectBox(SignUpTermsType)
+        case didTapReceiveSelectBox(SignUpTermsType)
+        case didTapInfoSelectBox(SignUpTermsType)
     }
     
     public enum Mutation {
-        case setSelectType(SignUpTermsType)
+        case setAllSelectType(SignUpTermsType)
+        case setReceiveSelectBox(SignUpTermsType)
+        case setInfoSelectBox(SignUpTermsType)
     }
     
     // MARK: State
     public struct State {
-        var termsType: SignUpTermsType
+        var allTermsType: SignUpTermsType
+        var receiveTermsType: SignUpTermsType
+        var infoTermsType: SignUpTermsType
     }
     
     
     public init() {
-        self.initialState = State(termsType: .none)
+        self.initialState = State(
+            allTermsType: .none,
+            receiveTermsType: .none,
+            infoTermsType: .none
+        )
     }
     
     
@@ -43,9 +53,13 @@ public final class SignUpTermsViewReactor: Reactor {
     // MARK: SideEffect
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case let .didTapSelectBox(type):
-            return .just(.setSelectType(type))
-
+        case let .didTapAllSelectBox(alltype):
+            return .just(.setAllSelectType(alltype))
+        case let .didTapReceiveSelectBox(recevieType):
+            return .just(.setReceiveSelectBox(recevieType))
+            
+        case let .didTapInfoSelectBox(infoType):
+            return .just(.setInfoSelectBox(infoType))
         }
     }
     
@@ -54,8 +68,33 @@ public final class SignUpTermsViewReactor: Reactor {
         var newState = state
         
         switch mutation {
-        case let .setSelectType(termsType):
-            newState.termsType = termsType
+        case let .setAllSelectType(allTermsType):
+            guard vaildationSingupTerms() else {
+                newState.allTermsType = .none
+                newState.infoTermsType = .none
+                newState.receiveTermsType = .none
+                return newState
+            }
+            
+            newState.allTermsType = allTermsType
+            newState.infoTermsType = .info
+            newState.receiveTermsType = .receive
+            
+            
+        case let .setReceiveSelectBox(receiveTermsType):
+            guard currentState.receiveTermsType == .receive else {
+                newState.receiveTermsType = receiveTermsType
+                return newState
+            }
+            
+            newState.receiveTermsType = .none
+            
+        case let .setInfoSelectBox(infoTermsType):
+            guard currentState.infoTermsType == .info else {
+                newState.infoTermsType = infoTermsType
+                return newState
+            }
+            newState.infoTermsType = .none
         }
         
         return newState
@@ -63,5 +102,21 @@ public final class SignUpTermsViewReactor: Reactor {
     
     
     
+    
+}
+
+
+private extension SignUpTermsViewReactor {
+    
+    func vaildationSingupTerms() -> Bool {
+        
+        if self.currentState.allTermsType == .all && self.currentState.infoTermsType == .info && self.currentState.receiveTermsType == .receive {
+            return false
+        } else {
+            return true
+        }
+
+        
+    }
     
 }

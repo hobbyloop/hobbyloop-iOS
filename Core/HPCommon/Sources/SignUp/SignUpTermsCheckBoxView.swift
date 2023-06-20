@@ -20,7 +20,7 @@ public final class SignUpTermsCheckBoxView: UIView {
     
     public private(set) var checkBoxType: SignUpTermsType
     
-    private let checkBoxButton: HPButton = HPButton(
+    public let checkBoxButton: HPButton = HPButton(
         cornerRadius: 4,
         borderColor: HPCommonUIAsset.deepSeparator.color.cgColor
     ).then {

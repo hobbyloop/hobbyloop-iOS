@@ -116,56 +116,109 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         
     }
     
+    // TODO: Figma Design대로 코드 리펙토링
+    private func didTapCheckBox(type: SignUpTermsType) {
+        switch type {
+        case .all:
+            self.termsAllView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            
+        case .receive:
+            self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            
+        case .info:
+            self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+        case .none:
+            break
+        }
+        
+    }
+    
     
     public override func bind(reactor: SignUpTermsViewReactor) {
         
         termsAllView
-            .rx.tapGesture()
-            .when(.recognized)
-            .map { _ in Reactor.Action.didTapSelectBox(.all) }
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture All")
+            .map { _ in Reactor.Action.didTapAllSelectBox(.all) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         termsReceiveView
-            .rx.tapGesture()
-            .when(.recognized)
-            .map { _ in Reactor.Action.didTapSelectBox(.receive) }
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture Receive")
+            .map { _ in Reactor.Action.didTapReceiveSelectBox(.receive) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         termsInfoView
-            .rx.tapGesture()
-            .when(.recognized)
-            .map { _ in Reactor.Action.didTapSelectBox(.info) }
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture Info")
+            .map { _ in Reactor.Action.didTapInfoSelectBox(.info) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         reactor.state
-            .filter { $0.termsType == .all }
-            .map { $0.termsType }
+            .filter { $0.allTermsType == .all }
+            .map { $0.allTermsType }
             .asDriver(onErrorJustReturn: .none)
             .drive(onNext: { type in
-                // TODO: All Select Design 변경
-                
+                // TODO: 추후 Figma Design 변경
+                self.didTapCheckBox(type: .all)
             }).disposed(by: disposeBag)
         
         reactor.state
-            .filter { $0.termsType == .receive }
-            .map { $0.termsType }
+            .filter { $0.receiveTermsType == .receive }
+            .map { $0.receiveTermsType }
             .asDriver(onErrorJustReturn: .none)
             .drive(onNext: { type in
-                // TODO: receive Select Design 변경
-                
+                // TODO: 추후 Figma Design 변경
+                self.didTapCheckBox(type: .receive)
             }).disposed(by: disposeBag)
         
         reactor.state
-            .filter { $0.termsType == .info }
-            .map { $0.termsType }
+            .filter { $0.infoTermsType == .info }
+            .map { $0.infoTermsType }
             .asDriver(onErrorJustReturn: .none)
             .drive(onNext: { type in
-                // TODO: info Select Design 변경
-                
+                // TODO: 추후 Figma Design 변경
+                self.didTapCheckBox(type: .info)
             }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.allTermsType  == .none }
+            .map { $0.allTermsType }
+            .asDriver(onErrorJustReturn: .all)
+            .drive(onNext: { type in
+                // TODO: 추후 Figma Design 변경
+                self.termsAllView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.receiveTermsType  == .none }
+            .map { $0.receiveTermsType }
+            .asDriver(onErrorJustReturn: .receive)
+            .drive(onNext: { type in
+                // TODO: 추후 Figma Design 변경
+                self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.infoTermsType  == .none }
+            .map { $0.infoTermsType }
+            .asDriver(onErrorJustReturn: .info)
+            .drive(onNext: { type in
+                // TODO: 추후 Figma Design 변경
+                self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            }).disposed(by: disposeBag)
+        
+        
         
         
         
