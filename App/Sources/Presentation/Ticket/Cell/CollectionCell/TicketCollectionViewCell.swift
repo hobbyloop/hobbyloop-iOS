@@ -86,6 +86,9 @@ class TicketCollectionViewCell: UICollectionViewCell {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.register(TicketTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: "HeaderCell")
             $0.register(TicketTableViewCell.self, forCellReuseIdentifier: "BodyCell")
+            $0.separatorInset = .zero
+            $0.separatorStyle = .singleLine
+            $0.separatorInsetReference = .fromCellEdges
             $0.delegate = self
             $0.dataSource = self
             $0.backgroundColor = .clear
@@ -168,9 +171,7 @@ extension TicketCollectionViewCell: UITableViewDataSource {
 extension TicketCollectionViewCell: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderCell") as? TicketTableViewHeaderCell else { return UIView() }
-        
         header.configure(data!.count)
-        
         return header
     }
 }
