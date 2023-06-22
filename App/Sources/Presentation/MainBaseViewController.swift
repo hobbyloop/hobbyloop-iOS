@@ -37,6 +37,7 @@ class MainBaseViewController<T: ReactorKit.Reactor>: BaseViewController<T>, UIGe
     public var headerType: HeaderType = .none
     
     open func configure() {
+        self.view.backgroundColor = .white
         if let headerView {
             headerType = headerView.type ?? .none
             view.addSubview(headerView)
