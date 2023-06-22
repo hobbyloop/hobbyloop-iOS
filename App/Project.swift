@@ -34,6 +34,9 @@ let project = Project.makeModule(
         .Project.Core.network,
         .Project.UI.common
     ], externalDependencies: [
-        .xcframework(path: .CocoaPods.Framework.naverLogin)
+        .xcframework(path: .CocoaPods.Framework.naverLogin),
+        .xcframework(path: .CocoaPods.Framework.naverMap),
+        .xcframework(path: .CocoaPods.Framework.naverGeometry)
+        
     ]
 )

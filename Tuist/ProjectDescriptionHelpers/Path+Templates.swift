@@ -18,6 +18,8 @@ public extension Path {
 
 extension Path.CocoaPods.Framework {
     public static let naverLogin: Path = .relativeToRoot("Pods/naveridlogin-sdk-ios/NaverThirdPartyLogin.xcframework")
+    public static let naverMap: Path = .relativeToRoot("Pods/NMapsMap/framework/NMapsMap.xcframework")
+    public static let naverGeometry: Path = .relativeToRoot("Pods/NMapsGeometry/framework/NMapsGeometry.xcframework")
 }
 
 
