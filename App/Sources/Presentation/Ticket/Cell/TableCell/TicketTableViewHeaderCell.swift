@@ -15,6 +15,7 @@ class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
         return UIStackView().then {
             $0.spacing = 10
             $0.axis = .horizontal
+            $0.alignment = .center
         }
     }()
     

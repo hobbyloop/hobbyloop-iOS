@@ -157,15 +157,24 @@ class TicketCollectionViewCell: UICollectionViewCell {
 extension TicketCollectionViewCell: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data!.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "BodyCell", for: indexPath) as? TicketTableViewCell else { return UITableViewCell() }
-        cell.configure("6:1 그룹레슨 30회", 12, 30)
+        cell.configure(data!)
+        cell.layoutMargins = .zero
+        cell.preservesSuperviewLayoutMargins = false
         return cell
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        67
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("클릭")
+    }
 }
 
 extension TicketCollectionViewCell: UITableViewDelegate {

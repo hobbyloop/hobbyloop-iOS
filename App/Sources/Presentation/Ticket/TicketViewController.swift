@@ -38,7 +38,6 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
                 withReuseIdentifier: "TicketReusableView"
             )
             
-            
         }
     }()
     
@@ -79,12 +78,6 @@ extension TicketViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketCollectionViewCell", for: indexPath) as? TicketCollectionViewCell else { return UICollectionViewCell() }
         cell.configure(item)
-        cell.tableView
-            .rx.itemSelected
-            .subscribe { indexPath in
-                let viewController = TicketDetailViewController(2)
-                self.navigationController?.pushViewController(viewController, animated: false)
-            }.disposed(by: disposeBag)
         return cell
     }
     
@@ -113,6 +106,6 @@ extension TicketViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: self.view.bounds.width - 40, height: 365 + CGFloat(item.count * 72 + 22))
+        return CGSize(width: self.view.bounds.width - 40, height: 365 + CGFloat(100))
     }
 }
