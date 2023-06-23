@@ -7,16 +7,21 @@
 
 import UIKit
 
+public enum HPNavigationBarType: Equatable {
+    case home
+    case ticket
+    case ticketDetail
+    case `default`
+}
+
+
+
 public final class HPNavigationController: UINavigationController {
     
+    public private(set) var navigationBarType: HPNavigationBarType
     
-    public override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
-        super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-        
-    }
-    
-    
-    public override init(rootViewController: UIViewController) {
+    public init(navigationBarType: HPNavigationBarType, rootViewController: UIViewController) {
+        self.navigationBarType = navigationBarType
         super.init(rootViewController: rootViewController)
     }
     
@@ -29,7 +34,13 @@ public final class HPNavigationController: UINavigationController {
     //MARK: Configure
     private func configure() {
         self.navigationBar.prefersLargeTitles = true
+        
+        
     }
     
+    
+    private func setNavigationBarItem(type: HPNavigationBarType) {
+
+    }
     
 }
