@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 public enum HPNavigationBarType: Equatable {
     case home
     case ticket
@@ -15,14 +16,22 @@ public enum HPNavigationBarType: Equatable {
 }
 
 
+public protocol HPNavigationProxy {
+    var navigationBarAppearance: UINavigationBarAppearance { get }
+}
 
-public final class HPNavigationController: UINavigationController {
+
+public final class HPNavigationController: UINavigationController, HPNavigationProxy {
     
     public private(set) var navigationBarType: HPNavigationBarType
+    public var navigationBarAppearance: UINavigationBarAppearance
     
-    public init(navigationBarType: HPNavigationBarType, rootViewController: UIViewController) {
+    public init(navigationBarType: HPNavigationBarType, rootViewController: UIViewController, navigationBarAppearance: UINavigationBarAppearance) {
         self.navigationBarType = navigationBarType
+        self.navigationBarAppearance = navigationBarAppearance
         super.init(rootViewController: rootViewController)
+        self.configure()
+        
     }
     
     
@@ -34,13 +43,23 @@ public final class HPNavigationController: UINavigationController {
     //MARK: Configure
     private func configure() {
         self.navigationBar.prefersLargeTitles = true
+        navigationBarAppearance.titleTextAttributes = [
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 14),
+            .foregroundColor: HPCommonUIAsset.black.color
+        ]
+        
+        navigationBarAppearance.largeTitleTextAttributes = [
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 22),
+            .foregroundColor: HPCommonUIAsset.lightBlack.color,
+        ]
+        
+        navigationBarAppearance.configureWithTransparentBackground()
+        
+        self.navigationBar.tintColor = .systemBackground
+        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
         
         
     }
     
-    
-    private func setNavigationBarItem(type: HPNavigationBarType) {
-
-    }
     
 }
