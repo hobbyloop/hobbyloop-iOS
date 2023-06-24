@@ -102,11 +102,7 @@ public final class CouponView: UIView {
     }
     
     private func applyCornerRadius() {
-        self.layer.cornerRadius = 10
-        
-        let maskPath = UIBezierPath(roundedRect: self.bounds,
-                                    byRoundingCorners: [.topLeft, .bottomLeft],
-                                    cornerRadii: CGSize(width: 40, height: 40))
+        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
         
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
