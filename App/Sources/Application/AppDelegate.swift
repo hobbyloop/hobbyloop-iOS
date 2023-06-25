@@ -7,6 +7,7 @@ import RxKakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
 import AuthenticationServices
+import HPCommonUI
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -92,7 +93,7 @@ private extension AppDelegate {
         DispatchQueue.main.async {
             let loginDIContainer = LoginDIContainer()
             self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
+            self.window?.rootViewController = HPNavigationController(navigationBarType: .home, rootViewController: loginDIContainer.makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
             self.window?.makeKeyAndVisible()
         }
     }

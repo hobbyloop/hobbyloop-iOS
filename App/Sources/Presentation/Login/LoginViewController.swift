@@ -99,6 +99,12 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     // MARK: Configure
     private func configure() {
+        
+        if let customNavigationController = self.navigationController as? HPNavigationController {
+            customNavigationController.configure(type: .home)
+            print("Login Navigation Title : \(customNavigationController.titleLabel.text) \(self.navigationController?.navigationItem.titleView)")
+        }
+        
         [backgroundImageView, logoImageView, loginStckView,
          underLineView, indicatorView, dashLineView].forEach {
             view.addSubview($0)
