@@ -31,12 +31,6 @@ public final class CouponView: UIView {
         $0.textColor = .white
     }
     
-    public override var bounds: CGRect {
-        didSet {
-            applyCornerRadius()
-        }
-    }
-    
     var count: Int = 0 {
         didSet {
             updateCountLabel(to: count)
@@ -101,7 +95,7 @@ public final class CouponView: UIView {
         countLabel.attributedText = attributedString
     }
     
-    private func applyCornerRadius() {
+    public override func draw(_ rect: CGRect) {
         let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
         
         let maskLayer = CAShapeLayer()
