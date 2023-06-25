@@ -28,30 +28,24 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     public private(set) var navigationBarType: HPNavigationBarType
     
     public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        print("viewdidLayout SubViews: \(self.viewControllers)")
         
-        for customNavigationSubViews in self.navigationBar.subviews {
-            for items in customNavigationSubViews.subviews {
-                if let largeLabel = items as? UILabel {
-                    largeLabel.text = self.navigationBar.topItem?.title
-                    largeLabel.numberOfLines = 0
-                }
-            }
+        if viewControllers.count >= 2 {
+            self.navigationBar.prefersLargeTitles = false
+            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 50)
+        } else {
+            self.navigationBar.prefersLargeTitles = true
+            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 100)
         }
-        
-        switch navigationBarType {
-        case .none:
-            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: self.navigationBar.frame.size.height)
-        default:
-            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 170)
-        }
-        
         
     }
     
     public var navigationBarAppearance: UINavigationBarAppearance
     
-    public init(navigationBarType: HPNavigationBarType, rootViewController: UIViewController, navigationBarAppearance: UINavigationBarAppearance) {
+    public init(navigationBarType: HPNavigationBarType,
+                rootViewController: UIViewController,
+                navigationBarAppearance: UINavigationBarAppearance
+    ) {
         self.navigationBarType = navigationBarType
         self.navigationBarAppearance = navigationBarAppearance
         super.init(rootViewController: rootViewController)
@@ -68,12 +62,9 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     public func configure(type: HPNavigationBarType) {
         
         //TODO: navigation Title Label Height 값 수정
-        self.navigationBar.prefersLargeTitles = true
-        
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .left
         paragraphStyle.lineSpacing = 15.0
-        
         navigationBarAppearance.titleTextAttributes = [
             .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 14),
             .foregroundColor: HPCommonUIAsset.black.color
@@ -85,6 +76,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             .paragraphStyle: paragraphStyle
         ]
         
+        navigationBarAppearance.backgroundColor = .clear
         navigationBarAppearance.configureWithTransparentBackground()
         self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
         
