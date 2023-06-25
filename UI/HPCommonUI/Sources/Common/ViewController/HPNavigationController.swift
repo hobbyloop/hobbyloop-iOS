@@ -27,19 +27,6 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     public private(set) var navigationBarType: HPNavigationBarType
     
-    public override func viewDidLayoutSubviews() {
-        print("viewdidLayout SubViews: \(self.viewControllers)")
-        
-        if viewControllers.count >= 2 {
-            self.navigationBar.prefersLargeTitles = false
-            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 50)
-        } else {
-            self.navigationBar.prefersLargeTitles = true
-            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 100)
-        }
-        
-    }
-    
     public var navigationBarAppearance: UINavigationBarAppearance
     
     public init(navigationBarType: HPNavigationBarType,
@@ -50,6 +37,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBarAppearance = navigationBarAppearance
         super.init(rootViewController: rootViewController)
         self.configure(type: navigationBarType)
+        self.delegate = self
     }
     
     
@@ -94,4 +82,22 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     
+}
+
+
+extension HPNavigationController: UINavigationControllerDelegate {
+    
+    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            if viewControllers.count >= 2 {
+                self.navigationBar.prefersLargeTitles = false
+                self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 50)
+            } else {
+                self.navigationBar.prefersLargeTitles = true
+                self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 100)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
 }
