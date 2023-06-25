@@ -14,7 +14,7 @@ public enum HPNavigationBarType: Equatable {
     case home
     case ticket
     case lessonDetail
-    case `default`
+    case none
 }
 
 
@@ -27,7 +27,8 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     public private(set) var navigationBarType: HPNavigationBarType
     
-    public override func viewWillLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
         for customNavigationSubViews in self.navigationBar.subviews {
             for items in customNavigationSubViews.subviews {
@@ -37,6 +38,15 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
                 }
             }
         }
+        
+        switch navigationBarType {
+        case .none:
+            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: self.navigationBar.frame.size.height)
+        default:
+            self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 170)
+        }
+        
+        
     }
     
     public var navigationBarAppearance: UINavigationBarAppearance
@@ -57,9 +67,8 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     //MARK: Configure
     public func configure(type: HPNavigationBarType) {
         
+        //TODO: navigation Title Label Height 값 수정
         self.navigationBar.prefersLargeTitles = true
-        self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationBar.tintColor = .systemBackground
         
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .left
@@ -77,6 +86,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         ]
         
         navigationBarAppearance.configureWithTransparentBackground()
+        self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
         
         switch type {
         case .home:
