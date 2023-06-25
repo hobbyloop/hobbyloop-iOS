@@ -36,7 +36,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBarType = navigationBarType
         self.navigationBarAppearance = navigationBarAppearance
         super.init(rootViewController: rootViewController)
-        self.configure(type: navigationBarType)
+        self.configure()
         self.delegate = self
     }
     
@@ -47,38 +47,11 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     
     //MARK: Configure
-    public func configure(type: HPNavigationBarType) {
-        
-        //TODO: navigation Title Label Height 값 수정
-        let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .left
-        paragraphStyle.lineSpacing = 15.0
-        navigationBarAppearance.titleTextAttributes = [
-            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 14),
-            .foregroundColor: HPCommonUIAsset.black.color
-        ]
-        
-        navigationBarAppearance.largeTitleTextAttributes = [
-            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 22),
-            .foregroundColor: HPCommonUIAsset.lightBlack.color,
-            .paragraphStyle: paragraphStyle
-        ]
-        
+    public func configure() {
         navigationBarAppearance.backgroundColor = .clear
         navigationBarAppearance.configureWithTransparentBackground()
         self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
         
-        switch type {
-        case .home:
-            self.navigationBar.topItem?.title = "지원님, 반가워요!\n예약된 수업"
-        case .ticket:
-            self.navigationBar.topItem?.title = "시설 / 이용권 조회\n원하는 시설을 구경하고 이용권을 구매해보세요!"
-        case .lessonDetail:
-            self.navigationBar.topItem?.title = "3개의 이용권이 있어요\n어떤 이용권을 사용하실건가요?"
-        default:
-            break
-
-        }
     }
     
     
@@ -88,16 +61,16 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
 extension HPNavigationController: UINavigationControllerDelegate {
     
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self else { return }
-            if viewControllers.count >= 2 {
-                self.navigationBar.prefersLargeTitles = false
-                self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 50)
-            } else {
-                self.navigationBar.prefersLargeTitles = true
-                self.navigationBar.frame = CGRect(x: 0, y: self.view.safeAreaInsets.top, width: self.view.frame.size.width, height: 100)
-            }
-            self.view.layoutIfNeeded()
+        
+        //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
+        switch navigationBarType {
+        case .home: break
+        case .ticket: break
+        case .lessonDetail: break
+        case .none: break
+            
         }
+        
+        
     }
 }
