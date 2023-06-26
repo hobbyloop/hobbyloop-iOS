@@ -24,6 +24,7 @@ public protocol HPNavigationProxy {
     var leftBarButtonItems: [UIBarButtonItem] { get }
     var navigationBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
+    func setTicketNavigationBarButtonItem() -> Void
 }
 
 
@@ -99,6 +100,38 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
     }
     
+    
+    
+    public func setTicketNavigationBarButtonItem() {
+        //TODO: TicketDetailViewController일 경우 RightBarButtonitem Reset
+        
+        
+        let notificationButton = UIButton(type: .system)
+        notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        let searchButton = UIButton(type: .system)
+        searchButton.setImage(HPCommonUIAsset.searchBlack.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        let notificationbarButtonItem = UIBarButtonItem(customView: notificationButton)
+        let searchbarButtonItem = UIBarButtonItem(customView: searchButton)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 13
+        
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(image: HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+        ]
+        
+        
+        rightBarButtonItems = [
+            notificationbarButtonItem,
+            spacerbarButtonItem,
+            searchbarButtonItem
+        ]
+        
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        
+    }
 }
 
 
@@ -108,8 +141,9 @@ extension HPNavigationController: UINavigationControllerDelegate {
         //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
         switch navigationBarType {
         case .home:
-            self.setHomeNavigationBarButtonItem()
-        case .ticket: break
+            setHomeNavigationBarButtonItem()
+        case .ticket:
+            setTicketNavigationBarButtonItem()
         case .lessonDetail: break
         case .none:
             self.navigationItem.setHidesBackButton(true, animated: true)
