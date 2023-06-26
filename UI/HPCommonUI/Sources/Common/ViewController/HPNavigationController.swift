@@ -57,7 +57,10 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     public func configure() {
         navigationBarAppearance.backgroundColor = .clear
         navigationBarAppearance.configureWithTransparentBackground()
+        
+        
         self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationBar.standardAppearance = navigationBarAppearance
         self.navigationBar.compactAppearance = navigationBarAppearance
         
     }

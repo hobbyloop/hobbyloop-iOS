@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
         let loginDIContainer = LoginDIContainer()
-        window?.rootViewController = HPNavigationController(navigationBarType: .home, rootViewController: loginDIContainer.makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
+        window?.rootViewController = HPNavigationController(navigationBarType: .none, rootViewController: loginDIContainer.makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
         window?.makeKeyAndVisible()
         
     }
