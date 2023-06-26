@@ -51,6 +51,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         navigationBarAppearance.backgroundColor = .clear
         navigationBarAppearance.configureWithTransparentBackground()
         self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationBar.compactAppearance = navigationBarAppearance
         
     }
     
@@ -61,13 +62,29 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
 extension HPNavigationController: UINavigationControllerDelegate {
     
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        
+        var rightBarButtonItems: [UIBarButtonItem]
+        var leftBarButtonItems: [UIBarButtonItem]
         //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
         switch navigationBarType {
-        case .home: break
+        case .home:
+            leftBarButtonItems = [
+                UIBarButtonItem(image: HPCommonUIAsset.logo.image, style: .plain, target: nil, action: nil)
+            ]
+            
+            
+            
+            rightBarButtonItems = [
+                UIBarButtonItem(image: HPCommonUIAsset.search.image, style: .plain, target: nil, action: nil),
+                UIBarButtonItem(image: HPCommonUIAsset.notification.image, style: .plain, target: nil, action: nil)
+            ]
+            
+            self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+            self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+            
         case .ticket: break
         case .lessonDetail: break
-        case .none: break
+        case .none:
+            self.navigationItem.setHidesBackButton(true, animated: true)
             
         }
         
