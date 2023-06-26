@@ -9,6 +9,7 @@ import UIKit
 
 import HPExtensions
 import Then
+import SnapKit
 
 public enum HPNavigationBarType: Equatable {
     case home
@@ -19,7 +20,10 @@ public enum HPNavigationBarType: Equatable {
 
 
 public protocol HPNavigationProxy {
+    var rightBarButtonItems: [UIBarButtonItem] { get }
+    var leftBarButtonItems: [UIBarButtonItem] { get }
     var navigationBarAppearance: UINavigationBarAppearance { get }
+    func setHomeNavigationBarButtonItem() -> Void
 }
 
 
@@ -28,6 +32,8 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     public private(set) var navigationBarType: HPNavigationBarType
     
     public var navigationBarAppearance: UINavigationBarAppearance
+    public var rightBarButtonItems: [UIBarButtonItem] = []
+    public var leftBarButtonItems: [UIBarButtonItem] = []
     
     public init(navigationBarType: HPNavigationBarType,
                 rootViewController: UIViewController,
@@ -56,31 +62,53 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     
+    public func setHomeNavigationBarButtonItem() {
+        let notificationButton = UIButton(type: .system)
+        notificationButton.setImage(HPCommonUIAsset.notificationWhite.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        let searchButton = UIButton(type: .system)
+        searchButton.setImage(HPCommonUIAsset.search.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        let notificationbarButtonItem = UIBarButtonItem(customView: notificationButton)
+        let searchbarButtonItem = UIBarButtonItem(customView: searchButton)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 13
+        
+        notificationbarButtonItem.customView?.snp.makeConstraints {
+            $0.width.height.equalTo(24)
+        }
+        
+        searchbarButtonItem.customView?.snp.makeConstraints {
+            $0.width.height.equalTo(24)
+        }
+        
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(image: HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+        ]
+        
+        
+        
+        rightBarButtonItems = [
+            notificationbarButtonItem,
+            spacerbarButtonItem,
+            searchbarButtonItem
+        ]
+        
+        
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+    }
+    
 }
 
 
 extension HPNavigationController: UINavigationControllerDelegate {
     
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        var rightBarButtonItems: [UIBarButtonItem]
-        var leftBarButtonItems: [UIBarButtonItem]
         //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
         switch navigationBarType {
         case .home:
-            leftBarButtonItems = [
-                UIBarButtonItem(image: HPCommonUIAsset.logo.image, style: .plain, target: nil, action: nil)
-            ]
-            
-            
-            
-            rightBarButtonItems = [
-                UIBarButtonItem(image: HPCommonUIAsset.search.image, style: .plain, target: nil, action: nil),
-                UIBarButtonItem(image: HPCommonUIAsset.notification.image, style: .plain, target: nil, action: nil)
-            ]
-            
-            self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
-            self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
-            
+            self.setHomeNavigationBarButtonItem()
         case .ticket: break
         case .lessonDetail: break
         case .none:
