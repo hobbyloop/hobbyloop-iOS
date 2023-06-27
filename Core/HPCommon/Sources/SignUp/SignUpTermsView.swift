@@ -118,21 +118,15 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
     
     // TODO: Figma Design대로 코드 리펙토링
     private func didTapCheckBox(type: SignUpTermsType) {
-        switch type {
-        case .all:
-            self.termsAllView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
-            self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
-            self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
-            
-        case .receive:
-            self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
-            
-        case .info:
-            self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
-        case .none:
-            break
+        if type == .all {
+            termsAllView.didTapCheckBoxButton(isSelected: true)
+            termsInfoView.didTapCheckBoxButton(isSelected: true)
+            termsReceiveView.didTapCheckBoxButton(isSelected: true)
+        } else if type == .receive {
+            termsReceiveView.didTapCheckBoxButton(isSelected: true)
+        } else {
+            termsInfoView.didTapCheckBoxButton(isSelected: true)
         }
-        
     }
     
     
@@ -166,8 +160,8 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
             .filter { $0.allTermsType == .all }
             .map { $0.allTermsType }
             .asDriver(onErrorJustReturn: .none)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
                 self.didTapCheckBox(type: .all)
             }).disposed(by: disposeBag)
         
@@ -175,8 +169,8 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
             .filter { $0.receiveTermsType == .receive }
             .map { $0.receiveTermsType }
             .asDriver(onErrorJustReturn: .none)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
                 self.didTapCheckBox(type: .receive)
             }).disposed(by: disposeBag)
         
@@ -184,38 +178,38 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
             .filter { $0.infoTermsType == .info }
             .map { $0.infoTermsType }
             .asDriver(onErrorJustReturn: .none)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
                 self.didTapCheckBox(type: .info)
             }).disposed(by: disposeBag)
         
         reactor.state
             .filter { $0.allTermsType  == .none }
-            .map { $0.allTermsType }
-            .asDriver(onErrorJustReturn: .all)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
-                self.termsAllView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            .map { $0.allTermsType == .all }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsAllView.didTapCheckBoxButton(isSelected: isSelected)
             }).disposed(by: disposeBag)
         
         
         reactor.state
             .filter { $0.receiveTermsType  == .none }
-            .map { $0.receiveTermsType }
-            .asDriver(onErrorJustReturn: .receive)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
-                self.termsReceiveView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            .map { $0.receiveTermsType == .receive }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsReceiveView.didTapCheckBoxButton(isSelected: isSelected)
             }).disposed(by: disposeBag)
         
         
         reactor.state
             .filter { $0.infoTermsType  == .none }
-            .map { $0.infoTermsType }
-            .asDriver(onErrorJustReturn: .info)
-            .drive(onNext: { type in
-                // TODO: 추후 Figma Design 변경
-                self.termsInfoView.checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            .map { $0.infoTermsType == .info }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsInfoView.didTapCheckBoxButton(isSelected: isSelected)
             }).disposed(by: disposeBag)
         
         

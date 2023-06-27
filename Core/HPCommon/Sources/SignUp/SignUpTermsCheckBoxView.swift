@@ -25,6 +25,7 @@ public final class SignUpTermsCheckBoxView: UIView {
         borderColor: HPCommonUIAsset.deepSeparator.color.cgColor
     ).then {
         $0.setImage(UIImage(), for: .normal)
+        $0.setImage(HPCommonUIAsset.selectBox.image, for: .selected)
         $0.backgroundColor = HPCommonUIAsset.lightBackground.color
     }
     
@@ -128,5 +129,16 @@ public final class SignUpTermsCheckBoxView: UIView {
         }
     }
 
+    
+    public func didTapCheckBoxButton(isSelected: Bool) {
+        if isSelected {
+            checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            checkBoxButton.isSelected = isSelected
+        } else {
+            checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            checkBoxButton.isSelected = isSelected
+        }
+        
+    }
     
 }
