@@ -59,14 +59,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         )
     }
     
-    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .nickname).then {
-        $0.titleLabel.setSubScriptAttributed(
-            targetString: "*",
-            font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
-            offset: 8
-        )
-    }
+    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .nickname)
     
     private let genederDescriptionLabel: UILabel = UILabel().then {
         $0.text = "성별 *"
