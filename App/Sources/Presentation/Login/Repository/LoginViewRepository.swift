@@ -210,21 +210,16 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
         
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
-            // TODO: Token, givenName, identityToken 값이 nil 일 경우 현재 로그인 상태 임을 알 수 있기에 return 을 MainViewController로 화면 전환하도록 구현
             guard let token = appleIDCredential.identityToken,
                   let givenName = appleIDCredential.fullName?.givenName,
                   let familyName = appleIDCredential.fullName?.familyName,
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
-            do {
-                //TODO: 애플 로그인 성공시 JWT 발급 및 반환
-                chiperToken = try CryptoUtil.makeEncryption(identityToken)
-                chiperId = try CryptoUtil.makeEncryption(userIdentifier)
-                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                UserDefaults.standard.set(chiperId, forKey: .accessId)
+            
+            //TODO: Apple Login Server API 구현시 Code 추가
+            debugPrint("appleLogin identityToken: \(identityToken)")
+            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .apple, token: identityToken)) { authToken in
                 
-            } catch {
-                print(error.localizedDescription)
             }
             let resultName = "\(familyName)\(givenName)"
             SignUpViewStream.event.onNext(.requestAppleLogin(resultName))
