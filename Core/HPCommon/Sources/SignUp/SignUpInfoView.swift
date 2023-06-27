@@ -66,6 +66,7 @@ public final class SignUpInfoView: UIView {
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         $0.leftViewMode = .always
         $0.layer.cornerRadius = 8
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
     }
     
     public init(titleType: SignUpType) {
@@ -95,7 +96,9 @@ public final class SignUpInfoView: UIView {
     
     // MARK: Configure
     private func configure() {
-        textFiledView.placeholder = titleType.setPlaceholderText()
+        textFiledView.attributedPlaceholder = NSAttributedString(string: titleType.setPlaceholderText(), attributes: [
+            .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        ])
         titleLabel.text = titleType.setTitleLabelText()
         
         
