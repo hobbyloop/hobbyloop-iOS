@@ -13,6 +13,7 @@ target 'Hobbyloop' do
   project './App/Hobbyloop.xcodeproj'
 
   pod 'naveridlogin-sdk-ios'
+  pod 'NMapsMap', '3.16.2'
 
 end
 
