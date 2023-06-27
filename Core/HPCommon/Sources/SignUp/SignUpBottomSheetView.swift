@@ -34,6 +34,13 @@ public final class SignUpBottomSheetView: UIViewController {
         _ = $0.subviews.map { $0.setValue(HPCommonUIColors.Color.clear, forKey: "magnifierLineColor") }
     }
     
+    private let doneButton: UIButton = UIButton(type: .system).then {
+        $0.setAttributedTitle(NSAttributedString(string: "완료", attributes: [
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+            .foregroundColor: HPCommonUIAsset.black.color
+        ]), for: .normal)
+    }
+    
     
     
     //MARK: LifeCycle
@@ -45,7 +52,9 @@ public final class SignUpBottomSheetView: UIViewController {
     
     //MARK: Configure
     private func configure() {
-        containerView.addSubview(datePickerView)
+        
+        [datePickerView, doneButton].forEach { containerView.addSubview($0) }
+        
         view.addSubview(containerView)
         
         
@@ -54,9 +63,19 @@ public final class SignUpBottomSheetView: UIViewController {
             $0.height.equalTo(271)
         }
         
-        datePickerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        doneButton.snp.makeConstraints {
+            $0.right.equalToSuperview().offset(-30)
+            $0.top.equalToSuperview().offset(10)
+            $0.width.height.equalTo(44)
         }
+        
+        datePickerView.snp.makeConstraints {
+            $0.width.equalTo(319)
+            $0.height.equalTo(143)
+            $0.center.equalToSuperview()
+        }
+        
+        
         
     }
     
