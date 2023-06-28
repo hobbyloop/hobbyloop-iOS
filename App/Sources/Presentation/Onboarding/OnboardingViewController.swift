@@ -41,8 +41,10 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
     
     private lazy var onboardingCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: onboardingCollectionViewLayout).then {
         $0.register(OnboardingCell.self, forCellWithReuseIdentifier: "OnboardingCell")
-        
+        $0.contentInset = .zero
+        $0.contentInsetAdjustmentBehavior = .never
         $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = false
         
     }
     

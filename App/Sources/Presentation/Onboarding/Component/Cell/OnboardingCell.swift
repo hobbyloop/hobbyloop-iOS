@@ -19,6 +19,11 @@ final class OnboardingCell: UICollectionViewCell {
     
     public var disposeBag: DisposeBag = DisposeBag()
     
+    
+    private let onboardingDeleteButton: UIButton = UIButton(type: .custom).then {
+        $0.setImage(HPCommonUIAsset.delete.image, for: .normal)
+    }
+    
     private let onboardingTitleLabel: UILabel = UILabel().then {
         $0.text = "간단한 예약 방법"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 24)
@@ -58,7 +63,7 @@ final class OnboardingCell: UICollectionViewCell {
     
     
     private func configure() {
-        [pageViewControl, onboardingTitleLabel, onboardingDescriptionLabel].forEach {
+        [pageViewControl, onboardingTitleLabel, onboardingDescriptionLabel, onboardingDeleteButton].forEach {
             self.onboardingImage.addSubview($0)
         }
         
@@ -86,6 +91,12 @@ final class OnboardingCell: UICollectionViewCell {
             $0.top.equalTo(pageViewControl.snp.bottom).offset(29)
             $0.height.greaterThanOrEqualTo(21)
             $0.centerX.equalToSuperview()
+        }
+        
+        onboardingDeleteButton.snp.makeConstraints {
+            $0.width.height.equalTo(44)
+            $0.right.equalToSuperview().offset(-10)
+            $0.top.equalToSuperview().offset(44)
         }
                 
     }
