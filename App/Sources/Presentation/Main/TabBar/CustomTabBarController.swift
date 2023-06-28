@@ -12,7 +12,7 @@ import HPCommonUI
 
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    private let firstVC = CustomNavigationViewController(rootViewController: HomeDIContainer().makeViewController())
+    private let homeController = HPNavigationController(navigationBarType: .home, rootViewController: HomeDIContainer().makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
     private let dummyView = CustomNavigationViewController(rootViewController: TicketViewController(HeaderType: .main))
     private let dummyView2 = CustomNavigationViewController(rootViewController: UIViewController())
     private let dummyView3 = CustomNavigationViewController(rootViewController: UIViewController())
@@ -32,9 +32,9 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         let systemFontAttributes = [NSAttributedString.Key.font: font]
         UITabBarItem.appearance().setTitleTextAttributes(systemFontAttributes, for: .normal)
         
-        firstVC.tabBarItem.selectedImage = HPCommonUIAsset.homeFilled.image.withRenderingMode(.alwaysOriginal)
-        firstVC.tabBarItem.title = "홈"
-        firstVC.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
+        homeController.tabBarItem.selectedImage = HPCommonUIAsset.homeFilled.image.withRenderingMode(.alwaysOriginal)
+        homeController.tabBarItem.title = "홈"
+        homeController.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
         
         dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
         dummyView.tabBarItem.title = "이용권"
@@ -53,7 +53,7 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         dummyView4.tabBarItem.title = "마이페이지"
         dummyView4.tabBarItem.image = HPCommonUIAsset.myOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        viewControllers = [firstVC, dummyView, dummyView2, dummyView3, dummyView4]
+        viewControllers = [homeController, dummyView, dummyView2, dummyView3, dummyView4]
         
         object_setClass(self.tabBar, CustomTabBar.self)
         tabBarAddLine()

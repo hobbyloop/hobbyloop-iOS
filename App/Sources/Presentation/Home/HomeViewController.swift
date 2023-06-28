@@ -15,13 +15,18 @@ import RxCocoa
 import RxGesture
 
 
-class HomeViewController: MainBaseViewController<HomeViewReactor> {
+class HomeViewController: BaseViewController<HomeViewReactor> {
     
+    // MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
         configure()
-        
+    }
+    
+    
+    // MARK: Configure
+    private func configure() {
+        self.view.backgroundColor = .systemBackground
     }
     
 }
