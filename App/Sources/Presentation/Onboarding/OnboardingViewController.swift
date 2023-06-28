@@ -26,15 +26,22 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
             return onboardingCell
         }
     }
-
-    private let onboardingCollectionViewFlowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout().then {
-        $0.scrollDirection = .horizontal
-        $0.minimumLineSpacing = .zero
-        $0.minimumInteritemSpacing = .zero
-    }
     
-    private lazy var onboardingCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: onboardingCollectionViewFlowLayout).then {
+    
+    private lazy var onboardingCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout(sectionProvider: { section, _ -> NSCollectionLayoutSection? in
+        let section = self.onboardingDataSource.sectionModels[section]
+        
+        switch section {
+        case .Onboarding:
+            return self.createOnboardingLayout()
+        }
+    })
+    
+    
+    
+    private lazy var onboardingCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: onboardingCollectionViewLayout).then {
         $0.register(OnboardingCell.self, forCellWithReuseIdentifier: "OnboardingCell")
+        
         $0.showsHorizontalScrollIndicator = false
         
     }
@@ -65,9 +72,28 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
     }
     
     
-    override func bind(reactor: Reactor) {
+    private func createOnboardingLayout() -> NSCollectionLayoutSection {
         
-        // TODO: UICollectionViewCompositionalLayout으로 구현 하도록 수정
+        let onboardingLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(self.view.frame.size.height)
+        )
+        
+        let onboardingItem = NSCollectionLayoutItem(layoutSize: onboardingLayoutSize)
+        
+        let onboardingGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: onboardingLayoutSize,
+            subitems: [onboardingItem]
+        )
+        
+        let onboardingSection = NSCollectionLayoutSection(group: onboardingGroup)
+        onboardingSection.orthogonalScrollingBehavior = .groupPagingCentered
+        
+        return onboardingSection
+    }
+    
+    
+    override func bind(reactor: Reactor) {
         
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
@@ -90,13 +116,7 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
 
 
 
-extension OnboardingViewController: UICollectionViewDelegateFlowLayout {
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.size.width, height: collectionView.frame.size.height)
-    }
-    
-}
+extension OnboardingViewController: UICollectionViewDelegateFlowLayout {}
 
 
 
