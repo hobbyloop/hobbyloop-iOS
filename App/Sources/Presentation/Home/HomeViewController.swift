@@ -17,6 +17,8 @@ import RxGesture
 
 class HomeViewController: BaseViewController<HomeViewReactor> {
     
+    // MARK: Property
+    
     // MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
