@@ -67,6 +67,8 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
     
     override func bind(reactor: Reactor) {
         
+        // TODO: UICollectionViewCompositionalLayout으로 구현 하도록 수정
+        
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
             .bind(to: reactor.action)

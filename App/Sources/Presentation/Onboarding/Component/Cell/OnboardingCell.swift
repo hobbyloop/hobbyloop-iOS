@@ -19,7 +19,7 @@ final class OnboardingCell: UICollectionViewCell {
     
     public var disposeBag: DisposeBag = DisposeBag()
     
-    private var onboardingTitleLabel: UILabel = UILabel().then {
+    private let onboardingTitleLabel: UILabel = UILabel().then {
         $0.text = "간단한 예약 방법"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 24)
         $0.textColor = HPCommonUIAsset.black.color
@@ -27,10 +27,20 @@ final class OnboardingCell: UICollectionViewCell {
         $0.numberOfLines = 1
     }
     
-    private lazy var pageViewControl: HPPageControl = HPPageControl()
+    private lazy var pageViewControl: HPPageControl = HPPageControl().then {
+        $0.numberOfPages = 4
+        $0.currentPage = 0
+    }
     
-    private var onboardingImage: UIImageView = UIImageView().then {
+    private let onboardingImage: UIImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
+    }
+    
+    private let onboardingDescriptionLabel: UILabel = UILabel().then {
+        $0.numberOfLines = 2
+        $0.sizeToFit()
+        $0.textColor = HPCommonUIAsset.gray.color
+        $0.textAlignment = .center
     }
 
         
@@ -48,13 +58,36 @@ final class OnboardingCell: UICollectionViewCell {
     
     
     private func configure() {
-        [onboardingTitleLabel, pageViewControl, onboardingImage].forEach {
-            contentView.addSubview($0)
+        [pageViewControl, onboardingTitleLabel, onboardingDescriptionLabel].forEach {
+            self.onboardingImage.addSubview($0)
+        }
+        
+        self.contentView.addSubview(onboardingImage)
+        
+        onboardingTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(83)
+            $0.width.equalTo(180)
+            $0.height.equalTo(29)
+            $0.centerX.equalToSuperview()
         }
         
         onboardingImage.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        pageViewControl.snp.makeConstraints {
+            $0.top.equalTo(onboardingTitleLabel.snp.bottom).offset(31)
+            $0.width.equalTo(59)
+            $0.height.equalTo(8)
+            $0.centerX.equalToSuperview()
+        }
+        
+        onboardingDescriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(pageViewControl.snp.bottom).offset(29)
+            $0.height.greaterThanOrEqualTo(21)
+            $0.centerX.equalToSuperview()
+        }
+                
     }
     
     
@@ -75,6 +108,39 @@ extension OnboardingCell: ReactorKit.View {
             .map { $0.onboardingImage }
             .asDriver(onErrorJustReturn: UIImage())
             .drive(onboardingImage.rx.image)
+            .disposed(by: disposeBag)
+        
+        
+        // TODO: Method로 특정 Target String 문자열 Font, foregroundColor 변환 하도록 구현
+        reactor.state
+            .map { $0.onboardingTitle }
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(onNext: { description in
+                if description.contains("시설 이용권 창") {
+                    let attributedString = NSMutableAttributedString(string: description)
+                    let targetTextRange = (description as NSString).range(of: "시설 이용권 창")
+                    attributedString.addAttributes([
+                        .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
+                        .foregroundColor: HPCommonUIAsset.black.color
+                    ], range: targetTextRange)
+                    self.onboardingDescriptionLabel.attributedText = attributedString
+                    
+                } else if description.contains("이용권 창") {
+                    let attributedString = NSMutableAttributedString(string: description)
+                    let targetTextRange = (description as NSString).range(of: "이용권 창")
+                    attributedString.addAttributes([
+                        .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
+                        .foregroundColor: HPCommonUIAsset.black.color
+                    ], range: targetTextRange)
+                    self.onboardingDescriptionLabel.attributedText = attributedString
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { $0.onboardingTitle }
+            .asDriver(onErrorJustReturn: "")
+            .drive(onboardingDescriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
     }
