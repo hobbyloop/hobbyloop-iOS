@@ -7,6 +7,7 @@
 
 import UIKit
 
+import HPDomain
 import ReactorKit
 
 public final class OnboardingCellReactor: Reactor {
@@ -17,10 +18,15 @@ public final class OnboardingCellReactor: Reactor {
 
     public struct State {
         var onboardingImage: UIImage
+        var onboardingTitle: String
     }
     
-    public init(onboardingImage: UIImage) {
-        self.initialState = State(onboardingImage: onboardingImage)
+    public init(onboardingImage: UIImage, onboardingTitle: String) {
+        self.initialState = State(
+            onboardingImage: onboardingImage,
+            onboardingTitle: onboardingTitle
+        )
+        print("CellReactor: \(onboardingImage), onboardTtitle: \(onboardingTitle)")
     }
     
     

@@ -6,25 +6,25 @@
 //
 
 import HPCommon
-
+import HPDomain
 
 final class OnboardingDIContainer: DIContainer {
 
     typealias ViewController = OnboardingViewController
-    typealias Repository = Optional
-    typealias Reactor = Optional
+    typealias Repository = OnboardingRepo
+    typealias Reactor = OnboardingViewReactor
     
     
     func makeViewController() -> OnboardingViewController {
-        return OnboardingViewController()
+        return OnboardingViewController(reactor: makeReactor())
     }
     
-    func makeRepository() -> Repository<Any> {
-        return nil
+    func makeRepository() -> OnboardingRepo {
+        return OnboardingViewRepository()
     }
     
-    func makeReactor() -> Reactor<Any> {
-        return nil
+    func makeReactor() -> OnboardingViewReactor {
+        return OnboardingViewReactor(onboardingRepository: makeRepository(), onboardingEntity: Onboarding())
     }
     
     

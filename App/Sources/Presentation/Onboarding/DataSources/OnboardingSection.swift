@@ -9,6 +9,10 @@ import Foundation
 
 import RxDataSources
 
+public enum OnboardingType: String, Equatable {
+    case onboardingType
+}
+
 
 //MARK: Section
 public enum OnboardingSection: SectionModelType {
@@ -34,6 +38,16 @@ public enum OnboardingSectionItem {
     case OnboardingItems(OnboardingCellReactor)
 }
 
+
+extension OnboardingSection {
+    
+    func getSectionType() -> OnboardingType {
+        switch self {
+        case .Onboarding: return .onboardingType
+        }
+    }
+    
+}
 
 
 

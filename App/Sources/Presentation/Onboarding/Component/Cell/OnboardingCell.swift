@@ -38,6 +38,7 @@ final class OnboardingCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
+        configure()
     }
     
     
@@ -47,7 +48,13 @@ final class OnboardingCell: UICollectionViewCell {
     
     
     private func configure() {
+        [onboardingTitleLabel, pageViewControl, onboardingImage].forEach {
+            contentView.addSubview($0)
+        }
         
+        onboardingImage.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     
@@ -63,6 +70,12 @@ extension OnboardingCell: ReactorKit.View {
     func bind(reactor: Reactor) {
         
         
+    
+        reactor.state
+            .map { $0.onboardingImage }
+            .asDriver(onErrorJustReturn: UIImage())
+            .drive(onboardingImage.rx.image)
+            .disposed(by: disposeBag)
         
     }
     
