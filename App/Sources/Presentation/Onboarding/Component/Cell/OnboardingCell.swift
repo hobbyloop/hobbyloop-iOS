@@ -12,10 +12,19 @@ import ReactorKit
 import Then
 import SnapKit
 
+
+// MARK: Delegate
+public protocol OnboardingDelegate: AnyObject {
+    func onboardingViewDismiss()
+}
+
+
 final class OnboardingCell: UICollectionViewCell {
     
     // MARK: Property
     typealias Reactor = OnboardingCellReactor
+    
+    public weak var delegate: OnboardingDelegate?
     
     public var disposeBag: DisposeBag = DisposeBag()
     
@@ -63,11 +72,13 @@ final class OnboardingCell: UICollectionViewCell {
     
     
     private func configure() {
-        [pageViewControl, onboardingTitleLabel, onboardingDescriptionLabel, onboardingDeleteButton].forEach {
+        [pageViewControl, onboardingTitleLabel, onboardingDescriptionLabel].forEach {
             self.onboardingImage.addSubview($0)
         }
         
-        self.contentView.addSubview(onboardingImage)
+        [onboardingImage, onboardingDeleteButton].forEach {
+            self.contentView.addSubview($0)
+        }
         
         onboardingTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(83)
@@ -154,6 +165,13 @@ extension OnboardingCell: ReactorKit.View {
             .drive(onboardingDescriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
+        
+        onboardingDeleteButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                self.delegate?.onboardingViewDismiss()
+            }).disposed(by: disposeBag)
     }
     
 }

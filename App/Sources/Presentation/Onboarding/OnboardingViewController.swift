@@ -17,12 +17,12 @@ import RxDataSources
 
 final class OnboardingViewController: BaseViewController<OnboardingViewReactor> {
     
-    private var onboardingDataSource: RxCollectionViewSectionedReloadDataSource<OnboardingSection> = .init { dataSource, collectionView, indexPath, sectionItem in
+    private lazy var onboardingDataSource: RxCollectionViewSectionedReloadDataSource<OnboardingSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         switch sectionItem {
         case let .OnboardingItems(cellReactor):
             guard let onboardingCell = collectionView.dequeueReusableCell(withReuseIdentifier: "OnboardingCell", for: indexPath) as? OnboardingCell else { return UICollectionViewCell() }
+            onboardingCell.delegate = self
             onboardingCell.reactor = cellReactor
-            
             return onboardingCell
         }
     }
@@ -121,4 +121,9 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
 extension OnboardingViewController: UICollectionViewDelegateFlowLayout {}
 
 
+extension OnboardingViewController: OnboardingDelegate {
+    func onboardingViewDismiss() {
+        self.dismiss(animated: true)
+    }
+}
 
