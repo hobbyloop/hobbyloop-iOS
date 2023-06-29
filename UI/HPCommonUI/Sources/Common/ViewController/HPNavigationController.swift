@@ -68,10 +68,10 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     public func setHomeNavigationBarButtonItem() {
         let notificationButton = UIButton(type: .system)
-        notificationButton.setImage(HPCommonUIAsset.notificationWhite.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
         let searchButton = UIButton(type: .system)
-        searchButton.setImage(HPCommonUIAsset.search.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        searchButton.setImage(HPCommonUIAsset.searchBlack.image.withRenderingMode(.alwaysOriginal), for: .normal)
         let notificationbarButtonItem = UIBarButtonItem(customView: notificationButton)
         let searchbarButtonItem = UIBarButtonItem(customView: searchButton)
         let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)

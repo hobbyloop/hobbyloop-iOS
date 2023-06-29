@@ -23,9 +23,6 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        let onboardingController = OnboardingDIContainer().makeViewController()
-        onboardingController.modalPresentationStyle = .fullScreen
-        self.present(onboardingController, animated: true)
     }
     
     
