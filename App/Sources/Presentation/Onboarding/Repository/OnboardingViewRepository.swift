@@ -22,7 +22,7 @@ public final class OnboardingViewRepository: OnboardingRepo {
         var onboardingSectionItems: [OnboardingSectionItem] = []
         
         for i in 0 ..< 4 {
-            onboardingSectionItems.append(.OnboardingItems(OnboardingCellReactor(onboardingImage: items.image[i], onboardingTitle: items.title[i])))
+            onboardingSectionItems.append(.OnboardingItems(OnboardingCellReactor(onboardingImage: items.image[i], onboardingTitle: items.title[i], onboardingIndex: i)))
         }        
         
         return OnboardingSection.Onboarding(onboardingSectionItems)

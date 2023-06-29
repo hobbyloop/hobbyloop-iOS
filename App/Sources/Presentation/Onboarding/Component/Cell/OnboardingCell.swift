@@ -44,6 +44,7 @@ final class OnboardingCell: UICollectionViewCell {
     private lazy var pageViewControl: HPPageControl = HPPageControl().then {
         $0.numberOfPages = 4
         $0.currentPage = 0
+        $0.backgroundStyle = .minimal
     }
     
     private let onboardingImage: UIImageView = UIImageView().then {
@@ -93,7 +94,6 @@ final class OnboardingCell: UICollectionViewCell {
         
         pageViewControl.snp.makeConstraints {
             $0.top.equalTo(onboardingTitleLabel.snp.bottom).offset(31)
-            $0.width.equalTo(59)
             $0.height.equalTo(8)
             $0.centerX.equalToSuperview()
         }
@@ -172,6 +172,13 @@ extension OnboardingCell: ReactorKit.View {
             .subscribe(onNext: {
                 self.delegate?.onboardingViewDismiss()
             }).disposed(by: disposeBag)
+        
+        reactor.pulse(\.$onboardingIndex)
+            .asDriver(onErrorJustReturn: 0)
+            .drive(pageViewControl.rx.currentPage)
+            .disposed(by: disposeBag)
+        
+        
     }
     
 }
