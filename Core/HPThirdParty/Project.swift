@@ -19,6 +19,7 @@ let thirdParty = Project.makeModule(
         .ThirdParty.UI.snapKit,
         .ThirdParty.Network.alamofire,
         .ThirdParty.SDK.kakao,
+        .ThirdParty.SDK.firebaseAuth,
         .ThirdParty.SDK.google,
         .ThirdParty.Util.cryptoSwift
     ]

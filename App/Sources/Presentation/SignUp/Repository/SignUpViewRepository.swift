@@ -7,6 +7,7 @@
 
 import Foundation
 
+import FirebaseAuth
 import ReactorKit
 import RxCocoa
 import KakaoSDKUser
@@ -22,6 +23,7 @@ public protocol SignUpViewRepo {
     func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation>
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
     func createUserInformation(name: String, nickName: String, gender: String, birth: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
+    func isVaildationPhoneNumber() -> Void
 }
 
 
@@ -77,4 +79,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
     public func createUserInformation(name: String, nickName: String, gender: String, birth: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation> {
         return .empty()
     }
+    
+    /// 사용자 휴대폰 인증 메서드
+    public func isVaildationPhoneNumber() { }
 }
