@@ -10,11 +10,16 @@ import UIKit
 import HPCommonUI
 import Then
 import SnapKit
+import RxSwift
+import RxCocoa
 
 public final class SignUpBottomSheetView: UIViewController {
     
     
     //MARK: Property
+    
+    private let disposeBag: DisposeBag = DisposeBag()
+    
     private let containerView: UIView = UIView().then {
         $0.layer.cornerRadius = 20
         $0.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
@@ -75,6 +80,14 @@ public final class SignUpBottomSheetView: UIViewController {
             $0.center.equalToSuperview()
         }
         
+        
+        doneButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .bind(onNext: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.dismiss(animated: true)
+            }).disposed(by: disposeBag)
         
         
     }
