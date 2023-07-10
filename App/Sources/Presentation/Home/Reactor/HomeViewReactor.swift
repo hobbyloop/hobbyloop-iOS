@@ -12,20 +12,24 @@ import ReactorKit
 import RxSwift
 
 final class HomeViewReactor: Reactor {
+    
+    //MARK: Property
     public var initialState: State
     private var homeRepository: HomeViewRepo
     
     //MARK: Action
     public enum Action {
+        case viewDidLoad
     }
     
     public enum Mutation {
-        case none
+        case setLoading(Bool)
     }
     
     //MARK: State
     public struct State {
-        
+        var isLoading: Bool
+        @Pulse var section: [HomeSection]
     }
     
     init(homeRepository: HomeViewRepo) {
