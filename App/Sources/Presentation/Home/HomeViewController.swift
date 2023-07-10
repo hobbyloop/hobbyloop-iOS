@@ -31,4 +31,16 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
         self.view.backgroundColor = .systemBackground
     }
     
+    
+    private func createSchedulClassLayout() -> NSCollectionLayoutSection {
+        
+        
+        return NSCollectionLayoutSection
+    }
+    
+    private func createOnboardingClassLayout() -> NSCollectionLayoutSection {
+        
+        return NSCollectionLayoutSection
+    }
+    
 }
