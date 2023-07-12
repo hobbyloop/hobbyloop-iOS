@@ -52,6 +52,9 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
     
     
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
+        
+        $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
+        $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         
