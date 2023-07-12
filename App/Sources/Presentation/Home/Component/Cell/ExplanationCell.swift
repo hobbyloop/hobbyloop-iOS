@@ -14,6 +14,14 @@ import Then
 final class ExplanationCell: UICollectionViewCell {
     
     //MARK: Property
+    private let explanationContainerView: UIView = UIView().then {
+        $0.backgroundColor = .systemBackground
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 15
+        $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    }
+    
+    
     private let explanationTitleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 24)
         $0.textColor = HPCommonUIAsset.black.color

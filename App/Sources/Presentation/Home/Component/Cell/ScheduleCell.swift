@@ -33,10 +33,22 @@ final class ScheduleCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
+        configure()
     }
     
     
     private func configure() {
+        
+        [nickNameLabel, scheduleTitleLabel].forEach {
+            self.contentView.addSubview($0)
+        }
+        
+        nickNameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.left.equalToSuperview().offset(15)
+            $0.height.equalTo(25)
+        }
+        
         
         
     }
