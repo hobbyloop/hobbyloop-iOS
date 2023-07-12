@@ -13,19 +13,19 @@ import RxDataSources
 
 public enum HomeSection: SectionModelType {
     case schedulClass([HomeSectionItem])
-    case onboardingClass([HomeSectionItem])
+    case explanationClass([HomeSectionItem])
     
     public var items: [HomeSectionItem] {
         switch self {
         case let .schedulClass(items): return items
-        case let .onboardingClass(items): return items
+        case let .explanationClass(items): return items
         }
     }
     
     public init(original: HomeSection, items: [HomeSectionItem]) {
         switch original {
         case .schedulClass: self = .schedulClass(items)
-        case .onboardingClass: self = .onboardingClass(items)
+        case .explanationClass: self = .explanationClass(items)
         }
     }
     
@@ -35,7 +35,7 @@ public enum HomeSection: SectionModelType {
 //MARK: Item
 public enum HomeSectionItem {
     case schedulClassItem
-    case onboardingClassItem
+    case explanationClassItem
     
 }
 
