@@ -34,15 +34,31 @@ final class HomeViewReactor: Reactor {
     
     init(homeRepository: HomeViewRepo) {
         self.homeRepository = homeRepository
-        self.initialState = State()
+        self.initialState = State(
+            isLoading: false,
+            section: []
+        )
     }
     
     public func mutate(action: Action) -> Observable<Mutation> {
-        return Observable.just(.none)
+        switch action{
+        case .viewDidLoad:
+            return .just(.setLoading(true))
+            
+        }
+        
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
-        return State()
+        
+        var newState = state
+        
+        switch mutation {
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
+        }
+        
+        return newState
     }
     
 }

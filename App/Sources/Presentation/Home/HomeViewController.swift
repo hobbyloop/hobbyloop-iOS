@@ -16,7 +16,7 @@ import RxGesture
 import RxDataSources
 
 
-class HomeViewController: BaseViewController<HomeViewReactor> {
+final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     // MARK: Property
     
@@ -24,12 +24,12 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
         
         switch sectionItem {
         case .schedulClassItem:
-            guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) else { return UICollectionViewCell() }
+            guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else { return UICollectionViewCell() }
             
             return scheduleCell
             
         case .explanationClassItem:
-            guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) else { return UICollectionViewCell() }
+            guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else { return UICollectionViewCell() }
             
             return explanationCell
         }
@@ -61,6 +61,17 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
         
     }
     
+    override init(reactor: HomeViewReactor?) {
+        defer { self.reactor = reactor }
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    
     
     
     // MARK: LifeCycle
@@ -73,6 +84,11 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
     // MARK: Configure
     private func configure() {
         self.view.backgroundColor = .systemBackground
+        self.view.addSubview(homeCollectionView)
+        
+        homeCollectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     
@@ -119,6 +135,20 @@ class HomeViewController: BaseViewController<HomeViewReactor> {
         
         
         return explanationClassSection
+    }
+    
+    
+    
+    override func bind(reactor: HomeViewReactor) {
+        
+        
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        
     }
     
 }
