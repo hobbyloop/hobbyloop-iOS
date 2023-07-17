@@ -9,6 +9,13 @@ import Foundation
 
 import RxDataSources
 
+
+public enum HomeType: String, Equatable {
+    case scheduleType
+    case explanationType
+}
+
+
 //MARK: Section
 
 public enum HomeSection: SectionModelType {
@@ -39,3 +46,16 @@ public enum HomeSectionItem {
     
 }
 
+
+
+extension HomeSection {
+    
+    func getSectionType() -> HomeType {
+        
+        switch self {
+        case .schedulClass: return .scheduleType
+        case .explanationClass: return .explanationType
+        }
+        
+    }
+}

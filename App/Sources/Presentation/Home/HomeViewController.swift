@@ -24,12 +24,15 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         switch sectionItem {
         case .schedulClassItem:
+            print("test schedule Cell")
             guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else { return UICollectionViewCell() }
             
             return scheduleCell
             
         case .explanationClassItem:
-            guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else { return UICollectionViewCell() }
+            print("test explanation Cell")
+            guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else {
+                return UICollectionViewCell() }
             
             return explanationCell
         }
@@ -147,8 +150,20 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        self.homeCollectionView
+            .rx.setDelegate(self)
+            .disposed(by: disposeBag)
         
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
+            .disposed(by: disposeBag)
         
     }
     
 }
+
+
+
+
+extension HomeViewController: UICollectionViewDelegateFlowLayout { }

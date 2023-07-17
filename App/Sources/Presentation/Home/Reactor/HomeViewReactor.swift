@@ -24,6 +24,7 @@ final class HomeViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
+        case setEmptyClassItem
     }
     
     //MARK: State
@@ -36,14 +37,28 @@ final class HomeViewReactor: Reactor {
         self.homeRepository = homeRepository
         self.initialState = State(
             isLoading: false,
-            section: []
+            section: [
+                .schedulClass([
+                    .schedulClassItem
+                ]),
+                .explanationClass([
+                    .explanationClassItem
+                ])
+            ]
         )
     }
     
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action{
         case .viewDidLoad:
-            return .just(.setLoading(true))
+            let startLoading = Observable<Mutation>.just(.setLoading(true))
+            let endLoading = Observable<Mutation>.just(.setLoading(false))
+            
+            return .concat(
+                startLoading,
+                .just(.setEmptyClassItem),
+                endLoading
+            )
             
         }
         
@@ -56,9 +71,39 @@ final class HomeViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+            
+        case .setEmptyClassItem:
+            let scheduleIndex = self.getIndex(section: .schedulClass([]))
+            let explanationIndex = self.getIndex(section: .explanationClass([]))
+            
+            newState.section[scheduleIndex] = .schedulClass([HomeSectionItem.schedulClassItem])
+            newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
         }
         
         return newState
     }
     
 }
+
+
+
+private extension HomeViewReactor {
+    
+    func getIndex(section: HomeSection) -> Int {
+        
+        var index: Int = 0
+        
+        for i in 0 ..< self.currentState.section.count where self.currentState.section[i].getSectionType() == section.getSectionType() {
+            index = i
+        }
+        
+        return index
+        
+    }
+    
+}
+
+
+
+
+

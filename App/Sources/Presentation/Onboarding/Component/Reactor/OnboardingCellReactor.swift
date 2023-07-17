@@ -17,12 +17,12 @@ public final class OnboardingCellReactor: Reactor {
     public typealias Action = NoAction
 
     public struct State {
-        var onboardingImage: UIImage
+        var onboardingImage: String
         var onboardingTitle: String
         @Pulse var onboardingIndex: Int
     }
     
-    public init(onboardingImage: UIImage, onboardingTitle: String, onboardingIndex: Int) {
+    public init(onboardingImage: String, onboardingTitle: String, onboardingIndex: Int) {
         self.initialState = State(
             onboardingImage: onboardingImage,
             onboardingTitle: onboardingTitle,

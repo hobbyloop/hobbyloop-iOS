@@ -128,10 +128,11 @@ extension OnboardingCell: ReactorKit.View {
     
         reactor.state
             .map { $0.onboardingImage }
+            .map { HPCommonUIImages.Image(named: $0, in: HPCommonUIResources.bundle, with: nil)}
+            .debug("image Set")
             .asDriver(onErrorJustReturn: UIImage())
             .drive(onboardingImage.rx.image)
             .disposed(by: disposeBag)
-        
         
         // TODO: Method로 특정 Target String 문자열 Font, foregroundColor 변환 하도록 구현
         reactor.state

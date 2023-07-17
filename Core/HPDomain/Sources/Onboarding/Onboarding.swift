@@ -5,7 +5,7 @@
 //  Created by Kim dohyun on 2023/06/28.
 //
 
-import UIKit
+import Foundation
 import HPCommonUI
 
 public struct Onboarding {
@@ -19,14 +19,13 @@ public struct Onboarding {
     ]
     
     /// 온보딩 이미지
-    public let image: [UIImage] = [
-        HPCommonUIAsset.onboardingImage1.image,
-        HPCommonUIAsset.onboardingImage2.image,
-        HPCommonUIAsset.onboardingImage3.image,
-        HPCommonUIAsset.onboardingImage4.image
+    public let image: [String] = [
+        "onboardingImage1",
+        "onboardingImage2",
+        "onboardingImage3",
+        "onboardingImage4"
     ]
-    
-    
+        
     public init() {} 
     
     

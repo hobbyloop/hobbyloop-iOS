@@ -54,7 +54,8 @@ final class ExplanationCell: UICollectionViewCell {
     
     
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -63,6 +64,8 @@ final class ExplanationCell: UICollectionViewCell {
     
     
     //MARK: Configure
-    private func configure() { }
+    private func configure() {
+        self.backgroundColor = .brown
+    }
     
 }
