@@ -24,19 +24,26 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         switch sectionItem {
         case .schedulClassItem:
-            print("test schedule Cell")
             guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else { return UICollectionViewCell() }
             
             return scheduleCell
             
         case .explanationClassItem:
-            print("test explanation Cell")
             guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else {
                 return UICollectionViewCell() }
             
             return explanationCell
         }
         
+    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let scheduleReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ScheduleReusableView", for: indexPath) as? ScheduleReusableView else { return UICollectionReusableView() }
+            
+            return scheduleReusableView
+        default:
+            return UICollectionReusableView()
+        }
     }
     
     private lazy var homeCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
@@ -58,6 +65,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
+        $0.register(ScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ScheduleReusableView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         
@@ -113,6 +121,20 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let scheduleClassSection = NSCollectionLayoutSection(
             group: scheduleClassGroup
         )
+        
+        /// ScheduleSection Header Layout Size
+        let scheduleSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(100)
+        )
+        
+        scheduleClassSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: scheduleSectionHeaderLayoutSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
         
 
         return scheduleClassSection
