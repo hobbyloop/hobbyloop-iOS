@@ -48,6 +48,8 @@ final class ScheduleReusableView: UICollectionReusableView {
     
     
     private func configure() {
+        self.backgroundColor = HPCommonUIAsset.systemBackground.color
+        
         [nickNameLabel, scheduleTitleLabel].forEach {
             self.addSubview($0)
         }

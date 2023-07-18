@@ -62,7 +62,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
-        
+        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
         $0.register(ScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ScheduleReusableView")
@@ -94,7 +94,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     // MARK: Configure
     private func configure() {
-        self.view.backgroundColor = .systemBackground
         self.view.addSubview(homeCollectionView)
         
         homeCollectionView.snp.makeConstraints {

@@ -65,7 +65,32 @@ final class ExplanationCell: UICollectionViewCell {
     
     //MARK: Configure
     private func configure() {
-        self.backgroundColor = .brown
+        
+        self.contentView.addSubview(explanationContainerView)
+        
+        [explanationTitleLabel, explanationSubTitleLabel, explanationButton].forEach {
+            self.explanationContainerView.addSubview($0)
+        }
+        
+        explanationContainerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        explanationTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(50)
+            $0.width.equalTo(120)
+            $0.height.equalTo(20)
+            $0.centerX.equalToSuperview()
+        }
+        
+        explanationSubTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(explanationTitleLabel.snp.bottom).offset(30)
+            $0.width.equalTo(250)
+            $0.height.equalTo(15)
+            $0.centerX.equalTo(explanationTitleLabel)
+        }
+        
+        
     }
     
 }

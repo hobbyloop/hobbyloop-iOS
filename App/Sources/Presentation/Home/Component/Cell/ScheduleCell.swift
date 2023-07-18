@@ -28,7 +28,7 @@ final class ScheduleCell: UICollectionViewCell {
     
     
     private func configure() {
-        self.backgroundColor = .systemPink
+        self.contentView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
     }
     

@@ -77,6 +77,9 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     
     public func setHomeNavigationBarButtonItem() {
+        
+        defaultBarAppearance.backgroundColor = HPCommonUIAsset.systemBackground.color
+        
         let notificationButton = UIButton(type: .system)
         notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
@@ -111,6 +114,8 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        self.navigationBar.compactAppearance = defaultBarAppearance
+        self.navigationBar.scrollEdgeAppearance = defaultBarAppearance
     }
     
     
