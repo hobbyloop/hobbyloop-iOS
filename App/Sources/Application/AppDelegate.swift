@@ -93,7 +93,12 @@ private extension AppDelegate {
         DispatchQueue.main.async {
             let loginDIContainer = LoginDIContainer()
             self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = HPNavigationController(navigationBarType: .none, rootViewController: loginDIContainer.makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
+            self.window?.rootViewController = HPNavigationController(
+                navigationBarType: .none,
+                rootViewController: loginDIContainer.makeViewController(),
+                defaultBarAppearance: UINavigationBarAppearance(),
+                scrollBarAppearance: UINavigationBarAppearance()
+            )
             self.window?.makeKeyAndVisible()
         }
     }

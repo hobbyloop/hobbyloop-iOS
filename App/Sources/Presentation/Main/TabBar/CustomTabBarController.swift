@@ -12,7 +12,12 @@ import HPCommonUI
 
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    private let homeController = HPNavigationController(navigationBarType: .home, rootViewController: HomeDIContainer().makeViewController(), navigationBarAppearance: UINavigationBarAppearance())
+    private let homeController = HPNavigationController(
+        navigationBarType: .home,
+        rootViewController: HomeDIContainer().makeViewController(),
+        defaultBarAppearance: UINavigationBarAppearance(),
+        scrollBarAppearance: UINavigationBarAppearance()
+    )
     private let dummyView = CustomNavigationViewController(rootViewController: TicketViewController(HeaderType: .main))
     private let dummyView2 = CustomNavigationViewController(rootViewController: UIViewController())
     private let dummyView3 = CustomNavigationViewController(rootViewController: UIViewController())

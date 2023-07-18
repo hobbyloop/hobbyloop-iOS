@@ -22,7 +22,8 @@ public enum HPNavigationBarType: Equatable {
 public protocol HPNavigationProxy {
     var rightBarButtonItems: [UIBarButtonItem] { get }
     var leftBarButtonItems: [UIBarButtonItem] { get }
-    var navigationBarAppearance: UINavigationBarAppearance { get }
+    var scrollBarAppearance: UINavigationBarAppearance { get }
+    var defaultBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
 }
@@ -32,16 +33,19 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     public private(set) var navigationBarType: HPNavigationBarType
     
-    public var navigationBarAppearance: UINavigationBarAppearance
+    public var defaultBarAppearance: UINavigationBarAppearance
+    public var scrollBarAppearance: UINavigationBarAppearance
     public var rightBarButtonItems: [UIBarButtonItem] = []
     public var leftBarButtonItems: [UIBarButtonItem] = []
     
     public init(navigationBarType: HPNavigationBarType,
                 rootViewController: UIViewController,
-                navigationBarAppearance: UINavigationBarAppearance
+                defaultBarAppearance: UINavigationBarAppearance,
+                scrollBarAppearance: UINavigationBarAppearance
     ) {
         self.navigationBarType = navigationBarType
-        self.navigationBarAppearance = navigationBarAppearance
+        self.defaultBarAppearance = defaultBarAppearance
+        self.scrollBarAppearance = scrollBarAppearance
         super.init(rootViewController: rootViewController)
         self.configure()
         self.delegate = self
@@ -55,13 +59,19 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     //MARK: Configure
     public func configure() {
-        navigationBarAppearance.backgroundColor = .clear
-        navigationBarAppearance.configureWithTransparentBackground()
         
+        scrollBarAppearance.configureWithTransparentBackground()
+        scrollBarAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
+        scrollBarAppearance.shadowImage = UIImage()
+        scrollBarAppearance.backgroundImage = UIImage()
         
-        self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationBar.standardAppearance = navigationBarAppearance
-        self.navigationBar.compactAppearance = navigationBarAppearance
+        defaultBarAppearance.backgroundColor = .clear
+        defaultBarAppearance.configureWithTransparentBackground()
+
+        
+        self.navigationBar.scrollEdgeAppearance = defaultBarAppearance
+        self.navigationBar.standardAppearance = scrollBarAppearance
+        self.navigationBar.compactAppearance = defaultBarAppearance
         
     }
     

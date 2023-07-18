@@ -172,10 +172,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        self.homeCollectionView
-            .rx.setDelegate(self)
-            .disposed(by: disposeBag)
-        
         reactor.pulse(\.$section)
             .asDriver(onErrorJustReturn: [])
             .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
@@ -184,8 +180,3 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     }
     
 }
-
-
-
-
-extension HomeViewController: UICollectionViewDelegateFlowLayout { }
