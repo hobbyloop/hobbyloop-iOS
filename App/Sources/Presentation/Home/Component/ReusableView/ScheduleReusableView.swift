@@ -26,7 +26,7 @@ final class ScheduleReusableView: UICollectionReusableView {
         $0.numberOfLines = 1
     }
     
-    private let scheduleTitleLabel: UIButton = UIButton(configuration: .plain(), primaryAction: nil).then {
+    private let scheduleButton: UIButton = UIButton(configuration: .plain(), primaryAction: nil).then {
         $0.configuration?.image = HPCommonUIAsset.rightArrow.image
         $0.configuration?.imagePadding = 240
         $0.configuration?.imagePlacement = .trailing
@@ -50,7 +50,7 @@ final class ScheduleReusableView: UICollectionReusableView {
     private func configure() {
         self.backgroundColor = HPCommonUIAsset.systemBackground.color
         
-        [nickNameLabel, scheduleTitleLabel].forEach {
+        [nickNameLabel, scheduleButton].forEach {
             self.addSubview($0)
         }
         
@@ -61,7 +61,7 @@ final class ScheduleReusableView: UICollectionReusableView {
             $0.height.equalTo(20)
         }
         
-        scheduleTitleLabel.snp.makeConstraints {
+        scheduleButton.snp.makeConstraints {
             $0.top.equalTo(nickNameLabel.snp.bottom).offset(10)
             $0.left.equalToSuperview()
             $0.right.equalTo(nickNameLabel)
