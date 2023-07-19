@@ -32,6 +32,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else {
                 return UICollectionViewCell() }
             
+            explanationCell.delegate = self
             return explanationCell
         }
         
@@ -176,6 +177,16 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
             .disposed(by: disposeBag)
         
+    }
+    
+}
+
+extension HomeViewController: ExplanationDelegate {
+    
+    func showOnboardingView() {
+        let onboardingController = OnboardingDIContainer().makeViewController()
+        onboardingController.modalPresentationStyle = .fullScreen
+        self.present(onboardingController, animated: true)
     }
     
 }

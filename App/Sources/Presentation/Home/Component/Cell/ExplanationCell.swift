@@ -9,11 +9,21 @@ import UIKit
 
 import HPCommonUI
 import Then
+import RxSwift
+import RxCocoa
 
+//MARK: Delegate
+public protocol ExplanationDelegate: AnyObject {
+    func showOnboardingView()
+}
 
 final class ExplanationCell: UICollectionViewCell {
     
     //MARK: Property
+    private var disposeBag: DisposeBag = DisposeBag()
+    
+    public weak var delegate: ExplanationDelegate?
+    
     private let explanationContainerView: UIView = UIView().then {
         $0.backgroundColor = .systemBackground
         $0.clipsToBounds = true
@@ -89,6 +99,22 @@ final class ExplanationCell: UICollectionViewCell {
             $0.height.equalTo(15)
             $0.centerX.equalTo(explanationTitleLabel)
         }
+        
+        
+        //TODO: Top Constraints 값 CouponView Bottom으로 변경
+        explanationButton.snp.makeConstraints {
+            $0.width.equalTo(120)
+            $0.height.equalTo(20)
+            $0.top.equalTo(explanationSubTitleLabel.snp.bottom).offset(30)
+            $0.centerX.equalTo(explanationSubTitleLabel)
+        }
+        
+        explanationButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                self.delegate?.showOnboardingView()
+            }).disposed(by: disposeBag)
         
         
     }
