@@ -10,8 +10,18 @@ import SnapKit
 import Then
 
 public final class EmptyTicketView: UIView {
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    let topLeftRadius: CGFloat
+    let topRightRadius: CGFloat
+    let bottomLeftRadius: CGFloat
+    let bottomRightRadius: CGFloat
+    
+    public init(topLeftRadius: CGFloat, topRightRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat) {
+        self.topLeftRadius = topLeftRadius
+        self.topRightRadius = topRightRadius
+        self.bottomLeftRadius = bottomLeftRadius
+        self.bottomRightRadius = bottomRightRadius
+        
+        super.init(frame: .infinite)
         
         let logoImage = HPCommonUIAsset.logo.image
         let logoImageView = UIImageView(image: logoImage)
@@ -31,7 +41,7 @@ public final class EmptyTicketView: UIView {
     }
     
     public override func draw(_ rect: CGRect) {
-        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
+        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: topLeftRadius, topRightRadius: topRightRadius, bottomLeftRadius: bottomLeftRadius, bottomRightRadius: bottomRightRadius)
         
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath

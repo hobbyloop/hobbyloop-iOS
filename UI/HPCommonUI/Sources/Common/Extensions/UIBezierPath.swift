@@ -14,7 +14,7 @@ extension UIBezierPath {
         
         let path = CGMutablePath()
         
-        let topLeft = rect.origin
+        let topLeft = CGPoint(x: rect.minX, y: rect.minY)
         let topRight = CGPoint(x: rect.maxX, y: rect.minY)
         let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
         let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
