@@ -180,8 +180,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     
     
-    //TODO: 오늘의 운동 섹션 레이아웃 구성 함수
-    /// - Return: NSCollectionLayoutSize
+    //MARK: 오늘의 운동 섹션 레이아웃 구성 함수
+    /// - Return : NSCollectionLayoutSize
     private func createExerciseClassLayout() -> NSCollectionLayoutSection {
         
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
@@ -223,6 +223,11 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         return exerciseSection
     }
+    
+    
+    //MARK: 오늘의 혜택 섹션 레이아웃 구성 함수
+    /// - Return : NSCollectionLayoutSize
+    private func createBenefitsLayout() { }
     
     
     
