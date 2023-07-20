@@ -17,7 +17,7 @@ final class ExerciseReusableView: UICollectionReusableView {
     //MARK: Property
     private let exerciseButton: UIButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.rightArrow.image
-        $0.configuration?.imagePadding = 240
+        $0.configuration?.imagePadding = 165
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "오늘은 이 운동 어때요?", attributes: [
             .foregroundColor: HPCommonUIAsset.black.color,

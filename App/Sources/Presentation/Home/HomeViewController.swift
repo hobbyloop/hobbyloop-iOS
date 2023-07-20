@@ -41,11 +41,18 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
+        let dataSource = dataSource[indexPath]
+        
+        switch dataSource {
+        case .schedulClassItem:
             guard let scheduleReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ScheduleReusableView", for: indexPath) as? ScheduleReusableView else { return UICollectionReusableView() }
             
             return scheduleReusableView
+            
+        case .exerciseClassItem:
+            guard let exerciseReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ExerciseReusableView", for: indexPath) as? ExerciseReusableView else { return UICollectionReusableView() }
+            return exerciseReusableView
+            
         default:
             return UICollectionReusableView()
         }
@@ -61,6 +68,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             
         case .explanationClass:
             return self.createExplanationClassLayout()
+            
         case .exerciseClass:
             return self.createExerciseClassLayout()
         }
@@ -177,14 +185,18 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     private func createExerciseClassLayout() -> NSCollectionLayoutSection {
         
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.8),
+            widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(339)
         )
         
         let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
         
+        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        
         let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: exerciseClassLayoutSize,
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(0.9),
+                heightDimension: .absolute(339)),
             subitems: [exerciseClassItem]
         )
         
@@ -197,6 +209,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let exerciseSection = NSCollectionLayoutSection(
             group: exerciseClassGroup
         )
+        
+        exerciseSection.orthogonalScrollingBehavior = .groupPagingCentered
         
         exerciseSection.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
