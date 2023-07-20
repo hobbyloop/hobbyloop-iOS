@@ -14,6 +14,7 @@ public enum HomeType: String, Equatable {
     case scheduleType
     case explanationType
     case exerciseType
+    case benefitsType
 }
 
 
@@ -23,12 +24,15 @@ public enum HomeSection: SectionModelType {
     case schedulClass([HomeSectionItem])
     case explanationClass([HomeSectionItem])
     case exerciseClass([HomeSectionItem])
+    case benefitsClass([HomeSectionItem])
     
     public var items: [HomeSectionItem] {
         switch self {
         case let .schedulClass(items): return items
         case let .explanationClass(items): return items
         case let .exerciseClass(items): return items
+        case let .benefitsClass(items): return items
+            
         }
     }
     
@@ -37,6 +41,7 @@ public enum HomeSection: SectionModelType {
         case .schedulClass: self = .schedulClass(items)
         case .explanationClass: self = .explanationClass(items)
         case .exerciseClass: self = .exerciseClass(items)
+        case .benefitsClass: self = .benefitsClass(items)
         }
     }
     
@@ -48,6 +53,7 @@ public enum HomeSectionItem {
     case schedulClassItem
     case explanationClassItem
     case exerciseClassItem
+    case benefitsClassItem
 }
 
 
@@ -60,6 +66,7 @@ extension HomeSection {
         case .schedulClass: return .scheduleType
         case .explanationClass: return .explanationType
         case .exerciseClass: return .exerciseType
+        case .benefitsClass: return .benefitsType
         }
         
     }
