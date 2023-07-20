@@ -33,7 +33,11 @@ final class ExerciseCell: UICollectionViewCell {
         $0.numberOfLines = 0
     }
     
-    //TODO: content Design 추가
+    private let contentBookMarkButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.archiveOutlined.image, for: .normal)
+        $0.setImage(HPCommonUIAsset.archiveFilled.image, for: .selected)
+        $0.setTitle("", for: .normal)
+    }
     
     
     //MARK: Property

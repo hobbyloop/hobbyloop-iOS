@@ -34,6 +34,10 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             
             explanationCell.delegate = self
             return explanationCell
+        case .exerciseClassItem:
+            guard let exerciseCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExerciseCell", for: indexPath) as? ExerciseCell else { return UICollectionViewCell() }
+            
+            return exerciseCell
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
@@ -57,6 +61,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             
         case .explanationClass:
             return self.createExplanationClassLayout()
+        case .exerciseClass:
+            return self.createExerciseClassLayout()
         }
         
     }
@@ -66,7 +72,9 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
+        $0.register(ExerciseCell.self, forCellWithReuseIdentifier: "ExerciseCell")
         $0.register(ScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ScheduleReusableView")
+        $0.register(ExerciseReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ExerciseReusableView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         
@@ -160,6 +168,46 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         
         return explanationClassSection
+    }
+    
+    
+    
+    //TODO: 오늘의 운동 섹션 레이아웃 구성 함수
+    /// - Return: NSCollectionLayoutSize
+    private func createExerciseClassLayout() -> NSCollectionLayoutSection {
+        
+        let exerciseClassLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.8),
+            heightDimension: .absolute(339)
+        )
+        
+        let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
+        
+        let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: exerciseClassLayoutSize,
+            subitems: [exerciseClassItem]
+        )
+        
+        
+        let exerciseSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(100)
+        )
+        
+        let exerciseSection = NSCollectionLayoutSection(
+            group: exerciseClassGroup
+        )
+        
+        exerciseSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: exerciseSectionHeaderLayoutSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+        
+        
+        return exerciseSection
     }
     
     
