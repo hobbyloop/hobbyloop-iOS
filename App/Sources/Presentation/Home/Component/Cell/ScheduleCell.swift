@@ -15,7 +15,7 @@ final class ScheduleCell: UICollectionViewCell {
     
     //MARK: Property
     
-    
+    private let emptyCouponView: EmptyTicketView = EmptyTicketView(topLeftRadius: 40, topRightRadius: 5, bottomLeftRadius: 40, bottomRightRadius: 5)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,8 +28,16 @@ final class ScheduleCell: UICollectionViewCell {
     
     
     private func configure() {
+        self.contentView.addSubview(emptyCouponView)
         self.contentView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
+        
+        emptyCouponView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(143)
+        }
     }
     
     

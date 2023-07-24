@@ -38,6 +38,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             guard let exerciseCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExerciseCell", for: indexPath) as? ExerciseCell else { return UICollectionViewCell() }
             
             return exerciseCell
+        default:
+            return UICollectionViewCell()
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
@@ -71,6 +73,9 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             
         case .exerciseClass:
             return self.createExerciseClassLayout()
+            
+        case .benefitsClass:
+            return self.createBenefitsLayout()
         }
         
     }
@@ -124,7 +129,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let scheduleClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(256)
+            heightDimension: .absolute(160)
         )
         
         let scheduleClassItem = NSCollectionLayoutItem(layoutSize: scheduleClassLayoutSize)
@@ -191,7 +196,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
         
-        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 10, bottom: 0, trailing: 10)
         
         let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
@@ -203,7 +208,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let exerciseSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(100)
+            heightDimension: .absolute(50)
         )
         
         let exerciseSection = NSCollectionLayoutSection(
@@ -227,7 +232,10 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     //MARK: 오늘의 혜택 섹션 레이아웃 구성 함수
     /// - Return : NSCollectionLayoutSize
-    private func createBenefitsLayout() { }
+    private func createBenefitsLayout() -> NSCollectionLayoutSection {
+        
+        return NSCollectionLayoutSection(group: NSCollectionLayoutGroup(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(self.view.frame.size.width), heightDimension: .absolute(100))))
+    }
     
     
     
