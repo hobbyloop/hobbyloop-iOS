@@ -196,12 +196,15 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
         
-        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 10, bottom: 0, trailing: 10)
+        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        
+        let exerciseGroupLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.9),
+            heightDimension: .absolute(339)
+        )
         
         let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(0.9),
-                heightDimension: .absolute(339)),
+            layoutSize: exerciseGroupLayoutSize,
             subitems: [exerciseClassItem]
         )
         
@@ -234,7 +237,51 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     /// - Return : NSCollectionLayoutSize
     private func createBenefitsLayout() -> NSCollectionLayoutSection {
         
-        return NSCollectionLayoutSection(group: NSCollectionLayoutGroup(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(self.view.frame.size.width), heightDimension: .absolute(100))))
+        let benefitsItemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(230)
+        )
+        
+        let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
+        
+        benefitsLayoutItem.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 16,
+            bottom: 0,
+            trailing: 16
+        )
+        
+        let benefitsGroupLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(0.9),
+            heightDimension: .absolute(120)
+        )
+        
+        let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
+            layoutSize: benefitsGroupLayoutSize,
+            subitems: [benefitsLayoutItem]
+        )
+        
+        let benefitsSection = NSCollectionLayoutSection(
+            group: benefitsGroupLayout
+        )
+        
+        benefitsSection
+            .orthogonalScrollingBehavior = .groupPagingCentered
+        
+        let benefitsHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(50)
+        )
+        
+        let benefitsHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: benefitsHeaderLayoutSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        
+        benefitsSection.boundarySupplementaryItems = [benefitsHeader]
+        
+        return benefitsSection
     }
     
     

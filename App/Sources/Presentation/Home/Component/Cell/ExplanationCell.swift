@@ -63,6 +63,12 @@ final class ExplanationCell: UICollectionViewCell {
     }
     
     
+    //TODO: StartDate, EndDate 값 추후 Server Date 값 Binding 처리
+    private let explanationCouponView: CouponView = CouponView(
+        coupon: DummyCoupon(companyName: "1:1 맞춤지도 20회", count: 1, start: Date(), end: Date())
+    )
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -78,7 +84,7 @@ final class ExplanationCell: UICollectionViewCell {
         
         self.contentView.addSubview(explanationContainerView)
         
-        [explanationTitleLabel, explanationSubTitleLabel, explanationButton].forEach {
+        [explanationTitleLabel, explanationSubTitleLabel, explanationCouponView ,explanationButton].forEach {
             self.explanationContainerView.addSubview($0)
         }
         
@@ -100,6 +106,13 @@ final class ExplanationCell: UICollectionViewCell {
             $0.centerX.equalTo(explanationTitleLabel)
         }
         
+        explanationCouponView.snp.makeConstraints {
+            $0.top.equalTo(explanationSubTitleLabel.snp.bottom).offset(21)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(152)
+            
+        }
         
         //TODO: Top Constraints 값 CouponView Bottom으로 변경
         explanationButton.snp.makeConstraints {

@@ -61,7 +61,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     public func configure() {
         
         scrollBarAppearance.configureWithTransparentBackground()
-        scrollBarAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
+        scrollBarAppearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterial)
         scrollBarAppearance.shadowImage = UIImage()
         scrollBarAppearance.backgroundImage = UIImage()
         
