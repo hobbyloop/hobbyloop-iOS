@@ -146,6 +146,20 @@ public final class TicketView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    private func createDashLineLayer(frame: CGRect) -> CAShapeLayer {
+        let midLineLayer = CAShapeLayer()
+        midLineLayer.strokeColor = self.textColor.cgColor
+        midLineLayer.lineWidth = 0.5
+        midLineLayer.lineDashPattern = [10, 10]
+        let cgPath = CGMutablePath()
+        let cgPoints = [CGPoint(x: frame.width - 136.42, y: 0), CGPoint(x: frame.width - 136.42, y: frame.height)]
+        cgPath.addLines(between: cgPoints)
+        midLineLayer.path = cgPath
+        
+        return midLineLayer
+    }
+    
     public override func draw(_ rect: CGRect) {
         let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
         
@@ -156,6 +170,8 @@ public final class TicketView: UIView {
         maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
         maskLayer.lineWidth = 1
         
+        
         self.containerView.layer.addSublayer(maskLayer)
+        self.containerView.layer.addSublayer(createDashLineLayer(frame: rect))
     }
 }
