@@ -10,6 +10,13 @@ import SnapKit
 
 /// 수업 예약 내용을 나타내는 ticket view
 public final class TicketView: UIView {
+    
+    private let fillColor: CGColor
+    private let textColor: UIColor
+    
+    private let containerView: UIView = UIView().then {
+        $0.backgroundColor = .clear
+    }
     private let photoView = UIImageView().then {
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 24.5
@@ -54,20 +61,43 @@ public final class TicketView: UIView {
         }
     }
     
-    public init(title: String, studioName: String, instructor: String, timeString: String) {
+    public init(
+        title: String,
+        studioName: String,
+        instructor: String,
+        timeString: String,
+        textColor: UIColor,
+        fillColor: CGColor
+    ) {
+        self.textColor = textColor
+        self.fillColor = fillColor
         super.init(frame: .infinite)
-        
         titleLabel.text = title
         studioLabel.text = studioName
         instructorLabel.text = "\(instructor) 강사님"
         timeLabel.text = timeString
-        
+        setLayoutColor(color: textColor)
         layout()
     }
     
+    
+    private func setLayoutColor(color: UIColor) {
+        self.titleLabel.textColor = color
+        self.studioLabel.textColor = color
+        self.instructorLabel.textColor = color
+        self.timeLabel.textColor = color
+        self.dividerLine.backgroundColor = color
+    }
+    
     private func layout() {
+        
+        self.addSubview(containerView)
         [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, logoView].forEach(self.addSubview(_:))
                 
+        
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         photoView.snp.makeConstraints {
             $0.top.equalTo(self.snp.top).offset(24)
             $0.leading.equalTo(self.snp.leading).offset(26)
@@ -114,12 +144,10 @@ public final class TicketView: UIView {
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         
-        maskLayer.fillColor = UIColor.clear.cgColor
+        maskLayer.fillColor = self.fillColor
         maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
         maskLayer.lineWidth = 1
         
-        self.layer.addSublayer(maskLayer)
-        // 이 방식으로 처리하면 view의 backgroundColor가 테두리 바깥에도 적용됨
-        // maskLayer의 fill color를 설정해야 함
+        self.containerView.layer.addSublayer(maskLayer)
     }
 }

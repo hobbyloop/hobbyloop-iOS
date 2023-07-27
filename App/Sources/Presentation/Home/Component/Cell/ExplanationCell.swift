@@ -64,8 +64,13 @@ final class ExplanationCell: UICollectionViewCell {
     
     
     //TODO: StartDate, EndDate 값 추후 Server Date 값 Binding 처리
-    private let explanationCouponView: CouponView = CouponView(
-        coupon: DummyCoupon(companyName: "1:1 맞춤지도 20회", count: 1, start: Date(), end: Date())
+    private let explanationCouponView: TicketView = TicketView(
+        title: "1:1 맞춤지도 20회",
+        studioName: "하비루프 스튜디오",
+        instructor: "김하비 강사님",
+        timeString: Date().convertToString(),
+        textColor: HPCommonUIAsset.white.color,
+        fillColor: HPCommonUIAsset.deepOrange.color.cgColor
     )
     
     
@@ -114,11 +119,10 @@ final class ExplanationCell: UICollectionViewCell {
             
         }
         
-        //TODO: Top Constraints 값 CouponView Bottom으로 변경
         explanationButton.snp.makeConstraints {
             $0.width.equalTo(120)
             $0.height.equalTo(20)
-            $0.top.equalTo(explanationSubTitleLabel.snp.bottom).offset(30)
+            $0.top.equalTo(explanationCouponView.snp.bottom).offset(30)
             $0.centerX.equalTo(explanationSubTitleLabel)
         }
         
