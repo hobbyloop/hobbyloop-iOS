@@ -8,6 +8,12 @@
 import UIKit
 import SnapKit
 
+enum TicketStatus {
+    case launch
+    case release
+}
+
+
 /// 수업 예약 내용을 나타내는 ticket view
 public final class TicketView: UIView {
     
