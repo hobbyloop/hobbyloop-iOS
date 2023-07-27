@@ -8,7 +8,9 @@
 import UIKit
 import SnapKit
 
-enum TicketStatus {
+
+// TODO: 추후 Reactor 로 UI Configure 처리
+public enum TicketStatus {
     case launch
     case release
 }
