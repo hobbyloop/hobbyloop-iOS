@@ -46,6 +46,9 @@ final class HomeViewReactor: Reactor {
                 ]),
                 .exerciseClass([
                     .exerciseClassItem
+                ]),
+                .benefitsClass([
+                    .benefitsClassItem
                 ])
             ]
         )
@@ -79,6 +82,7 @@ final class HomeViewReactor: Reactor {
             let scheduleIndex = self.getIndex(section: .schedulClass([]))
             let explanationIndex = self.getIndex(section: .explanationClass([]))
             let exerciseIndex = self.getIndex(section: .exerciseClass([]))
+            let benefitsIndex = self.getIndex(section: .benefitsClass([]))
             
             //TODO: Server API 구현시 데이터 Response 값으로 Cell Configure
             newState.section[scheduleIndex] = .schedulClass([HomeSectionItem.schedulClassItem])
@@ -90,6 +94,13 @@ final class HomeViewReactor: Reactor {
                 HomeSectionItem.exerciseClassItem,
                 HomeSectionItem.exerciseClassItem
                 
+            ])
+            newState.section[benefitsIndex] = .benefitsClass([
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem
             ])
         }
         

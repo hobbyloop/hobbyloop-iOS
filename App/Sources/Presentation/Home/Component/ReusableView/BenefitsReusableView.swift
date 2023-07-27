@@ -15,6 +15,7 @@ final class BenefitsReusableView: UICollectionReusableView {
     
     private let benefitsTitleLabel: UILabel = UILabel().then {
         $0.text = "오늘의 혜택"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.setSubScriptAttributed(
             targetString: "혜택",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
@@ -40,7 +41,8 @@ final class BenefitsReusableView: UICollectionReusableView {
         self.addSubview(benefitsTitleLabel)
         
         benefitsTitleLabel.snp.makeConstraints {
-            $0.top.left.right.bottom.equalToSuperview()
+            $0.top.right.bottom.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
         }
     }
 }

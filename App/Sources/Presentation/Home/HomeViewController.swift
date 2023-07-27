@@ -36,10 +36,12 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             return explanationCell
         case .exerciseClassItem:
             guard let exerciseCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExerciseCell", for: indexPath) as? ExerciseCell else { return UICollectionViewCell() }
-            
             return exerciseCell
-        default:
-            return UICollectionViewCell()
+        case .benefitsClassItem:
+            guard let benefitsCell = collectionView.dequeueReusableCell(withReuseIdentifier: "BenefitsCell", for: indexPath) as? BenefitsCell else { return UICollectionViewCell() }
+            
+            
+            return benefitsCell
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
@@ -54,6 +56,10 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         case .exerciseClassItem:
             guard let exerciseReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ExerciseReusableView", for: indexPath) as? ExerciseReusableView else { return UICollectionReusableView() }
             return exerciseReusableView
+            
+        case .benefitsClassItem:
+            guard let benefitsReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "BenefitsReusableView", for: indexPath) as? BenefitsReusableView else { return UICollectionReusableView () }
+            return benefitsReusableView
             
         default:
             return UICollectionReusableView()
@@ -86,8 +92,10 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
         $0.register(ExerciseCell.self, forCellWithReuseIdentifier: "ExerciseCell")
+        $0.register(BenefitsCell.self, forCellWithReuseIdentifier: "BenefitsCell")
         $0.register(ScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ScheduleReusableView")
         $0.register(ExerciseReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ExerciseReusableView")
+        $0.register(BenefitsReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "BenefitsReusableView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         
@@ -246,14 +254,14 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         benefitsLayoutItem.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
-            leading: 16,
+            leading: 0,
             bottom: 0,
-            trailing: 16
+            trailing: 12
         )
         
         let benefitsGroupLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(0.9),
-            heightDimension: .absolute(120)
+            widthDimension: .fractionalWidth(0.92),
+            heightDimension: .absolute(230)
         )
         
         let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
