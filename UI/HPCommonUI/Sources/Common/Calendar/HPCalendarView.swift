@@ -9,7 +9,6 @@ import UIKit
 
 import Then
 import SnapKit
-import RxDataSources
 
 
 public struct HPDay: Equatable {
@@ -20,9 +19,13 @@ public struct HPDay: Equatable {
 }
 
 
-public final class HPCalendarView: UIView {
-    
-    
+public protocol HPCalendarDelegateProxy {
+    var currentMonth: Date? { get set }
+    var calendarDays: [HPDay] { get }
+}
+
+public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
+
     // MARK: Property
     private var calendarMonthLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
@@ -41,7 +44,6 @@ public final class HPCalendarView: UIView {
 
     }
     
-    
     private var calendarCollectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout().then {
         $0.itemSize = CGSize(width: 35, height: 35)
         $0.minimumLineSpacing = 0
@@ -54,6 +56,9 @@ public final class HPCalendarView: UIView {
         $0.showsVerticalScrollIndicator = false
     }
     
+    public var currentMonth: Date?
+    public var calendarDays: [HPDay] = []
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -65,7 +70,27 @@ public final class HPCalendarView: UIView {
     
     
     //MARK: Configure
-    private func configure() { }
+    private func configure() {
+        setNeedsMonthDay()
+    }
+    
+    
+    private func setNeedsMonthDay() {
+        guard let initalMonthDay = Calendar.current.date(byAdding: .month, value: 0, to: Date()) else { return }
+        let components = Calendar.current.dateComponents([.year, .month], from: initalMonthDay)
+        
+        print("setNeeds Month Day: \(components)")
+        self.calendarMonthLabel.text = "\(initalMonthDay.month)월"
+        self.addSubview(self.calendarMonthLabel)
+        
+        self.calendarMonthLabel.snp.makeConstraints {
+            $0.width.height.equalTo(40)
+            $0.top.equalToSuperview()
+            $0.center.equalToSuperview()
+        }
+        
+        
+    }
     
 }
 
