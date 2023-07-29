@@ -10,6 +10,19 @@ import Foundation
 
 public extension Date {
     
+    var day: Int {
+        return Calendar.current.component(.day, from: self)
+    }
+    
+    var year: Int {
+        return Calendar.current.component(.year, from: self)
+    }
+    
+    var month: Int {
+        return Calendar.current.component(.month, from: self)
+    }
+    
+    
     func convertToString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY년 MM월 dd일"

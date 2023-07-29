@@ -9,6 +9,16 @@ import UIKit
 
 import Then
 import SnapKit
+import RxDataSources
+
+
+public struct HPDay: Equatable {
+    let date: Date
+    let today: String
+    let isPrevious: Bool
+    let isNext: Bool
+}
+
 
 public final class HPCalendarView: UIView {
     
