@@ -5,7 +5,7 @@
 //  Created by Kim dohyun on 2023/06/05.
 //
 
-import Foundation
+import UIKit
 
 
 public extension String {
@@ -41,6 +41,17 @@ public extension String {
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
         guard let newDate = dateFormatter.date(from: self) else { return Date() }
         return newDate
+    }
+    
+    func heightForView(font: UIFont, width: CGFloat) -> CGFloat{
+        let label: UILabel = UILabel(frame: CGRectMake(0, 0, width, CGFloat.greatestFiniteMagnitude))
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.font = font
+        label.text = self
+
+        label.sizeToFit()
+        return label.frame.height
     }
     
 }
