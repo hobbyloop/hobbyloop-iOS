@@ -48,22 +48,23 @@ class FacilityInfoCollectionCompanyInfo: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         textLabel.preferredMaxLayoutWidth = textLabel.frame.size.width
-        super.layoutSubviews()
     }
     
     private func initLayout() {
         backgroundColor = .white
         
-        [mainStackView].forEach {
+        [logoImageView, textLabel].forEach {
             contentView.addSubview($0)
         }
         
-        [logoImageView, textLabel].forEach {
-            mainStackView.addArrangedSubview($0)
+        logoImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(26)
+            $0.width.height.equalTo(90)
         }
         
-        mainStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(26)
+        textLabel.snp.makeConstraints {
+            $0.top.equalTo(logoImageView.snp.bottom).offset(26)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(40)
         }

@@ -15,6 +15,10 @@ class FacilityInfoViewController: UIViewController {
 balance SUDIO는 강사진과 트레이너들의 체계적인 Pilates & Wegiht Program 제공하는 퍼스널 트레이닝 스튜디오 입니다.
     
 Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다.   필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다.
+
+balance SUDIO는 강사진과 트레이너들의 체계적인 Pilates & Wegiht Program 제공하는 퍼스널 트레이닝 스튜디오 입니다.
+    
+Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다.   필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다.
 """
     
     private lazy var collectionView: UICollectionView = {
@@ -120,12 +124,8 @@ extension FacilityInfoViewController: UICollectionViewDelegateFlowLayout {
         let width = self.view.bounds.width
         switch indexPath.row {
         case 0:
-            let cell = FacilityInfoCollectionCompanyInfo()
-            cell.configure(text)
-            cell.contentView.setNeedsLayout()
-            cell.contentView.layoutIfNeeded()
-            let height = cell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
-            print(width, height)
+            let height = text.heightForView(font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14), width: width - 32)
+            
             return CGSize(width: width, height: height + 182)
         case 1 :
             return CGSize(width: width, height: width + 20 + 24 + 20 + 20)

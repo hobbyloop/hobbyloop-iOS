@@ -26,13 +26,14 @@ class BusinessStackView: UIStackView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        initLayout()
     }
     
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(_ title: String, _ subscribe: String) {
+    private func initLayout() {
         axis = .horizontal
         alignment = .leading
         spacing = 12
@@ -40,9 +41,10 @@ class BusinessStackView: UIStackView {
         [titleLabel, subscribeLabel].forEach {
             addArrangedSubview($0)
         }
-        
+    }
+    
+    public func configure(_ title: String, _ subscribe: String) {
         titleLabel.text = title
         subscribeLabel.text = subscribe
-        layoutIfNeeded()
     }
 }
