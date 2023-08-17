@@ -1,5 +1,5 @@
 //
-//  FacilityInfoCollectionCell.swift
+//  FacilityInfoCollectionCompanyInfo.swift
 //  Hobbyloop
 //
 //  Created by 김진우 on 2023/06/10.
@@ -8,34 +8,29 @@
 import UIKit
 import HPCommonUI
 
-class FacilityInfoCollectionCell: UICollectionViewCell {
+class FacilityInfoCollectionCompanyInfo: UICollectionViewCell {
     private lazy var mainStackView: UIStackView = {
         return UIStackView().then {
             $0.axis = .vertical
-            $0.alignment = .leading
-            $0.spacing = 18
-        }
-    }()
-    
-    private lazy var separator: UIView = {
-        return UIView().then {
-            $0.backgroundColor = .black
+            $0.alignment = .center
+            $0.distribution = .fill
+            $0.spacing = 26
         }
     }()
     
     private lazy var logoImageView: UIImageView = {
         return UIImageView().then {
             $0.image = HPCommonUIAsset.hobbyloop.image.withRenderingMode(.alwaysOriginal)
+            $0.contentMode = .scaleAspectFit
             $0.snp.makeConstraints {
-                $0.width.equalTo(60)
-                $0.height.equalTo(45)
+                $0.height.width.equalTo(90)
             }
         }
     }()
     
     private lazy var textLabel: UILabel = {
         return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
             $0.lineBreakStrategy = .hangulWordPriority
             $0.numberOfLines = 0
         }
@@ -57,7 +52,9 @@ class FacilityInfoCollectionCell: UICollectionViewCell {
     }
     
     private func initLayout() {
-        [mainStackView, separator].forEach {
+        backgroundColor = .white
+        
+        [mainStackView].forEach {
             contentView.addSubview($0)
         }
         
@@ -66,13 +63,9 @@ class FacilityInfoCollectionCell: UICollectionViewCell {
         }
         
         mainStackView.snp.makeConstraints {
-            $0.top.equalTo(contentView).offset(20)
-            $0.leading.trailing.bottom.equalTo(contentView)
-        }
-        
-        separator.snp.makeConstraints {
-            $0.top.leading.trailing.equalTo(contentView)
-            $0.height.equalTo(0.5)
+            $0.top.equalToSuperview().offset(26)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(40)
         }
     }
     

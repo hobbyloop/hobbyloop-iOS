@@ -16,8 +16,7 @@ import RxSwift
 class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
     var view1 = FacilityInfoViewController()
     var view2 = UIViewController()
-    var view3 = UIViewController()
-    private lazy var viewControllers = [view1, view2, view3]
+    private lazy var viewControllers = [view1, view2]
     
     private lazy var bodyView: TabmanViewController = {
         return TabmanViewController().then {
@@ -57,6 +56,11 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.topViewController?.tabBarController?.tabBar.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         headerView = HeaderView(type: .detail)
@@ -93,15 +97,13 @@ extension TicketDetailViewController: PageboyViewControllerDataSource, TMBarData
             case 0:
                 return "시설정보"
             case 1:
-                return "수업정보"
-            case 2:
-                return "이용권 구매"
+                return "이용권‧수업 정보"
             default :
                 return ""
             }
         }
         
-        var barItem = TMBarItem(title: title)
+        let barItem = TMBarItem(title: title)
         
         return barItem
     }

@@ -1,5 +1,5 @@
 //
-//  FacilityInfoCollectionBottomCell.swift
+//  FacilityInfoCollectionMapCell.swift
 //  Hobbyloop
 //
 //  Created by 김진우 on 2023/06/21.
@@ -9,24 +9,12 @@ import UIKit
 import HPCommonUI
 import NMapsMap
 
-class FacilityInfoCollectionBottomCell: UICollectionViewCell {
+class FacilityInfoCollectionMapCell: UICollectionViewCell {
     private lazy var mainStackView: UIStackView = {
         return UIStackView().then {
             $0.axis = .vertical
             $0.alignment = .leading
             $0.spacing = 20
-        }
-    }()
-    
-    private lazy var separator: UIView = {
-        return UIView().then {
-            $0.backgroundColor = .black
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = UIColor.black.cgColor
-            $0.isHidden = false
-            $0.snp.makeConstraints {
-                $0.height.equalTo(1)
-            }
         }
     }()
     
@@ -40,29 +28,19 @@ class FacilityInfoCollectionBottomCell: UICollectionViewCell {
     
     private lazy var iconImageView: UIImageView = {
         return UIImageView().then {
-            $0.image = HPCommonUIAsset.locationOutlined.image.withRenderingMode(.alwaysOriginal)
-//            $0.snp.makeConstraints {
-//                $0.width.equalTo(60)
-//                $0.height.equalTo(45)
-//            }
+            $0.image = HPCommonUIAsset.locationFilled.image.withRenderingMode(.alwaysOriginal)
         }
     }()
     
     private lazy var textLabel: UILabel = {
         return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-            $0.textColor = UIColor(red: 28/255, green: 28/255, blue: 28/255, alpha: 1)
+            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+            $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
             $0.text = "오시는 길"
             $0.lineBreakStrategy = .hangulWordPriority
             $0.numberOfLines = 0
         }
     }()
-    
-//    lazy var map: UIView = {
-//        return UIView(frame: CGRect(x: 0, y: 0, width: 353, height: 400)).then {
-//            $0.backgroundColor = .blue
-//        }
-//    }()
     
     private lazy var map: NMFMapView = {
         return NMFMapView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.width))
@@ -84,24 +62,9 @@ class FacilityInfoCollectionBottomCell: UICollectionViewCell {
     }
     
     private func initLayout() {
-//        [mainStackView].forEach {
-//            contentView.addSubview($0)
-//        }
-//
-//        [titleStackView, separator, map].forEach {
-//            mainStackView.addArrangedSubview($0)
-//        }
-//
-//        [iconImageView, textLabel].forEach {
-//            titleStackView.addArrangedSubview($0)
-//        }
-//
-//        mainStackView.snp.makeConstraints {
-//            $0.top.equalTo(contentView).offset(20)
-//            $0.leading.trailing.bottom.equalTo(contentView)
-//        }
+        backgroundColor = .white
         
-        [mainStackView, separator, map].forEach {
+        [mainStackView, map].forEach {
             contentView.addSubview($0)
         }
         
@@ -115,17 +78,12 @@ class FacilityInfoCollectionBottomCell: UICollectionViewCell {
         
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(contentView).offset(20)
-            $0.leading.trailing.equalTo(contentView)
-//            $0.height.equalTo(30)
-        }
-        
-        separator.snp.makeConstraints {
-            $0.top.equalTo(mainStackView.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview()
+            $0.trailing.equalTo(contentView)
+            $0.leading.equalToSuperview().offset(16)
         }
         
         map.snp.makeConstraints {
-            $0.top.equalTo(separator.snp.bottom).offset(20)
+            $0.top.equalTo(mainStackView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(frame.width)
         }

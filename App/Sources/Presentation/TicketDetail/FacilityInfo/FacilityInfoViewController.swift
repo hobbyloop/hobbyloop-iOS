@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import HPCommonUI
 
 class FacilityInfoViewController: UIViewController {
     var item = [1, 2, 3, 4]
@@ -23,20 +24,29 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
         layout.minimumInteritemSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 14, left: 0, bottom: UIApplication.shared.safeAreaBottom, right: 0)
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
-            view.addSubview($0)
             $0.delegate = self
             $0.dataSource = self
-            $0.backgroundColor = .clear
+            $0.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
             $0.automaticallyAdjustsScrollIndicatorInsets = false
-            $0.contentInset = UIEdgeInsets(top: 17, left: 16, bottom: 72, right: 16)
+            $0.contentInset = UIEdgeInsets(top: 17, left: 0, bottom: 72, right: 0)
             $0.register(TicketCollectionViewCell.self, forCellWithReuseIdentifier: "TicketCollectionViewCell")
-            $0.register(FacilityInfoCollectionCell.self, forCellWithReuseIdentifier: "FacilityInfoCollectionCell")
-            $0.register(FacilityInfoCollectionBottomCell.self, forCellWithReuseIdentifier: "FacilityInfoCollectionBottomCell")
+            $0.register(FacilityInfoCollectionCompanyInfo.self, forCellWithReuseIdentifier: "FacilityInfoCollectionCompanyInfo")
+            $0.register(FacilityInfoCollectionMapCell.self, forCellWithReuseIdentifier: "FacilityInfoCollectionMapCell")
+            $0.register(FacilityInfoCollectionBusiness.self, forCellWithReuseIdentifier: "FacilityInfoCollectionBusiness")
             $0.register(
                 FacilityInfoCollectionReusableView.self,
                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                 withReuseIdentifier: "FacilityInfoCollectionReusableView"
             )
+        }
+    }()
+    
+    private lazy var paymentButton: UIButton = {
+        return UIButton().then {
+            $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+            $0.setTitle("결제하기", for: .normal)
+            $0.setTitleColor(.white, for: .normal)
+            $0.layer.cornerRadius = 10
         }
     }()
     
@@ -46,25 +56,40 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
     }
     
     func configure() {
+        [collectionView, paymentButton].forEach {
+            view.addSubview($0)
+        }
+        
         collectionView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
+        
+        paymentButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().offset(-34)
+            $0.height.equalTo(56)
+        }
+        
     }
 }
 
 extension FacilityInfoViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.row {
         case 0:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionCell", for: indexPath) as? FacilityInfoCollectionCell else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionCompanyInfo", for: indexPath) as? FacilityInfoCollectionCompanyInfo else { return UICollectionViewCell() }
             cell.configure(text)
             return cell
         case 1:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionBottomCell", for: indexPath) as? FacilityInfoCollectionBottomCell else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionMapCell", for: indexPath) as? FacilityInfoCollectionMapCell else { return UICollectionViewCell() }
+            return cell
+        case 2:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionBusiness", for: indexPath) as? FacilityInfoCollectionBusiness else { return UICollectionViewCell() }
             return cell
         default:
             break
@@ -88,22 +113,24 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
 extension FacilityInfoViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: self.view.bounds.width - 40, height: 362)
+        return CGSize(width: self.view.bounds.width, height: 362)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = self.view.bounds.width - 40
+        let width = self.view.bounds.width
         switch indexPath.row {
         case 0:
-            let cell = FacilityInfoCollectionCell()
+            let cell = FacilityInfoCollectionCompanyInfo()
             cell.configure(text)
             cell.contentView.setNeedsLayout()
             cell.contentView.layoutIfNeeded()
             let height = cell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
             print(width, height)
-            return CGSize(width: width, height: height + 85)
+            return CGSize(width: width, height: height + 182)
         case 1 :
             return CGSize(width: width, height: width + 20 + 24 + 20 + 20)
+        case 2 :
+            return CGSize(width: width, height: 147)
         default :
             return CGSize(width: width, height: 0)
         }

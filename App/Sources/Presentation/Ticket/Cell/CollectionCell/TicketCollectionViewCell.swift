@@ -107,6 +107,8 @@ class TicketCollectionViewCell: UICollectionViewCell {
     }
     
     private func initLayout() {
+        backgroundColor = .white
+        
         [imageView, storeStackView, tableView].forEach {
             addSubview($0)
         }

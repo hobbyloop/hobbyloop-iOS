@@ -94,7 +94,7 @@ extension TicketViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let viewController = TicketDetailViewController()
         self.navigationController?.pushViewController(viewController, animated: false)
-        
+        self.tabBarController?.tabBar.isHidden = true
     }
 }
 
