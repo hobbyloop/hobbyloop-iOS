@@ -88,8 +88,65 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
             $0.top.equalToSuperview()
             $0.center.equalToSuperview()
         }
+    }
+    
+    
+    // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
+    private func createCalendarLayout() -> NSCollectionLayoutSection {
+        
+        let calendarLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.frame.size.width),
+            heightDimension: .absolute(250)
+        )
+        
+        let calendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: calendarLayoutSize
+        )
+        
+        let calendarLayoutGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: calendarLayoutSize,
+            subitems: [calendarLayoutItem]
+        )
+        
+        let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.frame.size.width),
+            heightDimension: .absolute(40)
+        )
         
         
+        let calendarLayoutSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
+        calendarLayoutSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: calendarSectionHeaderLayoutSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+        
+        
+        return calendarLayoutSection
+    }
+    
+    
+    // MARK: 예약된 수업 사용자 티켓정보 레이아웃 구성 함수
+    private func createTicketInfoLayout() -> NSCollectionLayoutSection {
+        
+        let ticketInfoLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.frame.size.width),
+            heightDimension: .estimated(140)
+        )
+        
+        let ticketInfoLayoutItem = NSCollectionLayoutItem(layoutSize: ticketInfoLayoutSize)
+        
+        let ticketInfoLayoutGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: ticketInfoLayoutSize,
+            subitems: [ticketInfoLayoutItem]
+        )
+        
+        
+        let ticketInfoLayoutSection = NSCollectionLayoutSection(group: ticketInfoLayoutGroup)
+        
+        return ticketInfoLayoutSection
     }
     
 }
