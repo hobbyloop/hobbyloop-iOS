@@ -20,7 +20,6 @@ let dependencies = Dependencies(
         Package.alamofire,
         Package.kakaoSDK,
         Package.googleSDK,
-        Package.firebaseAuth,
         Package.cryptoSwift
     ]),
     platforms: [.iOS]
