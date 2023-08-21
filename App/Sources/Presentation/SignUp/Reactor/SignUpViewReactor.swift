@@ -27,6 +27,17 @@ public enum HPGender: String, Equatable {
     case male
     case female
     case none
+    
+    func getGenderType() -> String {
+        switch self {
+        case .male:
+            return "남자"
+        case .female:
+            return "여자"
+        case .none:
+            return ""
+        }
+    }
 }
 
 
@@ -42,6 +53,7 @@ public final class SignUpViewReactor: Reactor {
         case viewDidLoad
         case didTapGenderButton(HPGender)
         case didTapAuthCodeButton
+        case didTapCreateUserButton(String, String, String, String, String)
     }
     
     public enum Mutation {
@@ -50,12 +62,14 @@ public final class SignUpViewReactor: Reactor {
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
         case setAppleUserFullName(String)
+        case setCreateUserInfo(UserAccount)
     }
     
     public struct State {
         var isLoading: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
+        var userAccountEntity: UserAccount?
         var userGender: HPGender
         var applefullName: String
     }
@@ -67,6 +81,7 @@ public final class SignUpViewReactor: Reactor {
             isLoading: false,
             kakaoUserEntity: nil,
             naverUserEntity: nil,
+            userAccountEntity: nil,
             userGender: .none,
             applefullName: ""
         )
@@ -102,6 +117,17 @@ public final class SignUpViewReactor: Reactor {
         case .didTapAuthCodeButton:
             
             return .empty()
+            
+        case let .didTapCreateUserButton(name, nickName, gender, birth, phoneNumber):
+            let startLoading = Observable<Mutation>.just(.setLoading(true))
+            let endLoading = Observable<Mutation>.just(.setLoading(false))
+            print("name: \(name) and action : \(nickName) and : \(gender) and : \(birth) and : \(phoneNumber)")
+            
+            return .concat(
+                startLoading,
+                signUpRepository.createUserInformation(name: name, nickName: nickName, gender: gender, birth: birth, phoneNumber: phoneNumber),
+                endLoading
+            )
         }
     }
     
@@ -135,6 +161,9 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserGender(gender):
             newState.userGender = gender
+            
+        case let .setCreateUserInfo(accountInfo):
+            newState.userAccountEntity = accountInfo
         }
         
         return newState

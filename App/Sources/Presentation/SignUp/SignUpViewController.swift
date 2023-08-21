@@ -377,15 +377,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }).disposed(by: disposeBag)
 
         
-        // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
-//        birthDayPickerView.rx
-//            .value
-//            .skip(1)
-//            .asDriver(onErrorJustReturn: Date())
-//            .drive(onNext: { [weak self] date in
-//                guard let `self` = self else { return }
-//                self.birthDayView.textFiledView.text = date.convertToString()
-//            }).disposed(by: disposeBag)
         
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.profile?.nickname}
@@ -461,16 +452,16 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        // TODO: birthDayPickerView -> birthDayBottomSheet 로 디자인 변경
-//        Observable.zip(
-//            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
-//            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
-//        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
-//            .map { "\($0.1+"-"+$0.0)".birthdayToString().birthdayToDate() }
-//            .take(1)
-//            .asDriver(onErrorJustReturn: Date())
-//            .drive(birthDayPickerView.rx.date)
-//            .disposed(by: disposeBag)
+        Observable.zip(
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
+            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
+        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
+            .map { "\($0.1+"-"+$0.0)".birthdayToString() }
+            .take(1)
+            .asDriver(onErrorJustReturn: "")
+            .drive(birthDayView.textFiledView.rx.text)
+            .disposed(by: disposeBag)
+            
 
         NotificationCenter.default
             .rx.notification(UIResponder.keyboardWillShowNotification)
@@ -549,7 +540,41 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
+        // TODO: UserInfo Create Observable 사용자 이름 바인딩시 빈값 출력 이슈 확인
+        let userInfoNameObservable = Observable
+            .combineLatest(
+                nameView.textFiledView.rx.text,
+                nickNameView.textFiledView.rx.text
+            )
+            .debug("userinfoNamber ofbservable Data ")
+            
+        let userInfoGenderOfBirthDayObservable = Observable
+            .combineLatest(
+                reactor.state.map { $0.userGender.getGenderType() },
+                birthDayView.textFiledView.rx.text
+            )
+            .debug("userInfoGenderOfBirthDayObservable ofbservable Data ")
         
+        
+        let userInfoPhoneNumberOfConfirmObservable = Observable
+            .combineLatest(
+                phoneView.textFiledView.rx.text,
+                confirmButton.rx.tap.asObservable()
+            )
+            .debug("userInfoPhoneNumberOfConfirmObservable Data")
+        
+        
+        Observable
+            .combineLatest(
+            userInfoNameObservable,
+            userInfoGenderOfBirthDayObservable,
+            userInfoPhoneNumberOfConfirmObservable
+            ).compactMap { Reactor.Action.didTapCreateUserButton($0.0.0!, $0.0.1!, $0.1.0, $0.1.1!, $0.2.0!)}
+            .observe(on: MainScheduler.asyncInstance)
+            .debug("Confirm Data: Observable")
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
     }
 }
 

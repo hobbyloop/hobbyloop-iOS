@@ -62,19 +62,39 @@ extension AccountRouter: Router {
                 "Accept": "*/*"
             ]
             
-        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+        case .createUserInfo:
+            
+            var token: String = ""
+            
+            do {
+                token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+            } catch {
+                print(error.localizedDescription)
+            }
+            
             return [
+                "Authorization":"\(token)",
+                "Content-Type": "application/json"
+            ]
+        }
+    }
+    
+    public var parameters: HPParameterType {
+        
+        switch self {
+            
+        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+            return .body([
                 "birth": birth,
                 "gender": gender,
                 "name": name,
                 "nickname": nickname,
                 "phoneNum": phoneNumber
-            ]
-
+            ])
+        default:
+            return .none
         }
     }
-    
-    
     
     
 }

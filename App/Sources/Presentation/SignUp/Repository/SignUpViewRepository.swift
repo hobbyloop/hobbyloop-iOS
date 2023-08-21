@@ -17,7 +17,7 @@ import HPDomain
 
 public protocol SignUpViewRepo {
     var disposeBag: DisposeBag { get }
-    var APIService: APIService { get }
+    var networkService: APIService { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation>
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
@@ -28,12 +28,10 @@ public protocol SignUpViewRepo {
 public final class SignUpViewRepository: SignUpViewRepo {
     
     public var disposeBag: DisposeBag = DisposeBag()
-    public var APIService: APIService = APIClient.shared
+    public var networkService: APIService = APIClient.shared
     public var naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
     
-    public init(APIService: APIService) {
-        self.APIService = APIService
-    }
+    public init() { }
     
     /// 카카오 사용자 프로필 조회 메서드
     /// - note: 로그인 성공후 카카오 사용자 프로필 정보 조회 하기 위한 메서드
@@ -57,7 +55,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
             //TODO: 토큰이 만료될시 추후 처리 추가
             return .empty()
         } else {
-            return APIService.request(NaverAccount.self, AccountRouter.getNaverUserInfo)
+            return self.networkService.request(NaverAccount.self, AccountRouter.getNaverUserInfo)
                 .asObservable()
                 .flatMap { (data: NaverAccount) -> Observable<SignUpViewReactor.Mutation> in
                     return .just(.setNaverUserEntity(data))
@@ -75,7 +73,13 @@ public final class SignUpViewRepository: SignUpViewRepo {
     ///   - birth 사용자 출생년도
     ///   - phoneNumber 사용자 핸드폰 번호
     public func createUserInformation(name: String, nickName: String, gender: String, birth: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation> {
-        return .empty()
+        return self.networkService.request(UserAccount.self, AccountRouter.createUserInfo(birth: birth, gender: gender, name: name, nickname: nickName, phoneNumber: phoneNumber))
+            .asObservable()
+            .flatMap { (data: UserAccount) -> Observable<SignUpViewReactor.Mutation> in
+                
+                return .just(.setCreateUserInfo(data))
+            }
+        
     }
     
 }
