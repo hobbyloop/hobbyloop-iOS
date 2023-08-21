@@ -184,7 +184,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private func configure() {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)
-        
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.left.right.equalToSuperview()
@@ -541,39 +540,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         
         // TODO: UserInfo Create Observable 사용자 이름 바인딩시 빈값 출력 이슈 확인
-        let userInfoNameObservable = Observable
-            .combineLatest(
-                nameView.textFiledView.rx.text,
-                nickNameView.textFiledView.rx.text
-            )
-            .debug("userinfoNamber ofbservable Data ")
-            
-        let userInfoGenderOfBirthDayObservable = Observable
-            .combineLatest(
-                reactor.state.map { $0.userGender.getGenderType() },
-                birthDayView.textFiledView.rx.text
-            )
-            .debug("userInfoGenderOfBirthDayObservable ofbservable Data ")
-        
-        
-        let userInfoPhoneNumberOfConfirmObservable = Observable
-            .combineLatest(
-                phoneView.textFiledView.rx.text,
-                confirmButton.rx.tap.asObservable()
-            )
-            .debug("userInfoPhoneNumberOfConfirmObservable Data")
-        
-        
-        Observable
-            .combineLatest(
-            userInfoNameObservable,
-            userInfoGenderOfBirthDayObservable,
-            userInfoPhoneNumberOfConfirmObservable
-            ).compactMap { Reactor.Action.didTapCreateUserButton($0.0.0!, $0.0.1!, $0.1.0, $0.1.1!, $0.2.0!)}
-            .observe(on: MainScheduler.asyncInstance)
-            .debug("Confirm Data: Observable")
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
 
     }
 }
@@ -617,8 +583,17 @@ extension SignUpViewController: SignUpViewAnimatable {
     func showBottomSheetView() {
         let signUpBottomSheetView = SignUpBottomSheetView()
         signUpBottomSheetView.modalPresentationStyle = .overFullScreen
+        signUpBottomSheetView.delegate = self
         self.present(signUpBottomSheetView, animated: true)
     }
     
     
+}
+
+
+
+extension SignUpViewController: SignUpBottomSheetDelegate {
+    func updateToBirthDay(birthday: Date) {
+        self.birthDayView.textFiledView.text = birthday.convertToString()
+    }
 }

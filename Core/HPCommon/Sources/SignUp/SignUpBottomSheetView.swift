@@ -13,10 +13,18 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+
+public protocol SignUpBottomSheetDelegate: AnyObject {
+    func updateToBirthDay(birthday: Date)
+}
+
+
 public final class SignUpBottomSheetView: UIViewController {
     
     
     //MARK: Property
+    public weak var delegate: SignUpBottomSheetDelegate?
+    
     
     private let disposeBag: DisposeBag = DisposeBag()
     
@@ -87,6 +95,15 @@ public final class SignUpBottomSheetView: UIViewController {
             .bind(onNext: { [weak self] _ in
                 guard let `self` = self else { return }
                 self.dismiss(animated: true)
+            }).disposed(by: disposeBag)
+        
+        
+        datePickerView
+            .rx
+            .date
+            .changed
+            .subscribe(onNext: { date in
+                self.delegate?.updateToBirthDay(birthday: date)
             }).disposed(by: disposeBag)
         
         
