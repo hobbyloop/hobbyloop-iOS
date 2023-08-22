@@ -15,7 +15,7 @@ import RxSwift
 
 class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
     var view1 = FacilityInfoViewController()
-    var view2 = UIViewController()
+    var view2 = ClassInfoViewController()
     private lazy var viewControllers = [view1, view2]
     
     private lazy var bodyView: TabmanViewController = {
