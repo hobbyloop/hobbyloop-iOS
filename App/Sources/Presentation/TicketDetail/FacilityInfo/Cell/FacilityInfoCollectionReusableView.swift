@@ -7,6 +7,7 @@
 
 import UIKit
 
+import HPCommon
 import HPCommonUI
 import RxSwift
 
@@ -135,29 +136,8 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         return UIView()
     }()
     
-    private var reviewView: UIView = {
-        return UIView()
-    }()
-    
-    private var starImageView: UIImageView = {
-        return UIImageView().then {
-            $0.tintColor = UIColor(red: 255/255, green: 212/255, blue: 75/255, alpha: 1)
-            $0.image = UIImage(systemName: "star.fill")?.withRenderingMode(.alwaysOriginal)
-        }
-    }()
-    
-    private var starLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        }
-    }()
-    
-    private var starArrowImageView: UIImageView = {
-        return UIImageView().then {
-            let size = CGSize(width: 12, height: 12)
-            $0.tintColor = .black
-            $0.image = UIImage(systemName: "chevron.right")?.imageWith(newSize: size).withRenderingMode(.alwaysOriginal)
-        }
+    private var reviewView: StarReviewView = {
+        return StarReviewView()
     }()
     
     private let disposeBag = DisposeBag()
@@ -202,13 +182,9 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
             operatingAndReviewView.addSubview($0)
         }
         
-        [starImageView, starLabel, starArrowImageView].forEach {
-            reviewView.addSubview($0)
-        }
-        
         centerImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(236)
+            $0.height.equalTo(285)
         }
         
         companyView.snp.makeConstraints {
@@ -234,23 +210,6 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
             $0.top.bottom.leading.equalToSuperview()
         }
         
-        starImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview()
-            $0.height.width.equalTo(13)
-            $0.centerY.equalToSuperview()
-        }
-        
-        starLabel.snp.makeConstraints {
-            $0.leading.equalTo(starImageView.snp.trailing).offset(5)
-            $0.top.bottom.equalToSuperview()
-        }
-        
-        starArrowImageView.snp.makeConstraints {
-            $0.leading.equalTo(starLabel.snp.trailing).offset(5)
-            $0.trailing.equalToSuperview()
-            $0.centerY.equalToSuperview()
-        }
-        
         reviewView.snp.makeConstraints {
             $0.top.bottom.right.equalToSuperview()
         }
@@ -264,17 +223,10 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
     }
     
     public func configure() {
-        let number = 123
-        let text = "\(number)개의 리뷰"
+        reviewView.configure(123)
         centerImageView.image = UIImage(named: "TicketTestImage")?.withRenderingMode(.alwaysOriginal)
         titleLabel.text = "발란스 스튜디오"
         descriptionLabel.text = "서울 강남구 압구정로50길 8 2층"
-        let attributedString = NSMutableAttributedString(string: text)
-        let range = (text as NSString).range(of: text)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 14), range: range)
-        attributedString.addAttribute(.foregroundColor, value: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1), range: range)
-        attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: range)
-        starLabel.attributedText = attributedString
         
         let leftImageView = UIImageView(frame: CGRect(x: 0,
                                                       y: 0,
