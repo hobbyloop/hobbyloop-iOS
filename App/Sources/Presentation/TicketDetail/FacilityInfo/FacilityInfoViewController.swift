@@ -117,7 +117,7 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
 extension FacilityInfoViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: self.view.bounds.width, height: 362)
+        return CGSize(width: self.view.bounds.width, height: 414)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
