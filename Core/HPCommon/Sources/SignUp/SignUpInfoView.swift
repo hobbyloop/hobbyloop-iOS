@@ -12,11 +12,11 @@ import Then
 import SnapKit
 
 public enum SignUpType: String {
-    case name
-    case nickname
-    case birthDay
-    case phone
-    case authcode
+    case name = "이름"
+    case nickname = "닉네임"
+    case birthDay = "출생년도"
+    case phone = "전화번호"
+    case authcode = "인증번호"
     
     func setTitleLabelText() -> String {
         switch self {
@@ -67,6 +67,15 @@ public final class SignUpInfoView: UIView {
         $0.leftViewMode = .always
         $0.layer.cornerRadius = 8
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+    }
+    
+    
+    public lazy var descriptionLabel: UILabel = UILabel().then {
+        $0.textColor = HPCommonUIAsset.error.color
+        $0.numberOfLines = 1
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textAlignment = .left
+        $0.isHidden = true
     }
     
     public init(titleType: SignUpType) {

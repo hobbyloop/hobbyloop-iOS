@@ -391,6 +391,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfManButton.didTapHPButton(color)
+                self.genderOfGirlButton.isEnabled = false
             }).disposed(by: disposeBag)
         
         reactor.pulse(\.$kakaoUserEntity)
@@ -400,6 +401,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.didTapHPButton(color)
+                self.genderOfManButton.isEnabled = false
             }).disposed(by: disposeBag)
         
         
