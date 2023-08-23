@@ -403,6 +403,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }).disposed(by: disposeBag)
         
         
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .filter { $0.rawValue == "male" }
+            .map { _ in Reactor.Action.didTapGenderButton(.male)}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .filter { $0.rawValue == "female" }
+            .map { _ in Reactor.Action.didTapGenderButton(.female)}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         reactor.pulse(\.$naverUserEntity)
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
@@ -431,6 +445,23 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .drive(onNext: { color in
                 self.genderOfManButton.didTapHPButton(color)
             }).disposed(by: disposeBag)
+        
+        
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .filter { $0.gender == "M" }
+            .map { _ in Reactor.Action.didTapGenderButton(.male)}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .filter { $0?.response != nil }
+            .compactMap { $0?.response }
+            .filter { $0.gender == "F" }
+            .map { _ in Reactor.Action.didTapGenderButton(.female)}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
         reactor.pulse(\.$naverUserEntity)
             .filter { $0?.response != nil }
@@ -530,6 +561,41 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }).disposed(by: disposeBag)
         
         
+        nameView
+            .textFiledView.rx.observe(\.text)
+            .compactMap { $0 }
+            .map { Reactor.Action.updateToName($0)}
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nickNameView
+            .textFiledView.rx
+            .text.orEmpty
+            .map { Reactor.Action.updateToNickName($0) }
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView
+            .textFiledView.rx.observe(\.text)
+            .compactMap { $0 }
+            .map { Reactor.Action.updateToBirthDay($0)}
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        Observable
+            .combineLatest(
+                phoneView.textFiledView.rx.text.orEmpty,
+                confirmButton.rx.tap
+            ).filter { $0.1 == () }
+            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", $0.0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+    
         
         reactor.state
             .compactMap { $0.applefullName }
@@ -538,9 +604,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
         
-        
-        // TODO: UserInfo Create Observable 사용자 이름 바인딩시 빈값 출력 이슈 확인
-
     }
 }
 

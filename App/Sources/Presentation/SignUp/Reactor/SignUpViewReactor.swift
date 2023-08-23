@@ -54,6 +54,9 @@ public final class SignUpViewReactor: Reactor {
         case didTapGenderButton(HPGender)
         case didTapAuthCodeButton
         case didTapCreateUserButton(String, String, String, String, String)
+        case updateToName(String)
+        case updateToNickName(String)
+        case updateToBirthDay(String)
     }
     
     public enum Mutation {
@@ -62,6 +65,9 @@ public final class SignUpViewReactor: Reactor {
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
         case setAppleUserFullName(String)
+        case setUserName(String)
+        case setUserNickName(String)
+        case setUserBirthDay(String)
         case setCreateUserInfo(UserAccount)
     }
     
@@ -71,6 +77,9 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var naverUserEntity: NaverAccount?
         var userAccountEntity: UserAccount?
         var userGender: HPGender
+        var userName: String
+        var userNickName: String
+        var userBirthDay: String
         var applefullName: String
     }
     
@@ -83,6 +92,9 @@ public final class SignUpViewReactor: Reactor {
             naverUserEntity: nil,
             userAccountEntity: nil,
             userGender: .none,
+            userName: "",
+            userNickName: "",
+            userBirthDay: "",
             applefullName: ""
         )
     }
@@ -109,6 +121,15 @@ public final class SignUpViewReactor: Reactor {
                 requestProfile,
                 endLoading
             )
+        case let .updateToName(userName):
+            return .just(.setUserName(userName))
+            
+        case let .updateToNickName(userNickName):
+            return .just(.setUserNickName(userNickName))
+            
+        case let .updateToBirthDay(userBirthDay):
+            return .just(.setUserBirthDay(userBirthDay))
+            
         case let .didTapGenderButton(gender):
             let setUserInfoGender = Observable<Mutation>.just(.setUserGender(gender))
             
@@ -148,6 +169,18 @@ public final class SignUpViewReactor: Reactor {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
             
+        case let .setUserName(userName):
+            newState.userName = userName
+            print("newState userName: \(newState.userName)")
+            
+        case let .setUserNickName(userNickName):
+            newState.userNickName = userNickName
+            print("newState userNickName: \(newState.userNickName)")
+            
+        case let .setUserBirthDay(userBirthDay):
+            newState.userBirthDay = userBirthDay
+            print("newState userBirtyday : \(newState.userBirthDay)")
+            
         case let .setKakaoUserEntity(kakaoEntity):
             newState.kakaoUserEntity = kakaoEntity
             debugPrint("newState Kakao Profile Entity: \(newState.kakaoUserEntity)")
@@ -161,7 +194,7 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserGender(gender):
             newState.userGender = gender
-            
+            print("set newstate gedner: \(newState.userGender)")
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
         }

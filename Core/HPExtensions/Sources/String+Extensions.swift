@@ -27,6 +27,7 @@ public extension String {
         dateFormatter.locale = Locale(identifier: "ko_KR")
         
         if let date = dateFormatter.date(from: self) {
+            
             let newDateFormatter = DateFormatter()
             newDateFormatter.dateFormat = "yyyy년 MM월 dd일"
             let newDateString = newDateFormatter.string(from: date)
@@ -35,6 +36,23 @@ public extension String {
             return ""
         }
     }
+    
+    
+    func birthdayDashSymbolToString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        if let date = dateFormatter.date(from: self) {
+            let newDateFormatter = DateFormatter()
+            newDateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            let newDateString = newDateFormatter.string(from: date)
+            return newDateString
+        } else {
+            return ""
+        }
+    }
+    
     
     func birthdayToDate() -> Date {
         let dateFormatter = DateFormatter()
