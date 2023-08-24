@@ -11,7 +11,7 @@ import ReactorKit
 import RxSwift
 
 
-final class HPCalendarViewReactor: Reactor {
+public final class HPCalendarViewReactor: Reactor {
     
     //MARK: Property
     public var initialState: State
@@ -29,11 +29,15 @@ final class HPCalendarViewReactor: Reactor {
     //MARK: State
     public struct State {
         var days: [String]
+        @Pulse var section: [CalendarSection]
     }
     
     
-    init() {
-        self.initialState = State(days: [])
+    public init() {
+        self.initialState = State(
+            days: [],
+            section: [.calendar([.calnedarItem])]
+        )
     }
     
     

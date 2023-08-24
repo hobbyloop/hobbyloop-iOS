@@ -7,9 +7,12 @@
 
 import UIKit
 
+
+import RxDataSources
+import ReactorKit
 import Then
 import SnapKit
-import RxDataSources
+
 
 
 public struct HPDay: Equatable {
@@ -28,6 +31,9 @@ public protocol HPCalendarDelegateProxy {
 public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
 
     // MARK: Property
+    
+    public var disposeBag: DisposeBag = DisposeBag()
+    public typealias Reactor = HPCalendarViewReactor
     private var calendarMonthLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .center
@@ -45,23 +51,61 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
 
     }
     
-    private var calendarCollectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout().then {
-        $0.itemSize = CGSize(width: 35, height: 35)
-        $0.minimumLineSpacing = 0
-        $0.minimumInteritemSpacing = 0
+    private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
+        switch sectionItem {
+        case .calnedarItem:
+            guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarDayCell", for: indexPath) as? HPCalendarDayCell else { return UICollectionViewCell() }
+            return calendarCell
+            
+        default:
+            return UICollectionViewCell()
+        }
+    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        let dataSource = dataSource[indexPath]
+        
+        switch dataSource {
+        case .calnedarItem:
+            guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+            
+            return weekDayReusableView
+            
+        default:
+            return UICollectionReusableView()
+            
+        }
+        
     }
+
+    
+    private lazy var calendarCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+        
+        let section = self.calendarDataSource.sectionModels[section]
+        
+        switch section {
+        case .calendar:
+            return self.createCalendarLayout()
+        case .ticket:
+            return self.createTicketInfoLayout()
+        }
+        
+    }
+    
+    
     
     private lazy var calendarCollectionView: UICollectionView = UICollectionView(frame: self.frame, collectionViewLayout: calendarCollectionViewLayout).then {
         $0.isScrollEnabled = false
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
+        $0.register(HPCalendarDayCell.self, forCellWithReuseIdentifier: "HPCalendarDayCell")
+        $0.register(HPCalendarWeekReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HPCalendarWeekReusableView")
     }
     
     public var currentMonth: Date?
     public var calendarDays: [HPDay] = []
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    public init(reactor: HPCalendarViewReactor) {
+        super.init(frame: .zero)
+        self.reactor = reactor
         configure()
     }
     
@@ -83,11 +127,16 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
         print("setNeeds Month Day: \(components)")
         self.calendarMonthLabel.text = "\(initalMonthDay.month)월"
         self.addSubview(self.calendarMonthLabel)
+        self.addSubview(self.calendarCollectionView)
         
         self.calendarMonthLabel.snp.makeConstraints {
             $0.width.height.equalTo(40)
             $0.top.equalToSuperview()
-            $0.center.equalToSuperview()
+        }
+        
+        self.calendarCollectionView.snp.makeConstraints {
+            $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(10)
+            $0.left.right.bottom.equalToSuperview()
         }
     }
     
@@ -150,6 +199,19 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
         return ticketInfoLayoutSection
     }
     
+}
+
+
+extension HPCalendarView: ReactorKit.View {
+    
+    
+    public func bind(reactor: Reactor) {
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .debug("test calendar Section")
+            .drive(calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
+            .disposed(by: disposeBag)
+    }
 }
 
 

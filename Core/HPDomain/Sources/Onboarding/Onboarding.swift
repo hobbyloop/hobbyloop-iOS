@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import HPCommonUI
 
 public struct Onboarding {
     
