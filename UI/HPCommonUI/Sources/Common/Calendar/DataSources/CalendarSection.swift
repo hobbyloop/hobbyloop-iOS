@@ -31,7 +31,7 @@ public enum CalendarSection: SectionModelType {
 
 
 public enum CalendarSectionItem {
-    case calnedarItem
+    case calendarItem(HPCalendarDayCellReactor)
     case ticketItem
     
 }

@@ -15,6 +15,8 @@ public final class HPCalendarViewReactor: Reactor {
     
     //MARK: Property
     public var initialState: State
+    private var calendarConfigureProxy: HPCalendarDelgateProxy = HPCalendarProxyBinder()
+    
     
     //MARK: Action
     public enum Action {
@@ -36,7 +38,9 @@ public final class HPCalendarViewReactor: Reactor {
     public init() {
         self.initialState = State(
             days: [],
-            section: [.calendar([.calnedarItem])]
+            section: [
+                calendarConfigureProxy.configureCalendar()
+            ]
         )
     }
     
@@ -57,6 +61,42 @@ public final class HPCalendarViewReactor: Reactor {
             return newState
         }
     }
+    
+}
+
+
+
+protocol HPCalendarDelgateProxy {
+    var nowDate: Date { get set }
+    
+    func configureCalendar() -> CalendarSection
+}
+
+
+final class HPCalendarProxyBinder: HPCalendarDelgateProxy {
+    
+    //MARK: Property
+    var nowDate: Date = Date()
+    
+    
+    
+    
+    func configureCalendar() -> CalendarSection {
+        
+        var calendarSectionItem: [CalendarSectionItem] = []
+        var startOfDays = (nowDate.weekday - 1)
+        var totalDays = startOfDays + nowDate.rangeOfdays
+        for days in Int() ..< totalDays {
+            if days < startOfDays {
+                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String())))
+                continue
+            }
+            calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - startOfDays + 1)")))
+        }
+        
+        return CalendarSection.calendar(calendarSectionItem)
+    }
+    
     
 }
 

@@ -47,8 +47,9 @@ public final class HPCalendarView: UIView {
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         switch sectionItem {
-        case .calnedarItem:
+        case let .calendarItem(cellReactor):
             guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarDayCell", for: indexPath) as? HPCalendarDayCell else { return UICollectionViewCell() }
+            calendarCell.reactor = cellReactor
             return calendarCell
             
         default:
@@ -58,7 +59,7 @@ public final class HPCalendarView: UIView {
         let dataSource = dataSource[indexPath]
         
         switch dataSource {
-        case .calnedarItem:
+        case .calendarItem:
             guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
             
             return weekDayReusableView
@@ -139,7 +140,9 @@ public final class HPCalendarView: UIView {
         
         calendarCollectionView.snp.makeConstraints {
             $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(20)
-            $0.left.right.bottom.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -150,17 +153,22 @@ public final class HPCalendarView: UIView {
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
     private func createCalendarLayout() -> NSCollectionLayoutSection {
         
-        let calendarLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(self.frame.size.width),
-            heightDimension: .absolute(250)
+        let calendarItemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute((UIScreen.main.bounds.size.width) / 7),
+            heightDimension: .absolute(40)
         )
+        
         
         let calendarLayoutItem = NSCollectionLayoutItem(
-            layoutSize: calendarLayoutSize
+            layoutSize: calendarItemSize
         )
         
-        let calendarLayoutGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: calendarLayoutSize,
+        calendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3)
+        
+        let calendarLayoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                       heightDimension: .fractionalWidth(0.2))
+        let calendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: calendarLayoutGroupSize,
             subitems: [calendarLayoutItem]
         )
         

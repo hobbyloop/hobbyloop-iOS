@@ -10,16 +10,36 @@ import Foundation
 
 public extension Date {
     
+    
     var day: Int {
-        return Calendar.current.component(.day, from: self)
+        return Calendar.current.component(.day, from: nowDate)
     }
     
     var year: Int {
-        return Calendar.current.component(.year, from: self)
+        return Calendar.current.component(.year, from: nowDate)
     }
     
     var month: Int {
-        return Calendar.current.component(.month, from: self)
+        return Calendar.current.component(.month, from: nowDate)
+    }
+    
+    
+    var weekday: Int {
+        return Calendar.current.component(.weekday, from: nowDate)
+    }
+    
+    
+    
+    var components: DateComponents {
+        return Calendar.current.dateComponents([.year, .month],from: self)
+    }
+    
+    var nowDate: Date {
+        return Calendar.current.date(from: components) ?? Date()
+    }
+    
+    var rangeOfdays: Int {
+        return Calendar.current.range(of: .day, in: .month, for: nowDate)?.count ?? Int()
     }
     
     

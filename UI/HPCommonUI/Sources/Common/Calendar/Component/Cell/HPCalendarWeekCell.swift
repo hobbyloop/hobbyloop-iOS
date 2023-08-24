@@ -25,7 +25,6 @@ final class HPCalendarWeekCellReactor: Reactor {
     }
     
     init(week: String) {
-        print("test Week Calendar: \(week)")
         self.initialState = State(week: week)
     }
     
