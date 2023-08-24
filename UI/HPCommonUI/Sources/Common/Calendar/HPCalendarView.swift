@@ -21,14 +21,7 @@ public struct HPDay: Equatable {
     let isPrevious: Bool
     let isNext: Bool
 }
-
-
-public protocol HPCalendarDelegateProxy {
-    var currentMonth: Date? { get set }
-    var calendarDays: [HPDay] { get }
-}
-
-public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
+public final class HPCalendarView: UIView {
 
     // MARK: Property
     
@@ -100,9 +93,6 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
         $0.register(HPCalendarWeekReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HPCalendarWeekReusableView")
     }
     
-    public var currentMonth: Date?
-    public var calendarDays: [HPDay] = []
-    
     public init(reactor: HPCalendarViewReactor) {
         super.init(frame: .zero)
         self.reactor = reactor
@@ -124,7 +114,6 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
         guard let initalMonthDay = Calendar.current.date(byAdding: .month, value: 0, to: Date()) else { return }
         let components = Calendar.current.dateComponents([.year, .month], from: initalMonthDay)
         
-        print("setNeeds Month Day: \(components)")
         self.calendarMonthLabel.text = "\(initalMonthDay.month)월"
         self.addSubview(self.calendarMonthLabel)
         self.addSubview(self.calendarCollectionView)
@@ -159,7 +148,7 @@ public final class HPCalendarView: UIView, HPCalendarDelegateProxy {
         )
         
         let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(self.frame.size.width),
+            widthDimension: .absolute(UIScreen.main.bounds.size.width),
             heightDimension: .absolute(40)
         )
         

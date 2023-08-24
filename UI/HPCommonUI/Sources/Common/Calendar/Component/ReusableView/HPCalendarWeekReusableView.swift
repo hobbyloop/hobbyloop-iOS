@@ -25,6 +25,11 @@ final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionVi
         $0.dataSource = self
     }
     
+    private let weekUnderLineView: UIView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.lineSeparator.color
+        
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -38,11 +43,20 @@ final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionVi
     
     private func configure() {
         
-        self.addSubview(weekCollectionView)
+        [weekCollectionView, weekUnderLineView].forEach {
+            self.addSubview($0)
+        }
         weekCollectionView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
+        }
+        
+        weekUnderLineView.snp.makeConstraints {
+            $0.top.equalTo(weekCollectionView.snp.bottom)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(1)
         }
     }
     
@@ -68,8 +82,8 @@ extension HPCalendarWeekReusableView: UICollectionViewDataSource {
 extension HPCalendarWeekReusableView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let contentSpacing: Int = 16
-        return CGSize(width: (Int(collectionView.frame.size.width) - contentSpacing) / 9, height: 40)
+        let contentSpacing: Int = 32
+        return CGSize(width: (Int(collectionView.frame.size.width) - contentSpacing) / 7, height: 40)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -79,8 +93,5 @@ extension HPCalendarWeekReusableView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return .zero
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 48, bottom: 0, right: 0)
-    }
+
 }
