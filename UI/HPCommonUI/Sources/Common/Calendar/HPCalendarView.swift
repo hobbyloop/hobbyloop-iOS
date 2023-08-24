@@ -27,7 +27,8 @@ public final class HPCalendarView: UIView {
     
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
-    private var calendarMonthLabel: UILabel = UILabel().then {
+    private lazy var calendarMonthLabel: UILabel = UILabel().then {
+        $0.text = "\(Date().month)월"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .center
         $0.numberOfLines = 1
@@ -106,28 +107,44 @@ public final class HPCalendarView: UIView {
     
     //MARK: Configure
     private func configure() {
-        setNeedsMonthDay()
-    }
-    
-    
-    private func setNeedsMonthDay() {
-        guard let initalMonthDay = Calendar.current.date(byAdding: .month, value: 0, to: Date()) else { return }
-        let components = Calendar.current.dateComponents([.year, .month], from: initalMonthDay)
         
-        self.calendarMonthLabel.text = "\(initalMonthDay.month)월"
-        self.addSubview(self.calendarMonthLabel)
-        self.addSubview(self.calendarCollectionView)
+        self.backgroundColor = .white
         
-        self.calendarMonthLabel.snp.makeConstraints {
-            $0.width.height.equalTo(40)
-            $0.top.equalToSuperview()
+        [calendarCollectionView, calendarMonthLabel, nextButton, previousButton].forEach {
+            self.addSubview($0)
         }
         
-        self.calendarCollectionView.snp.makeConstraints {
-            $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(10)
+        
+        
+        calendarMonthLabel.snp.makeConstraints {
+            $0.width.equalTo(30)
+            $0.height.equalTo(14)
+            $0.top.equalToSuperview().offset(20)
+            $0.centerX.equalToSuperview()
+        }
+        
+        previousButton.snp.makeConstraints {
+            $0.width.equalTo(16)
+            $0.height.equalTo(17)
+            $0.right.equalTo(calendarMonthLabel.snp.left).offset(-20)
+            $0.centerY.equalTo(calendarMonthLabel)
+        }
+
+        nextButton.snp.makeConstraints {
+            $0.width.equalTo(previousButton)
+            $0.height.equalTo(previousButton)
+            $0.left.equalTo(calendarMonthLabel.snp.right).offset(20)
+            $0.centerY.equalTo(previousButton)
+        }
+        
+        calendarCollectionView.snp.makeConstraints {
+            $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(20)
             $0.left.right.bottom.equalToSuperview()
         }
     }
+    
+    
+    private func setNeedsMonthDay() {}
     
     
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
