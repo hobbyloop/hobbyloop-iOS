@@ -12,7 +12,7 @@ public extension Date {
     
     
     var day: Int {
-        return Calendar.current.component(.day, from: nowDate)
+        return Calendar.current.component(.day, from: .now)
     }
     
     var year: Int {
@@ -71,16 +71,14 @@ public extension Date {
         return dateFormatter.date(from: dateToString) ?? Date()
     }
     
-    func dateCompare(fromDate: Date) -> String {
+    func dateCompare(fromDate: Date) -> Bool {
         let result: ComparisonResult = self.compare(fromDate)
         
         switch result {
         case .orderedDescending:
-            return "Past"
-        case .orderedSame:
-            return "Same"
+            return false
         default:
-            return "Future"
+            return true
         }
         
     }
