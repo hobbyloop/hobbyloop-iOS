@@ -10,13 +10,14 @@ import UIKit
 import HPCommon
 import HPCommonUI
 import RxSwift
+import RxCocoa
 
 class FacilityInfoCollectionReusableView: UICollectionReusableView {
     private var centerImageView: UIImageView = {
         return UIImageView()
     }()
     
-    private var mainStackView: UIStackView = {
+    private lazy var mainStackView: UIStackView = {
         return UIStackView().then {
             $0.axis = .vertical
             $0.distribution = .fillProportionally
@@ -24,11 +25,11 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         }
     }()
     
-    private var companyView: UIView = {
+    private lazy var companyView: UIView = {
         return UIView()
     }()
     
-    private var titleStackView: UIStackView = {
+    private lazy var titleStackView: UIStackView = {
         return UIStackView().then {
             $0.spacing = 8
             $0.axis = .vertical
@@ -36,7 +37,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         }
     }()
     
-    private var titleAndIconStackView: UIStackView = {
+    private lazy var titleAndIconStackView: UIStackView = {
         return UIStackView().then {
             $0.spacing = 5
             $0.axis = .horizontal
@@ -47,7 +48,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         }
     }()
     
-    private var loopPassLabel: UILabel = {
+    private lazy var loopPassLabel: UILabel = {
         return UILabel().then {
             $0.text = "루프패스"
             $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
@@ -62,8 +63,8 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
             }
         }
     }()
-
-    private var refundableCompanyLabel: UILabel = {
+    
+    private lazy var refundableCompanyLabel: UILabel = {
         return UILabel().then {
             $0.text = "중도환불 가능업체"
             $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
@@ -79,39 +80,39 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         }
     }()
     
-    private var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         return UILabel().then {
             $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 18)
         }
     }()
     
-    private var descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         return UILabel().then {
             $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
             $0.textColor = .black.withAlphaComponent(0.45)
         }
     }()
     
-    private var communicationStackView: UIStackView = {
+    private lazy var communicationStackView: UIStackView = {
         return UIStackView().then {
             $0.axis = .horizontal
             $0.spacing = 15
         }
     }()
     
-    private var callButton: UIButton = {
+    private lazy var callButton: UIButton = {
         return UIButton().then {
             $0.setImage(HPCommonUIAsset.callFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
         }
     }()
     
-    private var messageButton: UIButton = {
+    private lazy var messageButton: UIButton = {
         return UIButton().then {
             $0.setImage(HPCommonUIAsset.textFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
         }
     }()
     
-    private var workTimeButton: UIButton = {
+    private lazy var workTimeButton: UIButton = {
         return UIButton().then {
             var configure = UIButton.Configuration.plain()
             let imageSize = CGSize(width: 12, height: 12)
@@ -132,15 +133,32 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         }
     }()
     
-    private var operatingAndReviewView: UIView = {
+    private lazy var operatingAndReviewView: UIView = {
         return UIView()
     }()
     
-    private var reviewView: StarReviewView = {
+    private lazy var reviewView: StarReviewView = {
         return StarReviewView()
     }()
     
-    private let disposeBag = DisposeBag()
+    private lazy var workTimeView: WorkTimeView = {
+        return WorkTimeView().then {
+            let daily = [DailyTime(day: "월", time: "11:30 - 21:30"),
+                         DailyTime(day: "화", time: "11:30 - 21:30"),
+                         DailyTime(day: "수", time: "11:30 - 21:30"),
+                         DailyTime(day: "목", time: "11:30 - 21:30"),
+                         DailyTime(day: "금", time: "11:30 - 21:30"),
+                         DailyTime(day: "토", time: "11:30 - 21:30"),
+                         DailyTime(day: "일", time: "11:30 - 21:30")
+            ]
+            $0.configure(daily)
+            $0.backgroundColor = .white
+            $0.layer.cornerRadius = 10
+            $0.layer.borderColor = HPCommonUIAsset.lightSeparator.color.cgColor
+            $0.layer.borderWidth = 1
+            $0.isHidden = true
+        }
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -153,8 +171,9 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
     
     private func initLayout() {
         backgroundColor = .white
+        layer.masksToBounds = false
         
-        [centerImageView, mainStackView].forEach {
+        [centerImageView, mainStackView, workTimeView].forEach {
             addSubview($0)
         }
         
@@ -214,11 +233,10 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
             $0.top.bottom.right.equalToSuperview()
         }
         
-        reviewView.rx.tapGesture()
-            .when(.recognized)
-            .bind{ _ in
-                print("tap Star Review View")
-            }.disposed(by: disposeBag)
+        workTimeView.snp.makeConstraints {
+            $0.top.equalTo(workTimeButton.snp.bottom).offset(9)
+            $0.leading.equalToSuperview().inset(50)
+        }
         
     }
     
@@ -237,5 +255,13 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
         leftImageView.contentMode = .scaleAspectFit
         leftImageView.layer.masksToBounds = true
         workTimeButton.addSubview(leftImageView)
+    }
+    
+    private func bind() {
+        reviewView.rx.tapGesture()
+            .when(.recognized)
+            .bind{ _ in
+                print("tap Star Review View")
+            }.disposed(by: disposeBag)
     }
 }
