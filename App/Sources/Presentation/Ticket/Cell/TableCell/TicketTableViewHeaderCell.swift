@@ -21,7 +21,7 @@ class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
     
     private var ticketImageView: UIImageView = {
         return UIImageView().then {
-            $0.image = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
+            $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
             $0.snp.makeConstraints {
                 $0.width.equalTo(17)
                 $0.height.equalTo(12)
