@@ -169,6 +169,7 @@ class ClassInfoReusableView: UICollectionReusableView {
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(couponListView.snp.bottom).offset(29)
             $0.leading.trailing.equalToSuperview().inset(29)
+            $0.bottom.equalToSuperview().inset(26)
         }
         
         titleLabel.snp.makeConstraints {
