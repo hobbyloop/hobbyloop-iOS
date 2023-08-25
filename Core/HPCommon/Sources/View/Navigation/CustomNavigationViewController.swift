@@ -11,7 +11,7 @@ import HPCommonUI
 import RxSwift
 import RxCocoa
 
-public class CustomNavigationViewController: UINavigationController {
+public class CustomNavigationViewController: UINavigationController, ContentNavigatable {
     
     public override func viewDidLoad() {
         super.viewDidLoad()

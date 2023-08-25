@@ -22,15 +22,13 @@ public final class StarReviewView: UIView {
     
     private var starLabel: UILabel = {
         return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 11)
         }
     }()
     
     private var starArrowImageView: UIImageView = {
         return UIImageView().then {
-            let size = CGSize(width: 12, height: 12)
             $0.tintColor = .black
-            $0.image = UIImage(systemName: "chevron.right")?.imageWith(newSize: size).withRenderingMode(.alwaysOriginal)
         }
     }()
     
@@ -67,13 +65,20 @@ public final class StarReviewView: UIView {
         }
     }
     
-    public func configure(_ num: Int) {
-        let text = "\(num)개의 리뷰"
+    public func configure(_ review: Int) {
+        let text = "\(review)개의 리뷰"
         let attributedString = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: text)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 14), range: range)
         attributedString.addAttribute(.foregroundColor, value: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1), range: range)
         attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: range)
         starLabel.attributedText = attributedString
+        
+        let size = CGSize(width: 12, height: 12)
+        starArrowImageView.image = UIImage(systemName: "chevron.right")?.imageWith(newSize: size).withRenderingMode(.alwaysOriginal)
+    }
+    
+    public func configure(_ score: Double) {
+        starLabel.text = "\(score)"
     }
 }
