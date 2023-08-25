@@ -9,6 +9,12 @@ import Foundation
 
 import RxDataSources
 
+public enum CalendarType: String, Equatable {
+    case calendarType
+    case ticketType
+}
+
+
 
 public enum CalendarSection: SectionModelType {
     case calendar([CalendarSectionItem])
@@ -27,6 +33,16 @@ public enum CalendarSection: SectionModelType {
         case .ticket: self = .ticket(items)
         }
     }
+    
+    public func getSectionType() -> CalendarType {
+        switch self {
+        case .calendar: return .calendarType
+        case .ticket: return .ticketType
+            
+        }
+        
+    }
+    
 }
 
 

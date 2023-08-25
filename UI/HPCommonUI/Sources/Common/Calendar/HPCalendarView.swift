@@ -118,7 +118,7 @@ public final class HPCalendarView: UIView {
         
         
         calendarMonthLabel.snp.makeConstraints {
-            $0.width.equalTo(30)
+            $0.width.lessThanOrEqualTo(45)
             $0.height.equalTo(14)
             $0.top.equalToSuperview().offset(20)
             $0.centerX.equalToSuperview()
@@ -236,11 +236,42 @@ extension HPCalendarView: ReactorKit.View {
     
     
     public func bind(reactor: Reactor) {
+        
+
+        Observable
+            .just(())
+            .map { Reactor.Action.loadView}
+            .debug("Load View HP Calendar View")
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
         reactor.pulse(\.$section)
             .asDriver(onErrorJustReturn: [])
             .debug("test calendar Section")
             .drive(calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
+
+        nextButton
+            .rx.tap
+            .map { Reactor.Action.didTapNextDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        previousButton
+            .rx.tap
+            .map { Reactor.Action.didTapPreviousDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { "\($0.month)월" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(calendarMonthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        
     }
 }
 
