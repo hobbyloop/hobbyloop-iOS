@@ -46,7 +46,7 @@ public extension String {
     func heightForView(font: UIFont, width: CGFloat) -> CGFloat{
         let label: UILabel = UILabel(frame: CGRectMake(0, 0, width, CGFloat.greatestFiniteMagnitude))
         label.numberOfLines = 0
-        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.lineBreakStrategy = .hangulWordPriority
         label.font = font
         label.text = self
 
