@@ -26,53 +26,37 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 20
         layout.minimumInteritemSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 14, left: 0, bottom: UIApplication.shared.safeAreaBottom, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 14, left: 0, bottom: 0, right: 0)
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             $0.delegate = self
             $0.dataSource = self
             $0.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
             $0.automaticallyAdjustsScrollIndicatorInsets = false
-            $0.contentInset = UIEdgeInsets(top: 17, left: 0, bottom: 72, right: 0)
-            $0.register(TicketCollectionViewCell.self, forCellWithReuseIdentifier: "TicketCollectionViewCell")
-            $0.register(FacilityInfoCollectionCompanyInfo.self, forCellWithReuseIdentifier: "FacilityInfoCollectionCompanyInfo")
-            $0.register(FacilityInfoCollectionMapCell.self, forCellWithReuseIdentifier: "FacilityInfoCollectionMapCell")
-            $0.register(FacilityInfoCollectionBusiness.self, forCellWithReuseIdentifier: "FacilityInfoCollectionBusiness")
+            $0.contentInset = UIEdgeInsets(top: 17, left: 0, bottom: 121, right: 0)
             $0.register(
                 FacilityInfoCollectionReusableView.self,
                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                 withReuseIdentifier: "FacilityInfoCollectionReusableView"
             )
-        }
-    }()
-    
-    private lazy var paymentButton: UIButton = {
-        return UIButton().then {
-            $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
-            $0.setTitle("결제하기", for: .normal)
-            $0.setTitleColor(.white, for: .normal)
-            $0.layer.cornerRadius = 10
+            $0.register(FacilityInfoCollectionAnnouncement.self, forCellWithReuseIdentifier: "FacilityInfoCollectionAnnouncement")
+            $0.register(FacilityInfoCollectionCompanyInfo.self, forCellWithReuseIdentifier: "FacilityInfoCollectionCompanyInfo")
+            $0.register(FacilityInfoCollectionMapCell.self, forCellWithReuseIdentifier: "FacilityInfoCollectionMapCell")
+            $0.register(FacilityInfoCollectionBusiness.self, forCellWithReuseIdentifier: "FacilityInfoCollectionBusiness")
         }
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
+        initLayout()
     }
     
-    func configure() {
-        [collectionView, paymentButton].forEach {
+    private func initLayout() {
+        [collectionView].forEach {
             view.addSubview($0)
         }
         
         collectionView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
-        }
-        
-        paymentButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-34)
-            $0.height.equalTo(56)
         }
         
     }

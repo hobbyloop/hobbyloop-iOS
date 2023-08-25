@@ -14,13 +14,12 @@ import Pageboy
 import RxSwift
 
 class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
-    var view1 = FacilityInfoViewController()
-    var view2 = ClassInfoViewController()
+    private var view1 = FacilityInfoViewController()
+    private var view2 = ClassInfoViewController()
     private lazy var viewControllers = [view1, view2]
     
     private lazy var bodyView: TabmanViewController = {
         return TabmanViewController().then {
-            self.view.addSubview($0.view)
             // Create bar
             $0.dataSource = self
             let bar = TMBar.ButtonBar()
@@ -45,7 +44,16 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
         }
     }()
     
-    public var viewIndex: Int = 0
+    private lazy var paymentButton: UIButton = {
+        return UIButton().then {
+            $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+            $0.setTitle("결제하기", for: .normal)
+            $0.setTitleColor(.white, for: .normal)
+            $0.layer.cornerRadius = 10
+        }
+    }()
+    
+    private var viewIndex: Int = 0
     
     init(_ index: Int = 0) {
         super.init()
@@ -67,10 +75,21 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
         
         configure()
         
+        [bodyView.view, paymentButton].forEach {
+            self.view.addSubview($0)
+        }
+        
         bodyView.view.snp.makeConstraints {
             guard let headerView else { return }
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        paymentButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().inset(UIApplication.shared.safeAreaBottom)
+            $0.height.equalTo(56)
         }
         
     }
