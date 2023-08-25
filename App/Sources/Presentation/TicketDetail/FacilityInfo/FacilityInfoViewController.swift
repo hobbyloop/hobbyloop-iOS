@@ -6,6 +6,8 @@
 //
 
 import UIKit
+
+import RxSwift
 import HPCommonUI
 
 class FacilityInfoViewController: UIViewController {
@@ -20,6 +22,9 @@ balance SUDIO는 강사진과 트레이너들의 체계적인 Pilates & Wegiht P
     
 Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다.   필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다.
 """
+    var openFlag = false
+    var workTimeClickEvent = PublishSubject<Void>()
+    var disposeBag = DisposeBag()
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -48,6 +53,7 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
     override func viewDidLoad() {
         super.viewDidLoad()
         initLayout()
+        bind()
     }
     
     private func initLayout() {
@@ -58,25 +64,47 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
         collectionView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
+    }
+    
+    private func bind() {
+        collectionView.rx.tapGesture()
+            .when(.recognized)
+            .bind { _ in
+                self.workTimeClickEvent.onNext(Void())
+            }.disposed(by: disposeBag)
+    }
+    
+    public func configure() {
         
     }
 }
 
 extension FacilityInfoViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.row {
         case 0:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionAnnouncement", for: indexPath) as? FacilityInfoCollectionAnnouncement else { return UICollectionViewCell() }
+            cell.configure(text)
+            cell.announcementEvent.bind { [weak self] status in
+                guard let self = self else { return }
+                openFlag.toggle()
+                collectionView.reloadItems(at: [indexPath])
+                collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+            }.disposed(by: cell.disposeBag)
+            
+            return cell
+        case 1:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionCompanyInfo", for: indexPath) as? FacilityInfoCollectionCompanyInfo else { return UICollectionViewCell() }
             cell.configure(text)
             return cell
-        case 1:
+        case 2:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionMapCell", for: indexPath) as? FacilityInfoCollectionMapCell else { return UICollectionViewCell() }
             return cell
-        case 2:
+        case 3:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityInfoCollectionBusiness", for: indexPath) as? FacilityInfoCollectionBusiness else { return UICollectionViewCell() }
             return cell
         default:
@@ -94,6 +122,23 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
                 for: indexPath
               ) as? FacilityInfoCollectionReusableView else {return UICollectionReusableView()}
         header.configure()
+        
+        header.callClickEvent.subscribe { _ in
+            
+        }.disposed(by: header.disposeBag)
+        
+        header.messageClickEvent.subscribe { _ in
+            
+        }.disposed(by: header.disposeBag)
+        
+        workTimeClickEvent
+            .bind(to: header.workTimeClickEvent)
+            .disposed(by: header.disposeBag)
+        
+        header.reviewClickEvent.subscribe { _ in
+            
+        }.disposed(by: header.disposeBag)
+        
         return header
     }
 }
@@ -107,13 +152,20 @@ extension FacilityInfoViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = self.view.bounds.width
         switch indexPath.row {
-        case 0:
+        case 0 :
+            var height: CGFloat = 0
+            if openFlag {
+                height = text.heightForView(font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14), width: width - 32)
+            }
+            
+            return CGSize(width: width, height: 140 + height)
+        case 1:
             let height = text.heightForView(font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14), width: width - 32)
             
             return CGSize(width: width, height: height + 182)
-        case 1 :
-            return CGSize(width: width, height: width + 20 + 24 + 20 + 20)
         case 2 :
+            return CGSize(width: width, height: width + 20 + 24 + 20 + 20)
+        case 3 :
             return CGSize(width: width, height: 147)
         default :
             return CGSize(width: width, height: 0)

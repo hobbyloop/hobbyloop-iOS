@@ -12,8 +12,15 @@ import HPCommonUI
 import RxSwift
 import RxCocoa
 
-class FacilityInfoCollectionReusableView: UICollectionReusableView {
-    private var centerImageView: UIImageView = {
+class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfoHeaderNavigatable {
+    internal lazy var workTimeClickEvent = PublishSubject<Void>()
+    internal lazy var reviewClickEvent = PublishSubject<Void>()
+    internal lazy var callClickEvent = PublishSubject<Void>()
+    internal lazy var messageClickEvent = PublishSubject<Void>()
+    
+    internal lazy var disposeBag = DisposeBag()
+    
+    private lazy var centerImageView: UIImageView = {
         return UIImageView()
     }()
     
@@ -163,10 +170,17 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         initLayout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+        bind()
     }
     
     private func initLayout() {
@@ -262,6 +276,41 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView {
             .when(.recognized)
             .bind{ _ in
                 print("tap Star Review View")
+            }.disposed(by: disposeBag)
+        
+        callButton.rx
+            .tap
+            .bind { [weak self] in
+                guard let self = self else { return }
+                callClickEvent.onNext(Void())
+            }.disposed(by: disposeBag)
+        
+        messageButton.rx
+            .tap
+            .bind { [weak self] in
+                guard let self = self else { return }
+                messageClickEvent.onNext(Void())
+            }.disposed(by: disposeBag)
+        
+        workTimeButton.rx
+            .tap
+            .bind { [weak self] _ in
+                guard let self = self else { return }
+                print("운영시간 ON")
+                workTimeView.isHidden.toggle()
+            }.disposed(by: disposeBag)
+        
+        workTimeClickEvent.subscribe { [weak self] _ in
+            guard let self = self else { return }
+            print("운영시간 OFF")
+            self.workTimeView.isHidden = true
+        }.disposed(by: disposeBag)
+        
+        reviewView.rx.tapGesture()
+            .when(.recognized)
+            .bind { [weak self] _ in
+                guard let self = self else { return }
+                reviewClickEvent.onNext(Void())
             }.disposed(by: disposeBag)
     }
 }
