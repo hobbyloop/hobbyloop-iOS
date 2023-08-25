@@ -63,7 +63,7 @@ final class HPCalendarDayCell: UICollectionViewCell {
         self.contentView.addSubview(dayLabel)
         
         dayLabel.snp.makeConstraints {
-            $0.width.equalTo(15)
+            $0.width.equalTo(20)
             $0.height.equalTo(17)
             $0.center.equalToSuperview()
         }

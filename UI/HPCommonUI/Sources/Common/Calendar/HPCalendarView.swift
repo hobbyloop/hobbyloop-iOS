@@ -154,7 +154,7 @@ public final class HPCalendarView: UIView {
     private func createCalendarLayout() -> NSCollectionLayoutSection {
         
         let calendarItemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute((UIScreen.main.bounds.size.width) / 7),
+            widthDimension: .estimated(calendarCollectionView.frame.size.width),
             heightDimension: .absolute(40)
         )
         
@@ -165,12 +165,28 @@ public final class HPCalendarView: UIView {
         
         calendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3)
         
-        let calendarLayoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                       heightDimension: .fractionalWidth(0.2))
-        let calendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: calendarLayoutGroupSize,
-            subitems: [calendarLayoutItem]
+        
+        let calendarHorizontalLayoutSize = NSCollectionLayoutSize(widthDimension: .estimated(calendarCollectionView.frame.size.width),
+                                                             heightDimension: .estimated(calendarCollectionView.frame.size.height))
+        
+        let calendarLayoutHorizontalGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: calendarHorizontalLayoutSize,
+            subitem: calendarLayoutItem,
+            count: 7
         )
+        
+        
+        let calendarVerticalLayoutSize: NSCollectionLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(calendarCollectionView.frame.size.width),
+            heightDimension: .fractionalHeight(0.5)
+        )
+        
+        let calendarVerticalLayoutGroup: NSCollectionLayoutGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: calendarVerticalLayoutSize,
+            subitem: calendarLayoutHorizontalGroup,
+            count: 5
+        )
+        
         
         let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(UIScreen.main.bounds.size.width),
@@ -178,7 +194,7 @@ public final class HPCalendarView: UIView {
         )
         
         
-        let calendarLayoutSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
+        let calendarLayoutSection = NSCollectionLayoutSection(group: calendarVerticalLayoutGroup)
         calendarLayoutSection.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: calendarSectionHeaderLayoutSize,
