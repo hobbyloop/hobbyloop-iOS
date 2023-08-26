@@ -16,7 +16,7 @@ class MyPageViewController: UIViewController {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
     }
     
-    private let settingsButton = UIButton(type: .custom).then {
+    private let settingsButton = UIButton().then {
         let imageView = UIImageView(image: HPCommonUIAsset.settingOutlind.image)
         imageView.contentMode = .scaleAspectFit
         imageView.snp.makeConstraints {
@@ -24,7 +24,7 @@ class MyPageViewController: UIViewController {
             $0.height.equalTo(18)
         }
         
-        $0.addSubView(imageView)
+        $0.addSubview(imageView)
         
         $0.snp.makeConstraints {
             $0.width.equalTo(24)
@@ -63,7 +63,7 @@ class MyPageViewController: UIViewController {
     
     private let editButton = UIButton().then {
         $0.titleLabel?.text = "수정하기"
-        $0.titleLabel?.font = font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
     private lazy var reviewButton = UIButton().then {
@@ -76,7 +76,7 @@ class MyPageViewController: UIViewController {
         let label = UILabel()
         label.attributedText = reviewCountText(5)
         
-        $0.addSubView(imageView)
+        $0.addSubview(imageView)
         $0.addSubview(label)
         
         $0.snp.makeConstraints {
@@ -100,7 +100,7 @@ class MyPageViewController: UIViewController {
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "포인트"
         
-        $0.addSubView(imageView)
+        $0.addSubview(imageView)
         $0.addSubview(label)
         
         $0.snp.makeConstraints {
@@ -125,7 +125,7 @@ class MyPageViewController: UIViewController {
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "쿠폰"
         
-        $0.addSubView(imageView)
+        $0.addSubview(imageView)
         $0.addSubview(label)
         
         $0.snp.makeConstraints {
@@ -139,20 +139,12 @@ class MyPageViewController: UIViewController {
         }
     }
     
-    private let customNavigationBar = UIView().then {
-        [navigationTitleLabel, settingsButton].forEach($0.addSubview)
-        
-        customNavigationBar.snp.makeConstraints {
-            $0.height.equalTo(56)
-            $0.center.equalTo(navigationTitleLabel.snp.center)
-            $0.centerY.equalTo(settingsButton.snp.centerY)
-        }
-    }
-    
+    private let customNavigationBar = UIView()
     private let scrollView = UIScrollView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         
         layoutCustomNavigationBar()
         layoutScrollView()
@@ -165,10 +157,22 @@ class MyPageViewController: UIViewController {
     private func layoutCustomNavigationBar() {
         view.addSubview(customNavigationBar)
         
-        view.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.top)
-            $0.leading.equalTo(customNavigationBar.snp.leading)
-            $0.trailing.equalTo(customNavigationBar.snp.trailing)
+        customNavigationBar.snp.makeConstraints {
+            $0.top.equalTo(view.snp.top).offset(44)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+            $0.height.equalTo(56)
+        }
+        
+        [navigationTitleLabel, settingsButton].forEach(customNavigationBar.addSubview(_:))
+        
+        navigationTitleLabel.snp.makeConstraints {
+            $0.center.equalTo(customNavigationBar.snp.center)
+        }
+        
+        settingsButton.snp.makeConstraints {
+            $0.centerY.equalTo(navigationTitleLabel.snp.centerY)
+            $0.trailing.equalTo(view.snp.trailing).offset(-16)
         }
     }
     
