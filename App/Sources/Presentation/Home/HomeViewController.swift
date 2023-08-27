@@ -23,6 +23,12 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     private lazy var homeDataSource: RxCollectionViewSectionedReloadDataSource<HomeSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
         switch sectionItem {
+        case .calendarClassItem:
+            guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as? CalendarCell else { return UICollectionViewCell() }
+            
+            return calendarCell
+            
+            
         case .schedulClassItem:
             guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else { return UICollectionViewCell() }
             
@@ -48,7 +54,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let dataSource = dataSource[indexPath]
         
         switch dataSource {
-        case .schedulClassItem:
+        case .calendarClassItem:
             guard let scheduleReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ScheduleReusableView", for: indexPath) as? ScheduleReusableView else { return UICollectionReusableView() }
             
             return scheduleReusableView
@@ -71,6 +77,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let section = self.homeDataSource.sectionModels[section]
         
         switch section {
+        case .calendarClass:
+            return self.createCalendarLayout()
         case .schedulClass:
             return self.createSchedulClassLayout()
             
@@ -89,6 +97,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.register(CalendarCell.self, forCellWithReuseIdentifier: "CalendarCell")
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
         $0.register(ExerciseCell.self, forCellWithReuseIdentifier: "ExerciseCell")
@@ -131,6 +140,45 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         }
     }
     
+    private func createCalendarLayout() -> NSCollectionLayoutSection {
+        let calendarLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width - 32),
+            heightDimension: .estimated(280)
+        )
+        let calendarGroupSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(280)
+        )
+        
+        let calendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: calendarLayoutSize
+        )
+        
+        let calendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: calendarGroupSize,
+            subitem: calendarLayoutItem,
+            count: 1
+        )
+        
+        
+        let calendarSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
+        
+        let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(100)
+        )
+        
+        calendarSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: calendarSectionHeaderLayoutSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+        
+        return calendarSection
+    }
+    
     
     private func createSchedulClassLayout() -> NSCollectionLayoutSection {
         
@@ -150,21 +198,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let scheduleClassSection = NSCollectionLayoutSection(
             group: scheduleClassGroup
         )
-        
-        /// ScheduleSection Header Layout Size
-        let scheduleSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
-            widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(100)
-        )
-        
-        scheduleClassSection.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: scheduleSectionHeaderLayoutSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-        ]
-        
 
         return scheduleClassSection
     }

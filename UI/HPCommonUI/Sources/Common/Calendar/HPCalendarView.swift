@@ -15,12 +15,6 @@ import SnapKit
 
 
 
-public struct HPDay: Equatable {
-    let date: Date
-    let today: String
-    let isPrevious: Bool
-    let isNext: Bool
-}
 public final class HPCalendarView: UIView {
 
     // MARK: Property
@@ -50,39 +44,21 @@ public final class HPCalendarView: UIView {
         case let .calendarItem(cellReactor):
             guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarDayCell", for: indexPath) as? HPCalendarDayCell else { return UICollectionViewCell() }
             calendarCell.reactor = cellReactor
-            return calendarCell
             
-        default:
-            return UICollectionViewCell()
+            return calendarCell
         }
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-        let dataSource = dataSource[indexPath]
         
-        switch dataSource {
-        case .calendarItem:
-            guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
-            
-            return weekDayReusableView
-            
-        default:
-            return UICollectionReusableView()
-            
-        }
+        guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+        
+        return weekDayReusableView
         
     }
 
     
     private lazy var calendarCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
-        
-        let section = self.calendarDataSource.sectionModels[section]
-        
-        switch section {
-        case .calendar:
-            return self.createCalendarLayout()
-        case .ticket:
-            return self.createTicketInfoLayout()
-        }
-        
+    
+        return self.createCalendarLayout()
     }
     
     
@@ -108,7 +84,6 @@ public final class HPCalendarView: UIView {
     
     //MARK: Configure
     private func configure() {
-        
         self.backgroundColor = .white
         
         [calendarCollectionView, calendarMonthLabel, nextButton, previousButton].forEach {
@@ -142,20 +117,16 @@ public final class HPCalendarView: UIView {
             $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-20)
         }
     }
-    
-    
-    private func setNeedsMonthDay() {}
-    
-    
+
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
     private func createCalendarLayout() -> NSCollectionLayoutSection {
         
         let calendarItemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(calendarCollectionView.frame.size.width),
-            heightDimension: .absolute(40)
+            heightDimension: .absolute(30)
         )
         
         
@@ -178,7 +149,7 @@ public final class HPCalendarView: UIView {
         
         let calendarVerticalLayoutSize: NSCollectionLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(calendarCollectionView.frame.size.width),
-            heightDimension: .fractionalHeight(0.5)
+            heightDimension: .estimated(180)
         )
         
         let calendarVerticalLayoutGroup: NSCollectionLayoutGroup = NSCollectionLayoutGroup.vertical(
@@ -206,29 +177,7 @@ public final class HPCalendarView: UIView {
         
         return calendarLayoutSection
     }
-    
-    
-    // MARK: 예약된 수업 사용자 티켓정보 레이아웃 구성 함수
-    private func createTicketInfoLayout() -> NSCollectionLayoutSection {
-        
-        let ticketInfoLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(self.frame.size.width),
-            heightDimension: .estimated(140)
-        )
-        
-        let ticketInfoLayoutItem = NSCollectionLayoutItem(layoutSize: ticketInfoLayoutSize)
-        
-        let ticketInfoLayoutGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: ticketInfoLayoutSize,
-            subitems: [ticketInfoLayoutItem]
-        )
-        
-        
-        let ticketInfoLayoutSection = NSCollectionLayoutSection(group: ticketInfoLayoutGroup)
-        
-        return ticketInfoLayoutSection
-    }
-    
+
 }
 
 
@@ -271,6 +220,20 @@ extension HPCalendarView: ReactorKit.View {
             .drive(calendarMonthLabel.rx.text)
             .disposed(by: disposeBag)
         
+        NotificationCenter.default
+            .rx.notification(.NSCalendarDayChanged)
+            .subscribe(onNext: { [weak self] _ in
+                print("notification changed date")
+                self?.reactor?.action.onNext(.loadView)
+            }).disposed(by: disposeBag)
+        
+        
+        calendarCollectionView
+            .rx.itemSelected
+            .withUnretained(self)
+            .subscribe(onNext: { owner, indexPath in
+                
+            }).disposed(by: disposeBag)
         
     }
 }

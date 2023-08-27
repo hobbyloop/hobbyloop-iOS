@@ -38,6 +38,9 @@ final class HomeViewReactor: Reactor {
         self.initialState = State(
             isLoading: false,
             section: [
+                .calendarClass([
+                    .calendarClassItem
+                ]),
                 .schedulClass([
                     .schedulClassItem
                 ]),
@@ -79,12 +82,14 @@ final class HomeViewReactor: Reactor {
             newState.isLoading = isLoading
             
         case .setEmptyClassItem:
+            let calendarIndex = self.getIndex(section: .calendarClass([]))
             let scheduleIndex = self.getIndex(section: .schedulClass([]))
             let explanationIndex = self.getIndex(section: .explanationClass([]))
             let exerciseIndex = self.getIndex(section: .exerciseClass([]))
             let benefitsIndex = self.getIndex(section: .benefitsClass([]))
             
             //TODO: Server API 구현시 데이터 Response 값으로 Cell Configure
+            newState.section[calendarIndex] = .calendarClass([HomeSectionItem.calendarClassItem])
             newState.section[scheduleIndex] = .schedulClass([HomeSectionItem.schedulClassItem])
             newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
             newState.section[exerciseIndex] = .exerciseClass([
