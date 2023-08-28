@@ -1,17 +1,15 @@
 //
-//  HPCalendarTicketsCell.swift
-//  HPCommonUI
+//  TicketCell.swift
+//  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/08/26.
+//  Created by Kim dohyun on 2023/08/28.
 //
 
 import UIKit
 
-import SnapKit
+import HPCommonUI
 
-
-
-final class HPCalendarTicketsCell: UICollectionViewCell {
+final class TicketCell: UICollectionViewCell {
     
     
     private let ticketInfoView: TicketView = TicketView(
@@ -38,13 +36,16 @@ final class HPCalendarTicketsCell: UICollectionViewCell {
         self.contentView.addSubview(ticketInfoView)
         
         ticketInfoView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.bottom.top.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
         }
         
         
     }
     
 }
+
 
 
 

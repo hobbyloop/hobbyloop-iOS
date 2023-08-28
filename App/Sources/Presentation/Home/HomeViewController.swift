@@ -23,10 +23,19 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     private lazy var homeDataSource: RxCollectionViewSectionedReloadDataSource<HomeSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
         switch sectionItem {
+        case .userInfoClassItem:
+            guard let userInfoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserInfoProvideCell", for: indexPath) as? UserInfoProvideCell else { return UICollectionViewCell() }
+            return userInfoCell
+            
         case .calendarClassItem:
             guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as? CalendarCell else { return UICollectionViewCell() }
             
             return calendarCell
+            
+        case .ticketClassItem:
+            guard let ticketCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketCell", for: indexPath) as? TicketCell else { return UICollectionViewCell() }
+            
+            return ticketCell
             
             
         case .schedulClassItem:
@@ -54,11 +63,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let dataSource = dataSource[indexPath]
         
         switch dataSource {
-        case .calendarClassItem:
-            guard let scheduleReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ScheduleReusableView", for: indexPath) as? ScheduleReusableView else { return UICollectionReusableView() }
-            
-            return scheduleReusableView
-            
         case .exerciseClassItem:
             guard let exerciseReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ExerciseReusableView", for: indexPath) as? ExerciseReusableView else { return UICollectionReusableView() }
             return exerciseReusableView
@@ -77,8 +81,13 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let section = self.homeDataSource.sectionModels[section]
         
         switch section {
+        case .userInfoClass:
+            return self.userInfoProvideLayout()
         case .calendarClass:
             return self.createCalendarLayout()
+            
+        case .ticketClass:
+            return self.createTicketLayout()
         case .schedulClass:
             return self.createSchedulClassLayout()
             
@@ -97,6 +106,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.register(UserInfoProvideCell.self, forCellWithReuseIdentifier: "UserInfoProvideCell")
+        $0.register(TicketCell.self, forCellWithReuseIdentifier: "TicketCell")
         $0.register(CalendarCell.self, forCellWithReuseIdentifier: "CalendarCell")
         $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
@@ -142,6 +153,56 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         }
     }
     
+    private func userInfoProvideLayout() -> NSCollectionLayoutSection {
+        let userInfoProvideLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(90)
+        )
+        
+        let userInfoProvideItem = NSCollectionLayoutItem(layoutSize: userInfoProvideLayoutSize)
+        
+        let userInfoProvideGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: userInfoProvideLayoutSize,
+            subitem: userInfoProvideItem,
+            count: 1
+        )
+        
+        let userInfoProvideSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        
+        let userInfoProvideSection = NSCollectionLayoutSection(group: userInfoProvideGroup)
+        userInfoProvideSection.decorationItems = [userInfoProvideSectionBackground]
+        
+        userInfoProvideSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        
+        return userInfoProvideSection
+        
+    }
+    
+    private func createTicketLayout() -> NSCollectionLayoutSection {
+        
+        let ticketLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(140)
+        )
+        
+        let ticketLayoutItem = NSCollectionLayoutItem(layoutSize: ticketLayoutSize)
+        
+        let ticketLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: ticketLayoutSize,
+            subitems: [ticketLayoutItem]
+        )
+        
+        let ticketSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        
+        let ticketSection = NSCollectionLayoutSection(group: ticketLayoutGroup)
+        ticketSection.decorationItems = [ticketSectionBackground]
+        ticketSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        
+        
+        return ticketSection
+    }
+    
+    
     private func createCalendarLayout() -> NSCollectionLayoutSection {
         let calendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width - 32),
@@ -168,19 +229,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         let calendarSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
         
         calendarSection.decorationItems = [calendarSectionBackground]
-        let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(100)
-        )
-        
-        calendarSection.boundarySupplementaryItems = [
-            NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: calendarSectionHeaderLayoutSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-        ]
-        
+                
         calendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return calendarSection

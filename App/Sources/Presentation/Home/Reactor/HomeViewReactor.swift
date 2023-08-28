@@ -38,9 +38,18 @@ final class HomeViewReactor: Reactor {
         self.initialState = State(
             isLoading: false,
             section: [
+                .userInfoClass([
+                    .userInfoClassItem
+                ]),
+                
                 .calendarClass([
                     .calendarClassItem
                 ]),
+                
+                .ticketClass([
+                    .ticketClassItem
+                ]),
+                
                 .schedulClass([
                     .schedulClassItem
                 ]),
@@ -82,6 +91,8 @@ final class HomeViewReactor: Reactor {
             newState.isLoading = isLoading
             
         case .setEmptyClassItem:
+            let userIndex = self.getIndex(section: .userInfoClass([]))
+            let ticketIndex = self.getIndex(section: .ticketClass([]))
             let calendarIndex = self.getIndex(section: .calendarClass([]))
             let scheduleIndex = self.getIndex(section: .schedulClass([]))
             let explanationIndex = self.getIndex(section: .explanationClass([]))
@@ -89,7 +100,9 @@ final class HomeViewReactor: Reactor {
             let benefitsIndex = self.getIndex(section: .benefitsClass([]))
             
             //TODO: Server API 구현시 데이터 Response 값으로 Cell Configure
+            newState.section[userIndex] = .userInfoClass([HomeSectionItem.userInfoClassItem])
             newState.section[calendarIndex] = .calendarClass([HomeSectionItem.calendarClassItem])
+            newState.section[ticketIndex] = .ticketClass([HomeSectionItem.ticketClassItem])
             newState.section[scheduleIndex] = .schedulClass([HomeSectionItem.schedulClassItem])
             newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
             newState.section[exerciseIndex] = .exerciseClass([

@@ -17,7 +17,6 @@ final class ExerciseReusableView: UICollectionReusableView {
     //MARK: Property
     private lazy var exerciseButton: UIButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.rightArrow.image
-        $0.configuration?.imagePadding = (self.frame.size.width - 100) / 2
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "오늘은 이 운동 어때요?", attributes: [
             .foregroundColor: HPCommonUIAsset.black.color,
@@ -28,6 +27,8 @@ final class ExerciseReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
+        self.layoutIfNeeded()
+        exerciseButton.configuration?.imagePadding = UIScreen.main.bounds.maxX - (80 + (exerciseButton.titleLabel?.frame.size.width ?? 0))
     }
     
     required init?(coder: NSCoder) {

@@ -1,23 +1,18 @@
 //
-//  ScheduleReusableView.swift
+//  UserInfoProvideCell.swift
 //  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/07/17.
+//  Created by Kim dohyun on 2023/08/28.
 //
 
 import UIKit
 
 import HPCommonUI
-import SnapKit
-import Then
 
-
-final class ScheduleReusableView: UICollectionReusableView {
-    
+final class UserInfoProvideCell: UICollectionViewCell {
     
     //MARK: Property
     
-    //TODO: 추후 Title User Name Bindig Code 추가
     private let nickNameLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
         $0.textColor = HPCommonUIAsset.black.color
@@ -27,19 +22,21 @@ final class ScheduleReusableView: UICollectionReusableView {
     }
     
     private let scheduleButton: UIButton = UIButton(configuration: .plain(), primaryAction: nil).then {
-        $0.configuration?.image = HPCommonUIAsset.rightArrow.image
-        $0.configuration?.imagePadding = 240
+        $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: .normal)
+        $0.setImage(HPCommonUIAsset.calendarFilled.image, for: .selected)
+        $0.configuration?.setDefaultContentInsets()
         $0.configuration?.imagePlacement = .trailing
-        $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "예약된 손님", attributes: [
+        $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "예약된 수업", attributes: [
             .foregroundColor: HPCommonUIAsset.black.color,
             .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 18)
         ]))
     }
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
+        self.layoutIfNeeded()
+        scheduleButton.configuration?.imagePadding = UIScreen.main.bounds.maxX - (58 + (scheduleButton.titleLabel?.frame.size.width ?? 0))
     }
     
     required init?(coder: NSCoder) {
@@ -69,6 +66,5 @@ final class ScheduleReusableView: UICollectionReusableView {
         }
         
     }
-    
     
 }
