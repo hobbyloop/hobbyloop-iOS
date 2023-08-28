@@ -52,10 +52,8 @@ final class BenefitsCell: UICollectionViewCell {
         
         benefitsPageViewControl.snp.makeConstraints {
             $0.top.equalTo(benefitsCotentImageView.snp.bottom).offset(20)
-            $0.width.equalTo(60)
             $0.height.equalTo(8)
-            $0.centerX.equalTo(benefitsCotentImageView.snp.centerX)
-            
+            $0.centerX.equalToSuperview()
         }
         
     }

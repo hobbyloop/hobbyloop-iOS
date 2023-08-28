@@ -84,7 +84,7 @@ public final class HPCalendarView: UIView {
     
     //MARK: Configure
     private func configure() {
-        self.backgroundColor = .white
+        self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
         [calendarCollectionView, calendarMonthLabel, nextButton, previousButton].forEach {
             self.addSubview($0)

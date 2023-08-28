@@ -37,10 +37,9 @@ final class ExerciseCell: UICollectionViewCell {
         $0.text = "서울 강남구 압구정로50길 8 2층"
     }
     
-    private let contentBookMarkButton: UIButton = UIButton().then {
+    private let contentBookMarkButton: UIButton = UIButton(type: .custom).then {
         $0.setImage(HPCommonUIAsset.archiveOutlined.image, for: .normal)
         $0.setImage(HPCommonUIAsset.archiveFilled.image, for: .selected)
-        $0.setTitle("", for: .normal)
     }
     
     
@@ -70,19 +69,20 @@ final class ExerciseCell: UICollectionViewCell {
         contentTitleLabel.snp.makeConstraints {
             $0.top.equalTo(contentImageView.snp.bottom).offset(14)
             $0.left.equalToSuperview()
+            $0.right.equalTo(contentBookMarkButton.snp.left).offset(-10)
             $0.height.equalTo(24)
         }
         
         contentBookMarkButton.snp.makeConstraints {
-            $0.right.equalToSuperview()
-            $0.height.width.equalTo(24)
             $0.top.equalTo(contentTitleLabel)
+            $0.right.equalToSuperview()
+            $0.width.height.equalTo(24)
         }
         
         contentSubTitleLable.snp.makeConstraints {
-            $0.top.equalTo(contentTitleLabel.snp.bottom).offset(9)
             $0.left.equalToSuperview()
-            $0.height.equalTo(14)
+            $0.top.equalTo(contentTitleLabel.snp.bottom).offset(8)
+            $0.height.equalTo(15)
         }
         
     }

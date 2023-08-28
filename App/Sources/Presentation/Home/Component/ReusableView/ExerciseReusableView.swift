@@ -15,9 +15,9 @@ import Then
 final class ExerciseReusableView: UICollectionReusableView {
     
     //MARK: Property
-    private let exerciseButton: UIButton = UIButton(configuration: .plain()).then {
+    private lazy var exerciseButton: UIButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.rightArrow.image
-        $0.configuration?.imagePadding = 165
+        $0.configuration?.imagePadding = (self.frame.size.width - 100) / 2
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "오늘은 이 운동 어때요?", attributes: [
             .foregroundColor: HPCommonUIAsset.black.color,
@@ -37,9 +37,13 @@ final class ExerciseReusableView: UICollectionReusableView {
     
     private func configure() {
         self.addSubview(exerciseButton)
+        self.backgroundColor = HPCommonUIAsset.white.color
         
         exerciseButton.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.right.equalToSuperview()
+            $0.top.equalToSuperview().offset(20)
+            $0.left.equalToSuperview().offset(16)
+            $0.height.equalTo(20)
         }
         
         

@@ -29,7 +29,6 @@ final class ScheduleCell: UICollectionViewCell {
     
     private func configure() {
         self.contentView.addSubview(emptyCouponView)
-        self.contentView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
         
         emptyCouponView.snp.makeConstraints {

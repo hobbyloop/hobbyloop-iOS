@@ -102,6 +102,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
         $0.register(ExerciseCell.self, forCellWithReuseIdentifier: "ExerciseCell")
         $0.register(BenefitsCell.self, forCellWithReuseIdentifier: "BenefitsCell")
+        $0.collectionViewLayout.register(SystemBackgroundDecorationView.self, forDecorationViewOfKind: "SystemBackgroundDecorationView")
+        $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.register(ScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ScheduleReusableView")
         $0.register(ExerciseReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ExerciseReusableView")
         $0.register(BenefitsReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "BenefitsReusableView")
@@ -160,9 +162,12 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             count: 1
         )
         
+        let calendarSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        
         
         let calendarSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
         
+        calendarSection.decorationItems = [calendarSectionBackground]
         let calendarSectionHeaderLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
             heightDimension: .estimated(100)
@@ -175,6 +180,8 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
                 alignment: .top
             )
         ]
+        
+        calendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return calendarSection
     }
@@ -259,6 +266,11 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             group: exerciseClassGroup
         )
         
+        let exerciseSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
+        exerciseSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        exerciseSection.decorationItems = [exerciseSectionBackground]
+        
         exerciseSection.orthogonalScrollingBehavior = .groupPagingCentered
         
         exerciseSection.boundarySupplementaryItems = [
@@ -280,7 +292,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let benefitsItemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(230)
+            heightDimension: .absolute(200)
         )
         
         let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
@@ -294,7 +306,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let benefitsGroupLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.92),
-            heightDimension: .absolute(230)
+            heightDimension: .absolute(200)
         )
         
         let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
@@ -306,8 +318,12 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             group: benefitsGroupLayout
         )
         
+        let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         benefitsSection
             .orthogonalScrollingBehavior = .groupPagingCentered
+        
+        benefitsSection.decorationItems = [benefitsSectionBackground]
         
         let benefitsHeaderLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),

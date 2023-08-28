@@ -18,7 +18,6 @@ final class CalendarCell: UICollectionViewCell {
     private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor())
     
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -31,7 +30,6 @@ final class CalendarCell: UICollectionViewCell {
     
     private func configure() {
         self.contentView.addSubview(calendarView)
-        self.contentView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
         calendarView.snp.makeConstraints {
             $0.edges.equalToSuperview()
