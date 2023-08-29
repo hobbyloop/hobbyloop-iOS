@@ -124,11 +124,15 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
         header.configure()
         
         header.callClickEvent.subscribe { _ in
-            
+            if let url = NSURL(string: "tel://01038856116"), UIApplication.shared.canOpenURL(url as URL) {
+                UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            }
         }.disposed(by: header.disposeBag)
         
         header.messageClickEvent.subscribe { _ in
-            
+            if let url = NSURL(string: "sms://01038856116"), UIApplication.shared.canOpenURL(url as URL) {
+                UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            }
         }.disposed(by: header.disposeBag)
         
         workTimeClickEvent
