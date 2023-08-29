@@ -104,31 +104,14 @@ class TicketCollectionReusableView: UICollectionReusableView {
     public lazy var locationButton: UIButton = {
         return UIButton().then {
             let mainText = "위치를 설정해주세요"
-            let attributedString = NSMutableAttributedString(string: mainText)
-            let range = (mainText as NSString).range(of: mainText)
-            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: range)
-            attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+            let attributedString = mainText.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), UIColor.black)
             $0.setAttributedTitle(attributedString, for: .normal)
             
             var configure = UIButton.Configuration.plain()
             
-            let rightLabel = UILabel(frame: CGRect(x: 0,
-                                                   y: 0,
-                                                   width: 0,
-                                                   height: 0))
-            let subText = "설정"
-            let subAttributedString = NSMutableAttributedString(string: subText)
-            let subRange = (subText as NSString).range(of: subText)
-            subAttributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.light.font(size: 12), range: subRange)
-            subAttributedString.addAttribute(.foregroundColor, value: UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1), range: subRange)
-            subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
-            rightLabel.attributedText = subAttributedString
-            rightLabel.contentMode = .scaleAspectFit
-            rightLabel.layer.masksToBounds = true
+            $0.addSubview(locationButtonRightLabel)
             
-            $0.addSubview(rightLabel)
-            
-            rightLabel.snp.makeConstraints {
+            locationButtonRightLabel.snp.makeConstraints {
                 $0.trailing.equalToSuperview().offset(0)
                 $0.centerY.equalToSuperview()
             }
@@ -136,6 +119,21 @@ class TicketCollectionReusableView: UICollectionReusableView {
             configure.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: $0.bounds.width + 26)
             $0.configuration = configure
         }
+    }()
+    
+    private lazy var locationButtonRightLabel: UILabel = {
+       return UILabel(frame: CGRect(x: 0,
+                                    y: 0,
+                                    width: 0,
+                                    height: 0)).then {
+           let subText = "설정"
+           let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
+           let subRange = (subText as NSString).range(of: subText)
+           subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
+           $0.attributedText = subAttributedString
+           $0.contentMode = .scaleAspectFit
+           $0.layer.masksToBounds = true
+       }
     }()
     
     private lazy var sortButton: UIButton = {
