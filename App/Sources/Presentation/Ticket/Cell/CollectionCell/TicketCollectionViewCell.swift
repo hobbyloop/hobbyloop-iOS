@@ -68,7 +68,7 @@ class TicketCollectionViewCell: UICollectionViewCell {
     
     private var starImageView: UIImageView = {
         return UIImageView().then {
-            $0.tintColor = .yellow
+            $0.tintColor = UIColor(red: 255/255, green: 194/255, blue: 0, alpha: 1)
             $0.snp.makeConstraints {
                 $0.width.height.equalTo(13)
             }

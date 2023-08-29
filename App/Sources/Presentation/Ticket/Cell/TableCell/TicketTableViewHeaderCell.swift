@@ -23,15 +23,15 @@ class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
         return UIImageView().then {
             $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
             $0.snp.makeConstraints {
-                $0.width.equalTo(17)
-                $0.height.equalTo(12)
+                $0.width.equalTo(24)
+                $0.height.equalTo(24)
             }
         }
     }()
     
     private var titleLabel: UILabel = {
         return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
+            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         }
     }()
     
