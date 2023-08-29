@@ -6,10 +6,20 @@
 //
 
 import UIKit
-
+import HPCommonUI
 
 public extension String {
     
+    func stringToAttributed(_ font: UIFont,
+                            _ color: UIColor) -> NSMutableAttributedString {
+        
+        let attributedString = NSMutableAttributedString(string: self)
+        let range = (self as NSString).range(of: self)
+        attributedString.addAttribute(.font, value: font, range: range)
+        attributedString.addAttribute(.foregroundColor, value: color, range: range)
+        
+        return attributedString
+    }
     
     func toPhoneNumber() -> String {
         let digits = digitsOnly
