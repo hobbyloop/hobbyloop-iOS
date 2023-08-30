@@ -54,6 +54,8 @@ public final class CouponListView: UIView {
             $0.top.equalTo(collectionView.snp.bottom).offset(24)
             $0.centerX.equalTo(collectionView.snp.centerX)
         }
+        
+        pageControl.delegate = self
     }
     
     private func configureCollectionView() {
@@ -122,5 +124,18 @@ extension CouponListView: UIScrollViewDelegate {
         // 위 코드를 통해 페이징 될 좌표값을 targetContentOffset에 대입하면 된다.
         offset = CGPoint(x: roundedIndex * cellWidthIncludingSpacing - scrollView.contentInset.left, y: -scrollView.contentInset.top)
         targetContentOffset.pointee = offset
+    }
+}
+
+extension CouponListView: HPPageControlDelegate {
+    public func didChangePage(to page: Int) {
+        let layout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        let cellWidthIncludingSpacing = layout.itemSize.width + layout.minimumLineSpacing
+        
+        let animator1 = UIViewPropertyAnimator(duration: 0.5, curve: .easeOut) {
+            self.collectionView.contentOffset = CGPoint(x: CGFloat(page) * cellWidthIncludingSpacing - self.collectionView.contentInset.left, y: -self.collectionView.contentInset.top)
+        }
+        
+        animator1.startAnimation()
     }
 }

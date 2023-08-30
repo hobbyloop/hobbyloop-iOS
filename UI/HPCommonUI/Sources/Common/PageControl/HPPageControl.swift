@@ -49,6 +49,8 @@ public final class HPPageControl: UIStackView {
         }
     }
     
+    var delegate: HPPageControlDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.axis = .horizontal
@@ -95,6 +97,6 @@ public final class HPPageControl: UIStackView {
         let page = sender.tag
         
         currentPage = page
-        print(currentPage)
+        delegate?.didChangePage(to: currentPage)
     }
 }
