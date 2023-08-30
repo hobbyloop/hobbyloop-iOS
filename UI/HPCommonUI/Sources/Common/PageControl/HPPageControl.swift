@@ -49,7 +49,7 @@ public final class HPPageControl: UIStackView {
         }
     }
     
-    var delegate: HPPageControlDelegate?
+    weak var delegate: HPPageControlDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

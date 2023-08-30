@@ -7,6 +7,6 @@
 
 import Foundation
 
-public protocol HPPageControlDelegate {
+public protocol HPPageControlDelegate: AnyObject {
     func didChangePage(to page: Int)
 }
