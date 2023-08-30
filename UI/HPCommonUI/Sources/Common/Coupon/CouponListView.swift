@@ -62,7 +62,6 @@ public final class CouponListView: UIView {
         layout.itemSize = CGSize(width: self.bounds.width - 58, height: 179)
         layout.minimumLineSpacing = 14.5
         layout.scrollDirection = .horizontal
-        pageControl.backgroundStyle = .minimal
     }
     
     required init?(coder: NSCoder) {
