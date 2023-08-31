@@ -11,6 +11,14 @@ import HPExtensions
 import ReactorKit
 import RxSwift
 
+
+enum HomeViewStream: HPStreamType {
+    enum Event {
+        case reloadHomeViewSection(isSelected: Bool)
+    }
+    
+}
+
 final class HomeViewReactor: Reactor {
     
     //MARK: Property
@@ -25,6 +33,7 @@ final class HomeViewReactor: Reactor {
     public enum Mutation {
         case setLoading(Bool)
         case setEmptyClassItem
+        case reloadClassItem
     }
     
     //MARK: State
@@ -42,9 +51,7 @@ final class HomeViewReactor: Reactor {
                     .userInfoClassItem
                 ]),
                 
-                .calendarClass([
-                    .calendarClassItem
-                ]),
+                .calendarClass([]),
                 
                 .ticketClass([
                     .ticketClassItem
@@ -65,6 +72,16 @@ final class HomeViewReactor: Reactor {
             ]
         )
     }
+    
+    public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let reloadHomeSection = HomeViewStream.event.flatMap { [weak self] event in
+            self?.reqeustHomeViewSection(from: event) ?? .empty()
+            
+        }
+        
+        return Observable.of(mutation, reloadHomeSection).merge()
+    }
+    
     
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action{
@@ -100,6 +117,36 @@ final class HomeViewReactor: Reactor {
             let benefitsIndex = self.getIndex(section: .benefitsClass([]))
             
             //TODO: Server API 구현시 데이터 Response 값으로 Cell Configure
+            newState.section[userIndex] = .userInfoClass([HomeSectionItem.userInfoClassItem])
+            newState.section[calendarIndex] = .calendarClass([])
+            newState.section[ticketIndex] = .ticketClass([HomeSectionItem.ticketClassItem])
+            newState.section[scheduleIndex] = .schedulClass([HomeSectionItem.schedulClassItem])
+            newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
+            newState.section[exerciseIndex] = .exerciseClass([
+                HomeSectionItem.exerciseClassItem,
+                HomeSectionItem.exerciseClassItem,
+                HomeSectionItem.exerciseClassItem,
+                HomeSectionItem.exerciseClassItem,
+                HomeSectionItem.exerciseClassItem
+                
+            ])
+            newState.section[benefitsIndex] = .benefitsClass([
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem,
+                HomeSectionItem.benefitsClassItem
+            ])
+            
+        case .reloadClassItem:
+            let userIndex = self.getIndex(section: .userInfoClass([]))
+            let ticketIndex = self.getIndex(section: .ticketClass([]))
+            let calendarIndex = self.getIndex(section: .calendarClass([]))
+            let scheduleIndex = self.getIndex(section: .schedulClass([]))
+            let explanationIndex = self.getIndex(section: .explanationClass([]))
+            let exerciseIndex = self.getIndex(section: .exerciseClass([]))
+            let benefitsIndex = self.getIndex(section: .benefitsClass([]))
+            
             newState.section[userIndex] = .userInfoClass([HomeSectionItem.userInfoClassItem])
             newState.section[calendarIndex] = .calendarClass([HomeSectionItem.calendarClassItem])
             newState.section[ticketIndex] = .ticketClass([HomeSectionItem.ticketClassItem])
@@ -140,6 +187,18 @@ private extension HomeViewReactor {
         }
         
         return index
+        
+    }
+    
+    func reqeustHomeViewSection(from event: HomeViewStream.Event) -> Observable<Mutation> {
+        switch event {
+        case let .reloadHomeViewSection(isSelected):
+            if isSelected {
+                return .just(.reloadClassItem)
+            } else {
+                return .just(.setEmptyClassItem)
+            }
+        }
         
     }
     
