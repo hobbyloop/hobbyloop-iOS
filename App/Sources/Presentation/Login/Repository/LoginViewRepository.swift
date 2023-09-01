@@ -101,7 +101,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                     .create { observer in
                         self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
                             observer.onNext(.setAccessToken(authToken))
-                            
+                            observer.onNext(.setLoading(false))
                         }
                         return Disposables.create()
                     }

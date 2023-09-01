@@ -337,6 +337,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter { $0.userGender == .male }
             .map { _ in HPCommonUIAsset.deepOrange.color}
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfManButton.didTapHPButton(color)
@@ -347,6 +348,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender == .female }
             .map { _ in HPCommonUIAsset.deepOrange.color}
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.didTapHPButton(color)
@@ -358,6 +360,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender != .male }
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
             .drive(onNext: { color in
                 self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
@@ -369,6 +372,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender != .female }
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
             .drive(onNext: { color in
                 self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
@@ -380,6 +384,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.profile?.nickname}
             .filter { !($0?.isEmpty ?? false) }
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
@@ -388,6 +393,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "male" }
             .map { _ in HPCommonUIAsset.deepOrange.color}
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfManButton.didTapHPButton(color)
@@ -398,6 +404,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "female" }
             .map { _ in HPCommonUIAsset.deepOrange.color}
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.didTapHPButton(color)
@@ -408,6 +415,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "male" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in Reactor.Action.didTapGenderButton(.male)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -415,6 +423,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "female" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in Reactor.Action.didTapGenderButton(.female)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -423,6 +432,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .map { $0.name }
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
@@ -432,6 +442,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .filter { $0.gender == "M" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
@@ -442,6 +453,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .filter { $0.gender == "F" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
@@ -453,6 +465,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .filter { $0.gender == "M" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in Reactor.Action.didTapGenderButton(.male)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -461,6 +474,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .filter { $0.gender == "F" }
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in Reactor.Action.didTapGenderButton(.female)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -469,6 +483,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { $0?.response != nil }
             .compactMap { $0?.response }
             .map { $0.mobile }
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
             .drive(phoneView.textFiledView.rx.text)
             .disposed(by: disposeBag)
