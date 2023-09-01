@@ -17,19 +17,11 @@ class MyPageViewController: UIViewController {
     }
     
     private let settingsButton = UIButton().then {
-        let imageView = UIImageView(image: HPCommonUIAsset.settingOutlind.image)
-        imageView.contentMode = .scaleAspectFit
-        imageView.snp.makeConstraints {
-            $0.width.equalTo(18)
-            $0.height.equalTo(18)
-        }
-        
-        $0.addSubview(imageView)
+        $0.setBackgroundImage(HPCommonUIAsset.settingOutlind.image, for: .normal)
         
         $0.snp.makeConstraints {
             $0.width.equalTo(24)
             $0.height.equalTo(24)
-            $0.center.equalTo(imageView.snp.center)
         }
     }
     
@@ -62,34 +54,42 @@ class MyPageViewController: UIViewController {
     }
     
     private let editButton = UIButton().then {
-        $0.titleLabel?.text = "수정하기"
+        $0.setTitle("수정하기", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    private lazy var reviewButton = UIButton().then {
+    private lazy var reviewButton = UIButton(type: .custom).then { button in
         let imageView = UIImageView(image: HPCommonUIAsset.textOutlined.image)
         imageView.snp.makeConstraints {
-            $0.width.equalTo(24)
-            $0.height.equalTo(21.33)
+            $0.width.equalTo(32)
+            $0.height.equalTo(32)
         }
         
         let label = UILabel()
         label.attributedText = reviewCountText(5)
         
-        $0.addSubview(imageView)
-        $0.addSubview(label)
+        button.addSubview(imageView)
+        button.addSubview(label)
         
-        $0.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.top).offset(-5.335)
-            $0.centerX.equalTo(imageView.snp.centerX)
-            $0.leading.equalTo(label.snp.leading)
-            $0.trailing.equalTo(label.snp.trailing)
-            $0.bottom.equalTo(label.snp.bottom)
+        button.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(37)
             $0.height.equalTo(51)
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.top.equalTo(button.snp.top)
+            $0.centerX.equalTo(button.snp.centerX)
+        }
+        
+        label.snp.makeConstraints {
+            $0.leading.equalTo(button.snp.leading)
+            $0.trailing.equalTo(button.snp.trailing)
+            $0.bottom.equalTo(button.snp.bottom)
         }
     }
     
-    private let pointButton = UIButton().then {
+    private let pointButton = UIButton(type: .custom).then { button in
         let imageView = UIImageView(image: HPCommonUIAsset.point.image)
         imageView.snp.makeConstraints {
             $0.width.equalTo(13)
@@ -100,42 +100,54 @@ class MyPageViewController: UIViewController {
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "포인트"
         
-        $0.addSubview(imageView)
-        $0.addSubview(label)
+        button.addSubview(imageView)
+        button.addSubview(label)
         
-        $0.snp.makeConstraints {
-            $0.width.equalTo(37)
-            $0.height.equalTo(50)
-            $0.top.equalTo(imageView.snp.top).offset(-2)
-            $0.centerX.equalTo(imageView.snp.centerX)
-            $0.leading.equalTo(label.snp.leading)
-            $0.trailing.equalTo(label.snp.trailing)
-            $0.bottom.equalTo(label.snp.bottom)
+        button.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(37)
+            $0.height.equalTo(51)
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.top.equalTo(button.snp.top).offset(3)
+            $0.centerX.equalTo(button.snp.centerX)
+        }
+        
+        label.snp.makeConstraints {
+            $0.leading.equalTo(button.snp.leading)
+            $0.trailing.equalTo(button.snp.trailing)
+            $0.bottom.equalTo(button.snp.bottom)
         }
     }
     
-    private let couponButton = UIButton().then {
+    private let couponButton = UIButton(type: .custom).then { button in
         let imageView = UIImageView(image: HPCommonUIAsset.bookingOutlined.image)
+        imageView.contentMode = .scaleToFill
         imageView.snp.makeConstraints {
-            $0.width.equalTo(25)
-            $0.height.equalTo(16)
+            $0.width.equalTo(29)
+            $0.height.equalTo(28)
         }
         
         let label = UILabel()
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "쿠폰"
         
-        $0.addSubview(imageView)
-        $0.addSubview(label)
+        button.addSubview(imageView)
+        button.addSubview(label)
         
-        $0.snp.makeConstraints {
+        button.snp.makeConstraints {
             $0.width.equalTo(37)
-            $0.height.equalTo(50)
-            $0.top.equalTo(imageView.snp.top).offset(-4)
-            $0.centerX.equalTo(imageView.snp.centerX)
-            $0.leading.equalTo(label.snp.leading).offset(-6)
-            $0.trailing.equalTo(label.snp.trailing).offset(6)
-            $0.bottom.equalTo(label.snp.bottom)
+            $0.height.equalTo(51)
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.top.equalTo(button.snp.top)
+            $0.centerX.equalTo(button.snp.centerX)
+        }
+        
+        label.snp.makeConstraints {
+            $0.bottom.equalTo(button.snp.bottom)
+            $0.centerX.equalTo(button.snp.centerX)
         }
     }
     
@@ -148,8 +160,9 @@ class MyPageViewController: UIViewController {
         
         layoutCustomNavigationBar()
         layoutScrollView()
+        layoutFirstPart()
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
@@ -177,7 +190,69 @@ class MyPageViewController: UIViewController {
     }
     
     private func layoutScrollView() {
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(customNavigationBar.snp.bottom)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+    }
+    
+    private func layoutFirstPart() {
+        let userInfoLabelStack = UIStackView()
+        userInfoLabelStack.axis = .vertical
+        userInfoLabelStack.alignment = .leading
+        userInfoLabelStack.spacing = 3
         
+        [userNameLabel, phoneNumberLabel, userEmailLabel].forEach(userInfoLabelStack.addArrangedSubview(_:))
+        
+        [
+            photoView,
+            userInfoLabelStack,
+            editButton
+        ].forEach(scrollView.addSubview(_:))
+        
+        photoView.snp.makeConstraints {
+            $0.top.equalTo(scrollView.snp.top).offset(20)
+            $0.leading.equalTo(scrollView.snp.leading).offset(29)
+        }
+        
+        userInfoLabelStack.snp.makeConstraints {
+            $0.top.equalTo(photoView.snp.top)
+            $0.leading.equalTo(photoView.snp.trailing).offset(13)
+        }
+        
+        editButton.snp.makeConstraints {
+            $0.top.equalTo(userInfoLabelStack.snp.top).offset(-3)
+            $0.trailing.equalTo(view.snp.trailing).offset(-30)
+        }
+        
+        let buttonsStack = UIStackView()
+        buttonsStack.axis = .horizontal
+        buttonsStack.alignment = .bottom
+        buttonsStack.spacing = 57
+        
+        [reviewButton, pointButton, couponButton].forEach(buttonsStack.addArrangedSubview(_:))
+        
+        scrollView.addSubview(buttonsStack)
+        
+        buttonsStack.snp.makeConstraints {
+            $0.top.equalTo(photoView.snp.bottom).offset(29)
+            $0.centerX.equalTo(scrollView.snp.centerX)
+        }
+        
+        let divierView = UIView()
+        divierView.backgroundColor = HPCommonUIAsset.separator.color
+        
+        scrollView.addSubview(divierView)
+        
+        divierView.snp.makeConstraints {
+            $0.top.equalTo(buttonsStack.snp.bottom).offset(34)
+            $0.leading.equalTo(scrollView.snp.leading)
+            $0.width.equalTo(scrollView.snp.width)
+            $0.height.equalTo(14)
+        }
     }
     
     private func reviewCountText(_ count: Int) -> NSAttributedString {
