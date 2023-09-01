@@ -59,7 +59,7 @@ class MyPageViewController: UIViewController {
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    private lazy var reviewButton = UIButton(type: .custom).then { button in
+    private lazy var reviewButton = UIButton(type: .custom).then {
         let imageView = UIImageView(image: HPCommonUIAsset.textOutlined.image)
         imageView.snp.makeConstraints {
             $0.width.equalTo(32)
@@ -69,27 +69,10 @@ class MyPageViewController: UIViewController {
         let label = UILabel()
         label.attributedText = reviewCountText(5)
         
-        button.addSubview(imageView)
-        button.addSubview(label)
-        
-        button.snp.makeConstraints {
-            $0.width.greaterThanOrEqualTo(37)
-            $0.height.equalTo(51)
-        }
-        
-        imageView.snp.makeConstraints {
-            $0.top.equalTo(button.snp.top)
-            $0.centerX.equalTo(button.snp.centerX)
-        }
-        
-        label.snp.makeConstraints {
-            $0.leading.equalTo(button.snp.leading)
-            $0.trailing.equalTo(button.snp.trailing)
-            $0.bottom.equalTo(button.snp.bottom)
-        }
+        $0.constructLayout(imageView: imageView, label: label)
     }
     
-    private let pointButton = UIButton(type: .custom).then { button in
+    private let pointButton = UIButton(type: .custom).then {
         let imageView = UIImageView(image: HPCommonUIAsset.point.image)
         imageView.snp.makeConstraints {
             $0.width.equalTo(13)
@@ -100,27 +83,10 @@ class MyPageViewController: UIViewController {
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "포인트"
         
-        button.addSubview(imageView)
-        button.addSubview(label)
-        
-        button.snp.makeConstraints {
-            $0.width.greaterThanOrEqualTo(37)
-            $0.height.equalTo(51)
-        }
-        
-        imageView.snp.makeConstraints {
-            $0.top.equalTo(button.snp.top).offset(3)
-            $0.centerX.equalTo(button.snp.centerX)
-        }
-        
-        label.snp.makeConstraints {
-            $0.leading.equalTo(button.snp.leading)
-            $0.trailing.equalTo(button.snp.trailing)
-            $0.bottom.equalTo(button.snp.bottom)
-        }
+        $0.constructLayout(imageView: imageView, label: label, topMargin: 3)
     }
     
-    private let couponButton = UIButton(type: .custom).then { button in
+    private let couponButton = UIButton(type: .custom).then {
         let imageView = UIImageView(image: HPCommonUIAsset.bookingOutlined.image)
         imageView.contentMode = .scaleToFill
         imageView.snp.makeConstraints {
@@ -129,26 +95,11 @@ class MyPageViewController: UIViewController {
         }
         
         let label = UILabel()
+        label.textAlignment = .center
         label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         label.text = "쿠폰"
         
-        button.addSubview(imageView)
-        button.addSubview(label)
-        
-        button.snp.makeConstraints {
-            $0.width.equalTo(37)
-            $0.height.equalTo(51)
-        }
-        
-        imageView.snp.makeConstraints {
-            $0.top.equalTo(button.snp.top)
-            $0.centerX.equalTo(button.snp.centerX)
-        }
-        
-        label.snp.makeConstraints {
-            $0.bottom.equalTo(button.snp.bottom)
-            $0.centerX.equalTo(button.snp.centerX)
-        }
+        $0.constructLayout(imageView: imageView, label: label)
     }
     
     private let customNavigationBar = UIView()
@@ -266,5 +217,28 @@ class MyPageViewController: UIViewController {
         attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
         
         return attributedString
+    }
+}
+
+private extension UIButton {
+    func constructLayout(imageView: UIImageView, label: UILabel, topMargin: CGFloat = 0) {
+        self.addSubview(imageView)
+        self.addSubview(label)
+        
+        self.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(37)
+            $0.height.equalTo(51)
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.top.equalTo(self.snp.top).offset(topMargin)
+            $0.centerX.equalTo(self.snp.centerX)
+        }
+        
+        label.snp.makeConstraints {
+            $0.leading.equalTo(self.snp.leading)
+            $0.trailing.equalTo(self.snp.trailing)
+            $0.bottom.equalTo(self.snp.bottom)
+        }
     }
 }
