@@ -55,7 +55,7 @@ class MyPageViewController: UIViewController {
     
     private let editButton = UIButton().then {
         $0.setTitle("수정하기", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.buttonTitle.color, for: .normal)
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
@@ -243,7 +243,7 @@ class MyPageViewController: UIViewController {
         }
         
         let divierView = UIView()
-        divierView.backgroundColor = HPCommonUIAsset.separator.color
+        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
         
         scrollView.addSubview(divierView)
         
