@@ -109,30 +109,7 @@ class MyPageViewController: UIViewController {
     
     // MARK: - 이용권 파트 UI
     private let couponPartView = UIView()
-    private let couponPartHeaderButton = UIButton().then { view in
-        let label = UILabel()
-        label.text = "내 이용권"
-        label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        
-        let arrowImageView = UIImageView(image: HPCommonUIAsset.rightarrow.image)
-        arrowImageView.snp.makeConstraints {
-            $0.width.equalTo(11)
-            $0.height.equalTo(17)
-        }
-        
-        [label, arrowImageView].forEach(view.addSubview(_:))
-        
-        label.snp.makeConstraints {
-            $0.top.equalTo(view.snp.top)
-            $0.bottom.equalTo(view.snp.bottom)
-            $0.leading.equalTo(view.snp.leading).offset(29)
-        }
-        
-        arrowImageView.snp.makeConstraints {
-            $0.centerY.equalTo(view.snp.centerY)
-            $0.trailing.equalTo(view.snp.trailing).offset(-27)
-        }
-    }
+    private lazy var couponPartHeaderButton = partHeaderButton(text: "내 이용권")
     
     private let couponListView = CouponListView(coupons: [
         .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
@@ -172,6 +149,19 @@ class MyPageViewController: UIViewController {
         description: "이용권 잔여",
         countLabel: couponCountLabel
     )
+    
+    // MARK: - 수업 내역 파트 UI
+    private lazy var classPartHeaderButton = partHeaderButton(text: "수업 내역")
+    private let instructorPhotoView = UIImageView().then {
+        $0.layer.cornerRadius = 31
+        $0.clipsToBounds = true
+        $0.backgroundColor = .black
+        
+        $0.snp.makeConstraints {
+            $0.width.equalTo(62)
+            $0.height.equalTo(62)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -281,7 +271,7 @@ class MyPageViewController: UIViewController {
         }
     }
     
-    // MARK: - 이용권 파트
+    // MARK: - 이용권 파트 레이아웃
     private func layoutCouponPartView() {
         [couponPartHeaderButton, couponListView].forEach(couponPartView.addSubview(_:))
         
@@ -341,18 +331,5 @@ class MyPageViewController: UIViewController {
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
         }
-    }
-    
-    private func reviewCountText(_ count: Int) -> NSAttributedString {
-        let newString = "리뷰 \(count)"
-        let reviewRange = (newString as NSString).range(of: "리뷰 ")
-        let countRange = (newString as NSString).range(of: "\(count)")
-        
-        let attributedString = NSMutableAttributedString(string: newString)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: reviewRange)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: countRange)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
-        
-        return attributedString
     }
 }

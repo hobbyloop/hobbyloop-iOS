@@ -64,4 +64,46 @@ extension MyPageViewController {
         
         return button
     }
+    
+    func reviewCountText(_ count: Int) -> NSAttributedString {
+        let newString = "리뷰 \(count)"
+        let reviewRange = (newString as NSString).range(of: "리뷰 ")
+        let countRange = (newString as NSString).range(of: "\(count)")
+        
+        let attributedString = NSMutableAttributedString(string: newString)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: reviewRange)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: countRange)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
+        
+        return attributedString
+    }
+    
+    func partHeaderButton(text: String) -> UIButton {
+        let button = UIButton()
+        
+        let label = UILabel()
+        label.text = text
+        label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        
+        let arrowImageView = UIImageView(image: HPCommonUIAsset.rightarrow.image)
+        arrowImageView.snp.makeConstraints {
+            $0.width.equalTo(11)
+            $0.height.equalTo(17)
+        }
+        
+        [label, arrowImageView].forEach(button.addSubview(_:))
+        
+        label.snp.makeConstraints {
+            $0.top.equalTo(button.snp.top)
+            $0.bottom.equalTo(button.snp.bottom)
+            $0.leading.equalTo(button.snp.leading).offset(29)
+        }
+        
+        arrowImageView.snp.makeConstraints {
+            $0.centerY.equalTo(button.snp.centerY)
+            $0.trailing.equalTo(button.snp.trailing).offset(-27)
+        }
+        
+        return button
+    }
 }
