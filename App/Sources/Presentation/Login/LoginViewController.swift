@@ -160,8 +160,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             ).filter { $0.0 == .kakao && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .kakao)
+            .subscribe(onNext: { owner, _ in
+                owner.didShowSingUpController(accountType: .kakao)
             }).disposed(by: disposeBag)
         
         Observable
@@ -171,8 +171,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             ).filter { $0.0 == .naver && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .naver)
+            .subscribe(onNext: { owner, _ in
+                owner.didShowSingUpController(accountType: .naver)
             }).disposed(by: disposeBag)
         
         Observable
@@ -182,8 +182,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             ).filter { $0.0 == .google && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .google)
+            .subscribe(onNext: { owner, _ in
+                owner.didShowSingUpController(accountType: .google)
             }).disposed(by: disposeBag)
         
         Observable
@@ -193,8 +193,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             ).filter { $0.0 == .apple && !$0.1.isEmpty }
             .map { _ in () }
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .apple)
+            .subscribe(onNext: { owner, _ in
+                owner.didShowSingUpController(accountType: .apple)
             }).disposed(by: disposeBag)
     }
 }

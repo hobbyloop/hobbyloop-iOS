@@ -224,7 +224,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         nickNameView.snp.makeConstraints {
             $0.bottom.equalTo(genederDescriptionLabel.snp.top).offset(-36)
-            $0.left.height.right.equalTo(nameView)
+            $0.left.right.equalTo(nameView)
+            $0.height.equalTo(80)
         }
         
         genederDescriptionLabel.snp.makeConstraints {
@@ -518,9 +519,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
-            .subscribe(onNext: { vc, height in
-                if vc.phoneView.textFiledView.isEditing {
-                    vc.containerView.frame.origin.y -= height
+            .subscribe(onNext: { owner, height in
+                if owner.phoneView.textFiledView.isEditing {
+                    owner.containerView.frame.origin.y -= height
                 }
             }).disposed(by: disposeBag)
         
@@ -554,13 +555,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .debug("max count PhoneNumber")
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { vc, isEditing in
-                if vc.phoneView.textFiledView.text?.count ?? 0 < 13 {
-                    vc.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-                    vc.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+            .subscribe(onNext: { owner, isEditing in
+                if owner.phoneView.textFiledView.text?.count ?? 0 < 13 {
+                    owner.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
                 }
                 guard !isEditing else { return }
-                vc.phoneView.textFiledView.text = String(vc.phoneView.textFiledView.text?.dropLast() ?? "" )
+                owner.phoneView.textFiledView.text = String(owner.phoneView.textFiledView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
         
         
@@ -570,11 +571,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 phoneView.textFiledView.rx.text.values.asObservable()
             ).filter { $0?.count == 13 }
             .map {  _ in HPCommonUIAsset.deepOrange.color }
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { owner, color in
                 HapticUtil.impact(.light).generate()
-                self.certificationButton.didTapHPButton(color)
-                self.dropdownAnimation()
+                owner.certificationButton.didTapHPButton(color)
+                owner.dropdownAnimation()
             }).disposed(by: disposeBag)
         
         
@@ -629,21 +631,17 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { color in
-                self.nameView.textFiledView.layer.borderColor = color
-                self.nameView.updateErrorLayout(type: .name)
-                self.nameView.snp.remakeConstraints {
-                    $0.bottom.equalTo(self.nickNameView.snp.top).offset(-36)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.nameView.textFiledView.layer.borderColor = color
+                owner.nameView.updateErrorLayout(type: .name)
+                owner.nameView.snp.remakeConstraints {
+                    $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
                     $0.left.equalToSuperview().offset(15)
                     $0.right.equalToSuperview().offset(-15)
                     $0.height.equalTo(110)
                 }
                 
-                self.nickNameView.snp.remakeConstraints {
-                    $0.bottom.equalTo(self.genederDescriptionLabel.snp.top).offset(-36)
-                    $0.left.right.equalTo(self.nameView)
-                    $0.height.equalTo(80)
-                }
             }).disposed(by: disposeBag)
         
         
@@ -656,17 +654,18 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { color in
-                self.birthDayView.textFiledView.layer.borderColor = color
-                self.birthDayView.updateErrorLayout(type: .birthDay)
-                self.birthDayView.snp.remakeConstraints {
-                    $0.bottom.equalTo(self.phoneView.snp.top).offset(-36)
-                    $0.left.right.equalTo(self.nameView)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.birthDayView.textFiledView.layer.borderColor = color
+                owner.birthDayView.updateErrorLayout(type: .birthDay)
+                owner.birthDayView.snp.remakeConstraints {
+                    $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
+                    $0.left.right.equalTo(owner.nameView)
                     $0.height.equalTo(110)
                 }
             })
             .disposed(by: disposeBag)
-        
+
         Observable
             .combineLatest(
                 phoneView.textFiledView.rx.text.orEmpty,
@@ -674,13 +673,15 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { color in
-                self.phoneView.textFiledView.layer.borderColor = color
-                self.phoneView.updateErrorLayout(type: .phone)
-                self.phoneView.snp.remakeConstraints {
-                    $0.left.height.equalTo(self.nameView)
-                    $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
-                    $0.bottom.equalTo(self.termsView.snp.top).offset(-66)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.phoneView.textFiledView.layer.borderColor = color
+                owner.phoneView.updateErrorLayout(type: .phone)
+                
+                owner.phoneView.snp.remakeConstraints {
+                    $0.left.equalTo(owner.nameView)
+                    $0.right.equalTo(owner.certificationButton.snp.left).offset(-8)
+                    $0.bottom.equalTo(owner.termsView.snp.top).offset(-36)
                     $0.height.equalTo(110)
                 }
             })
