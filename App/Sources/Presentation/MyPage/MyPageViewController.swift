@@ -66,48 +66,46 @@ class MyPageViewController: UIViewController {
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    private lazy var reviewButton = UIButton(type: .custom).then {
-        let imageView = UIImageView(image: HPCommonUIAsset.textOutlined.image)
-        imageView.snp.makeConstraints {
-            $0.width.equalTo(32)
-            $0.height.equalTo(32)
+    private lazy var reviewButton = UIButton.withVerticalStack(
+        imageView: UIImageView(image: HPCommonUIAsset.textOutlined.image).then {
+            $0.snp.makeConstraints {
+                $0.width.equalTo(32)
+                $0.height.equalTo(32)
+            }
+        },
+        label: UILabel().then {
+            $0.attributedText = reviewCountText(5)
         }
-        
-        let label = UILabel()
-        label.attributedText = reviewCountText(5)
-        
-        $0.constructLayout(imageView: imageView, label: label)
-    }
+    )
     
-    private let pointButton = UIButton(type: .custom).then {
-        let imageView = UIImageView(image: HPCommonUIAsset.point.image)
-        imageView.snp.makeConstraints {
-            $0.width.equalTo(13)
-            $0.height.equalTo(19)
-        }
-        
-        let label = UILabel()
-        label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        label.text = "포인트"
-        
-        $0.constructLayout(imageView: imageView, label: label, topMargin: 3)
-    }
+    private let pointButton = UIButton.withVerticalStack(
+        imageView: UIImageView(image: HPCommonUIAsset.point.image).then {
+            $0.snp.makeConstraints {
+                $0.width.equalTo(13)
+                $0.height.equalTo(19)
+            }
+        },
+        label: UILabel().then {
+            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+            $0.text = "포인트"
+        },
+        topMargin: 3
+    )
     
-    private let couponButton = UIButton(type: .custom).then {
-        let imageView = UIImageView(image: HPCommonUIAsset.bookingOutlined.image)
-        imageView.contentMode = .scaleToFill
-        imageView.snp.makeConstraints {
-            $0.width.equalTo(29)
-            $0.height.equalTo(28)
+    private let couponButton = UIButton.withVerticalStack(
+        imageView: UIImageView(image: HPCommonUIAsset.bookingOutlined.image).then {
+            $0.contentMode = .scaleToFill
+            $0.snp.makeConstraints {
+                $0.width.equalTo(29)
+                $0.height.equalTo(28)
+            }
+        },
+        label: UILabel().then {
+            $0.textAlignment = .center
+            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+            $0.text = "쿠폰"
         }
-        
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        label.text = "쿠폰"
-        
-        $0.constructLayout(imageView: imageView, label: label)
-    }
+    )
     
     // MARK: - 이용권 파트 UI
     private let couponPartView = UIView()
@@ -147,7 +145,7 @@ class MyPageViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.deepOrange.color
     }
     
-    private lazy var reservableClassButton = horizontalStackButton(
+    private lazy var reservableClassButton = UIButton.withHorizontalStack(
         imageView: UIImageView(image: HPCommonUIAsset.calendarOutlined.image).then({
             $0.snp.makeConstraints {
                 $0.width.equalTo(24)
@@ -164,7 +162,7 @@ class MyPageViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.deepOrange.color
     }
     
-    private lazy var remainingCouponButton = horizontalStackButton(
+    private lazy var remainingCouponButton = UIButton.withHorizontalStack(
         imageView: UIImageView(image: HPCommonUIAsset.ticket.image).then({
             $0.snp.makeConstraints {
                 $0.width.equalTo(18.89)
@@ -356,57 +354,5 @@ class MyPageViewController: UIViewController {
         attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
         
         return attributedString
-    }
-    
-    private func horizontalStackButton(imageView: UIImageView, description: String, countLabel: UILabel) -> UIButton {
-        let button = UIButton(type: .custom)
-        button.contentMode = .center
-
-        let descriptionLabel = UILabel()
-        descriptionLabel.text = description
-        descriptionLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        descriptionLabel.textColor = HPCommonUIAsset.couponInfoLabel.color
-        
-        
-        let contentStack = UIStackView()
-        contentStack.axis = .horizontal
-        contentStack.alignment = .center
-        contentStack.spacing = 5
-        
-        [imageView, descriptionLabel, countLabel].forEach(contentStack.addArrangedSubview(_:))
-        
-        button.addSubview(contentStack)
-        
-        contentStack.snp.makeConstraints {
-            $0.top.equalTo(button.snp.top)
-            $0.leading.equalTo(button.snp.leading)
-            $0.trailing.equalTo(button.snp.trailing)
-            $0.bottom.equalTo(button.snp.bottom)
-        }
-        
-        return button
-    }
-}
-
-private extension UIButton {
-    func constructLayout(imageView: UIImageView, label: UILabel, topMargin: CGFloat = 0) {
-        self.addSubview(imageView)
-        self.addSubview(label)
-        
-        self.snp.makeConstraints {
-            $0.width.greaterThanOrEqualTo(37)
-            $0.height.equalTo(51)
-        }
-        
-        imageView.snp.makeConstraints {
-            $0.top.equalTo(self.snp.top).offset(topMargin)
-            $0.centerX.equalTo(self.snp.centerX)
-        }
-        
-        label.snp.makeConstraints {
-            $0.leading.equalTo(self.snp.leading)
-            $0.trailing.equalTo(self.snp.trailing)
-            $0.bottom.equalTo(self.snp.bottom)
-        }
     }
 }
