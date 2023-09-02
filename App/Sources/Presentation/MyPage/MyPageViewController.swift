@@ -36,7 +36,7 @@ class MyPageViewController: UIViewController {
     private let userInfoPartView = UIView().then {
         $0.backgroundColor = .systemBackground
     }
-    private lazy var photoView = photoImageView()
+    private lazy var photoView = circularImageView(radius: 31)
     
     private let userNameLabel = UILabel().then {
         $0.text = "지원"
@@ -152,7 +152,7 @@ class MyPageViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     private lazy var classPartHeaderButton = partHeaderButton(text: "수업 내역")
-    private lazy var instructorPhotoView = photoImageView()
+    private lazy var instructorPhotoView = circularImageView(radius: 31)
     private let classTitleLabel = UILabel().then {
         $0.text = "6:1 코어다지기"
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
