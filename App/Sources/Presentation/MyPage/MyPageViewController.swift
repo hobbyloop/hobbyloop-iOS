@@ -66,7 +66,7 @@ class MyPageViewController: UIViewController {
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    private lazy var reviewButton = UIButton.withVerticalStack(
+    private lazy var reviewButton = verticalStackButton(
         imageView: UIImageView(image: HPCommonUIAsset.textOutlined.image).then {
             $0.snp.makeConstraints {
                 $0.width.equalTo(32)
@@ -78,7 +78,7 @@ class MyPageViewController: UIViewController {
         }
     )
     
-    private let pointButton = UIButton.withVerticalStack(
+    private lazy var pointButton = verticalStackButton(
         imageView: UIImageView(image: HPCommonUIAsset.point.image).then {
             $0.snp.makeConstraints {
                 $0.width.equalTo(13)
@@ -92,7 +92,7 @@ class MyPageViewController: UIViewController {
         topMargin: 3
     )
     
-    private let couponButton = UIButton.withVerticalStack(
+    private lazy var couponButton = verticalStackButton(
         imageView: UIImageView(image: HPCommonUIAsset.bookingOutlined.image).then {
             $0.contentMode = .scaleToFill
             $0.snp.makeConstraints {
@@ -145,7 +145,7 @@ class MyPageViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.deepOrange.color
     }
     
-    private lazy var reservableClassButton = UIButton.withHorizontalStack(
+    private lazy var reservableClassButton = horizontalStackButton(
         imageView: UIImageView(image: HPCommonUIAsset.calendarOutlined.image).then({
             $0.snp.makeConstraints {
                 $0.width.equalTo(24)
@@ -162,7 +162,7 @@ class MyPageViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.deepOrange.color
     }
     
-    private lazy var remainingCouponButton = UIButton.withHorizontalStack(
+    private lazy var remainingCouponButton = horizontalStackButton(
         imageView: UIImageView(image: HPCommonUIAsset.ticket.image).then({
             $0.snp.makeConstraints {
                 $0.width.equalTo(18.89)

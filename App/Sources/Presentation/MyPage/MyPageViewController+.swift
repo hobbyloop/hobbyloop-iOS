@@ -8,10 +8,9 @@
 import UIKit
 import HPCommonUI
 
-extension UIButton {
+extension MyPageViewController {
     /// 이미지와 텍스트가 세로 방향으로 나열된 버튼 반환.
-    /// 마이페이지 화면에서 사용
-    static func withVerticalStack(imageView: UIImageView, label: UILabel, topMargin: CGFloat = 0) -> UIButton {
+    func verticalStackButton(imageView: UIImageView, label: UILabel, topMargin: CGFloat = 0) -> UIButton {
         let button = UIButton(type: .custom)
         
         button.addSubview(imageView)
@@ -37,8 +36,7 @@ extension UIButton {
     }
     
     /// 이미지, 설명 텍스트, 개수 텍스트가 가로로 나열된 버튼 반환.
-    /// 마이페이지 화면에서 사용
-    static func withHorizontalStack(imageView: UIImageView, description: String, countLabel: UILabel) -> UIButton {
+    func horizontalStackButton(imageView: UIImageView, description: String, countLabel: UILabel) -> UIButton {
         let button = UIButton(type: .custom)
         button.contentMode = .center
         
