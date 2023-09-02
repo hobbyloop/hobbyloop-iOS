@@ -11,6 +11,8 @@ import HPCommonUI
 import Then
 
 class MyPageViewController: UIViewController {
+    // MARK: - navigation bar
+    private let customNavigationBar = UIView()
     private let navigationTitleLabel = UILabel().then {
         $0.text = "마이페이지"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
@@ -25,6 +27,11 @@ class MyPageViewController: UIViewController {
         }
     }
     
+    // MARK: - scroll view
+    private let scrollView = UIScrollView()
+    
+    // MARK: - 유저 정보 파트 UI
+    private let userInfoPartView = UIView()
     private let photoView = UIImageView().then {
         $0.layer.cornerRadius = 31
         $0.clipsToBounds = true
@@ -102,8 +109,32 @@ class MyPageViewController: UIViewController {
         $0.constructLayout(imageView: imageView, label: label)
     }
     
-    private let customNavigationBar = UIView()
-    private let scrollView = UIScrollView()
+    // MARK: - 이용권 파트 UI
+    private let couponPartView = UIView()
+    private let couponPartHeaderButton = UIButton().then { view in
+        let label = UILabel()
+        label.text = "내 이용권"
+        label.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        
+        let arrowImageView = UIImageView(image: HPCommonUIAsset.rightarrow.image)
+        arrowImageView.snp.makeConstraints {
+            $0.width.equalTo(11)
+            $0.height.equalTo(17)
+        }
+        
+        [label, arrowImageView].forEach(view.addSubview(_:))
+        
+        label.snp.makeConstraints {
+            $0.top.equalTo(view.snp.top)
+            $0.bottom.equalTo(view.snp.bottom)
+            $0.leading.equalTo(view.snp.leading).offset(29)
+        }
+        
+        arrowImageView.snp.makeConstraints {
+            $0.centerY.equalTo(view.snp.centerY)
+            $0.trailing.equalTo(view.snp.trailing).offset(-27)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,7 +142,8 @@ class MyPageViewController: UIViewController {
         
         layoutCustomNavigationBar()
         layoutScrollView()
-        layoutFirstPart()
+        layoutUserInfoPartView()
+        layoutCouponPartView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -150,7 +182,9 @@ class MyPageViewController: UIViewController {
         }
     }
     
-    private func layoutFirstPart() {
+    // MARK: - 구분선 기준으로 파트 구분
+    // MARK: - 유저 정보 파트 레이아웃
+    private func layoutUserInfoPartView() {
         let userInfoLabelStack = UIStackView()
         userInfoLabelStack.axis = .vertical
         userInfoLabelStack.alignment = .leading
@@ -158,15 +192,11 @@ class MyPageViewController: UIViewController {
         
         [userNameLabel, phoneNumberLabel, userEmailLabel].forEach(userInfoLabelStack.addArrangedSubview(_:))
         
-        [
-            photoView,
-            userInfoLabelStack,
-            editButton
-        ].forEach(scrollView.addSubview(_:))
+        [photoView, userInfoLabelStack, editButton].forEach(userInfoPartView.addSubview(_:))
         
         photoView.snp.makeConstraints {
-            $0.top.equalTo(scrollView.snp.top).offset(20)
-            $0.leading.equalTo(scrollView.snp.leading).offset(29)
+            $0.top.equalTo(userInfoPartView.snp.top).offset(20)
+            $0.leading.equalTo(userInfoPartView.snp.leading).offset(29)
         }
         
         userInfoLabelStack.snp.makeConstraints {
@@ -176,7 +206,7 @@ class MyPageViewController: UIViewController {
         
         editButton.snp.makeConstraints {
             $0.top.equalTo(userInfoLabelStack.snp.top).offset(-3)
-            $0.trailing.equalTo(view.snp.trailing).offset(-30)
+            $0.trailing.equalTo(userInfoPartView.snp.trailing).offset(-30)
         }
         
         let buttonsStack = UIStackView()
@@ -186,24 +216,37 @@ class MyPageViewController: UIViewController {
         
         [reviewButton, pointButton, couponButton].forEach(buttonsStack.addArrangedSubview(_:))
         
-        scrollView.addSubview(buttonsStack)
+        userInfoPartView.addSubview(buttonsStack)
         
         buttonsStack.snp.makeConstraints {
             $0.top.equalTo(photoView.snp.bottom).offset(29)
-            $0.centerX.equalTo(scrollView.snp.centerX)
+            $0.centerX.equalTo(userInfoPartView.snp.centerX)
         }
         
         let divierView = UIView()
         divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
         
-        scrollView.addSubview(divierView)
+        userInfoPartView.addSubview(divierView)
         
         divierView.snp.makeConstraints {
             $0.top.equalTo(buttonsStack.snp.bottom).offset(34)
+            $0.leading.equalTo(userInfoPartView.snp.leading)
+            $0.width.equalTo(userInfoPartView.snp.width)
+            $0.height.equalTo(14)
+            $0.bottom.equalTo(userInfoPartView.snp.bottom)
+        }
+        
+        scrollView.addSubview(userInfoPartView)
+        userInfoPartView.snp.makeConstraints {
+            $0.top.equalTo(scrollView.snp.top)
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
-            $0.height.equalTo(14)
         }
+    }
+    
+    // MARK: - 이용권 파트
+    private func layoutCouponPartView() {
+        
     }
     
     private func reviewCountText(_ count: Int) -> NSAttributedString {
