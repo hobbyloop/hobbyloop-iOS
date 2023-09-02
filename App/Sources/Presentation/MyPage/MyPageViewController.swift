@@ -12,7 +12,9 @@ import Then
 
 class MyPageViewController: UIViewController {
     // MARK: - navigation bar
-    private let customNavigationBar = UIView()
+    private let customNavigationBar = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
     private let navigationTitleLabel = UILabel().then {
         $0.text = "마이페이지"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
@@ -31,7 +33,9 @@ class MyPageViewController: UIViewController {
     private let scrollView = UIScrollView()
     
     // MARK: - 유저 정보 파트 UI
-    private let userInfoPartView = UIView()
+    private let userInfoPartView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
     private lazy var photoView = photoImageView()
     
     private let userNameLabel = UILabel().then {
@@ -99,7 +103,9 @@ class MyPageViewController: UIViewController {
     )
     
     // MARK: - 이용권 파트 UI
-    private let couponPartView = UIView()
+    private let couponPartView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
     private lazy var couponPartHeaderButton = partHeaderButton(text: "내 이용권")
     
     private let couponListView = CouponListView(coupons: [
@@ -238,11 +244,14 @@ class MyPageViewController: UIViewController {
         }
     }
     
-    private let classPartView = UIView()
+    private let classPartView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        scrollView.backgroundColor = HPCommonUIAsset.lightBackground.color
         
         layoutCustomNavigationBar()
         layoutScrollView()
@@ -334,19 +343,7 @@ class MyPageViewController: UIViewController {
         buttonsStack.snp.makeConstraints {
             $0.top.equalTo(photoView.snp.bottom).offset(29)
             $0.centerX.equalTo(userInfoPartView.snp.centerX)
-        }
-        
-        let divierView = UIView()
-        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
-        
-        userInfoPartView.addSubview(divierView)
-        
-        divierView.snp.makeConstraints {
-            $0.top.equalTo(buttonsStack.snp.bottom).offset(34)
-            $0.leading.equalTo(userInfoPartView.snp.leading)
-            $0.width.equalTo(userInfoPartView.snp.width)
-            $0.height.equalTo(14)
-            $0.bottom.equalTo(userInfoPartView.snp.bottom)
+            $0.bottom.equalTo(userInfoPartView.snp.bottom).offset(-34)
         }
         
         scrollView.addSubview(userInfoPartView)
@@ -386,6 +383,7 @@ class MyPageViewController: UIViewController {
         buttonDivider.snp.makeConstraints {
             $0.centerX.equalTo(couponPartView.snp.centerX).offset(10)
             $0.top.equalTo(couponListView.snp.bottom).offset(26)
+            $0.bottom.equalTo(couponPartView.snp.bottom).offset(-24)
         }
         
         reservableClassButton.snp.makeConstraints {
@@ -398,22 +396,9 @@ class MyPageViewController: UIViewController {
             $0.centerY.equalTo(buttonDivider.snp.centerY)
         }
         
-        let divierView = UIView()
-        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
-        
-        couponPartView.addSubview(divierView)
-        
-        divierView.snp.makeConstraints {
-            $0.top.equalTo(buttonDivider.snp.bottom).offset(24)
-            $0.leading.equalTo(couponPartView.snp.leading)
-            $0.width.equalTo(couponPartView.snp.width)
-            $0.height.equalTo(14)
-            $0.bottom.equalTo(couponPartView.snp.bottom)
-        }
-        
         scrollView.addSubview(couponPartView)
         couponPartView.snp.makeConstraints {
-            $0.top.equalTo(userInfoPartView.snp.bottom)
+            $0.top.equalTo(userInfoPartView.snp.bottom).offset(14)
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
         }
@@ -434,23 +419,12 @@ class MyPageViewController: UIViewController {
             $0.leading.equalTo(classPartView.snp.leading).offset(16)
             $0.trailing.equalTo(classPartView.snp.trailing).offset(-16)
             $0.height.equalTo(140)
-        }
-        
-        let divierView = UIView()
-        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
-        
-        classPartView.addSubview(divierView)
-        divierView.snp.makeConstraints {
-            $0.top.equalTo(classInfoView.snp.bottom).offset(19)
-            $0.leading.equalTo(classPartView.snp.leading)
-            $0.width.equalTo(classPartView.snp.width)
-            $0.height.equalTo(14)
-            $0.bottom.equalTo(classPartView.snp.bottom)
+            $0.bottom.equalTo(classPartView.snp.bottom).offset(-19)
         }
         
         scrollView.addSubview(classPartView)
         classPartView.snp.makeConstraints {
-            $0.top.equalTo(couponPartView.snp.bottom)
+            $0.top.equalTo(couponPartView.snp.bottom).offset(14)
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
         }
