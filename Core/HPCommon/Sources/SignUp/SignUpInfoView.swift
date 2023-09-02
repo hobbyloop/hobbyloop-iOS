@@ -37,6 +37,7 @@ public enum SignUpType: String {
         case .authcode: return "인증번호를 입력해주세요"
         }
     }
+
 }
 
 
@@ -75,7 +76,6 @@ public final class SignUpInfoView: UIView {
         $0.numberOfLines = 1
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textAlignment = .left
-        $0.isHidden = true
     }
     
     public init(titleType: SignUpType) {
@@ -111,7 +111,7 @@ public final class SignUpInfoView: UIView {
         titleLabel.text = titleType.setTitleLabelText()
         
         
-        [titleLabel, textFiledView].forEach {
+        [titleLabel, textFiledView, descriptionLabel].forEach {
             addSubview($0)
         }
         
@@ -124,15 +124,29 @@ public final class SignUpInfoView: UIView {
         textFiledView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.height.equalTo(48)
         }
         
-        self.snp.makeConstraints {
-            $0.height.equalTo(80)
+        descriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(textFiledView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(0)
         }
+
         
     }
     
+    
+    public func updateErrorLayout(type: SignUpType) {
+        
+        self.descriptionLabel.text = "\(type.rawValue)을 다시 확인해주세요."
+        descriptionLabel.snp.remakeConstraints {
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-11)
+        }
+        
+        
+    }
     
     private func authConfigure() {
         self.addSubview(textFiledView)

@@ -219,7 +219,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.bottom.equalTo(nickNameView.snp.top).offset(-36)
             $0.left.equalToSuperview().offset(15)
             $0.right.equalToSuperview().offset(-15)
-            $0.height.equalTo(100)
+            $0.height.equalTo(80)
         }
         
         nickNameView.snp.makeConstraints {
@@ -620,6 +620,73 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(nameView.textFiledView.rx.text)
             .disposed(by: disposeBag)
+        
+        
+        Observable
+            .combineLatest(
+                reactor.state.map { $0.userName }.distinctUntilChanged(),
+                confirmButton.rx.tap
+            ).filter { $0.0 == "" }
+            .map { _ in HPCommonUIAsset.error.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { color in
+                self.nameView.textFiledView.layer.borderColor = color
+                self.nameView.updateErrorLayout(type: .name)
+                self.nameView.snp.remakeConstraints {
+                    $0.bottom.equalTo(self.nickNameView.snp.top).offset(-36)
+                    $0.left.equalToSuperview().offset(15)
+                    $0.right.equalToSuperview().offset(-15)
+                    $0.height.equalTo(110)
+                }
+                
+                self.nickNameView.snp.remakeConstraints {
+                    $0.bottom.equalTo(self.genederDescriptionLabel.snp.top).offset(-36)
+                    $0.left.right.equalTo(self.nameView)
+                    $0.height.equalTo(80)
+                }
+            }).disposed(by: disposeBag)
+        
+        
+
+        
+        Observable
+            .combineLatest(
+                reactor.state.map { $0.userBirthDay }.distinctUntilChanged(),
+                confirmButton.rx.tap
+            ).filter { $0.0 == "" }
+            .map { _ in HPCommonUIAsset.error.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { color in
+                self.birthDayView.textFiledView.layer.borderColor = color
+                self.birthDayView.updateErrorLayout(type: .birthDay)
+                self.birthDayView.snp.remakeConstraints {
+                    $0.bottom.equalTo(self.phoneView.snp.top).offset(-36)
+                    $0.left.right.equalTo(self.nameView)
+                    $0.height.equalTo(110)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        Observable
+            .combineLatest(
+                phoneView.textFiledView.rx.text.orEmpty,
+                confirmButton.rx.tap
+            ).filter { $0.0 == "" }
+            .map { _ in HPCommonUIAsset.error.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { color in
+                self.phoneView.textFiledView.layer.borderColor = color
+                self.phoneView.updateErrorLayout(type: .phone)
+                self.phoneView.snp.remakeConstraints {
+                    $0.left.height.equalTo(self.nameView)
+                    $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
+                    $0.bottom.equalTo(self.termsView.snp.top).offset(-66)
+                    $0.height.equalTo(110)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        
         
     }
 }
