@@ -106,4 +106,15 @@ extension MyPageViewController {
         
         return button
     }
+    
+    func stackViewDivider() -> UIView {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0xDC / 255, green: 0xDC / 255, blue: 0xDC / 255, alpha: 1)
+        
+        view.snp.makeConstraints {
+            $0.height.equalTo(1)
+        }
+        
+        return view
+    }
 }

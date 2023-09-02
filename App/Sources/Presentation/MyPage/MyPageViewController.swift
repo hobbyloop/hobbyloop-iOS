@@ -252,6 +252,29 @@ class MyPageViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     private lazy var couponPurchasePartHeaderButton = partHeaderButton(text: "이용권 구매내역")
+    private lazy var couponPurchaseHistoryStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.spacing = 0
+        
+        // TODO: 백엔드를 통해 받아온 내용으로 UI 구성하도록 수정
+        $0.addArrangedSubview(
+            CouponPurchaseHistoryGroupItemView(
+                studioName: "발란스 스튜디오",
+                couponName: "6:1 30회",
+                periodString: "04.20 ~ 04.20"
+            )
+        )
+        
+        $0.addArrangedSubview(stackViewDivider())
+        $0.addArrangedSubview(
+            CouponPurchaseHistoryGroupItemView(
+                studioName: "발란스 스튜디오",
+                couponName: "6:1 30회",
+                periodString: "04.20 ~ 04.20"
+            )
+        )
+    }
     
     // MARK: - life cycle
     override func viewDidLoad() {
@@ -264,6 +287,7 @@ class MyPageViewController: UIViewController {
         layoutUserInfoPartView()
         layoutCouponPartView()
         layoutClassPartView()
+        layoutCouponPurchasePartView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -274,7 +298,6 @@ class MyPageViewController: UIViewController {
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         classInfoView.layer.mask = maskLayer
-        // scrollView.updateContentSize()
         scrollView.contentSize.height = 1113
     }
     
@@ -433,6 +456,32 @@ class MyPageViewController: UIViewController {
         scrollView.addSubview(classPartView)
         classPartView.snp.makeConstraints {
             $0.top.equalTo(couponPartView.snp.bottom).offset(14)
+            $0.leading.equalTo(scrollView.snp.leading)
+            $0.width.equalTo(scrollView.snp.width)
+        }
+    }
+    
+    // MARK: - 이용권 구매내역 파트 레이아웃
+    private func layoutCouponPurchasePartView() {
+        [couponPurchasePartHeaderButton, couponPurchaseHistoryStackView].forEach(couponPurchasePartView.addSubview(_:))
+        
+        couponPurchasePartHeaderButton.snp.makeConstraints {
+            $0.top.equalTo(couponPurchasePartView.snp.top).offset(23)
+            $0.leading.equalTo(couponPurchasePartView.snp.leading)
+            $0.width.equalTo(couponPurchasePartView.snp.width)
+        }
+        
+        couponPurchaseHistoryStackView.snp.makeConstraints {
+            $0.top.equalTo(couponPurchasePartHeaderButton.snp.bottom).offset(21)
+            $0.leading.equalTo(couponPurchasePartView.snp.leading).offset(16)
+            $0.trailing.equalTo(couponPurchasePartView.snp.trailing).offset(-16)
+            $0.bottom.equalTo(couponPurchasePartView.snp.bottom)
+        }
+        
+        scrollView.addSubview(couponPurchasePartView)
+        
+        couponPurchasePartView.snp.makeConstraints {
+            $0.top.equalTo(classPartView.snp.bottom).offset(14)
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
         }
