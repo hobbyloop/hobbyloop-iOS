@@ -32,16 +32,7 @@ class MyPageViewController: UIViewController {
     
     // MARK: - 유저 정보 파트 UI
     private let userInfoPartView = UIView()
-    private let photoView = UIImageView().then {
-        $0.layer.cornerRadius = 31
-        $0.clipsToBounds = true
-        $0.backgroundColor = .black
-        
-        $0.snp.makeConstraints {
-            $0.width.equalTo(62)
-            $0.height.equalTo(62)
-        }
-    }
+    private lazy var photoView = photoImageView()
     
     private let userNameLabel = UILabel().then {
         $0.text = "지원"
@@ -152,16 +143,102 @@ class MyPageViewController: UIViewController {
     
     // MARK: - 수업 내역 파트 UI
     private lazy var classPartHeaderButton = partHeaderButton(text: "수업 내역")
-    private let instructorPhotoView = UIImageView().then {
-        $0.layer.cornerRadius = 31
-        $0.clipsToBounds = true
-        $0.backgroundColor = .black
+    private lazy var instructorPhotoView = photoImageView()
+    private let classTitleLabel = UILabel().then {
+        $0.text = "6:1 코어다지기"
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
+    }
+    private let instructorNameLabel = UILabel().then {
+        $0.text = "이민주 강사님"
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
+        $0.textColor = UIColor(red: 0x71 / 255, green: 0x71 / 255, blue: 0x71 / 255, alpha: 1)
+    }
+    private let classWeekdayLabel = UILabel().then {
+        $0.text = "매주 화. 목. 토"
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
+    }
+    private let classTimeLabel = UILabel().then {
+        $0.text = "20:00 - 20:50"
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
+    }
+    
+    private lazy var classInfoView = UIView().then { view in
+        view.backgroundColor = UIColor(red: 0xF6 / 255, green: 0xF6 / 255, blue: 0xF6 / 255, alpha: 1)
+        let horizontalDivider = UIView()
+        horizontalDivider.backgroundColor = UIColor(red: 0x14 / 255, green: 0x14 / 255, blue: 0x14 / 255, alpha: 0.1)
         
-        $0.snp.makeConstraints {
-            $0.width.equalTo(62)
-            $0.height.equalTo(62)
+        let verticalDivider = UIView()
+        verticalDivider.backgroundColor = .black
+        verticalDivider.snp.makeConstraints {
+            $0.width.equalTo(1)
+            $0.height.equalTo(12)
+        }
+        
+        let dotView = UIView()
+        dotView.layer.cornerRadius = 3.5
+        dotView.clipsToBounds = true
+        dotView.backgroundColor = HPCommonUIAsset.deepOrange.color
+        
+        dotView.snp.makeConstraints {
+            $0.width.equalTo(7)
+            $0.height.equalTo(7)
+        }
+        
+        [
+            instructorPhotoView,
+            classTitleLabel,
+            instructorNameLabel,
+            horizontalDivider,
+            dotView,
+            classWeekdayLabel,
+            verticalDivider,
+            classTimeLabel
+        ].forEach(view.addSubview(_:))
+        
+        instructorPhotoView.snp.makeConstraints {
+            $0.top.equalTo(view.snp.top).offset(13)
+            $0.leading.equalTo(view.snp.leading).offset(16)
+        }
+        
+        classTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(instructorPhotoView.snp.top).offset(12)
+            $0.leading.equalTo(instructorPhotoView.snp.trailing).offset(21)
+        }
+        
+        instructorNameLabel.snp.makeConstraints {
+            $0.top.equalTo(classTitleLabel.snp.bottom).offset(7)
+            $0.leading.equalTo(classTitleLabel.snp.leading)
+        }
+        
+        horizontalDivider.snp.makeConstraints {
+            $0.top.equalTo(instructorPhotoView.snp.bottom).offset(14)
+            $0.height.equalTo(1)
+            $0.leading.equalTo(view.snp.leading).offset(23)
+            $0.trailing.equalTo(view.snp.trailing).offset(-18)
+        }
+        
+        dotView.snp.makeConstraints {
+            $0.top.equalTo(horizontalDivider.snp.bottom).offset(21)
+            $0.leading.equalTo(view.snp.leading).offset(43)
+        }
+        
+        classWeekdayLabel.snp.makeConstraints {
+            $0.centerY.equalTo(dotView.snp.centerY)
+            $0.leading.equalTo(dotView.snp.trailing).offset(18)
+        }
+        
+        verticalDivider.snp.makeConstraints {
+            $0.centerY.equalTo(dotView.snp.centerY)
+            $0.leading.equalTo(classWeekdayLabel.snp.trailing).offset(20)
+        }
+        
+        classTimeLabel.snp.makeConstraints {
+            $0.centerY.equalTo(dotView.snp.centerY)
+            $0.leading.equalTo(verticalDivider.snp.trailing).offset(22)
         }
     }
+    
+    private let classPartView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,10 +248,19 @@ class MyPageViewController: UIViewController {
         layoutScrollView()
         layoutUserInfoPartView()
         layoutCouponPartView()
+        layoutClassPartView()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
+        let maskPath = UIBezierPath(shouldRoundRect: classInfoView.bounds, topLeftRadius: 35, topRightRadius: 13, bottomLeftRadius: 13, bottomRightRadius: 13)
+        
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = maskPath.cgPath
+        classInfoView.layer.mask = maskLayer
+        // scrollView.updateContentSize()
+        scrollView.contentSize.height = 1113
     }
     
     private func layoutCustomNavigationBar() {
@@ -328,6 +414,43 @@ class MyPageViewController: UIViewController {
         scrollView.addSubview(couponPartView)
         couponPartView.snp.makeConstraints {
             $0.top.equalTo(userInfoPartView.snp.bottom)
+            $0.leading.equalTo(scrollView.snp.leading)
+            $0.width.equalTo(scrollView.snp.width)
+        }
+    }
+    
+    // MARK: - 수업 내역 파트 레이아웃
+    private func layoutClassPartView() {
+        [classPartHeaderButton, classInfoView].forEach(classPartView.addSubview(_:))
+        
+        classPartHeaderButton.snp.makeConstraints {
+            $0.top.equalTo(classPartView.snp.top).offset(22)
+            $0.leading.equalTo(classPartView.snp.leading)
+            $0.width.equalTo(classPartView.snp.width)
+        }
+        
+        classInfoView.snp.makeConstraints {
+            $0.top.equalTo(classPartHeaderButton.snp.bottom).offset(18)
+            $0.leading.equalTo(classPartView.snp.leading).offset(16)
+            $0.trailing.equalTo(classPartView.snp.trailing).offset(-16)
+            $0.height.equalTo(140)
+        }
+        
+        let divierView = UIView()
+        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
+        
+        classPartView.addSubview(divierView)
+        divierView.snp.makeConstraints {
+            $0.top.equalTo(classInfoView.snp.bottom).offset(19)
+            $0.leading.equalTo(classPartView.snp.leading)
+            $0.width.equalTo(classPartView.snp.width)
+            $0.height.equalTo(14)
+            $0.bottom.equalTo(classPartView.snp.bottom)
+        }
+        
+        scrollView.addSubview(classPartView)
+        classPartView.snp.makeConstraints {
+            $0.top.equalTo(couponPartView.snp.bottom)
             $0.leading.equalTo(scrollView.snp.leading)
             $0.width.equalTo(scrollView.snp.width)
         }

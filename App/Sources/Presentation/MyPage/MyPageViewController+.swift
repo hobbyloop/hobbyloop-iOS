@@ -106,4 +106,19 @@ extension MyPageViewController {
         
         return button
     }
+    
+    func photoImageView() -> UIImageView {
+        let imageView = UIImageView()
+        
+        imageView.layer.cornerRadius = 31
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = .black
+        
+        imageView.snp.makeConstraints {
+            $0.width.equalTo(62)
+            $0.height.equalTo(62)
+        }
+        
+        return imageView
+    }
 }
