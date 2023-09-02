@@ -148,6 +148,9 @@ class MyPageViewController: UIViewController {
     )
     
     // MARK: - 수업 내역 파트 UI
+    private let classPartView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
     private lazy var classPartHeaderButton = partHeaderButton(text: "수업 내역")
     private lazy var instructorPhotoView = photoImageView()
     private let classTitleLabel = UILabel().then {
@@ -244,10 +247,13 @@ class MyPageViewController: UIViewController {
         }
     }
     
-    private let classPartView = UIView().then {
+    // MARK: - 이용권 구매내역 UI
+    private let couponPurchasePartView = UIView().then {
         $0.backgroundColor = .systemBackground
     }
+    private lazy var couponPurchasePartHeaderButton = partHeaderButton(text: "이용권 구매내역")
     
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -272,6 +278,7 @@ class MyPageViewController: UIViewController {
         scrollView.contentSize.height = 1113
     }
     
+    // MARK: - 커스텀 네이게이션 바 레이아웃
     private func layoutCustomNavigationBar() {
         view.addSubview(customNavigationBar)
         
@@ -294,6 +301,7 @@ class MyPageViewController: UIViewController {
         }
     }
     
+    // MARK: - 스크롤 뷰 레이아웃
     private func layoutScrollView() {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
