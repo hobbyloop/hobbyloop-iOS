@@ -51,13 +51,13 @@ class MyPageViewController: UIViewController {
     private let phoneNumberLabel = UILabel().then {
         $0.text = "010-1234-5678"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
-        $0.textColor = HPCommonUIAsset.infoLabel.color
+        $0.textColor = HPCommonUIAsset.userInfoLabel.color
     }
     
     private let userEmailLabel = UILabel().then {
         $0.text = "jiwon2@gmail.com"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
-        $0.textColor = HPCommonUIAsset.infoLabel.color
+        $0.textColor = HPCommonUIAsset.userInfoLabel.color
     }
     
     private let editButton = UIButton().then {
@@ -135,6 +135,45 @@ class MyPageViewController: UIViewController {
             $0.trailing.equalTo(view.snp.trailing).offset(-27)
         }
     }
+    
+    private let couponListView = CouponListView(coupons: [
+        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
+        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
+    ], withPageControl: false)
+    
+    private let classCountLabel = UILabel().then {
+        $0.text = "13"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.deepOrange.color
+    }
+    
+    private lazy var reservableClassButton = horizontalStackButton(
+        imageView: UIImageView(image: HPCommonUIAsset.calendarOutlined.image).then({
+            $0.snp.makeConstraints {
+                $0.width.equalTo(24)
+                $0.height.equalTo(24)
+            }
+        }),
+        description: "예약가능 수업",
+        countLabel: classCountLabel
+    )
+    
+    private let couponCountLabel = UILabel().then {
+        $0.text = "8"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.deepOrange.color
+    }
+    
+    private lazy var remainingCouponButton = horizontalStackButton(
+        imageView: UIImageView(image: HPCommonUIAsset.ticket.image).then({
+            $0.snp.makeConstraints {
+                $0.width.equalTo(18.89)
+                $0.height.equalTo(13.93)
+            }
+        }),
+        description: "이용권 잔여",
+        countLabel: couponCountLabel
+    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -246,7 +285,64 @@ class MyPageViewController: UIViewController {
     
     // MARK: - 이용권 파트
     private func layoutCouponPartView() {
+        [couponPartHeaderButton, couponListView].forEach(couponPartView.addSubview(_:))
         
+        couponPartHeaderButton.snp.makeConstraints {
+            $0.top.equalTo(couponPartView.snp.top).offset(28)
+            $0.leading.equalTo(couponPartView.snp.leading)
+            $0.trailing.equalTo(couponPartView.snp.trailing)
+        }
+        
+        couponListView.snp.makeConstraints {
+            $0.top.equalTo(couponPartHeaderButton.snp.bottom).offset(25)
+            $0.leading.equalTo(couponPartView.snp.leading)
+            $0.trailing.equalTo(couponPartView.snp.trailing)
+            $0.height.equalTo(170)
+        }
+        
+        let buttonDivider = UIView()
+        buttonDivider.backgroundColor = HPCommonUIAsset.separator.color
+        buttonDivider.snp.makeConstraints {
+            $0.width.equalTo(1)
+            $0.height.equalTo(23)
+        }
+        
+        [reservableClassButton, buttonDivider, remainingCouponButton].forEach(couponPartView.addSubview(_:))
+        
+        buttonDivider.snp.makeConstraints {
+            $0.centerX.equalTo(couponPartView.snp.centerX).offset(10)
+            $0.top.equalTo(couponListView.snp.bottom).offset(26)
+        }
+        
+        reservableClassButton.snp.makeConstraints {
+            $0.trailing.equalTo(buttonDivider.snp.leading).offset(-26)
+            $0.centerY.equalTo(buttonDivider.snp.centerY)
+        }
+        
+        remainingCouponButton.snp.makeConstraints {
+            $0.leading.equalTo(buttonDivider.snp.trailing).offset(29)
+            $0.centerY.equalTo(buttonDivider.snp.centerY)
+        }
+        
+        let divierView = UIView()
+        divierView.backgroundColor = HPCommonUIAsset.lightBackground.color
+        
+        couponPartView.addSubview(divierView)
+        
+        divierView.snp.makeConstraints {
+            $0.top.equalTo(buttonDivider.snp.bottom).offset(24)
+            $0.leading.equalTo(couponPartView.snp.leading)
+            $0.width.equalTo(couponPartView.snp.width)
+            $0.height.equalTo(14)
+            $0.bottom.equalTo(couponPartView.snp.bottom)
+        }
+        
+        scrollView.addSubview(couponPartView)
+        couponPartView.snp.makeConstraints {
+            $0.top.equalTo(userInfoPartView.snp.bottom)
+            $0.leading.equalTo(scrollView.snp.leading)
+            $0.width.equalTo(scrollView.snp.width)
+        }
     }
     
     private func reviewCountText(_ count: Int) -> NSAttributedString {
@@ -260,6 +356,35 @@ class MyPageViewController: UIViewController {
         attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
         
         return attributedString
+    }
+    
+    private func horizontalStackButton(imageView: UIImageView, description: String, countLabel: UILabel) -> UIButton {
+        let button = UIButton(type: .custom)
+        button.contentMode = .center
+
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = description
+        descriptionLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        descriptionLabel.textColor = HPCommonUIAsset.couponInfoLabel.color
+        
+        
+        let contentStack = UIStackView()
+        contentStack.axis = .horizontal
+        contentStack.alignment = .center
+        contentStack.spacing = 5
+        
+        [imageView, descriptionLabel, countLabel].forEach(contentStack.addArrangedSubview(_:))
+        
+        button.addSubview(contentStack)
+        
+        contentStack.snp.makeConstraints {
+            $0.top.equalTo(button.snp.top)
+            $0.leading.equalTo(button.snp.leading)
+            $0.trailing.equalTo(button.snp.trailing)
+            $0.bottom.equalTo(button.snp.bottom)
+        }
+        
+        return button
     }
 }
 
