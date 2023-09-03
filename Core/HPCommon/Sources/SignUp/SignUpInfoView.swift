@@ -136,6 +136,16 @@ public final class SignUpInfoView: UIView {
         
     }
     
+    public func updateSuccessLayout() {
+        self.descriptionLabel.text = ""
+        
+        descriptionLabel.snp.remakeConstraints {
+            $0.top.equalTo(textFiledView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(0)
+        }
+    }
+    
     
     public func updateErrorLayout(type: SignUpType) {
         

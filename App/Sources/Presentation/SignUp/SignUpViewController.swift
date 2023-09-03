@@ -626,7 +626,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                reactor.state.map { $0.userName }.distinctUntilChanged(),
+                nameView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
                 confirmButton.rx.tap
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
@@ -649,7 +649,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                reactor.state.map { $0.userBirthDay }.distinctUntilChanged(),
+                birthDayView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
                 confirmButton.rx.tap
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
@@ -668,7 +668,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
         Observable
             .combineLatest(
-                phoneView.textFiledView.rx.text.orEmpty,
+                phoneView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
                 confirmButton.rx.tap
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
@@ -686,6 +686,69 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 }
             })
             .disposed(by: disposeBag)
+        
+        Observable
+            .combineLatest(
+                nameView.textFiledView.rx.value.distinctUntilChanged(),
+                confirmButton.rx.tap
+            )
+            .compactMap{ $0.0 }
+            .filter { !$0.isEmpty }
+            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.nameView.textFiledView.layer.borderColor = color
+                owner.nameView.updateSuccessLayout()
+                owner.nameView.snp.remakeConstraints {
+                    $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
+                    $0.left.equalToSuperview().offset(15)
+                    $0.right.equalToSuperview().offset(-15)
+                    $0.height.equalTo(80)
+                }
+            }).disposed(by: disposeBag)
+        
+        Observable
+            .combineLatest(
+                birthDayView.textFiledView.rx.observe(\.text).distinctUntilChanged(),
+                confirmButton.rx.tap
+            )
+            .compactMap{ $0.0 }
+            .filter { !$0.isEmpty }
+            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.birthDayView.textFiledView.layer.borderColor = color
+                owner.birthDayView.updateSuccessLayout()
+                owner.birthDayView.snp.remakeConstraints {
+                    $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
+                    $0.left.right.equalTo(owner.nameView)
+                    $0.height.equalTo(80)
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        Observable
+            .combineLatest(
+                phoneView.textFiledView.rx.value.distinctUntilChanged(),
+                confirmButton.rx.tap
+            )
+            .compactMap{ $0.0 }
+            .filter { !$0.isEmpty }
+            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { owner, color in
+                owner.phoneView.textFiledView.layer.borderColor = color
+                owner.phoneView.updateSuccessLayout()
+                owner.phoneView.snp.remakeConstraints {
+                    $0.left.equalTo(owner.nameView)
+                    $0.right.equalTo(owner.certificationButton.snp.left).offset(-8)
+                    $0.bottom.equalTo(owner.termsView.snp.top).offset(-36)
+                    $0.height.equalTo(80)
+                }
+            }).disposed(by: disposeBag)
         
         
         
