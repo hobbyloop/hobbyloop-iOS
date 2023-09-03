@@ -18,11 +18,11 @@ class CouponPurchaseHistoryGroupItemView: UIView {
     }
     private let couponNameLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
-        $0.textColor = UIColor(red: 0x62 / 255, green: 0x62 / 255, blue: 0x62 / 255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.couponNameLabel.color
     }
     private let periodLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 11)
-        $0.textColor = UIColor(red: 0xAE / 255, green: 0xAE / 255, blue: 0xAE / 255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.couponPeriodLabel.color
     }
     
     init(logoImage: UIImage? = nil, studioName: String, couponName: String, periodString: String) {

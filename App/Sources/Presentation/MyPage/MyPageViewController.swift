@@ -160,7 +160,7 @@ class MyPageViewController: UIViewController {
     private let instructorNameLabel = UILabel().then {
         $0.text = "이민주 강사님"
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-        $0.textColor = UIColor(red: 0x71 / 255, green: 0x71 / 255, blue: 0x71 / 255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.instructorNameLabel.color
     }
     private let classWeekdayLabel = UILabel().then {
         $0.text = "매주 화. 목. 토"
@@ -172,9 +172,9 @@ class MyPageViewController: UIViewController {
     }
     
     private lazy var classInfoView = UIView().then { view in
-        view.backgroundColor = UIColor(red: 0xF6 / 255, green: 0xF6 / 255, blue: 0xF6 / 255, alpha: 1)
+        view.backgroundColor = HPCommonUIAsset.classInfoBackground.color
         let horizontalDivider = UIView()
-        horizontalDivider.backgroundColor = UIColor(red: 0x14 / 255, green: 0x14 / 255, blue: 0x14 / 255, alpha: 0.1)
+        horizontalDivider.backgroundColor = HPCommonUIAsset.horizontalDivider.color
         
         let verticalDivider = UIView()
         verticalDivider.backgroundColor = .black
