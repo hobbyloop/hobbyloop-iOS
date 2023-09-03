@@ -38,6 +38,23 @@ class UserInfoEditViewController: UIViewController {
         }
     }
     
+    // MARK: - 사진 UI 및 사진 수정 버튼
+    private let photoView = UIImageView.circularImageView(radius: 38)
+    private let photoEditButton = UIButton().then {
+        $0.layer.borderWidth = 2
+        $0.layer.borderColor = HPCommonUIAsset.white.color.cgColor
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+        $0.backgroundColor = UIColor(red: 0xE7 / 255, green: 0xE7 / 255, blue: 0xE7 / 255, alpha: 1)
+        $0.setImage(HPCommonUIAsset.plus.image, for: .normal)
+        
+        $0.snp.makeConstraints {
+            $0.width.equalTo(24)
+            $0.height.equalTo(24)
+        }
+    }
+    
+    
     // MARK: - input view
     private let nameInputView = SignUpInfoView(titleType: .name, filled: true).then {
         $0.titleLabel.text = "이름"
@@ -71,6 +88,17 @@ class UserInfoEditViewController: UIViewController {
             $0.height.equalTo(56)
         }
         
+        [photoView, photoEditButton].forEach(view.addSubview(_:))
+        photoView.snp.makeConstraints {
+            $0.top.equalTo(customNavigationBar.snp.bottom).offset(15)
+            $0.centerX.equalToSuperview()
+        }
+        
+        photoEditButton.snp.makeConstraints {
+            $0.trailing.equalTo(photoView.snp.trailing).offset(8)
+            $0.bottom.equalTo(photoView.snp.bottom).offset(-7)
+        }
+        
         let inputStack = UIStackView()
         inputStack.axis = .vertical
         inputStack.alignment = .fill
@@ -81,7 +109,8 @@ class UserInfoEditViewController: UIViewController {
         view.addSubview(inputStack)
         
         inputStack.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.top.equalTo(photoView.snp.bottom).offset(31)
+            $0.centerX.equalToSuperview()
             $0.width.equalToSuperview().offset(-32)
         }
     }
