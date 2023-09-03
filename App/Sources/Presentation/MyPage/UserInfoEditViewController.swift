@@ -76,19 +76,34 @@ class UserInfoEditViewController: UIViewController {
         $0.textFiledView.text = "010-1234-5678"
     }
     
+    // MARK: - 수정완료 버튼
+    private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
+        $0.setTitle("수정 완료", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        view.addSubview(customNavigationBar)
+        let inputStack = UIStackView()
+        inputStack.axis = .vertical
+        inputStack.alignment = .fill
+        inputStack.spacing = 36.14
+        
+        [nameInputView, nickNameInputView, birthDayInputView, phoneNumberInputView].forEach(inputStack.addArrangedSubview(_:))
+        
+        [customNavigationBar, photoView, photoEditButton, inputStack, confirmButton].forEach(view.addSubview(_:))
+        
         customNavigationBar.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.top.equalToSuperview().offset(44)
             $0.height.equalTo(56)
         }
         
-        [photoView, photoEditButton].forEach(view.addSubview(_:))
         photoView.snp.makeConstraints {
             $0.top.equalTo(customNavigationBar.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
@@ -99,19 +114,17 @@ class UserInfoEditViewController: UIViewController {
             $0.bottom.equalTo(photoView.snp.bottom).offset(-7)
         }
         
-        let inputStack = UIStackView()
-        inputStack.axis = .vertical
-        inputStack.alignment = .fill
-        inputStack.spacing = 36.14
-        
-        [nameInputView, nickNameInputView, birthDayInputView, phoneNumberInputView].forEach(inputStack.addArrangedSubview(_:))
-        
-        view.addSubview(inputStack)
-        
         inputStack.snp.makeConstraints {
             $0.top.equalTo(photoView.snp.bottom).offset(31)
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview().offset(-32)
+        }
+        
+        confirmButton.snp.makeConstraints {
+            $0.height.equalTo(56)
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().offset(-36)
         }
     }
 }
