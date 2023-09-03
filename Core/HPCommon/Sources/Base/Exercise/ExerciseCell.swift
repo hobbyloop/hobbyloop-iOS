@@ -7,7 +7,6 @@
 
 import UIKit
 
-import HPThirdParty
 import SnapKit
 
 class ExerciseCell: UITableViewCell {

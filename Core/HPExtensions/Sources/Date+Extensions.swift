@@ -10,6 +10,39 @@ import Foundation
 
 public extension Date {
     
+    
+    var day: Int {
+        return Calendar.current.component(.day, from: .now)
+    }
+    
+    var year: Int {
+        return Calendar.current.component(.year, from: nowDate)
+    }
+    
+    var month: Int {
+        return Calendar.current.component(.month, from: nowDate)
+    }
+    
+    
+    var weekday: Int {
+        return Calendar.current.component(.weekday, from: nowDate)
+    }
+    
+    
+    
+    var components: DateComponents {
+        return Calendar.current.dateComponents([.year, .month],from: self)
+    }
+    
+    var nowDate: Date {
+        return Calendar.current.date(from: components) ?? Date()
+    }
+    
+    var rangeOfdays: Int {
+        return Calendar.current.range(of: .day, in: .month, for: nowDate)?.count ?? Int()
+    }
+    
+    
     func convertToString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY년 MM월 dd일"
@@ -38,16 +71,14 @@ public extension Date {
         return dateFormatter.date(from: dateToString) ?? Date()
     }
     
-    func dateCompare(fromDate: Date) -> String {
+    func dateCompare(fromDate: Date) -> Bool {
         let result: ComparisonResult = self.compare(fromDate)
         
         switch result {
         case .orderedDescending:
-            return "Past"
-        case .orderedSame:
-            return "Same"
+            return false
         default:
-            return "Future"
+            return true
         }
         
     }

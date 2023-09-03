@@ -15,6 +15,7 @@ let thirdParty = Project.makeModule(
         .ThirdParty.Reactive.reactorKit,
         .ThirdParty.Reactive.rxCocoa,
         .ThirdParty.Reactive.rxGesture,
+        .ThirdParty.Reactive.rxDataSources,
         .ThirdParty.UI.then,
         .ThirdParty.UI.snapKit,
         .ThirdParty.UI.tabMan,
