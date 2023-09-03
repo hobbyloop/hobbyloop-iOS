@@ -184,6 +184,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private func configure() {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)
+        self.navigationItem.setHidesBackButton(true, animated: true)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.left.right.equalToSuperview()
@@ -264,7 +265,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         certificationButton.snp.makeConstraints {
             $0.height.equalTo(50)
             $0.width.equalTo(83)
-            $0.bottom.equalTo(phoneView.textFiledView)
+            $0.bottom.equalTo(phoneView.textFieldView)
             $0.right.equalToSuperview().offset(-15)
         }
         
@@ -289,7 +290,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         authCodeButton.snp.makeConstraints {
             $0.height.equalTo(0)
             $0.width.equalTo(0)
-            $0.top.equalTo(authCodeView.textFiledView)
+            $0.top.equalTo(authCodeView.textFieldView)
             $0.right.equalToSuperview().offset(-15)
         }
         
@@ -387,7 +388,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .filter { !($0?.isEmpty ?? false) }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
-            .drive(nameView.textFiledView.rx.text)
+            .drive(nameView.textFieldView.rx.text)
             .disposed(by: disposeBag)
         
         reactor.pulse(\.$kakaoUserEntity)
@@ -435,7 +436,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { $0.name }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
-            .drive(nameView.textFiledView.rx.text)
+            .drive(nameView.textFieldView.rx.text)
             .disposed(by: disposeBag)
         
 
@@ -486,7 +487,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { $0.mobile }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
-            .drive(phoneView.textFiledView.rx.text)
+            .drive(phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
 
         Observable.zip(
@@ -496,7 +497,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { "\($0.1+"-"+$0.0)".birthdayToString() }
             .take(1)
             .asDriver(onErrorJustReturn: "")
-            .drive(birthDayView.textFiledView.rx.text)
+            .drive(birthDayView.textFieldView.rx.text)
             .disposed(by: disposeBag)
         
         
@@ -507,7 +508,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { "\($0.1+"-"+$0.0)".birthdayToString() }
             .take(1)
             .asDriver(onErrorJustReturn: "")
-            .drive(birthDayView.textFiledView.rx.text)
+            .drive(birthDayView.textFieldView.rx.text)
             .disposed(by: disposeBag)
             
 
@@ -520,7 +521,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .subscribe(onNext: { owner, height in
-                if owner.phoneView.textFiledView.isEditing {
+                if owner.phoneView.textFieldView.isEditing {
                     owner.containerView.frame.origin.y -= height
                 }
             }).disposed(by: disposeBag)
@@ -537,7 +538,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
         
         
-        phoneView.textFiledView
+        phoneView.textFieldView
             .rx.text
             .changed
             .filter { $0?.count == 11 }
@@ -545,10 +546,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { phoneNumber in
                 guard let phoneNumber else { return }
-                self.phoneView.textFiledView.text = phoneNumber.toPhoneNumber()
+                self.phoneView.textFieldView.text = phoneNumber.toPhoneNumber()
             }).disposed(by: disposeBag)
         
-        phoneView.textFiledView
+        phoneView.textFieldView
             .rx.value
             .compactMap { $0?.count }
             .map { $0 <= 13 }
@@ -556,19 +557,19 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { owner, isEditing in
-                if owner.phoneView.textFiledView.text?.count ?? 0 < 13 {
+                if owner.phoneView.textFieldView.text?.count ?? 0 < 13 {
                     owner.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                     owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
                 }
                 guard !isEditing else { return }
-                owner.phoneView.textFiledView.text = String(owner.phoneView.textFiledView.text?.dropLast() ?? "" )
+                owner.phoneView.textFieldView.text = String(owner.phoneView.textFieldView.text?.dropLast() ?? "" )
             }).disposed(by: disposeBag)
         
         
         
         certificationButton.rx.tap.asObservable()
             .withLatestFrom(
-                phoneView.textFiledView.rx.text.values.asObservable()
+                phoneView.textFieldView.rx.text.values.asObservable()
             ).filter { $0?.count == 13 }
             .map {  _ in HPCommonUIAsset.deepOrange.color }
             .observe(on: MainScheduler.instance)
@@ -581,7 +582,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         
         nameView
-            .textFiledView.rx.observe(\.text)
+            .textFieldView.rx.observe(\.text)
             .compactMap { $0 }
             .map { Reactor.Action.updateToName($0)}
             .observe(on: MainScheduler.asyncInstance)
@@ -589,7 +590,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         nickNameView
-            .textFiledView.rx
+            .textFieldView.rx
             .text.orEmpty
             .map { Reactor.Action.updateToNickName($0) }
             .observe(on: MainScheduler.asyncInstance)
@@ -597,7 +598,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         birthDayView
-            .textFiledView.rx.observe(\.text)
+            .textFieldView.rx.observe(\.text)
             .compactMap { $0 }
             .map { Reactor.Action.updateToBirthDay($0)}
             .observe(on: MainScheduler.asyncInstance)
@@ -607,7 +608,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                phoneView.textFiledView.rx.text.orEmpty,
+                phoneView.textFieldView.rx.text.orEmpty,
                 confirmButton.rx.tap
             ).filter { $0.1 == () }
             .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", $0.0) }
@@ -620,20 +621,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0.applefullName }
             .filter { !$0.isEmpty }
             .asDriver(onErrorJustReturn: "")
-            .drive(nameView.textFiledView.rx.text)
+            .drive(nameView.textFieldView.rx.text)
             .disposed(by: disposeBag)
         
         
         Observable
             .combineLatest(
-                nameView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
+                nameView.textFieldView.rx.observe(\.text),
                 confirmButton.rx.tap
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.nameView.textFiledView.layer.borderColor = color
+                owner.nameView.textFieldView.layer.borderColor = color
                 owner.nameView.updateErrorLayout(type: .name)
                 owner.nameView.snp.remakeConstraints {
                     $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
@@ -649,14 +650,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                birthDayView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
+                birthDayView.textFieldView.rx.text.orEmpty.distinctUntilChanged(),
                 confirmButton.rx.tap
             ).filter { $0.0 == "" }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.birthDayView.textFiledView.layer.borderColor = color
+                owner.birthDayView.textFieldView.layer.borderColor = color
                 owner.birthDayView.updateErrorLayout(type: .birthDay)
                 owner.birthDayView.snp.remakeConstraints {
                     $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
@@ -668,14 +669,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
         Observable
             .combineLatest(
-                phoneView.textFiledView.rx.text.orEmpty.distinctUntilChanged(),
+                phoneView.textFieldView.rx.text.orEmpty.distinctUntilChanged(),
                 confirmButton.rx.tap
-            ).filter { $0.0 == "" }
+            ).filter { $0.0.count <= 13 }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.phoneView.textFiledView.layer.borderColor = color
+                owner.phoneView.textFieldView.layer.borderColor = color
                 owner.phoneView.updateErrorLayout(type: .phone)
                 
                 owner.phoneView.snp.remakeConstraints {
@@ -689,7 +690,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                nameView.textFiledView.rx.value.distinctUntilChanged(),
+                nameView.textFieldView.rx.value.distinctUntilChanged(),
                 confirmButton.rx.tap
             )
             .compactMap{ $0.0 }
@@ -698,7 +699,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.nameView.textFiledView.layer.borderColor = color
+                owner.nameView.textFieldView.layer.borderColor = color
                 owner.nameView.updateSuccessLayout()
                 owner.nameView.snp.remakeConstraints {
                     $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
@@ -710,7 +711,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                birthDayView.textFiledView.rx.observe(\.text).distinctUntilChanged(),
+                birthDayView.textFieldView.rx.observe(\.text).distinctUntilChanged(),
                 confirmButton.rx.tap
             )
             .compactMap{ $0.0 }
@@ -719,7 +720,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.birthDayView.textFiledView.layer.borderColor = color
+                owner.birthDayView.textFieldView.layer.borderColor = color
                 owner.birthDayView.updateSuccessLayout()
                 owner.birthDayView.snp.remakeConstraints {
                     $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
@@ -731,16 +732,16 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable
             .combineLatest(
-                phoneView.textFiledView.rx.value.distinctUntilChanged(),
+                phoneView.textFieldView.rx.value.distinctUntilChanged(),
                 confirmButton.rx.tap
             )
             .compactMap{ $0.0 }
-            .filter { !$0.isEmpty }
+            .filter { $0.count == 13 }
             .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { owner, color in
-                owner.phoneView.textFiledView.layer.borderColor = color
+                owner.phoneView.textFieldView.layer.borderColor = color
                 owner.phoneView.updateSuccessLayout()
                 owner.phoneView.snp.remakeConstraints {
                     $0.left.equalTo(owner.nameView)
@@ -775,7 +776,8 @@ extension SignUpViewController: SignUpViewAnimatable {
             
             
             self.phoneView.snp.remakeConstraints {
-                $0.left.height.equalTo(self.nameView)
+                $0.left.equalTo(self.nameView)
+                $0.height.equalTo(80)
                 $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
                 $0.bottom.equalTo(self.authCodeView.snp.top).offset(-10)
             }
@@ -805,6 +807,6 @@ extension SignUpViewController: SignUpViewAnimatable {
 
 extension SignUpViewController: SignUpBottomSheetDelegate {
     func updateToBirthDay(birthday: Date) {
-        self.birthDayView.textFiledView.text = birthday.convertToString()
+        self.birthDayView.textFieldView.text = birthday.convertToString()
     }
 }

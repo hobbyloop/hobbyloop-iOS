@@ -59,7 +59,7 @@ public final class SignUpInfoView: UIView {
         $0.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
     }
     
-    public lazy var textFiledView: UITextField = UITextField().then {
+    public lazy var textFieldView: UITextField = UITextField().then {
         $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.masksToBounds = true
@@ -85,17 +85,17 @@ public final class SignUpInfoView: UIView {
         switch titleType {
         case .birthDay:
             configure()
-            textFiledView.isUserInteractionEnabled = false
-            textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
+            textFieldView.isUserInteractionEnabled = false
+            textFieldView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
         case .phone:
             configure()
-            textFiledView.keyboardType = .numberPad
-            textFiledView.textContentType = .oneTimeCode
+            textFieldView.keyboardType = .numberPad
+            textFieldView.textContentType = .oneTimeCode
         case .authcode:
             authConfigure()
         default:
             configure()
-            textFiledView.isUserInteractionEnabled = true
+            textFieldView.isUserInteractionEnabled = true
         }
     }
     
@@ -105,13 +105,13 @@ public final class SignUpInfoView: UIView {
     
     // MARK: Configure
     private func configure() {
-        textFiledView.attributedPlaceholder = NSAttributedString(string: titleType.setPlaceholderText(), attributes: [
+        textFieldView.attributedPlaceholder = NSAttributedString(string: titleType.setPlaceholderText(), attributes: [
             .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
         ])
         titleLabel.text = titleType.setTitleLabelText()
         
         
-        [titleLabel, textFiledView, descriptionLabel].forEach {
+        [titleLabel, textFieldView, descriptionLabel].forEach {
             addSubview($0)
         }
         
@@ -121,14 +121,14 @@ public final class SignUpInfoView: UIView {
             $0.height.equalTo(19)
         }
         
-        textFiledView.snp.makeConstraints {
+        textFieldView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(48)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(textFiledView.snp.bottom)
+            $0.top.equalTo(textFieldView.snp.bottom)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(0)
         }
@@ -140,7 +140,7 @@ public final class SignUpInfoView: UIView {
         self.descriptionLabel.text = ""
         
         descriptionLabel.snp.remakeConstraints {
-            $0.top.equalTo(textFiledView.snp.bottom)
+            $0.top.equalTo(textFieldView.snp.bottom)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(0)
         }
@@ -159,9 +159,9 @@ public final class SignUpInfoView: UIView {
     }
     
     private func authConfigure() {
-        self.addSubview(textFiledView)
+        self.addSubview(textFieldView)
         
-        textFiledView.snp.makeConstraints {
+        textFieldView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
