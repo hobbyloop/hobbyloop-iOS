@@ -18,6 +18,4 @@ public protocol HomeViewRepo {
 
 public final class HomeViewRepository: HomeViewRepo {
     public var disposeBag: DisposeBag = DisposeBag()
-    
-//    public func 
 }

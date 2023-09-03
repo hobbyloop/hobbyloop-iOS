@@ -17,7 +17,7 @@ final class HomeDIContainer: DIContainer {
     public typealias Reactor = HomeViewReactor
     
     func makeViewController() -> HomeViewController {
-        return HomeViewController(reactor: makeReactor(), HeaderType: .main)
+        return HomeViewController(reactor: makeReactor())
     }
     
     func makeRepository() -> HomeViewRepo {
