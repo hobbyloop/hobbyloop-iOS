@@ -43,8 +43,6 @@ final class OnboardingCell: UICollectionViewCell {
     
     private lazy var pageViewControl: HPPageControl = HPPageControl().then {
         $0.numberOfPages = 4
-        $0.currentPage = 0
-        $0.backgroundStyle = .minimal
     }
     
     private let onboardingImage: UIImageView = UIImageView().then {

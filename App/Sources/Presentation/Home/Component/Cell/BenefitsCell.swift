@@ -25,8 +25,6 @@ final class BenefitsCell: UICollectionViewCell {
     
     private let benefitsPageViewControl: HPPageControl = HPPageControl().then {
         $0.numberOfPages = 4
-        $0.currentPage = 0
-        $0.backgroundStyle = .minimal
     }
     
     override init(frame: CGRect) {
