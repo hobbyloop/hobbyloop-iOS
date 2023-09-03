@@ -9,12 +9,25 @@ import Foundation
 
 
 import Alamofire
+import HPCommon
 
 
 final class HPRequestInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
+        var accessToken = ""
+        do {
+           accessToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+        } catch {
+            completion(.failure(error))
+        }
+        
+        if accessToken.isEmpty {
+            urlRequest.setValue("\(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        completion(.success(urlRequest))
     }
     
     
