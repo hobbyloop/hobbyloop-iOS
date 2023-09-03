@@ -8,8 +8,11 @@
 import UIKit
 import HPCommon
 import HPCommonUI
+import RxSwift
 
 class UserInfoEditViewController: UIViewController {
+    let disposeBag = DisposeBag()
+    
     // MARK: - custom navigation bar
     private let backButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.leftarrow.image
@@ -76,6 +79,12 @@ class UserInfoEditViewController: UIViewController {
         $0.textFiledView.text = "010-1234-5678"
     }
     
+    // MARK: - calendar
+    private let birthDayPickerView = SignUpDatePickerView().then {
+        $0.isHidden = true
+        $0.backgroundColor = .white
+    }
+    
     // MARK: - 수정완료 버튼
     private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
         $0.setTitle("수정 완료", for: .normal)
@@ -96,7 +105,7 @@ class UserInfoEditViewController: UIViewController {
         
         [nameInputView, nickNameInputView, birthDayInputView, phoneNumberInputView].forEach(inputStack.addArrangedSubview(_:))
         
-        [customNavigationBar, photoView, photoEditButton, inputStack, confirmButton].forEach(view.addSubview(_:))
+        [customNavigationBar, photoView, photoEditButton, inputStack, confirmButton, birthDayPickerView].forEach(view.addSubview(_:))
         
         customNavigationBar.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
@@ -126,5 +135,28 @@ class UserInfoEditViewController: UIViewController {
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalToSuperview().offset(-36)
         }
+        
+        birthDayPickerView.snp.makeConstraints {
+            $0.top.equalTo(birthDayInputView.snp.bottom)
+            $0.left.right.equalTo(birthDayInputView)
+            $0.height.equalTo(0)
+        }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleBirthDayPickerView))
+        birthDayInputView.addGestureRecognizer(tapGesture)
+        
+        birthDayPickerView.rx
+            .value
+            .skip(1)
+            .asDriver(onErrorJustReturn: Date())
+            .drive(onNext: { [weak self] date in
+                guard let `self` = self else { return }
+                self.birthDayInputView.textFiledView.text = date.convertToString()
+            }).disposed(by: disposeBag)
+    }
+    
+    @objc private func toggleBirthDayPickerView() {
+        birthDayPickerView.isHidden.toggle()
+        birthDayPickerView.didTapAnimation(constraints: birthDayPickerView.isHidden ? 0 : 138)
     }
 }
