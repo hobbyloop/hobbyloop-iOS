@@ -17,15 +17,16 @@ final class HPRequestInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
         var accessToken = ""
+        var refreshToken = ""
+        
         do {
-           accessToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+            accessToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+            refreshToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .refreshToken))
         } catch {
             completion(.failure(error))
         }
-        
-        if accessToken.isEmpty {
-            urlRequest.setValue("\(accessToken)", forHTTPHeaderField: "Authorization")
-        }
+        urlRequest.headers.add(name: "refresh_token", value: refreshToken)
+        urlRequest.headers.add(.authorization(bearerToken: accessToken))
         
         completion(.success(urlRequest))
     }
@@ -43,8 +44,7 @@ final class HPRequestInterceptor: RequestInterceptor {
             return
         }
         
-        
-        
+        completion(.retry)
     }
     
 }

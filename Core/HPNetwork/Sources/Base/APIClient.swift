@@ -29,7 +29,7 @@ public final class APIClient: APIService {
     
     public func request<T: Decodable>(_ response: T.Type, _ router: Router) -> Single<T> {
         return Single<T>.create { single -> Disposable in
-            AF.request(router)
+            AF.request(router, interceptor: HPRequestInterceptor())
                 .responseDecodable(of: response) { response in
                     switch response.result {
                     case .success(let data):
@@ -51,7 +51,7 @@ public final class APIClient: APIService {
     ///   - Router 서버 요청시 필요한 공통 인터페이스 객체
     ///   - completion JWT 발급 후 호출해야할 메서드(정해진 메서드 없음)
     public func requestToAuthentication(_ router: Router, completion: @escaping (String) -> Void) {
-        AF.request(router)
+        AF.request(router, interceptor: HPRequestInterceptor())
             .responseString(emptyResponseCodes: [200, 204],completionHandler: { response in
                 var chiperAccessToken = ""
                 var chiperRefreshToken = ""
