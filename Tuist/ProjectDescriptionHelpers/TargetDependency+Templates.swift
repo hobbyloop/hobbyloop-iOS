@@ -71,11 +71,13 @@ extension TargetDependency.ThirdParty.Reactive {
     public static let rxCocoa: TargetDependency = .external(name: "RxCocoa")
     public static let reactorKit: TargetDependency = .external(name: "ReactorKit")
     public static let rxGesture: TargetDependency = .external(name: "RxGesture")
+    public static let rxDataSources: TargetDependency = .external(name: "RxDataSources")
 }
 
 extension TargetDependency.ThirdParty.UI {
     public static let snapKit: TargetDependency = .external(name: "SnapKit")
     public static let then: TargetDependency = .external(name: "Then")
+    public static let tabMan: TargetDependency = .external(name: "Tabman")
 }
 
 

@@ -43,7 +43,7 @@ public extension UILabel {
         targetString: String,
         font: UIFont,
         color: UIColor,
-        offset: CGFloat
+        offset: CGFloat = 0.0
     ) {
             let defaultText = self.text ?? ""
             let attributedString = NSMutableAttributedString(string: defaultText)

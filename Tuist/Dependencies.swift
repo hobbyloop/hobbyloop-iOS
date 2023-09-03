@@ -15,12 +15,14 @@ let dependencies = Dependencies(
         Package.reactorKit,
         Package.rxSwift,
         Package.rxGesture,
+        Package.rxDataSources,
         Package.snapKit,
         Package.then,
         Package.alamofire,
         Package.kakaoSDK,
         Package.googleSDK,
-        Package.cryptoSwift
+        Package.cryptoSwift,
+        Package.tabMan
     ]),
     platforms: [.iOS]
 )

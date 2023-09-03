@@ -12,6 +12,7 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
+            "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
             "CFBundleDisplayName" : .string(name),
             "CFBundleIdentifier" : .string("com.sideproj.\(name)"),
