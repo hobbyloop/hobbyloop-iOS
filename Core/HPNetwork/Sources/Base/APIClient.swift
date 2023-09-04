@@ -51,7 +51,7 @@ public final class APIClient: APIService {
     ///   - Router 서버 요청시 필요한 공통 인터페이스 객체
     ///   - completion JWT 발급 후 호출해야할 메서드(정해진 메서드 없음)
     public func requestToAuthentication(_ router: Router, completion: @escaping (String) -> Void) {
-        AF.request(router, interceptor: HPRequestInterceptor())
+        AF.request(router)
             .responseString(emptyResponseCodes: [200, 204],completionHandler: { response in
                 var chiperAccessToken = ""
                 var chiperRefreshToken = ""

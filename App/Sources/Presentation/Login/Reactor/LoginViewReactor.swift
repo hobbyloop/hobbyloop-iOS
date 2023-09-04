@@ -72,7 +72,7 @@ public final class LoginViewReactor: Reactor {
             self?.requestGoogleAccessToken(from: event) ?? .empty()
         }
         
-        return Observable.of(mutation, fromGoogleLoginMutation).merge()
+        return Observable.of(mutation, fromGoogleLoginMutation).merge().take(1)
     }
     
     

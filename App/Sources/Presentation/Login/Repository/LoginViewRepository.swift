@@ -213,6 +213,8 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
             guard let token = appleIDCredential.identityToken,
                   let givenName = appleIDCredential.fullName?.givenName,
                   let familyName = appleIDCredential.fullName?.familyName,
+                  let authorizationCode = appleIDCredential.authorizationCode,
+                  let code = String(bytes: authorizationCode, encoding: .utf8),
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
             

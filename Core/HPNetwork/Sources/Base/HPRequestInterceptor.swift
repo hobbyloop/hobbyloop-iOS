@@ -25,7 +25,7 @@ final class HPRequestInterceptor: RequestInterceptor {
         } catch {
             completion(.failure(error))
         }
-        urlRequest.headers.add(name: "refresh_token", value: refreshToken)
+        urlRequest.headers.add(name: "Authorization-refresh", value: refreshToken)
         urlRequest.headers.add(.authorization(bearerToken: accessToken))
         
         completion(.success(urlRequest))
