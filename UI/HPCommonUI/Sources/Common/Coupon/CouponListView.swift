@@ -35,7 +35,7 @@ public final class CouponListView: UIView {
         }
     }
         
-    public init(coupons: [DummyCoupon]) {
+    public init(coupons: [DummyCoupon], withPageControl: Bool = true) {
         self.coupons = coupons
         super.init(frame: .zero)
         collectionView.register(CouponCell.self, forCellWithReuseIdentifier: CouponCell.identifier)
@@ -56,6 +56,10 @@ public final class CouponListView: UIView {
         }
         
         pageControl.delegate = self
+        
+        if !withPageControl {
+            pageControl.isHidden = true
+        }
     }
     
     private func configureCollectionView() {
