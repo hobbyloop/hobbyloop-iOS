@@ -11,7 +11,7 @@ import Alamofire
 import HPCommon
 
 public enum AccountRouter {
-    case getNaverUserInfo
+    case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
     case createUserInfo(birth: String, gender: String, name: String, nickname: String, phoneNumber: String)
 }
@@ -53,8 +53,11 @@ extension AccountRouter: Router {
     public var headers: HTTPHeaders {
 
         switch self {
-        case .getNaverUserInfo:
-            return [:]
+        case let .getNaverUserInfo(type, accessToken):
+            return [
+                "Authorization":"\(type) \(accessToken)",
+                "Content-Type": "application/json"
+            ]
             
         case let .getAccessToken(_, accessToken):
             return [

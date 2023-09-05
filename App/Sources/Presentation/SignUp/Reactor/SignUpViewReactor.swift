@@ -114,7 +114,6 @@ public final class SignUpViewReactor: Reactor {
             } else if accountType == .naver {
                 requestProfile = signUpRepository.responseNaverProfile()
             }
-            //TODO: Google, Apple Mutaion 추가
             
             return .concat(
                 startLoading,

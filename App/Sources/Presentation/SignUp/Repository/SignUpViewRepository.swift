@@ -55,7 +55,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
             //TODO: 토큰이 만료될시 추후 처리 추가
             return .empty()
         } else {
-            return self.networkService.request(NaverAccount.self, AccountRouter.getNaverUserInfo)
+            return self.networkService.request(NaverAccount.self, AccountRouter.getNaverUserInfo(type: naverLoginInstance.tokenType, accessToken: naverLoginInstance.accessToken))
                 .asObservable()
                 .flatMap { (data: NaverAccount) -> Observable<SignUpViewReactor.Mutation> in
                     return .just(.setNaverUserEntity(data))

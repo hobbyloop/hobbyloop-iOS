@@ -310,6 +310,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         

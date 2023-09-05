@@ -29,7 +29,7 @@ public final class APIClient: APIService {
     
     public func request<T: Decodable>(_ response: T.Type, _ router: Router) -> Single<T> {
         return Single<T>.create { single -> Disposable in
-            AF.request(router, interceptor: HPRequestInterceptor())
+            AF.request(router)
                 .responseDecodable(of: response) { response in
                     switch response.result {
                     case .success(let data):

@@ -111,6 +111,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     
     /// 네이버 로그인창을 띄우기 위한 메서드
     public func responseNaverLogin() -> Observable<LoginViewReactor.Mutation> {
+        naverLoginInstance.resetToken()
         return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
     }
     
@@ -174,18 +175,7 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     }
     
     /// 네이버 로그인 토큰 갱신을 하기 위한 메서드
-    public func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {
-        if let refreshToken = naverLoginInstance.accessToken {
-            do {
-                let chiperToken = try CryptoUtil.makeEncryption(refreshToken)
-                let expiredAt = naverLoginInstance.accessTokenExpireDate
-                UserDefaults.standard.set(chiperToken, forKey: .accessToken)
-                UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
+    public func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() { }
     
     /// 네이버 로그아웃 시 호출 되는 메서드
     public func oauth20ConnectionDidFinishDeleteToken() {
