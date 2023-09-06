@@ -490,6 +490,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response }
+            .compactMap{ !($0.mobile?.isEmpty ?? false) }
+            .asDriver(onErrorJustReturn: false)
+            .drive(certificationButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
 
         Observable.zip(
             reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
@@ -543,24 +551,33 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.text
             .changed
             .filter { $0?.count == 11 }
-            .debug("changed PhoneNumber")
+            .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { phoneNumber in
                 guard let phoneNumber else { return }
                 self.phoneView.textFieldView.text = phoneNumber.toPhoneNumber()
+                if phoneNumber.count < 13 {
+                    self.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                    self.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                    self.certificationButton.isEnabled = false
+                } else {
+                    self.certificationButton.isEnabled = true
+                }
             }).disposed(by: disposeBag)
         
         phoneView.textFieldView
             .rx.value
             .compactMap { $0?.count }
             .map { $0 <= 13 }
-            .debug("max count PhoneNumber")
             .withUnretained(self)
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { owner, isEditing in
                 if owner.phoneView.textFieldView.text?.count ?? 0 < 13 {
                     owner.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                     owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                    owner.certificationButton.isEnabled = false
+                } else {
+                    owner.certificationButton.isEnabled = true
                 }
                 guard !isEditing else { return }
                 owner.phoneView.textFieldView.text = String(owner.phoneView.textFieldView.text?.dropLast() ?? "" )
@@ -568,18 +585,17 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         
         
-        certificationButton.rx.tap.asObservable()
-            .withLatestFrom(
-                phoneView.textFieldView.rx.text.values.asObservable()
-            ).filter { $0?.count == 13 }
+        certificationButton.rx
+            .tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map {  _ in HPCommonUIAsset.deepOrange.color }
-            .observe(on: MainScheduler.instance)
             .withUnretained(self)
-            .subscribe(onNext: { owner, color in
+            .bind(onNext: { owner, color in
                 HapticUtil.impact(.light).generate()
                 owner.certificationButton.didTapHPButton(color)
                 owner.dropdownAnimation()
             }).disposed(by: disposeBag)
+        
         
         
         nameView
@@ -607,14 +623,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        Observable
-            .combineLatest(
-                phoneView.textFieldView.rx.text.orEmpty,
-                confirmButton.rx.tap
-            ).filter { $0.1 == () }
-            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", $0.0) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
         
     
         
@@ -670,9 +678,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
         Observable
             .combineLatest(
-                phoneView.textFieldView.rx.text.orEmpty.distinctUntilChanged(),
+                phoneView.textFieldView.rx.observe(\.text).distinctUntilChanged(),
                 confirmButton.rx.tap
-            ).filter { $0.0.count <= 13 }
+            ).compactMap { $0.0}
+            .filter { $0.count <= 13 }
             .map { _ in HPCommonUIAsset.error.color.cgColor }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
