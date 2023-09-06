@@ -157,48 +157,15 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .kakao && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { owner, _ in
-                owner.didShowSingUpController(accountType: .kakao)
-            }).disposed(by: disposeBag)
         
         Observable
-            .zip(
+            .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
                 reactor.state.map { $0.authToken }.distinctUntilChanged()
-            ).filter { $0.0 == .naver && !$0.1.isEmpty }
-            .map { _ in () }
+            ).filter {!$0.1.isEmpty }
             .withUnretained(self)
-            .subscribe(onNext: { owner, _ in
-                owner.didShowSingUpController(accountType: .naver)
-            }).disposed(by: disposeBag)
-        
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .google && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { owner, _ in
-                owner.didShowSingUpController(accountType: .google)
-            }).disposed(by: disposeBag)
-        
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .apple && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { owner, _ in
-                owner.didShowSingUpController(accountType: .apple)
+            .bind(onNext: { (owner, state) in
+                owner.didShowSingUpController(accountType: state.0)
             }).disposed(by: disposeBag)
     }
 }

@@ -57,6 +57,7 @@ public final class SignUpViewReactor: Reactor {
         case updateToName(String)
         case updateToNickName(String)
         case updateToBirthDay(String)
+        case updateToPhoneNumber(String)
     }
     
     public enum Mutation {
@@ -68,6 +69,7 @@ public final class SignUpViewReactor: Reactor {
         case setUserName(String)
         case setUserNickName(String)
         case setUserBirthDay(String)
+        case setUserPhoneNumber(String)
         case setCreateUserInfo(UserAccount)
     }
     
@@ -81,6 +83,8 @@ public final class SignUpViewReactor: Reactor {
         var userNickName: String
         var userBirthDay: String
         var applefullName: String
+        var isVaildationPhoneNuber: Bool
+        var phoneNumber: String
     }
     
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
@@ -95,7 +99,9 @@ public final class SignUpViewReactor: Reactor {
             userName: "",
             userNickName: "",
             userBirthDay: "",
-            applefullName: ""
+            applefullName: "",
+            isVaildationPhoneNuber: false,
+            phoneNumber: ""
         )
     }
     
@@ -108,7 +114,7 @@ public final class SignUpViewReactor: Reactor {
             let startLoading = Observable<Mutation>.just(.setLoading(true))
             let endLoading = Observable<Mutation>.just(.setLoading(false))
             var requestProfile = Observable<Mutation>.empty()
-            
+            print("viewDidLoad SignUp Reactor: \(self.accountType)")
             if accountType == .kakao {
                 requestProfile = signUpRepository.responseKakaoProfile()
             } else if accountType == .naver {
@@ -121,6 +127,7 @@ public final class SignUpViewReactor: Reactor {
                 endLoading
             )
         case let .updateToName(userName):
+            print("update To Name : \(userName)")
             return .just(.setUserName(userName))
             
         case let .updateToNickName(userNickName):
@@ -148,6 +155,9 @@ public final class SignUpViewReactor: Reactor {
                 signUpRepository.createUserInformation(name: name, nickName: nickName, gender: gender, birth: birth, phoneNumber: phoneNumber),
                 endLoading
             )
+            
+        case let .updateToPhoneNumber(phoneNumber):
+            return .just(.setUserPhoneNumber(phoneNumber))
         }
     }
     
@@ -196,6 +206,11 @@ public final class SignUpViewReactor: Reactor {
             print("set newstate gedner: \(newState.userGender)")
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
+            
+        case let .setUserPhoneNumber(phoneNumber):
+            newState.phoneNumber = phoneNumber
+            newState.isVaildationPhoneNuber = phoneNumber.isValidPhoneNumber()
+            print("set newstate phoneNumber: \(newState.phoneNumber) or phoneNumber validation : \(phoneNumber.isValidPhoneNumber())")
         }
         
         return newState

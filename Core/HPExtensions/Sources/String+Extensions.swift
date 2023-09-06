@@ -20,6 +20,10 @@ public extension String {
         }
     }
     
+    func isValidPhoneNumber() -> Bool {
+        let regex = "^01[0-1, 7][0-9]{7,8}$"
+        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
+    }
     
     func birthdayToString() -> String {
         let dateFormatter = DateFormatter()

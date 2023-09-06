@@ -12,11 +12,14 @@ import HPCommon
 import HPExtensions
 import HPFoundation
 import RxGesture
+import RxSwift
+import RxCocoa
 import ReactorKit
 
 
 private protocol SignUpViewAnimatable {
-    @MainActor func dropdownAnimation()
+    @MainActor func showDropdownAnimation()
+    @MainActor func hideDropdownAnimation()
     @MainActor func showBottomSheetView()
 }
 
@@ -257,7 +260,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         phoneView.snp.makeConstraints {
-            $0.left.height.equalTo(nameView)
+            $0.left.equalTo(nameView)
+            $0.height.equalTo(80)
             $0.right.equalTo(certificationButton.snp.left).offset(-8)
             $0.bottom.equalTo(termsView.snp.top).offset(-36)
         }
@@ -545,85 +549,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             }).disposed(by: disposeBag)
 
 
-        
-        
-        phoneView.textFieldView
-            .rx.text
-            .changed
-            .filter { $0?.count == 11 }
-            .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: "")
-            .drive(onNext: { phoneNumber in
-                guard let phoneNumber else { return }
-                self.phoneView.textFieldView.text = phoneNumber.toPhoneNumber()
-                if phoneNumber.count < 13 {
-                    self.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-                    self.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
-                    self.certificationButton.isEnabled = false
-                } else {
-                    self.certificationButton.isEnabled = true
-                }
-            }).disposed(by: disposeBag)
-        
-        phoneView.textFieldView
-            .rx.value
-            .compactMap { $0?.count }
-            .map { $0 <= 13 }
-            .withUnretained(self)
-            .observe(on: MainScheduler.asyncInstance)
-            .subscribe(onNext: { owner, isEditing in
-                if owner.phoneView.textFieldView.text?.count ?? 0 < 13 {
-                    owner.certificationButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
-                    owner.certificationButton.isEnabled = false
-                } else {
-                    owner.certificationButton.isEnabled = true
-                }
-                guard !isEditing else { return }
-                owner.phoneView.textFieldView.text = String(owner.phoneView.textFieldView.text?.dropLast() ?? "" )
-            }).disposed(by: disposeBag)
-        
-        
-        
-        certificationButton.rx
-            .tap
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map {  _ in HPCommonUIAsset.deepOrange.color }
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                HapticUtil.impact(.light).generate()
-                owner.certificationButton.didTapHPButton(color)
-                owner.dropdownAnimation()
-            }).disposed(by: disposeBag)
-        
-        
-        
-        nameView
-            .textFieldView.rx.observe(\.text)
-            .compactMap { $0 }
-            .map { Reactor.Action.updateToName($0)}
-            .observe(on: MainScheduler.asyncInstance)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        nickNameView
-            .textFieldView.rx
-            .text.orEmpty
-            .map { Reactor.Action.updateToNickName($0) }
-            .observe(on: MainScheduler.asyncInstance)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        birthDayView
-            .textFieldView.rx.observe(\.text)
-            .compactMap { $0 }
-            .map { Reactor.Action.updateToBirthDay($0)}
-            .observe(on: MainScheduler.asyncInstance)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        
-        
     
         
         reactor.state
@@ -634,134 +559,59 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        Observable
-            .combineLatest(
-                nameView.textFieldView.rx.observe(\.text),
-                confirmButton.rx.tap
-            ).filter { $0.0 == "" }
-            .map { _ in HPCommonUIAsset.error.color.cgColor }
+        //Textfeild
+        nameView.textFieldView
+            .rx.textChange
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.nameView.textFieldView.layer.borderColor = color
-                owner.nameView.updateErrorLayout(type: .name)
-                owner.nameView.snp.remakeConstraints {
-                    $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
-                    $0.left.equalToSuperview().offset(15)
-                    $0.right.equalToSuperview().offset(-15)
-                    $0.height.equalTo(110)
-                }
-                
-            }).disposed(by: disposeBag)
-        
-        
-
-        
-        Observable
-            .combineLatest(
-                birthDayView.textFieldView.rx.text.orEmpty.distinctUntilChanged(),
-                confirmButton.rx.tap
-            ).filter { $0.0 == "" }
-            .map { _ in HPCommonUIAsset.error.color.cgColor }
-            .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.birthDayView.textFieldView.layer.borderColor = color
-                owner.birthDayView.updateErrorLayout(type: .birthDay)
-                owner.birthDayView.snp.remakeConstraints {
-                    $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
-                    $0.left.right.equalTo(owner.nameView)
-                    $0.height.equalTo(110)
-                }
-            })
-            .disposed(by: disposeBag)
-
-        Observable
-            .combineLatest(
-                phoneView.textFieldView.rx.observe(\.text).distinctUntilChanged(),
-                confirmButton.rx.tap
-            ).compactMap { $0.0}
-            .filter { $0.count <= 13 }
-            .map { _ in HPCommonUIAsset.error.color.cgColor }
-            .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.phoneView.textFieldView.layer.borderColor = color
-                owner.phoneView.updateErrorLayout(type: .phone)
-                
-                owner.phoneView.snp.remakeConstraints {
-                    $0.left.equalTo(owner.nameView)
-                    $0.right.equalTo(owner.certificationButton.snp.left).offset(-8)
-                    $0.bottom.equalTo(owner.termsView.snp.top).offset(-36)
-                    $0.height.equalTo(110)
-                }
-            })
+            .map { Reactor.Action.updateToName($0 ?? "") }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        Observable
-            .combineLatest(
-                nameView.textFieldView.rx.value.distinctUntilChanged(),
-                confirmButton.rx.tap
-            )
-            .compactMap{ $0.0 }
-            .filter { !$0.isEmpty }
-            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+        nickNameView.textFieldView
+            .rx.textChange
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.nameView.textFieldView.layer.borderColor = color
-                owner.nameView.updateSuccessLayout()
-                owner.nameView.snp.remakeConstraints {
-                    $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
-                    $0.left.equalToSuperview().offset(15)
-                    $0.right.equalToSuperview().offset(-15)
-                    $0.height.equalTo(80)
-                }
-            }).disposed(by: disposeBag)
-        
-        Observable
-            .combineLatest(
-                birthDayView.textFieldView.rx.observe(\.text).distinctUntilChanged(),
-                confirmButton.rx.tap
-            )
-            .compactMap{ $0.0 }
-            .filter { !$0.isEmpty }
-            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+            .map { Reactor.Action.updateToNickName($0 ?? "")}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        birthDayView.textFieldView
+            .rx.textChange
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.birthDayView.textFieldView.layer.borderColor = color
-                owner.birthDayView.updateSuccessLayout()
-                owner.birthDayView.snp.remakeConstraints {
-                    $0.bottom.equalTo(owner.phoneView.snp.top).offset(-36)
-                    $0.left.right.equalTo(owner.nameView)
-                    $0.height.equalTo(80)
-                }
-            }).disposed(by: disposeBag)
+            .map { Reactor.Action.updateToBirthDay($0 ?? "")}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        
-        Observable
-            .combineLatest(
-                phoneView.textFieldView.rx.value.distinctUntilChanged(),
-                confirmButton.rx.tap
-            )
-            .compactMap{ $0.0 }
-            .filter { $0.count == 13 }
-            .map { _ in HPCommonUIAsset.deepSeparator.color.cgColor }
+        phoneView.textFieldView
+            .rx.textChange
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .withUnretained(self)
-            .bind(onNext: { owner, color in
-                owner.phoneView.textFieldView.layer.borderColor = color
-                owner.phoneView.updateSuccessLayout()
-                owner.phoneView.snp.remakeConstraints {
-                    $0.left.equalTo(owner.nameView)
-                    $0.right.equalTo(owner.certificationButton.snp.left).offset(-8)
-                    $0.bottom.equalTo(owner.termsView.snp.top).offset(-36)
-                    $0.height.equalTo(80)
+            .map { Reactor.Action.updateToPhoneNumber($0 ?? "")}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.phoneNumber }
+            .filter { $0.isValidPhoneNumber() }
+            .map { $0.toPhoneNumber() }
+            .observe(on: MainScheduler.instance)
+            .bind(to: phoneView.textFieldView.rx.text)
+            .disposed(by: disposeBag)
+            
+        
+        phoneView.textFieldView
+            .rx.text.orEmpty
+            .scan("") { previous, new -> String in
+                if new.count > 13 {
+                  return previous
+                } else {
+                  return new
                 }
-            }).disposed(by: disposeBag)
-        
-        
+              }
+            .bind(to: phoneView.textFieldView.rx.text)
+            .disposed(by: disposeBag)
         
     }
 }
@@ -770,7 +620,44 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 
 extension SignUpViewController: SignUpViewAnimatable {
     
-    func dropdownAnimation() {
+    
+    func hideDropdownAnimation() {
+        UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
+            guard let self = `self` else { return }
+            self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            
+            self.phoneView.snp.remakeConstraints {
+                $0.left.equalTo(self.nameView)
+                $0.height.equalTo(80)
+                $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
+                $0.bottom.equalTo(self.termsView.snp.top).offset(-36)
+            }
+            
+            
+            self.authCodeView.snp.remakeConstraints {
+                $0.top.equalTo(self.phoneView.snp.bottom).offset(20)
+                $0.left.right.equalTo(self.phoneView)
+                $0.height.equalTo(0)
+            }
+            
+            self.authCodeButton.snp.remakeConstraints {
+                $0.height.equalTo(0)
+                $0.width.equalTo(0)
+                $0.top.equalTo(self.authCodeView.textFieldView)
+                $0.right.equalToSuperview().offset(-15)
+            }
+            
+            
+            self.termsView.snp.remakeConstraints {
+                $0.left.right.equalTo(self.nameView)
+                $0.height.equalTo(160)
+                $0.bottom.equalTo(self.modifyDescriptionLabel.snp.bottom).offset(-34)
+            }
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    func showDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
             self.authCodeView.snp.remakeConstraints {
