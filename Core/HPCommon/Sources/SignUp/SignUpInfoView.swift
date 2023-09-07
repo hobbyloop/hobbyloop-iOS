@@ -47,6 +47,27 @@ public final class SignUpInfoView: UIView {
     //MARK: Property
     public private(set) var titleType: SignUpType
     
+    public var isError: Bool = false {
+        didSet {
+            if isError {
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.error.color.cgColor
+                self.descriptionLabel.text = "\(self.titleType.rawValue)을 다시 확인해주세요."
+                descriptionLabel.snp.remakeConstraints {
+                    $0.left.right.equalToSuperview()
+                    $0.bottom.equalToSuperview().offset(-11)
+                }
+            } else {
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+                self.descriptionLabel.text = ""
+                descriptionLabel.snp.remakeConstraints {
+                    $0.top.equalTo(textFieldView.snp.bottom)
+                    $0.left.right.equalToSuperview()
+                    $0.height.equalTo(0)
+                }
+            }
+        }
+    }
+    
     public let titleLabel: UILabel = UILabel().then {
         $0.textColor = HPCommonUIAsset.black.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)

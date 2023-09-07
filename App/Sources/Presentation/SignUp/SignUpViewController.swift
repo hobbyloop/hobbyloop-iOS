@@ -631,6 +631,43 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
               }
             .bind(to: phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
+        
+        nameView
+            .textFieldView.rx.textChange
+            .compactMap { $0?.isEmpty }
+            .skip(1)
+            .withUnretained(self)
+            .bind(onNext: { owner, isError in
+                self.nameView.rx.base.isError = isError
+                if isError {
+                    owner.nameView.snp.remakeConstraints {
+                        $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
+                        $0.left.equalToSuperview().offset(15)
+                        $0.right.equalToSuperview().offset(-15)
+                        $0.height.equalTo(110)
+                    }
+                } else {
+                    owner.nameView.snp.remakeConstraints {
+                        $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
+                        $0.left.equalToSuperview().offset(15)
+                        $0.right.equalToSuperview().offset(-15)
+                        $0.height.equalTo(80)
+                    }
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        Observable
+            .combineLatest(
+                reactor.state.map { $0.userName },
+                reactor.state.map { $0.userGender },
+                reactor.state.map { $0.userBirthDay },
+                reactor.state.map { $0.phoneNumber }
+            ).map { !$0.0.isEmpty && !$0.1.getGenderType().isEmpty && !$0.2.isEmpty && !$0.3.isEmpty }
+            .bind(to: confirmButton.rx.isConfirm)
+            .disposed(by: disposeBag)
+        
+        
     
     }
 }

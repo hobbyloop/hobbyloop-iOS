@@ -15,6 +15,16 @@ import RxCocoa
 
 public final class HPButton: UIButton {
     
+    public var isConfirm: Bool = false {
+        didSet {
+            if isConfirm {
+                self.backgroundColor = HPCommonUIAsset.deepOrange.color
+            } else {
+                self.backgroundColor = HPCommonUIAsset.santaGray.color
+            }
+        }
+    }
+    
     public override var isSelected: Bool {
         
         didSet {
