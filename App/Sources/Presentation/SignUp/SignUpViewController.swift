@@ -83,6 +83,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     ).then {
         $0.setTitle("남", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -92,6 +93,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     ).then {
         $0.setTitle("여", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -126,6 +128,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     ).then {
         $0.setTitle("인증하기", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -347,7 +350,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfManButton.didTapHPButton(color)
+                self.genderOfManButton.isSelected = true
+                self.genderOfGirlButton.isSelected = false
                 HapticUtil.impact(.light).generate()
             }).disposed(by: disposeBag)
         
@@ -358,7 +362,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfGirlButton.didTapHPButton(color)
+                self.genderOfGirlButton.isSelected = true
+                self.genderOfManButton.isSelected = false
                 HapticUtil.impact(.light).generate()
             }).disposed(by: disposeBag)
         
@@ -403,7 +408,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfManButton.didTapHPButton(color)
+                self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isEnabled = false
             }).disposed(by: disposeBag)
         
@@ -414,7 +419,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfGirlButton.didTapHPButton(color)
+                self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isEnabled = false
             }).disposed(by: disposeBag)
         
@@ -453,7 +458,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfManButton.didTapHPButton(color)
+                self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
         reactor.pulse(\.$naverUserEntity)
@@ -464,7 +469,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
             .drive(onNext: { color in
-                self.genderOfManButton.didTapHPButton(color)
+                self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
         
@@ -592,6 +597,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        phoneView.textFieldView
+            .rx.textChange
+            .distinctUntilChanged()
+            .map { $0?.count ?? 0 == 13 }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { (owner, isSelected) in
+                if isSelected {
+                    owner.certificationButton.isSelected = true
+                } else {
+                    owner.certificationButton.isSelected = false
+                }
+            }).disposed(by: disposeBag)
+        
         reactor.state
             .map { $0.phoneNumber }
             .filter { $0.isValidPhoneNumber() }
@@ -612,7 +631,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
               }
             .bind(to: phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
-        
+    
     }
 }
 
