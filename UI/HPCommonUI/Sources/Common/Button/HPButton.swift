@@ -19,8 +19,10 @@ public final class HPButton: UIButton {
         didSet {
             if isConfirm {
                 self.backgroundColor = HPCommonUIAsset.deepOrange.color
+                self.isEnabled = true
             } else {
                 self.backgroundColor = HPCommonUIAsset.santaGray.color
+                self.isEnabled = false
             }
         }
     }

@@ -668,6 +668,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
+        confirmButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay ?? "", self.reactor?.currentState.phoneNumber ?? "")}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
     
     }
 }
