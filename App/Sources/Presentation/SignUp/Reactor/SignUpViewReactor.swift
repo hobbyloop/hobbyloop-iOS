@@ -53,6 +53,7 @@ public final class SignUpViewReactor: Reactor {
         case viewDidLoad
         case didTapGenderButton(HPGender)
         case didTapAuthCodeButton
+        case didTapCertificationButton
         case didTapCreateUserButton(String, String, String, String, String)
         case updateToName(String)
         case updateToNickName(String)
@@ -65,6 +66,7 @@ public final class SignUpViewReactor: Reactor {
         case setKakaoUserEntity(User)
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
+        case setCertificationState(Bool)
         case setAppleUserFullName(String)
         case setUserName(String)
         case setUserNickName(String)
@@ -79,6 +81,7 @@ public final class SignUpViewReactor: Reactor {
         @Pulse var naverUserEntity: NaverAccount?
         var userAccountEntity: UserAccount?
         var userGender: HPGender
+        var ceritifcationState: Bool
         var userName: String
         var userNickName: String
         var userBirthDay: String
@@ -96,6 +99,7 @@ public final class SignUpViewReactor: Reactor {
             naverUserEntity: nil,
             userAccountEntity: nil,
             userGender: .none,
+            ceritifcationState: false,
             userName: "",
             userNickName: "",
             userBirthDay: "",
@@ -144,6 +148,11 @@ public final class SignUpViewReactor: Reactor {
         case .didTapAuthCodeButton:
             
             return .empty()
+            
+        case .didTapCertificationButton:
+            
+            guard self.currentState.ceritifcationState else { return .just(.setCertificationState(true)) }
+            return .just(.setCertificationState(false))
             
         case let .didTapCreateUserButton(name, nickName, gender, birth, phoneNumber):
             let startLoading = Observable<Mutation>.just(.setLoading(true))
@@ -197,6 +206,10 @@ public final class SignUpViewReactor: Reactor {
         case let .setNaverUserEntity(naverEntity):
             newState.naverUserEntity = naverEntity
             debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
+            
+        case let .setCertificationState(certificationState):
+            newState.ceritifcationState = certificationState
+            debugPrint("newState  CertificationState: \(certificationState)")
             
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName

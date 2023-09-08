@@ -499,13 +499,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .asDriver(onErrorJustReturn: "")
             .drive(phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
-        
-        reactor.pulse(\.$naverUserEntity)
-            .compactMap { $0?.response }
-            .compactMap{ !($0.mobile?.isEmpty ?? false) }
-            .asDriver(onErrorJustReturn: false)
-            .drive(certificationButton.rx.isEnabled)
-            .disposed(by: disposeBag)
 
 
         Observable.zip(
@@ -601,14 +594,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.textChange
             .distinctUntilChanged()
             .map { $0?.count ?? 0 == 13 }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .bind(onNext: { (owner, isSelected) in
-                if isSelected {
-                    owner.certificationButton.isSelected = true
-                } else {
-                    owner.certificationButton.isSelected = false
-                }
+                owner.certificationButton.rx.base.isEnabled = isSelected
             }).disposed(by: disposeBag)
         
         reactor.state
@@ -619,6 +608,20 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
             
+        
+        certificationButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .map { Reactor.Action.didTapCertificationButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { $0.ceritifcationState }.debug("certification Button Seelcted ")
+            .observe(on: MainScheduler.instance)
+            .bind(to: certificationButton.rx.isSelected)
+            .disposed(by: disposeBag)
         
         phoneView.textFieldView
             .rx.text.orEmpty
