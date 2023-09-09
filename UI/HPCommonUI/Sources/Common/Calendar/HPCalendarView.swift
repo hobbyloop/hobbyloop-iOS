@@ -14,8 +14,20 @@ import Then
 import SnapKit
 
 
+public enum CalendarStatus {
+    case single
+    case multiple
+}
 
 public final class HPCalendarView: UIView {
+    
+    public var isStatus: CalendarStatus = .single {
+        didSet {
+            //TODO: status 에 따라 ColletionView Layout UI 변경
+            self.calendarCollectionView.setCollectionViewLayout(UICollectionViewLayout(), animated: true)
+        }
+    }
+    
 
     // MARK: Property
     
