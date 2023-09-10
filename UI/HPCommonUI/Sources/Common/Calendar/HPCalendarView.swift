@@ -15,16 +15,19 @@ import SnapKit
 
 
 public enum CalendarStatus {
-    case single
-    case multiple
+    case `default`
+    case bubble
 }
 
 public final class HPCalendarView: UIView {
     
-    public var isStatus: CalendarStatus = .single {
+    public var isStatus: CalendarStatus = .default {
         didSet {
-            //TODO: status 에 따라 ColletionView Layout UI 변경
-            self.calendarCollectionView.setCollectionViewLayout(UICollectionViewLayout(), animated: true)
+            if isStatus == .bubble {
+                self.calendarCollectionView.setCollectionViewLayout(calendarCollectionViewLayout, animated: true)
+            } else {
+                self.calendarCollectionView.setCollectionViewLayout(bubbleCollectionViewLayout, animated: true)
+            }
         }
     }
     
@@ -58,8 +61,14 @@ public final class HPCalendarView: UIView {
             calendarCell.reactor = cellReactor
             
             return calendarCell
+        case let .bubbleItem(cellReactor):
+            guard let bubbleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarBubbleDayCell", for: indexPath) as? HPCalendarBubbleDayCell else { return UICollectionViewCell() }
+            bubbleCell.reactor = cellReactor
+            return bubbleCell
         }
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        
+        guard self.isStatus == .default else { return UICollectionReusableView() }
         
         guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
         
@@ -69,8 +78,13 @@ public final class HPCalendarView: UIView {
 
     
     private lazy var calendarCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
-    
+            
         return self.createCalendarLayout()
+    }
+    
+    private lazy var bubbleCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+        
+        return self.createBubbleCalendarLayout()
     }
     
     
@@ -80,6 +94,7 @@ public final class HPCalendarView: UIView {
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.register(HPCalendarDayCell.self, forCellWithReuseIdentifier: "HPCalendarDayCell")
+        $0.register(HPCalendarBubbleDayCell.self, forCellWithReuseIdentifier: "HPCalendarBubbleDayCell")
         $0.register(HPCalendarWeekReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HPCalendarWeekReusableView")
     }
     
@@ -188,6 +203,32 @@ public final class HPCalendarView: UIView {
         
         
         return calendarLayoutSection
+    }
+    
+    
+    private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
+        let bubbleCalendarItemSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(calendarCollectionView.frame.size.width),
+            heightDimension: .absolute(70)
+        )
+        
+        let bubbleCalendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: bubbleCalendarItemSize
+        )
+        
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14)
+        
+        let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: bubbleCalendarItemSize,
+            subitem: bubbleCalendarLayoutItem,
+            count: 7
+        )
+        
+        let bubbleCalendarSection = NSCollectionLayoutSection(group: bubbleCalendarGroup)
+        
+        
+        
+        return bubbleCalendarSection
     }
 
 }
