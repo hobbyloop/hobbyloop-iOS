@@ -13,7 +13,7 @@ public extension String {
     
     func toPhoneNumber() -> String {
         let digits = digitsOnly
-        if digits.count == 11 {
+        if digits.count == 11 || digits.count < 13 {
             return digits.replacingOccurrences(of: "(\\d{3})(\\d{4})(\\d+)", with: "$1-$2-$3", options: .regularExpression, range: nil)
         } else {
             return self

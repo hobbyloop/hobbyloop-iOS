@@ -223,7 +223,6 @@ public final class SignUpViewReactor: Reactor {
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
             newState.isVaildationPhoneNuber = phoneNumber.isValidPhoneNumber()
-            print("set newstate phoneNumber: \(newState.phoneNumber) or phoneNumber validation : \(phoneNumber.isValidPhoneNumber())")
         }
         
         return newState

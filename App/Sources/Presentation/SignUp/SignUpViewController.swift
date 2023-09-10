@@ -594,7 +594,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.textChange
             .distinctUntilChanged()
             .map { $0?.count ?? 0 == 13 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { (owner, isSelected) in
                 owner.certificationButton.rx.base.isEnabled = isSelected
@@ -602,9 +602,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .map { $0.phoneNumber }
-            .filter { $0.isValidPhoneNumber() }
+            .filter { $0.count == 11 }
             .map { $0.toPhoneNumber() }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
             
