@@ -86,7 +86,7 @@ public final class SignUpViewReactor: Reactor {
         var userNickName: String
         var userBirthDay: String
         var applefullName: String
-        var isVaildationPhoneNuber: Bool
+        var isVaildationPhoneNumber: Bool
         var phoneNumber: String
     }
     
@@ -104,7 +104,7 @@ public final class SignUpViewReactor: Reactor {
             userNickName: "",
             userBirthDay: "",
             applefullName: "",
-            isVaildationPhoneNuber: false,
+            isVaildationPhoneNumber: false,
             phoneNumber: ""
         )
     }
@@ -222,7 +222,7 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
-            newState.isVaildationPhoneNuber = phoneNumber.isValidPhoneNumber()
+            newState.isVaildationPhoneNumber = phoneNumber.isValidPhoneNumber()
         }
         
         return newState

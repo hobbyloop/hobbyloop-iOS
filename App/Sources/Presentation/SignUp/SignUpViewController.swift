@@ -596,8 +596,25 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { $0?.count ?? 0 == 13 }
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
-            .bind(onNext: { (owner, isSelected) in
-                owner.certificationButton.rx.base.isEnabled = isSelected
+            .bind(onNext: { (owner, isEnabled) in
+                
+                if isEnabled {
+                    owner.certificationButton.rx.base.isEnabled = isEnabled
+                } else {
+                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                    owner.certificationButton.rx.base.isEnabled = isEnabled
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        certificationButton
+            .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .withUnretained(self)
+            .bind(onNext: { owner, _ in
+                HapticUtil.impact(.light).generate()
+                owner.certificationButton.rx.base.isSelected = true
+                owner.showDropdownAnimation()
             }).disposed(by: disposeBag)
         
         reactor.state
