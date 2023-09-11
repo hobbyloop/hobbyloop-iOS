@@ -21,9 +21,9 @@ public enum CalendarStyle {
 
 public final class HPCalendarView: UIView {
     
-    public var isStyle: CalendarStyle = .default {
+    public var isStyle: CalendarStyle  {
         didSet {
-            if isStyle == .bubble {
+            if self.isStyle == .default {
                 self.calendarCollectionView.setCollectionViewLayout(calendarCollectionViewLayout, animated: true)
             } else {
                 self.calendarCollectionView.setCollectionViewLayout(bubbleCollectionViewLayout, animated: true)
@@ -86,8 +86,10 @@ public final class HPCalendarView: UIView {
     
     public init(
         reactor: HPCalendarViewReactor,
-        calendarContentView: HPCalendarContentView
+        calendarContentView: HPCalendarContentView? = nil,
+        isStyle: CalendarStyle
     ) {
+        self.isStyle = isStyle
         super.init(frame: .zero)
         self.reactor = reactor
         self.calendarContentView = calendarContentView
@@ -104,7 +106,6 @@ public final class HPCalendarView: UIView {
         self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
         self.addSubview(calendarCollectionView)
-        
         
         
         
@@ -210,7 +211,7 @@ extension HPCalendarView: ReactorKit.View {
 
         Observable
             .just(())
-            .map { Reactor.Action.loadView}
+            .map { Reactor.Action.changeCalendarStyle(self.isStyle)}
             .debug("Load View HP Calendar View")
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -227,9 +228,10 @@ extension HPCalendarView: ReactorKit.View {
             .rx.notification(.NSCalendarDayChanged)
             .subscribe(onNext: { [weak self] _ in
                 print("notification changed date")
-                self?.reactor?.action.onNext(.loadView)
+                guard let style = self?.reactor?.currentState.style else { return }
+                self?.reactor?.action.onNext(.changeCalendarStyle(style))
             }).disposed(by: disposeBag)
-        
+
         
         calendarCollectionView
             .rx.itemSelected

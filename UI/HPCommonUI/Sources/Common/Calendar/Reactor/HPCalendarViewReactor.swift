@@ -15,12 +15,12 @@ public final class HPCalendarViewReactor: Reactor {
     
     //MARK: Property
     public var initialState: State
-    private var calendarConfigureProxy: HPCalendarDelgateProxy = HPCalendarProxyBinder()
+    public var calendarConfigureProxy: HPCalendarDelgateProxy & HPCalendarBubbleDelegateProxy & HPCalendarInterface = HPCalendarProxyBinder()
     
     
     //MARK: Action
     public enum Action {
-        case loadView
+        case changeCalendarStyle(CalendarStyle)
         case didTapNextDateButton
         case didTapPreviousDateButton
     }
@@ -28,6 +28,7 @@ public final class HPCalendarViewReactor: Reactor {
     //MARK: Mutation
     public enum Mutation {
         case setCalendarItems([CalendarSectionItem])
+        case updateCalendarStyle(CalendarStyle)
         case setUpdateMonthItem(String)
     }
     
@@ -35,6 +36,7 @@ public final class HPCalendarViewReactor: Reactor {
     public struct State {
         var days: [String]
         var month: String
+        var style: CalendarStyle
         @Pulse var section: [CalendarSection]
     }
     
@@ -43,6 +45,7 @@ public final class HPCalendarViewReactor: Reactor {
         self.initialState = State(
             days: [],
             month: "",
+            style: .default,
             section: [
                 .calendar([])
             ]
@@ -53,12 +56,6 @@ public final class HPCalendarViewReactor: Reactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
-            
-        case .loadView:
-            return .concat(
-                calendarConfigureProxy.configureCalendar(),
-                calendarConfigureProxy.updateNextMonthCalendar()
-            )
             
         case .didTapNextDateButton:
             return .concat(
@@ -71,6 +68,17 @@ public final class HPCalendarViewReactor: Reactor {
                 calendarConfigureProxy.updatePreviousDateCalendar(),
                 calendarConfigureProxy.updateNextMonthCalendar()
             )
+            
+        case let .changeCalendarStyle(style):
+            switch style {
+            case .bubble:
+                return calendarConfigureProxy.configureBubbleCalendar()
+            case .default:
+                return .concat([
+                    calendarConfigureProxy.configureCalendar(),
+                    calendarConfigureProxy.updateNextMonthCalendar()
+                ])
+            }
         }
         
     }
@@ -91,7 +99,12 @@ public final class HPCalendarViewReactor: Reactor {
             newState.month = nextMonth
             
             return newState
+        case let .updateCalendarStyle(style):
+            
+            newState.style = style
         }
+        
+        return newState
     }
     
 }
@@ -126,16 +139,14 @@ public enum HPCalendarState {
 public protocol HPCalendarInterface {
     var nowDate: Date { get set }
     var calendarState: HPCalendarState { get set }
-    var calendarStyle: CalendarStyle { get set }
 }
 
-protocol HPCalendarBubbleDelegateProxy {
+public protocol HPCalendarBubbleDelegateProxy {
     func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation>
-    func setConfigureBubbleDays(date: Date) -> Int
 }
 
 
-protocol HPCalendarDelgateProxy  {
+public protocol HPCalendarDelgateProxy  {
     func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation>
     func updateNextDateCalendar() -> Observable<HPCalendarViewReactor.Mutation>
     func updatePreviousDateCalendar() -> Observable<HPCalendarViewReactor.Mutation>
@@ -144,29 +155,37 @@ protocol HPCalendarDelgateProxy  {
 }
 
 
-final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarInterface {
-    
+public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDelegateProxy, HPCalendarInterface {
     //MARK: Property
-    var nowDate: Date = Date()
-    var calendarState: HPCalendarState = .now
-    public var calendarStyle: CalendarStyle = .default {
-        didSet {
-            if calendarStyle == .default {
-                //MARK: Style에 따른 Configure UI Method 호출
-                _ = self.configureCalendar()
-                _ = self.updateNextMonthCalendar()
-            }
-        }
-    }
+    public var nowDate: Date = Date()
+    public var calendarState: HPCalendarState = .now
     
     
     //TODO: HPCalendar 과거 일경우 False 미래 혹은 현재 일경우 True 값으로 리턴하여 색상 변경
-    func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
+    
+    public func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
+        var calendarSectionItem: [CalendarSectionItem] = []
+        var startOfDays = (nowDate.weekday - 1)
+        var totalDays = startOfDays + setConfigureDays(date: nowDate)
+        var alpha: CGFloat = 5
+        
+        for days in Int() ..< totalDays {
+            calendarSectionItem.append(CalendarSectionItem.bubbleItem(HPCalendarBubbleDayCellReactor(day: "\(days - startOfDays + 1)", weekDay: "월", alpha: alpha + 10)))
+        }
+        
+        return .just(.setCalendarItems(calendarSectionItem))
+    }
+    
+    
+    
+    public func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .now)
+        
         
         var calendarSectionItem: [CalendarSectionItem] = []
         var startOfDays = (nowDate.weekday - 1)
         var totalDays = startOfDays + setConfigureDays(date: nowDate)
+        
         for days in Int() ..< totalDays {
             if days < startOfDays {
                 calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String(), iscompare: false)))
@@ -187,7 +206,7 @@ final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarInterface {
     }
     
     
-    func updateNextDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
+    public func updateNextDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .next)
         var updateCalendarSectionItem: [CalendarSectionItem] = []
         var updateStartOfDays = (nowDate.weekday - 1)
@@ -219,7 +238,7 @@ final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarInterface {
     }
     
     
-    func updatePreviousDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
+    public func updatePreviousDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .previous)
         var previousCalendarSectionItem: [CalendarSectionItem] = []
         var previousStartOfDays = (nowDate.weekday - 1)
@@ -251,18 +270,18 @@ final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarInterface {
         return .just(.setCalendarItems(previousCalendarSectionItem))
     }
     
-    func updateNextMonthCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
+    public func updateNextMonthCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         
         return .just(.setUpdateMonthItem("\(self.nowDate.month)"))
     }
     
-    func setConfigureDays(date: Date) -> Int {
+    public func setConfigureDays(date: Date) -> Int {
         
         return Calendar.current.range(of: .day, in: .month, for: date)?.count ?? Int()
     }
     
     
-    func updateCalendarDate(state: HPCalendarState) {
+    public func updateCalendarDate(state: HPCalendarState) {
         switch state {
         case .previous:
             self.nowDate = Calendar.current.date(byAdding: DateComponents(month: -1), to: nowDate) ?? Date()
