@@ -54,12 +54,13 @@ public final class HPCalendarView: UIView {
         }
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         
-        guard self.isStatus == .default else { return UICollectionReusableView() }
-        
-        guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
-        
-        return weekDayReusableView
-        
+        switch dataSource[indexPath] {
+        case .calendarItem:
+            guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+            return weekDayReusableView
+        case .bubbleItem:
+            return UICollectionReusableView()
+        }        
     }
 
     
@@ -75,7 +76,7 @@ public final class HPCalendarView: UIView {
     
     
     
-    private lazy var calendarCollectionView: UICollectionView = UICollectionView(frame: self.frame, collectionViewLayout: calendarCollectionViewLayout).then {
+    private lazy var calendarCollectionView: UICollectionView = UICollectionView(frame: self.frame, collectionViewLayout: isStyle == .default ? calendarCollectionViewLayout : bubbleCollectionViewLayout).then {
         $0.isScrollEnabled = false
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
@@ -105,16 +106,57 @@ public final class HPCalendarView: UIView {
     private func configure() {
         self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
-        self.addSubview(calendarCollectionView)
-        
-        
-        
-        calendarCollectionView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-20)
+
+        if let calendarContentView = self.calendarContentView {
+            [calendarContentView, calendarCollectionView].forEach {
+                self.addSubview($0)
+            }
+            
+            calendarContentView.snp.makeConstraints {
+                $0.left.right.top.equalToSuperview()
+                $0.height.equalTo(40)
+            }
+            calendarCollectionView.snp.makeConstraints {
+                $0.top.equalTo(calendarContentView.snp.bottom)
+                $0.left.equalToSuperview().offset(16)
+                $0.right.equalToSuperview().offset(-16)
+                $0.bottom.equalToSuperview()
+            }
+
+        } else {
+            self.addSubview(calendarCollectionView)
+
+
+            calendarCollectionView.snp.makeConstraints {
+                $0.top.equalToSuperview()
+                $0.left.equalToSuperview().offset(16)
+                $0.right.equalToSuperview().offset(-16)
+                $0.bottom.equalToSuperview().offset(-20)
+            }
         }
+        
+        
+        guard let contentView = self.calendarContentView,
+              let reactor = self.reactor else { return }
+        
+        contentView
+            .nextButton.rx.tap.debug("Tap Next Button Action")
+            .map { Reactor.Action.didTapNextDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+        contentView
+            .previousButton.rx.tap
+            .map { Reactor.Action.didTapPreviousDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+            
+        reactor.state
+            .map { "\($0.month)월" }
+            .bind(to: contentView.calendarMonthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
     }
 
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
@@ -249,27 +291,21 @@ public final class HPCalendarContentView: UIView {
     
     private var disposeBag: DisposeBag = DisposeBag()
         
-    public var contentMonth: Int = Date().month {
-        didSet {
-            self.calendarMonthLabel.text = "\(self.contentMonth)월"
-        }
-    }
-    
-    private lazy var calendarMonthLabel: UILabel = UILabel().then {
+    public lazy var calendarMonthLabel: UILabel = UILabel().then {
+        $0.text = "\(Date().month)월"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .center
         $0.numberOfLines = 1
     }
     
-    private var previousButton: UIButton = UIButton(type: .custom).then {
+    public lazy var previousButton: UIButton = UIButton(type: .custom).then {
         $0.setTitle("", for: .normal)
         $0.setImage(HPCommonUIAsset.previousArrow.image, for: .normal)
     }
     
-    private var nextButton: UIButton = UIButton(type: .custom).then {
+    public lazy var nextButton: UIButton = UIButton(type: .custom).then {
         $0.setTitle("", for: .normal)
         $0.setImage(HPCommonUIAsset.nextArrow.image, for: .normal)
-
     }
     
     
@@ -309,7 +345,7 @@ public final class HPCalendarContentView: UIView {
         nextButton.snp.makeConstraints {
             $0.width.equalTo(16)
             $0.height.equalTo(17)
-            $0.right.equalTo(calendarMonthLabel.snp.right).offset(20)
+            $0.left.equalTo(calendarMonthLabel.snp.right).offset(20)
             $0.centerY.equalTo(calendarMonthLabel)
         }
     }
