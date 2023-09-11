@@ -11,12 +11,8 @@ final public class HPSwitch: UISwitch {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.onTintColor = HPCommonUIAsset.deepOrange.color
-        self.tintColor = HPCommonUIAsset.switchBackground.color
         self.backgroundColor = HPCommonUIAsset.switchBackground.color
-    }
-    
-    public override func draw(_ rect: CGRect) {
-        self.layer.cornerRadius = frame.height / 2.0
+        self.layer.cornerRadius = self.bounds.size.height / 2
         self.clipsToBounds = true
     }
     
