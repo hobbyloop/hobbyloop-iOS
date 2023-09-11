@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 public extension UIImageView {
-    static func circularImageView(radius: CGFloat) -> UIImageView {
+    class func circularImageView(radius: CGFloat) -> UIImageView {
         let imageView = UIImageView()
         
         imageView.layer.cornerRadius = radius

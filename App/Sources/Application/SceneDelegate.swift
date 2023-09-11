@@ -12,6 +12,7 @@ import RxKakaoSDKAuth
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
+import HPCommonUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -22,7 +23,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
         let loginDIContainer = LoginDIContainer()
-        window?.rootViewController = UINavigationController(rootViewController: loginDIContainer.makeViewController())
+        window?.rootViewController = HPNavigationController(
+            navigationBarType: .none,
+            rootViewController: loginDIContainer.makeViewController(),
+            defaultBarAppearance: UINavigationBarAppearance(),
+            scrollBarAppearance: UINavigationBarAppearance()
+        )
         window?.makeKeyAndVisible()
         
     }

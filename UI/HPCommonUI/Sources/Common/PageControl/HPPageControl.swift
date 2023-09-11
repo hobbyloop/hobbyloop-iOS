@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 public final class HPPageControl: UIStackView {
-    var numberOfPages = 1 {
+    public var numberOfPages = 1 {
         didSet {
             if oldValue == numberOfPages {
                 return
@@ -31,7 +31,7 @@ public final class HPPageControl: UIStackView {
         }
     }
     
-    var currentPage = 0 {
+    public var currentPage = 0 {
         didSet {
             let pastPageButton = self.arrangedSubviews[oldValue] as! UIButton
             pastPageButton.setBackgroundImage(HPCommonUIAsset.unselectedPage.image, for: .normal)
