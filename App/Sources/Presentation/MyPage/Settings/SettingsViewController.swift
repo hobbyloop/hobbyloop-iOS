@@ -58,6 +58,13 @@ class SettingsViewController: UIViewController {
         }
     }
     
+    // MARK: - 고객지원 센터 섹션 UI
+    private lazy var customerSupportSectionHeader = sectionHeader(title: "고객지원 센터", bottomMargin: 14)
+    private lazy var faqMenu = menuWithArrow(name: "자주 묻는 질문")
+    private lazy var kakaoTalkQnaMenu = menuWithArrow(name: "카카오톡 1:1 문의")
+    private lazy var serviceTermsMenu = menuWithArrow(name: "서비스 약관")
+    
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -89,6 +96,20 @@ class SettingsViewController: UIViewController {
         
         appSectionStack.snp.makeConstraints {
             $0.top.equalTo(customNavigationBar.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        let customerSupportSectionStack = UIStackView()
+        customerSupportSectionStack.backgroundColor = .systemBackground
+        customerSupportSectionStack.axis = .vertical
+        customerSupportSectionStack.alignment = .fill
+        customerSupportSectionStack.spacing = 0
+        
+        [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu].forEach(customerSupportSectionStack.addArrangedSubview(_:))
+        
+        view.addSubview(customerSupportSectionStack)
+        customerSupportSectionStack.snp.makeConstraints {
+            $0.top.equalTo(appSectionStack.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
         }
     }
