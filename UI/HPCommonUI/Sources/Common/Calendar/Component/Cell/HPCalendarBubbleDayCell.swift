@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import ReactorKit
+import SnapKit
 
 
 public final class HPCalendarBubbleDayCellReactor: Reactor {
@@ -61,6 +62,7 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -74,8 +76,22 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
             self.bubbleView.addSubview($0)
         }
         
+        bubbleView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         
-        
+        weekDayLabel.snp.makeConstraints {
+            $0.width.equalTo(14)
+            $0.height.equalTo(19)
+            $0.top.equalToSuperview().offset(14)
+            $0.centerX.equalToSuperview()
+        }
+        dayLabel.snp.makeConstraints {
+            $0.width.equalTo(17)
+            $0.height.equalTo(19)
+            $0.top.equalTo(weekDayLabel.snp.bottom).offset(7)
+            $0.centerX.equalToSuperview()
+        }
     }
     
     
@@ -87,8 +103,20 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
     
     func bind(reactor: Reactor) {
         reactor.state
-            .map { $0.alpha }
-            .bind(to: bubbleView.rx.alpha)
+            .map { $0.alpha }.debug("alpha test")
+            .map { alpha in HPCommonUIAsset.horizontalDivider.color.withAlphaComponent(alpha) }
+            .bind(to: bubbleView.rx.backgroundColor)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { $0.day }
+            .bind(to: dayLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.weekDay }
+            .bind(to: weekDayLabel.rx.text)
             .disposed(by: disposeBag)
 
     }

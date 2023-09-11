@@ -14,16 +14,16 @@ import Then
 import SnapKit
 
 
-public enum CalendarStatus {
+public enum CalendarStyle {
     case `default`
     case bubble
 }
 
 public final class HPCalendarView: UIView {
     
-    public var isStatus: CalendarStatus = .default {
+    public var isStyle: CalendarStyle = .default {
         didSet {
-            if isStatus == .bubble {
+            if isStyle == .bubble {
                 self.calendarCollectionView.setCollectionViewLayout(calendarCollectionViewLayout, animated: true)
             } else {
                 self.calendarCollectionView.setCollectionViewLayout(bubbleCollectionViewLayout, animated: true)
@@ -36,23 +36,9 @@ public final class HPCalendarView: UIView {
     
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
-    private lazy var calendarMonthLabel: UILabel = UILabel().then {
-        $0.text = "\(Date().month)월"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.textAlignment = .center
-        $0.numberOfLines = 1
-    }
-    
-    private var previousButton: UIButton = UIButton(type: .custom).then {
-        $0.setTitle("", for: .normal)
-        $0.setImage(HPCommonUIAsset.previousArrow.image, for: .normal)
-    }
-    
-    private var nextButton: UIButton = UIButton(type: .custom).then {
-        $0.setTitle("", for: .normal)
-        $0.setImage(HPCommonUIAsset.nextArrow.image, for: .normal)
 
-    }
+    public weak var calendarContentView: HPCalendarContentView?
+    
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         switch sectionItem {
@@ -98,9 +84,13 @@ public final class HPCalendarView: UIView {
         $0.register(HPCalendarWeekReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HPCalendarWeekReusableView")
     }
     
-    public init(reactor: HPCalendarViewReactor) {
+    public init(
+        reactor: HPCalendarViewReactor,
+        calendarContentView: HPCalendarContentView
+    ) {
         super.init(frame: .zero)
         self.reactor = reactor
+        self.calendarContentView = calendarContentView
         configure()
     }
     
@@ -113,35 +103,13 @@ public final class HPCalendarView: UIView {
     private func configure() {
         self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         
-        [calendarCollectionView, calendarMonthLabel, nextButton, previousButton].forEach {
-            self.addSubview($0)
-        }
+        self.addSubview(calendarCollectionView)
         
         
         
-        calendarMonthLabel.snp.makeConstraints {
-            $0.width.lessThanOrEqualTo(45)
-            $0.height.equalTo(14)
-            $0.top.equalToSuperview().offset(20)
-            $0.centerX.equalToSuperview()
-        }
-        
-        previousButton.snp.makeConstraints {
-            $0.width.equalTo(16)
-            $0.height.equalTo(17)
-            $0.right.equalTo(calendarMonthLabel.snp.left).offset(-20)
-            $0.centerY.equalTo(calendarMonthLabel)
-        }
-
-        nextButton.snp.makeConstraints {
-            $0.width.equalTo(previousButton)
-            $0.height.equalTo(previousButton)
-            $0.left.equalTo(calendarMonthLabel.snp.right).offset(20)
-            $0.centerY.equalTo(previousButton)
-        }
         
         calendarCollectionView.snp.makeConstraints {
-            $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(20)
+            $0.top.equalToSuperview()
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
             $0.bottom.equalToSuperview().offset(-20)
@@ -209,7 +177,7 @@ public final class HPCalendarView: UIView {
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(calendarCollectionView.frame.size.width),
-            heightDimension: .absolute(70)
+            heightDimension: .fractionalHeight(0.8)
         )
         
         let bubbleCalendarLayoutItem = NSCollectionLayoutItem(
@@ -253,25 +221,7 @@ extension HPCalendarView: ReactorKit.View {
             .debug("test calendar Section")
             .drive(calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
-
-        nextButton
-            .rx.tap
-            .map { Reactor.Action.didTapNextDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
         
-        previousButton
-            .rx.tap
-            .map { Reactor.Action.didTapPreviousDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        
-        reactor.state
-            .map { "\($0.month)월" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(calendarMonthLabel.rx.text)
-            .disposed(by: disposeBag)
         
         NotificationCenter.default
             .rx.notification(.NSCalendarDayChanged)
@@ -293,3 +243,73 @@ extension HPCalendarView: ReactorKit.View {
 
 
 
+public final class HPCalendarContentView: UIView {
+    
+    private var disposeBag: DisposeBag = DisposeBag()
+        
+    public var contentMonth: Int = Date().month {
+        didSet {
+            self.calendarMonthLabel.text = "\(self.contentMonth)월"
+        }
+    }
+    
+    private lazy var calendarMonthLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.textAlignment = .center
+        $0.numberOfLines = 1
+    }
+    
+    private var previousButton: UIButton = UIButton(type: .custom).then {
+        $0.setTitle("", for: .normal)
+        $0.setImage(HPCommonUIAsset.previousArrow.image, for: .normal)
+    }
+    
+    private var nextButton: UIButton = UIButton(type: .custom).then {
+        $0.setTitle("", for: .normal)
+        $0.setImage(HPCommonUIAsset.nextArrow.image, for: .normal)
+
+    }
+    
+    
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    private func configure() {
+        
+        [calendarMonthLabel, previousButton, nextButton].forEach {
+            self.addSubview($0)
+        }
+        
+        
+        calendarMonthLabel.snp.makeConstraints {
+            $0.width.lessThanOrEqualTo(45)
+            $0.height.equalTo(14)
+            $0.top.equalToSuperview().offset(20)
+            $0.centerX.equalToSuperview()
+        }
+        
+        previousButton.snp.makeConstraints {
+            $0.width.equalTo(16)
+            $0.height.equalTo(17)
+            $0.right.equalTo(calendarMonthLabel.snp.left).offset(-20)
+            $0.centerY.equalTo(calendarMonthLabel)
+        }
+        
+        
+        nextButton.snp.makeConstraints {
+            $0.width.equalTo(16)
+            $0.height.equalTo(17)
+            $0.right.equalTo(calendarMonthLabel.snp.right).offset(20)
+            $0.centerY.equalTo(calendarMonthLabel)
+        }
+    }
+    
+}

@@ -115,15 +115,27 @@ private extension HPCalendarViewReactor {
 
 
 
-enum HPCalendarState {
+public enum HPCalendarState {
     case previous
     case next
     case now
 }
 
-protocol HPCalendarDelgateProxy {
+
+
+public protocol HPCalendarInterface {
     var nowDate: Date { get set }
     var calendarState: HPCalendarState { get set }
+    var calendarStyle: CalendarStyle { get set }
+}
+
+protocol HPCalendarBubbleDelegateProxy {
+    func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation>
+    func setConfigureBubbleDays(date: Date) -> Int
+}
+
+
+protocol HPCalendarDelgateProxy  {
     func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation>
     func updateNextDateCalendar() -> Observable<HPCalendarViewReactor.Mutation>
     func updatePreviousDateCalendar() -> Observable<HPCalendarViewReactor.Mutation>
@@ -132,11 +144,20 @@ protocol HPCalendarDelgateProxy {
 }
 
 
-final class HPCalendarProxyBinder: HPCalendarDelgateProxy {
+final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarInterface {
     
     //MARK: Property
     var nowDate: Date = Date()
     var calendarState: HPCalendarState = .now
+    public var calendarStyle: CalendarStyle = .default {
+        didSet {
+            if calendarStyle == .default {
+                //MARK: Style에 따른 Configure UI Method 호출
+                _ = self.configureCalendar()
+                _ = self.updateNextMonthCalendar()
+            }
+        }
+    }
     
     
     //TODO: HPCalendar 과거 일경우 False 미래 혹은 현재 일경우 True 값으로 리턴하여 색상 변경
