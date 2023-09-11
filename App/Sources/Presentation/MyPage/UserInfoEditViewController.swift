@@ -10,7 +10,7 @@ import HPCommon
 import HPCommonUI
 import RxSwift
 
-class UserInfoEditViewController: UIViewController {
+final class UserInfoEditViewController: UIViewController {
     let disposeBag = DisposeBag()
     
     // MARK: - custom navigation bar
@@ -145,6 +145,7 @@ class UserInfoEditViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleBirthDayPickerView))
         birthDayInputView.addGestureRecognizer(tapGesture)
         
+        // TODO: text binding code를 delegate 패턴으로 수정
         birthDayPickerView.rx
             .value
             .skip(1)
