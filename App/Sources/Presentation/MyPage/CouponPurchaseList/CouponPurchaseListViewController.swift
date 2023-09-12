@@ -81,10 +81,12 @@ extension CouponPurchaseListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        // section 간의 간격을 두기 위해 추가
         return 14
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        // section 간의 간격을 두기 위해 추가
         return UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 14))
     }
 }
