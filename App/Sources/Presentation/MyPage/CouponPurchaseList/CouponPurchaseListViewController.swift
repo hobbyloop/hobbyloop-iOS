@@ -37,20 +37,33 @@ class CouponPurchaseListViewController: UIViewController {
         }
     }
     
+    // MARK: - table view
+    let tableView = UITableView().then {
+        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+    }
+    
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layoutNavigationBar()
+        layout()
     }
     
     // MARK: - layout
-    private func layoutNavigationBar() {
+    private func layout() {
         view.addSubview(customNavigationBar)
         
         customNavigationBar.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.top.equalToSuperview().offset(44)
             $0.height.equalTo(56)
+        }
+        
+        view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(customNavigationBar.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
 }
