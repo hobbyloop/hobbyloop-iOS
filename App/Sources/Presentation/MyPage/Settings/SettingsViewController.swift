@@ -80,6 +80,12 @@ class SettingsViewController: UIViewController {
     
     private var logoutBottomSheetHeightConstraint: Constraint?
     
+    private var secessionBottomSheet = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
+    
+    private var secessionBottomSheetHeightConstraint: Constraint?
+    
     private let sheetBackgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
     }
@@ -93,11 +99,14 @@ class SettingsViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        let logoutBottomSheetPath = UIBezierPath(shouldRoundRect: logoutBottomSheet.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = logoutBottomSheetPath.cgPath
-        logoutBottomSheet.layer.mask = maskLayer
-        logoutBottomSheet.clipsToBounds = true
+        [logoutBottomSheet, secessionBottomSheet].forEach {
+            let bezierPath = UIBezierPath(shouldRoundRect: $0.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = bezierPath.cgPath
+            
+            $0.layer.mask = maskLayer
+            $0.clipsToBounds = true
+        }
     }
     
     // MARK: - layout
@@ -159,7 +168,7 @@ class SettingsViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
         }
         
-        [sheetBackgroundView, logoutBottomSheet].forEach(view.addSubview(_:))
+        [sheetBackgroundView, logoutBottomSheet, secessionBottomSheet].forEach(view.addSubview(_:))
         sheetBackgroundView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
@@ -169,12 +178,18 @@ class SettingsViewController: UIViewController {
             self.logoutBottomSheetHeightConstraint = $0.height.equalTo(0).constraint
         }
         
+        secessionBottomSheet.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            self.secessionBottomSheetHeightConstraint = $0.height.equalTo(0).constraint
+        }
+        
         sheetBackgroundView.isHidden = true
     }
     
     // MARK: - add actions
     private func addActions() {
         logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
+        secessionMenu.addTarget(self, action: #selector(showSecessionSheet), for: .touchUpInside)
     }
     
     // MARK: - view generating methods
@@ -254,6 +269,15 @@ class SettingsViewController: UIViewController {
         sheetBackgroundView.isHidden = false
         
         logoutBottomSheetHeightConstraint?.update(offset: 326)
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func showSecessionSheet() {
+        sheetBackgroundView.isHidden = false
+        
+        secessionBottomSheetHeightConstraint?.update(offset: 326)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
