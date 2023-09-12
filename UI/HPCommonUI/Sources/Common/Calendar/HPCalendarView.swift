@@ -219,8 +219,13 @@ public final class HPCalendarView: UIView {
     
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(100),
+            heightDimension: .fractionalHeight(0.7)
+        )
+        
+        let bubbleCalendarGroupSize = NSCollectionLayoutSize(
             widthDimension: .estimated(calendarCollectionView.frame.size.width),
-            heightDimension: .fractionalHeight(0.8)
+            heightDimension: .absolute(calendarCollectionView.frame.size.height)
         )
         
         let bubbleCalendarLayoutItem = NSCollectionLayoutItem(
@@ -230,13 +235,13 @@ public final class HPCalendarView: UIView {
         bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14)
         
         let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: bubbleCalendarItemSize,
+            layoutSize: bubbleCalendarGroupSize,
             subitem: bubbleCalendarLayoutItem,
             count: 7
         )
         
         let bubbleCalendarSection = NSCollectionLayoutSection(group: bubbleCalendarGroup)
-        
+        bubbleCalendarSection.orthogonalScrollingBehavior = .groupPagingCentered
         
         
         return bubbleCalendarSection

@@ -7,9 +7,11 @@
 
 import UIKit
 
+import HPExtensions
 import RxSwift
 import RxCocoa
 import ReactorKit
+import Then
 import SnapKit
 
 
@@ -58,6 +60,8 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
     }
     
+    private var eventView: UIImageView = UIImageView.circularImageView(radius: 4)
+    
     
     
     override init(frame: CGRect) {
@@ -71,21 +75,29 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
     
     private func configure() {
         self.contentView.addSubview(bubbleView)
+        self.contentView.addSubview(eventView)
         
         [weekDayLabel, dayLabel].forEach {
             self.bubbleView.addSubview($0)
         }
         
+        eventView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(15)
+            $0.centerX.equalTo(bubbleView)
+        }
+        
         bubbleView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(eventView.snp.bottom).offset(15)
+            $0.left.right.bottom.equalToSuperview()
         }
         
         weekDayLabel.snp.makeConstraints {
-            $0.width.equalTo(14)
+            $0.width.equalTo(17)
             $0.height.equalTo(19)
             $0.top.equalToSuperview().offset(14)
             $0.centerX.equalToSuperview()
         }
+        
         dayLabel.snp.makeConstraints {
             $0.width.equalTo(17)
             $0.height.equalTo(19)
