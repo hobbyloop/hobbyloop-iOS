@@ -115,6 +115,36 @@ class SettingsViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     
+    private let secessionSheetImageView = UIImageView(image: HPCommonUIAsset.info.image).then {
+        $0.snp.makeConstraints {
+            $0.width.height.equalTo(34)
+        }
+    }
+    
+    private let secessionTitleLabel = UILabel().then {
+        $0.text = "탈퇴 할까요?"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
+    }
+    
+    private let secessionDescriptionLabel = UILabel().then {
+        $0.text = "탈퇴하시면 서비스를 이용하실 수 없어요."
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+    }
+    
+    private let secessionCloseButton = HPButton(cornerRadius: 8).then {
+        $0.setTitle("닫기", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
+    }
+    
+    private let secessionConfirmButton = HPButton(cornerRadius: 8).then {
+        $0.setTitle("탈퇴하기", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+    }
+    
     private var secessionBottomSheetTopConstraint: Constraint?
     
     // MARK: - bottom sheet background
@@ -249,6 +279,38 @@ class SettingsViewController: UIViewController {
             self.secessionBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
         
+        [secessionSheetImageView, secessionTitleLabel, secessionDescriptionLabel, secessionCloseButton, secessionConfirmButton]
+            .forEach(secessionBottomSheet.addSubview(_:))
+        
+        secessionSheetImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(39)
+        }
+        
+        secessionTitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(secessionSheetImageView.snp.bottom).offset(21)
+        }
+        
+        secessionDescriptionLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(secessionTitleLabel.snp.bottom).offset(14)
+        }
+        
+        secessionCloseButton.snp.makeConstraints {
+            $0.top.equalTo(secessionDescriptionLabel.snp.bottom).offset(40)
+            $0.height.equalTo(59)
+            $0.leading.equalToSuperview().offset(34)
+            $0.trailing.equalTo(secessionBottomSheet.snp.centerX).offset(-6)
+        }
+        
+        secessionConfirmButton.snp.makeConstraints {
+            $0.top.equalTo(secessionCloseButton.snp.top)
+            $0.height.equalTo(secessionCloseButton.snp.height)
+            $0.leading.equalTo(secessionBottomSheet.snp.centerX).offset(6)
+            $0.trailing.equalToSuperview().offset(-34)
+        }
+        
         sheetBackgroundView.isHidden = true
     }
     
@@ -263,6 +325,10 @@ class SettingsViewController: UIViewController {
         logoutCloseButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
         // TODO: 로그아웃 하기 버튼 action 수정
         logoutConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
+        
+        secessionCloseButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
+        // TODO: 탈퇴하기 버튼 action 수정
+        secessionConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
     }
     
     // MARK: - view generating methods
