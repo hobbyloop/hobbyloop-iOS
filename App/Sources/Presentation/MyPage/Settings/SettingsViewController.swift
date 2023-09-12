@@ -11,6 +11,7 @@ import Then
 import HPCommonUI
 
 class SettingsViewController: UIViewController {
+    // MARK: - custom navigation bar
     private let backButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.leftarrow.image
         
@@ -38,7 +39,18 @@ class SettingsViewController: UIViewController {
         }
     }
     
+    // MARK: - background view
+    private let backgroundView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+    }
+    
     // MARK: - 앱 설정 섹션 UI
+    private let appSectionStack = UIStackView().then {
+        $0.backgroundColor = .systemBackground
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.spacing = 0
+    }
     private lazy var appSectionHeader = sectionHeader(title: "앱 설정", bottomMargin: 11)
     
     private let appAlarmSwitch = HPSwitch().then {
@@ -156,7 +168,13 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layout()
+        layoutNavigationBar()
+        layoutBackgroundView()
+        layoutAppSection()
+        layoutCustomerSupportSection()
+        layoutSheetBackground()
+        layoutLogoutBottomSheet()
+        layoutSecessionBottomSheet()
         addActions()
     }
     
@@ -172,7 +190,7 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - layout
-    private func layout() {
+    private func layoutNavigationBar() {
         view.addSubview(customNavigationBar)
         
         customNavigationBar.snp.makeConstraints {
@@ -180,22 +198,17 @@ class SettingsViewController: UIViewController {
             $0.top.equalToSuperview().offset(44)
             $0.height.equalTo(56)
         }
-        
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = HPCommonUIAsset.lightBackground.color
-        
+    }
+    
+    private func layoutBackgroundView() {
         view.addSubview(backgroundView)
         backgroundView.snp.makeConstraints {
             $0.top.equalTo(customNavigationBar.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-        
-        let appSectionStack = UIStackView()
-        appSectionStack.backgroundColor = .systemBackground
-        appSectionStack.axis = .vertical
-        appSectionStack.alignment = .fill
-        appSectionStack.spacing = 0
-        
+    }
+    
+    private func layoutAppSection() {
         [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, bottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
         backgroundView.addSubview(appSectionStack)
         
@@ -203,7 +216,9 @@ class SettingsViewController: UIViewController {
             $0.top.equalTo(customNavigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
-        
+    }
+    
+    private func layoutCustomerSupportSection() {
         let customerSupportSectionStack = UIStackView()
         customerSupportSectionStack.backgroundColor = .systemBackground
         customerSupportSectionStack.axis = .vertical
@@ -229,11 +244,19 @@ class SettingsViewController: UIViewController {
             $0.top.equalTo(logoutMenu.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
         }
-        
-        [sheetBackgroundView, logoutBottomSheet, secessionBottomSheet].forEach(view.addSubview(_:))
+    }
+    
+    private func layoutSheetBackground() {
+        view.addSubview(sheetBackgroundView)
         sheetBackgroundView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
+        
+        sheetBackgroundView.isHidden = true
+    }
+    
+    private func layoutLogoutBottomSheet() {
+        view.addSubview(logoutBottomSheet)
         
         logoutBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
@@ -272,6 +295,10 @@ class SettingsViewController: UIViewController {
             $0.leading.equalTo(logoutBottomSheet.snp.centerX).offset(6)
             $0.trailing.equalToSuperview().offset(-34)
         }
+    }
+    
+    private func layoutSecessionBottomSheet() {
+        view.addSubview(secessionBottomSheet)
         
         secessionBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
@@ -310,8 +337,6 @@ class SettingsViewController: UIViewController {
             $0.leading.equalTo(secessionBottomSheet.snp.centerX).offset(6)
             $0.trailing.equalToSuperview().offset(-34)
         }
-        
-        sheetBackgroundView.isHidden = true
     }
     
     // MARK: - add actions
