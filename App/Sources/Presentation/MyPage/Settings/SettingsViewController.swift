@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 import Then
 import HPCommonUI
 
@@ -64,6 +65,25 @@ class SettingsViewController: UIViewController {
     private lazy var kakaoTalkQnaMenu = menuWithArrow(name: "카카오톡 1:1 문의")
     private lazy var serviceTermsMenu = menuWithArrow(name: "서비스 약관")
     
+    // MARK: - 로그아웃, 탈퇴하기 메뉴
+    private lazy var logoutMenu = menuWithArrow(name: "로그아웃").then {
+        $0.backgroundColor = .systemBackground
+    }
+    private lazy var secessionMenu = menuWithArrow(name: "탈퇴하기").then {
+        $0.backgroundColor = .systemBackground
+    }
+    
+    // MARK: - bottom sheet & background
+    private let logoutBottomSheet = UIView().then {
+        $0.backgroundColor = .black
+    }
+    
+    private var logoutBottomSheetHeightConstraint: Constraint?
+    
+    private let sheetBackgroundView = UIView().then {
+        $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,13 +127,48 @@ class SettingsViewController: UIViewController {
         
         [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu].forEach(customerSupportSectionStack.addArrangedSubview(_:))
         
-        view.addSubview(customerSupportSectionStack)
+        backgroundView.addSubview(customerSupportSectionStack)
         customerSupportSectionStack.snp.makeConstraints {
             $0.top.equalTo(appSectionStack.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
         }
+        
+        [logoutMenu, secessionMenu].forEach(backgroundView.addSubview(_:))
+        
+        logoutMenu.snp.makeConstraints {
+            $0.top.equalTo(customerSupportSectionStack.snp.bottom).offset(17)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        secessionMenu.snp.makeConstraints {
+            $0.top.equalTo(logoutMenu.snp.bottom).offset(14)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        [sheetBackgroundView, logoutBottomSheet].forEach(view.addSubview(_:))
+        sheetBackgroundView.snp.makeConstraints {
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        logoutBottomSheet.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            self.logoutBottomSheetHeightConstraint = $0.height.equalTo(0).constraint
+        }
+        
+        sheetBackgroundView.isHidden = true
+        
+        logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
     }
     
+    override func viewDidLayoutSubviews() {
+        let logoutBottomSheetPath = UIBezierPath(shouldRoundRect: logoutBottomSheet.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = logoutBottomSheetPath.cgPath
+        logoutBottomSheet.layer.mask = maskLayer
+        logoutBottomSheet.clipsToBounds = true
+    }
+    
+    // MARK: - view generating methods
     private func sectionHeader(title: String, bottomMargin: CGFloat) -> UIView {
         let view = UIView()
         let titleLabel = UILabel()
@@ -183,5 +238,16 @@ class SettingsViewController: UIViewController {
         }
         
         return view
+    }
+    
+    // MARK: - sheet methods
+    @objc private func showLogoutSheet() {
+        sheetBackgroundView.isHidden = false
+        
+        logoutBottomSheetHeightConstraint?.update(offset: 326)
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
+        
     }
 }
