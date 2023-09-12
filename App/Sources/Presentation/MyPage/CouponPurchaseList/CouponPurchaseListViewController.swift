@@ -40,6 +40,7 @@ class CouponPurchaseListViewController: UIViewController {
     // MARK: - table view
     let tableView = UITableView().then {
         $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+        $0.rowHeight = CouponPurchaseHistoryCell.height
     }
     
     // MARK: - life cycle
@@ -47,6 +48,8 @@ class CouponPurchaseListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         layout()
+        tableView.dataSource = self
+        tableView.register(CouponPurchaseHistoryCell.self, forCellReuseIdentifier: CouponPurchaseHistoryCell.identifier)
     }
     
     // MARK: - layout
@@ -65,5 +68,17 @@ class CouponPurchaseListViewController: UIViewController {
             $0.top.equalTo(customNavigationBar.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+}
+
+extension CouponPurchaseListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CouponPurchaseHistoryCell.identifier) as! CouponPurchaseHistoryCell
+        
+        return cell
     }
 }
