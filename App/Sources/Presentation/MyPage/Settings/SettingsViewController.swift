@@ -78,13 +78,13 @@ class SettingsViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     
-    private var logoutBottomSheetHeightConstraint: Constraint?
+    private var logoutBottomSheetTopConstraint: Constraint?
     
     private var secessionBottomSheet = UIView().then {
         $0.backgroundColor = .systemBackground
     }
     
-    private var secessionBottomSheetHeightConstraint: Constraint?
+    private var secessionBottomSheetTopConstraint: Constraint?
     
     private let sheetBackgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
@@ -174,13 +174,15 @@ class SettingsViewController: UIViewController {
         }
         
         logoutBottomSheet.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            self.logoutBottomSheetHeightConstraint = $0.height.equalTo(0).constraint
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(326)
+            self.logoutBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
         
         secessionBottomSheet.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            self.secessionBottomSheetHeightConstraint = $0.height.equalTo(0).constraint
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(326)
+            self.secessionBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
         
         sheetBackgroundView.isHidden = true
@@ -190,6 +192,9 @@ class SettingsViewController: UIViewController {
     private func addActions() {
         logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
         secessionMenu.addTarget(self, action: #selector(showSecessionSheet), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideSheets))
+        sheetBackgroundView.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - view generating methods
@@ -268,7 +273,7 @@ class SettingsViewController: UIViewController {
     @objc private func showLogoutSheet() {
         sheetBackgroundView.isHidden = false
         
-        logoutBottomSheetHeightConstraint?.update(offset: 326)
+        logoutBottomSheetTopConstraint?.update(offset: -326)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
@@ -277,9 +282,22 @@ class SettingsViewController: UIViewController {
     @objc private func showSecessionSheet() {
         sheetBackgroundView.isHidden = false
         
-        secessionBottomSheetHeightConstraint?.update(offset: 326)
+        secessionBottomSheetTopConstraint?.update(offset: -326)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func hideSheets() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.sheetBackgroundView.isHidden = true
+        }
+        
+        logoutBottomSheetTopConstraint?.update(offset: 0)
+        secessionBottomSheetTopConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+            
         }
     }
 }
