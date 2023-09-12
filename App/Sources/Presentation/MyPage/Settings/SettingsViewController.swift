@@ -75,7 +75,7 @@ class SettingsViewController: UIViewController {
     
     // MARK: - bottom sheet & background
     private let logoutBottomSheet = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = .systemBackground
     }
     
     private var logoutBottomSheetHeightConstraint: Constraint?
@@ -88,6 +88,20 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        layout()
+        addActions()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        let logoutBottomSheetPath = UIBezierPath(shouldRoundRect: logoutBottomSheet.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = logoutBottomSheetPath.cgPath
+        logoutBottomSheet.layer.mask = maskLayer
+        logoutBottomSheet.clipsToBounds = true
+    }
+    
+    // MARK: - layout
+    private func layout() {
         view.addSubview(customNavigationBar)
         
         customNavigationBar.snp.makeConstraints {
@@ -156,16 +170,11 @@ class SettingsViewController: UIViewController {
         }
         
         sheetBackgroundView.isHidden = true
-        
-        logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
     }
     
-    override func viewDidLayoutSubviews() {
-        let logoutBottomSheetPath = UIBezierPath(shouldRoundRect: logoutBottomSheet.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = logoutBottomSheetPath.cgPath
-        logoutBottomSheet.layer.mask = maskLayer
-        logoutBottomSheet.clipsToBounds = true
+    // MARK: - add actions
+    private func addActions() {
+        logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
     }
     
     // MARK: - view generating methods
@@ -240,7 +249,7 @@ class SettingsViewController: UIViewController {
         return view
     }
     
-    // MARK: - sheet methods
+    // MARK: - actions
     @objc private func showLogoutSheet() {
         sheetBackgroundView.isHidden = false
         
@@ -248,6 +257,5 @@ class SettingsViewController: UIViewController {
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
-        
     }
 }
