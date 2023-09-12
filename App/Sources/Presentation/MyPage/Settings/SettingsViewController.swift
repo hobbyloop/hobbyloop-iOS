@@ -73,19 +73,51 @@ class SettingsViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     
-    // MARK: - bottom sheet & background
+    // MARK: - logout bottom sheet
     private let logoutBottomSheet = UIView().then {
         $0.backgroundColor = .systemBackground
     }
     
+    private let logoutSheetImageView = UIImageView(image: HPCommonUIAsset.info.image).then {
+        $0.snp.makeConstraints {
+            $0.width.height.equalTo(34)
+        }
+    }
+    
+    private let logoutTitleLabel = UILabel().then {
+        $0.text = "로그아웃 할까요?"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
+    }
+    
+    private let logoutDescriptionLabel = UILabel().then {
+        $0.text = "로그아웃 하시면 알림 서비스를 받으실 수 없어요."
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+    }
+    
+    private let logoutCloseButton = HPButton(cornerRadius: 8).then {
+        $0.setTitle("닫기", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
+    }
+    
+    private let logoutConfirmButton = HPButton(cornerRadius: 8).then {
+        $0.setTitle("로그아웃 하기", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+    }
+    
     private var logoutBottomSheetTopConstraint: Constraint?
     
+    // MARK: - secession bottom sheet
     private var secessionBottomSheet = UIView().then {
         $0.backgroundColor = .systemBackground
     }
     
     private var secessionBottomSheetTopConstraint: Constraint?
     
+    // MARK: - bottom sheet background
     private let sheetBackgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
     }
@@ -179,6 +211,38 @@ class SettingsViewController: UIViewController {
             self.logoutBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
         
+        [logoutSheetImageView, logoutTitleLabel, logoutDescriptionLabel, logoutCloseButton, logoutConfirmButton]
+            .forEach(logoutBottomSheet.addSubview(_:))
+        
+        logoutSheetImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(39)
+        }
+        
+        logoutTitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(logoutSheetImageView.snp.bottom).offset(21)
+        }
+        
+        logoutDescriptionLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(logoutTitleLabel.snp.bottom).offset(14)
+        }
+        
+        logoutCloseButton.snp.makeConstraints {
+            $0.top.equalTo(logoutDescriptionLabel.snp.bottom).offset(40)
+            $0.height.equalTo(59)
+            $0.leading.equalToSuperview().offset(34)
+            $0.trailing.equalTo(logoutBottomSheet.snp.centerX).offset(-6)
+        }
+        
+        logoutConfirmButton.snp.makeConstraints {
+            $0.top.equalTo(logoutCloseButton.snp.top)
+            $0.height.equalTo(logoutCloseButton.snp.height)
+            $0.leading.equalTo(logoutBottomSheet.snp.centerX).offset(6)
+            $0.trailing.equalToSuperview().offset(-34)
+        }
+        
         secessionBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(326)
@@ -195,6 +259,10 @@ class SettingsViewController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideSheets))
         sheetBackgroundView.addGestureRecognizer(tapGesture)
+        
+        logoutCloseButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
+        // TODO: 로그아웃 하기 버튼 action 수정
+        logoutConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
     }
     
     // MARK: - view generating methods
