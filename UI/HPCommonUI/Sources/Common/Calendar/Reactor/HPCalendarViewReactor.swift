@@ -30,12 +30,14 @@ public final class HPCalendarViewReactor: Reactor {
         case setCalendarItems([CalendarSectionItem])
         case updateCalendarStyle(CalendarStyle)
         case setUpdateMonthItem(String)
+        case setBubbleCalendarDay(Int)
     }
     
     //MARK: State
     public struct State {
         var days: [String]
         var month: String
+        var nowDay: Int
         var style: CalendarStyle
         @Pulse var section: [CalendarSection]
     }
@@ -45,6 +47,7 @@ public final class HPCalendarViewReactor: Reactor {
         self.initialState = State(
             days: [],
             month: "",
+            nowDay: 1,
             style: .default,
             section: [
                 .calendar([])
@@ -72,7 +75,10 @@ public final class HPCalendarViewReactor: Reactor {
         case let .changeCalendarStyle(style):
             switch style {
             case .bubble:
-                return calendarConfigureProxy.configureBubbleCalendar()
+                return .concat([
+                    calendarConfigureProxy.configureBubbleCalendar(),
+                    calendarConfigureProxy.configureBubbleCalendarDay()
+                ])
             case .default:
                 return .concat([
                     calendarConfigureProxy.configureCalendar(),
@@ -102,6 +108,9 @@ public final class HPCalendarViewReactor: Reactor {
         case let .updateCalendarStyle(style):
             
             newState.style = style
+            
+        case let .setBubbleCalendarDay(nowDay):
+            newState.nowDay = nowDay
         }
         
         return newState
@@ -143,6 +152,7 @@ public protocol HPCalendarInterface {
 
 public protocol HPCalendarBubbleDelegateProxy {
     func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation>
+    func configureBubbleCalendarDay() -> Observable<HPCalendarViewReactor.Mutation>
 }
 
 
@@ -170,12 +180,20 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         var alpha: CGFloat = 5
         
         for days in Int() ..< totalDays {
-            calendarSectionItem.append(CalendarSectionItem.bubbleItem(HPCalendarBubbleDayCellReactor(day: "\(days - startOfDays + 1)", weekDay: "월", alpha: alpha + 10)))
+            if 0 < (days - startOfDays + 1) {
+                calendarSectionItem.append(CalendarSectionItem.bubbleItem(HPCalendarBubbleDayCellReactor(day: "\(days - startOfDays + 1)", weekDay: "월", alpha: alpha + 10)))
+            }
+            
         }
         
         return .just(.setCalendarItems(calendarSectionItem))
     }
     
+    
+    public func configureBubbleCalendarDay() -> Observable<HPCalendarViewReactor.Mutation> {
+        print("current Day configure : \(self.nowDate.day)")
+        return .just(.setBubbleCalendarDay(self.nowDate.day))
+    }
     
     
     public func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation> {

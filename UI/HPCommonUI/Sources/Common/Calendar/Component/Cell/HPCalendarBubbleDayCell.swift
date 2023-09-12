@@ -57,7 +57,7 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
         $0.text = "1"
         $0.textColor = HPCommonUIAsset.black.color
         $0.textAlignment = .center
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 16)
     }
     
     private var eventView: UIImageView = UIImageView.circularImageView(radius: 4)
@@ -99,7 +99,7 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
         }
         
         dayLabel.snp.makeConstraints {
-            $0.width.equalTo(17)
+            $0.width.greaterThanOrEqualTo(20)
             $0.height.equalTo(19)
             $0.top.equalTo(weekDayLabel.snp.bottom).offset(7)
             $0.centerX.equalToSuperview()

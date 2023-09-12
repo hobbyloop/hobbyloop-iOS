@@ -12,7 +12,7 @@ public extension Date {
     
     
     var day: Int {
-        return Calendar.current.component(.day, from: .now)
+        return Calendar.current.component(.day, from: nowDate)
     }
     
     var year: Int {
@@ -31,7 +31,7 @@ public extension Date {
     
     
     var components: DateComponents {
-        return Calendar.current.dateComponents([.year, .month],from: self)
+        return Calendar.current.dateComponents([.year, .month, .day],from: self)
     }
     
     var nowDate: Date {

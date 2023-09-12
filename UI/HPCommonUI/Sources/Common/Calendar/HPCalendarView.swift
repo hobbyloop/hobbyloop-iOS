@@ -219,8 +219,8 @@ public final class HPCalendarView: UIView {
     
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(100),
-            heightDimension: .fractionalHeight(0.7)
+            widthDimension: .estimated(200),
+            heightDimension: .fractionalHeight(1.0)
         )
         
         let bubbleCalendarGroupSize = NSCollectionLayoutSize(
@@ -241,7 +241,7 @@ public final class HPCalendarView: UIView {
         )
         
         let bubbleCalendarSection = NSCollectionLayoutSection(group: bubbleCalendarGroup)
-        bubbleCalendarSection.orthogonalScrollingBehavior = .groupPagingCentered
+        bubbleCalendarSection.orthogonalScrollingBehavior = .continuous
         
         
         return bubbleCalendarSection
@@ -279,6 +279,14 @@ extension HPCalendarView: ReactorKit.View {
                 self?.reactor?.action.onNext(.changeCalendarStyle(style))
             }).disposed(by: disposeBag)
 
+        reactor.state
+            .map { $0.nowDay }
+            .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.asyncInstance)
+            .bind { index in
+                self.calendarCollectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
+            }.disposed(by: disposeBag)
+        
         
         calendarCollectionView
             .rx.itemSelected
