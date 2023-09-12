@@ -99,8 +99,6 @@ public final class HPCalendarViewReactor: Reactor {
         case let .setCalendarItems(items):
             let calendarSectionIndex = self.getIndex(section: .calendar([]))
             newState.section[calendarSectionIndex] = .calendar(items)
-            return newState
-            
         case let .setUpdateMonthItem(nextMonth):
             newState.month = nextMonth
             

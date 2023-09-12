@@ -24,9 +24,10 @@ public final class HPCalendarView: UIView {
     public var isStyle: CalendarStyle  {
         didSet {
             if self.isStyle == .default {
-                self.calendarCollectionView.setCollectionViewLayout(calendarCollectionViewLayout, animated: true)
+                self.calendarCollectionView.collectionViewLayout = calendarCollectionViewLayout
+                
             } else {
-                self.calendarCollectionView.setCollectionViewLayout(bubbleCollectionViewLayout, animated: true)
+                self.calendarCollectionView.collectionViewLayout = bubbleCollectionViewLayout
             }
         }
     }
@@ -52,15 +53,6 @@ public final class HPCalendarView: UIView {
             bubbleCell.reactor = cellReactor
             return bubbleCell
         }
-    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-        
-        switch dataSource[indexPath] {
-        case .calendarItem:
-            guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
-            return weekDayReusableView
-        case .bubbleItem:
-            return UICollectionReusableView()
-        }        
     }
 
     
@@ -105,7 +97,6 @@ public final class HPCalendarView: UIView {
     //MARK: Configure
     private func configure() {
         self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
-        
 
         if let calendarContentView = self.calendarContentView {
             [calendarContentView, calendarCollectionView].forEach {
@@ -219,7 +210,7 @@ public final class HPCalendarView: UIView {
     
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(200),
+            widthDimension: .estimated(54),
             heightDimension: .fractionalHeight(1.0)
         )
         
@@ -232,7 +223,7 @@ public final class HPCalendarView: UIView {
             layoutSize: bubbleCalendarItemSize
         )
         
-        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14)
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
         
         let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: bubbleCalendarGroupSize,
@@ -263,11 +254,28 @@ extension HPCalendarView: ReactorKit.View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map { $0.style }
+            .take(1)
+            .distinctUntilChanged()
+            .bind(onNext: { style in
+                if style == .default {
+                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                        guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+                        return weekDayReusableView
+                    }
+                } else {
+                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                        return UICollectionReusableView()
+                    }
+                }
+            }).disposed(by: disposeBag)
+        
         
         reactor.pulse(\.$section)
-            .asDriver(onErrorJustReturn: [])
             .debug("test calendar Section")
-            .drive(calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
+            .observe(on: MainScheduler.instance)
+            .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
         
         
@@ -286,6 +294,7 @@ extension HPCalendarView: ReactorKit.View {
             .bind { index in
                 self.calendarCollectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
             }.disposed(by: disposeBag)
+        
         
         
         calendarCollectionView
