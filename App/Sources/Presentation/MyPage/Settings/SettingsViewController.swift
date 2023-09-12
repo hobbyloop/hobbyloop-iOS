@@ -86,25 +86,12 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - logout bottom sheet
-    private let logoutBottomSheet = UIView().then {
-        $0.backgroundColor = .systemBackground
-    }
-    
-    private let logoutSheetImageView = UIImageView(image: HPCommonUIAsset.info.image).then {
-        $0.snp.makeConstraints {
-            $0.width.height.equalTo(34)
-        }
-    }
-    
-    private let logoutTitleLabel = UILabel().then {
-        $0.text = "로그아웃 할까요?"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
-    }
-    
-    private let logoutDescriptionLabel = UILabel().then {
-        $0.text = "로그아웃 하시면 알림 서비스를 받으실 수 없어요."
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
-    }
+    private lazy var logoutBottomSheet = bottomSheet(
+        title: "로그아웃 할까요?",
+        description: "로그아웃 하시면 알림 서비스를 받으실 수 없어요.",
+        closeButton: logoutCloseButton,
+        confirmButton: logoutConfirmButton
+    )
     
     private let logoutCloseButton = HPButton(cornerRadius: 8).then {
         $0.setTitle("닫기", for: .normal)
@@ -123,25 +110,12 @@ class SettingsViewController: UIViewController {
     private var logoutBottomSheetTopConstraint: Constraint?
     
     // MARK: - secession bottom sheet
-    private var secessionBottomSheet = UIView().then {
-        $0.backgroundColor = .systemBackground
-    }
-    
-    private let secessionSheetImageView = UIImageView(image: HPCommonUIAsset.info.image).then {
-        $0.snp.makeConstraints {
-            $0.width.height.equalTo(34)
-        }
-    }
-    
-    private let secessionTitleLabel = UILabel().then {
-        $0.text = "탈퇴 할까요?"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
-    }
-    
-    private let secessionDescriptionLabel = UILabel().then {
-        $0.text = "탈퇴하시면 서비스를 이용하실 수 없어요."
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
-    }
+    private lazy var secessionBottomSheet = bottomSheet(
+        title: "탈퇴 할까요?",
+        description: "탈퇴하시면 서비스를 이용하실 수 없어요.",
+        closeButton: secessionCloseButton,
+        confirmButton: secessionConfirmButton
+    )
     
     private let secessionCloseButton = HPButton(cornerRadius: 8).then {
         $0.setTitle("닫기", for: .normal)
@@ -263,38 +237,6 @@ class SettingsViewController: UIViewController {
             $0.height.equalTo(326)
             self.logoutBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
-        
-        [logoutSheetImageView, logoutTitleLabel, logoutDescriptionLabel, logoutCloseButton, logoutConfirmButton]
-            .forEach(logoutBottomSheet.addSubview(_:))
-        
-        logoutSheetImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(39)
-        }
-        
-        logoutTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(logoutSheetImageView.snp.bottom).offset(21)
-        }
-        
-        logoutDescriptionLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(logoutTitleLabel.snp.bottom).offset(14)
-        }
-        
-        logoutCloseButton.snp.makeConstraints {
-            $0.top.equalTo(logoutDescriptionLabel.snp.bottom).offset(40)
-            $0.height.equalTo(59)
-            $0.leading.equalToSuperview().offset(34)
-            $0.trailing.equalTo(logoutBottomSheet.snp.centerX).offset(-6)
-        }
-        
-        logoutConfirmButton.snp.makeConstraints {
-            $0.top.equalTo(logoutCloseButton.snp.top)
-            $0.height.equalTo(logoutCloseButton.snp.height)
-            $0.leading.equalTo(logoutBottomSheet.snp.centerX).offset(6)
-            $0.trailing.equalToSuperview().offset(-34)
-        }
     }
     
     private func layoutSecessionBottomSheet() {
@@ -304,38 +246,6 @@ class SettingsViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(326)
             self.secessionBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
-        }
-        
-        [secessionSheetImageView, secessionTitleLabel, secessionDescriptionLabel, secessionCloseButton, secessionConfirmButton]
-            .forEach(secessionBottomSheet.addSubview(_:))
-        
-        secessionSheetImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(39)
-        }
-        
-        secessionTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(secessionSheetImageView.snp.bottom).offset(21)
-        }
-        
-        secessionDescriptionLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(secessionTitleLabel.snp.bottom).offset(14)
-        }
-        
-        secessionCloseButton.snp.makeConstraints {
-            $0.top.equalTo(secessionDescriptionLabel.snp.bottom).offset(40)
-            $0.height.equalTo(59)
-            $0.leading.equalToSuperview().offset(34)
-            $0.trailing.equalTo(secessionBottomSheet.snp.centerX).offset(-6)
-        }
-        
-        secessionConfirmButton.snp.makeConstraints {
-            $0.top.equalTo(secessionCloseButton.snp.top)
-            $0.height.equalTo(secessionCloseButton.snp.height)
-            $0.leading.equalTo(secessionBottomSheet.snp.centerX).offset(6)
-            $0.trailing.equalToSuperview().offset(-34)
         }
     }
     
@@ -423,6 +333,58 @@ class SettingsViewController: UIViewController {
             $0.height.equalTo(12.63)
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-23.28)
+        }
+        
+        return view
+    }
+    
+    private func bottomSheet(title: String, description: String, closeButton: HPButton, confirmButton: HPButton) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        
+        let sheetImageView = UIImageView(image: HPCommonUIAsset.info.image)
+        sheetImageView.snp.makeConstraints {
+            $0.width.height.equalTo(34)
+        }
+        
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
+        
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = description
+        descriptionLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        
+        [sheetImageView, titleLabel, descriptionLabel, closeButton, confirmButton]
+            .forEach(view.addSubview(_:))
+        
+        sheetImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(39)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(sheetImageView.snp.bottom).offset(21)
+        }
+        
+        descriptionLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(titleLabel.snp.bottom).offset(14)
+        }
+        
+        closeButton.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(40)
+            $0.height.equalTo(59)
+            $0.leading.equalToSuperview().offset(34)
+            $0.trailing.equalTo(view.snp.centerX).offset(-6)
+        }
+        
+        confirmButton.snp.makeConstraints {
+            $0.top.equalTo(closeButton.snp.top)
+            $0.height.equalTo(closeButton.snp.height)
+            $0.leading.equalTo(view.snp.centerX).offset(6)
+            $0.trailing.equalToSuperview().offset(-34)
         }
         
         return view
