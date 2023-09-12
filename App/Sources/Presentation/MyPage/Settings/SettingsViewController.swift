@@ -251,6 +251,8 @@ class SettingsViewController: UIViewController {
     
     // MARK: - add actions
     private func addActions() {
+        // TODO: 앱 설정 섹션, 고객지원 센터 섹션의 menu button들에 action 추가
+        
         logoutMenu.addTarget(self, action: #selector(showLogoutSheet), for: .touchUpInside)
         secessionMenu.addTarget(self, action: #selector(showSecessionSheet), for: .touchUpInside)
         
