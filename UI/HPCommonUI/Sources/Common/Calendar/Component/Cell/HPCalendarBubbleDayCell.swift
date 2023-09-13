@@ -26,12 +26,12 @@ public final class HPCalendarBubbleDayCellReactor: Reactor {
         var day: String
         var weekDay: String
         var nowDay: String
-        var alpha: CGFloat
+        var color: String
         var isCompare: Bool
     }
     
-    public init(day: String, weekDay: String, nowDay: String, alpha: CGFloat, isCompare: Bool) {
-        self.initialState = State(day: day, weekDay: weekDay, nowDay: nowDay, alpha: alpha, isCompare: isCompare)
+    public init(day: String, weekDay: String, nowDay: String, color: String, isCompare: Bool) {
+        self.initialState = State(day: day, weekDay: weekDay, nowDay: nowDay, color: color, isCompare: isCompare)
     }
 }
 
