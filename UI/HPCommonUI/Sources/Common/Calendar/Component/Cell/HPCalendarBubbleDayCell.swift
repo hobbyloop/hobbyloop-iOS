@@ -25,11 +25,13 @@ public final class HPCalendarBubbleDayCellReactor: Reactor {
     public struct State {
         var day: String
         var weekDay: String
+        var nowDay: String
         var alpha: CGFloat
+        var isCompare: Bool
     }
     
-    public init(day: String, weekDay: String, alpha: CGFloat) {
-        self.initialState = State(day: day, weekDay: weekDay, alpha: alpha)
+    public init(day: String, weekDay: String, nowDay: String, alpha: CGFloat, isCompare: Bool) {
+        self.initialState = State(day: day, weekDay: weekDay, nowDay: nowDay, alpha: alpha, isCompare: isCompare)
     }
 }
 
@@ -114,12 +116,6 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
 extension HPCalendarBubbleDayCell: ReactorKit.View {
     
     func bind(reactor: Reactor) {
-        reactor.state
-            .map { $0.alpha }.debug("alpha test")
-            .map { alpha in HPCommonUIAsset.horizontalDivider.color.withAlphaComponent(alpha) }
-            .bind(to: bubbleView.rx.backgroundColor)
-            .disposed(by: disposeBag)
-        
         
         reactor.state
             .map { $0.day }
@@ -130,6 +126,36 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
             .map { $0.weekDay }
             .bind(to: weekDayLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isCompare == true ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.horizontalDivider.color   }
+            .bind(to: bubbleView.rx.backgroundColor)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.nowDay == $0.day ? false : true }
+            .bind(to: eventView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.nowDay == $0.day ? HPCommonUIAsset.white.color : HPCommonUIAsset.black.color }
+            .bind(to: dayLabel.rx.textColor)
+            .disposed(by: disposeBag)
 
+        reactor.state
+            .map { $0.nowDay == $0.day ? HPCommonUIAsset.white.color : HPCommonUIAsset.black.color }
+            .bind(to: weekDayLabel.rx.textColor)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.nowDay == $0.day ? HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16) : HPCommonUIFontFamily.Pretendard.regular.font(size: 16) }
+            .bind(to: dayLabel.rx.font)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .map { $0.nowDay == $0.day ? HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16) : HPCommonUIFontFamily.Pretendard.regular.font(size: 16) }
+            .bind(to: weekDayLabel.rx.font)
+            .disposed(by: disposeBag)
     }
 }

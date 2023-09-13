@@ -119,9 +119,7 @@ public final class HPCalendarView: UIView {
 
 
             calendarCollectionView.snp.makeConstraints {
-                $0.top.equalToSuperview()
-                $0.left.equalToSuperview().offset(16)
-                $0.right.equalToSuperview().offset(-16)
+                $0.top.left.right.equalToSuperview()
                 $0.bottom.equalToSuperview().offset(-20)
             }
         }
@@ -215,7 +213,7 @@ public final class HPCalendarView: UIView {
         )
         
         let bubbleCalendarGroupSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(calendarCollectionView.frame.size.width),
+            widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(calendarCollectionView.frame.size.height)
         )
         
@@ -223,7 +221,7 @@ public final class HPCalendarView: UIView {
             layoutSize: bubbleCalendarItemSize
         )
         
-        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)
         
         let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: bubbleCalendarGroupSize,
@@ -232,6 +230,8 @@ public final class HPCalendarView: UIView {
         )
         
         let bubbleCalendarSection = NSCollectionLayoutSection(group: bubbleCalendarGroup)
+        
+        bubbleCalendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: -40, bottom: 0, trailing: -40)
         bubbleCalendarSection.orthogonalScrollingBehavior = .continuous
         
         

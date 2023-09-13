@@ -23,12 +23,12 @@ public final class HPCalendarDayCellReactor: Reactor {
     
     public struct State {
         var days: String
-        var iscompare: Bool
+        var isCompare: Bool
     }
     
-    public init(days: String, iscompare: Bool) {
-        print("Days State: \(days) or iscompare: \(iscompare)")
-        self.initialState = State(days: days, iscompare: iscompare)
+    public init(days: String, isCompare: Bool) {
+        print("Days State: \(days) or iscompare: \(isCompare)")
+        self.initialState = State(days: days, isCompare: isCompare)
     }
     
     
@@ -86,14 +86,14 @@ extension HPCalendarDayCell: ReactorKit.View {
         
         
         reactor.state
-            .filter { $0.iscompare  == false}
+            .filter { $0.isCompare  == false}
             .map { _ in HPCommonUIAsset.lineSeparator.color }
             .asDriver(onErrorJustReturn: .separator)
             .drive(dayLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         reactor.state
-            .filter { $0.iscompare == true }
+            .filter { $0.isCompare == true }
             .map { _ in HPCommonUIAsset.black.color }
             .asDriver(onErrorJustReturn: .separator)
             .drive(dayLabel.rx.textColor)
