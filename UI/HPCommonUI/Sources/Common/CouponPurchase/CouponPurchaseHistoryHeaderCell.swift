@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-public class CouponPurchaseHistoryHeaderCell: UITableViewCell {
+public final class CouponPurchaseHistoryHeaderCell: UITableViewCell {
     public static let identifier = "CouponPurchaseHistoryHeaderCell"
     public static let height: CGFloat = 51.5
     

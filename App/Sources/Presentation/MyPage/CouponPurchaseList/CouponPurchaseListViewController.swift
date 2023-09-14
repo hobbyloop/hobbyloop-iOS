@@ -8,7 +8,7 @@
 import UIKit
 import HPCommonUI
 
-class CouponPurchaseListViewController: UIViewController {
+final class CouponPurchaseListViewController: UIViewController {
     // TODO: API 통해 이용권 구매 데이터 받아오고 날짜별로 grouping하기
     
     // MARK: - custom navigation bar
@@ -40,7 +40,7 @@ class CouponPurchaseListViewController: UIViewController {
     }
     
     // MARK: - table view
-    let tableView = UITableView().then {
+    private let tableView = UITableView().then {
         $0.backgroundColor = HPCommonUIAsset.lightBackground.color
         $0.separatorStyle = .none
     }
