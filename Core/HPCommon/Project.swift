@@ -10,7 +10,7 @@ import ProjectDescriptionHelpers
 
 let common = Project.makeModule(
   name: "HPCommon",
-  products: [.framework(.static)],
+  products: [.framework(.dynamic)],
   dependencies: [
     .Project.Core.extensions
   ]
