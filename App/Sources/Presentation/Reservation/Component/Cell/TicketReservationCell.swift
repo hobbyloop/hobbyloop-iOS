@@ -10,10 +10,17 @@ import UIKit
 import SnapKit
 import Then
 import HPCommonUI
+import HPExtensions
 
 public final class ReservationTicketCell: UITableViewCell {
     
     //MARK: Property
+    
+    private let lessonTicketView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 40)).createTicketView(
+        CGRect(x: 0, y: 0, width: 70, height: 40),
+        backgroundColor: HPCommonUIAsset.black.color,
+        image: HPCommonUIAsset.ticketlogoFilled.image
+    )
     
     private let lessonNameLabel: UILabel = UILabel().then {
         $0.text = "6:1 그룹레슨 30회"
@@ -37,6 +44,7 @@ public final class ReservationTicketCell: UITableViewCell {
     
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -46,6 +54,36 @@ public final class ReservationTicketCell: UITableViewCell {
     
     private func configure() {
         
+        [lessonTicketView, lessonNameLabel, lessoneDateLabel, arrowImageView].forEach {
+            self.contentView.addSubview($0)
+        }
+                
+        lessonTicketView.snp.makeConstraints {
+            $0.width.equalTo(70)
+            $0.height.equalTo(40)
+            $0.left.equalToSuperview().offset(23)
+            $0.top.equalToSuperview().offset(25)
+        }
+        
+        lessonNameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(29)
+            $0.left.equalTo(lessonTicketView.snp.right).offset(19)
+            $0.height.equalTo(10)
+            $0.right.equalTo(arrowImageView.snp.left).offset(-10)
+        }
+        
+        lessoneDateLabel.snp.makeConstraints {
+            $0.top.equalTo(lessonNameLabel.snp.bottom).offset(7)
+            $0.left.equalTo(lessonTicketView.snp.right).offset(19)
+            $0.height.equalTo(12)
+            $0.right.equalTo(arrowImageView.snp.right).offset(-10)
+        }
+        
+        arrowImageView.snp.makeConstraints {
+            $0.width.height.equalTo(20)
+            $0.centerY.equalTo(lessonTicketView)
+            $0.right.equalToSuperview().offset(-16)
+        }
         
     }
 }
