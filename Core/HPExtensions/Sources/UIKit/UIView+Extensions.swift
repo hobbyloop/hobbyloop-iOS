@@ -7,7 +7,7 @@
 
 import UIKit
 
-import HPCommon
+import HPCommonUI
 //TODO: Circular dependency between modules 'HPExtensions' and 'HPCommonUI'
 
 

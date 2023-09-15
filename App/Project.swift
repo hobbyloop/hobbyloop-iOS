@@ -29,7 +29,7 @@ let project = Project.makeModule(
     infoExtensions: [:],
     dependencies: [
         .Project.Core.thirdParty,
-        .Project.Core.foundation,
+        .Project.Core.common,
         .Project.Core.domain,
         .Project.Core.network,
         .Project.UI.common
