@@ -7,7 +7,6 @@
 
 import UIKit
 
-import HPExtensions
 import Then
 import SnapKit
 

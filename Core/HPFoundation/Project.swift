@@ -6,7 +6,6 @@ let foundation = Project.makeModule(
     name: "HPFoundation",
     products: [.framework(.dynamic)],
     dependencies: [
-        .Project.Core.extensions,
         .Project.Core.common
     ]
 )

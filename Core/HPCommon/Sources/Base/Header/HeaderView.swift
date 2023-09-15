@@ -7,7 +7,6 @@
 
 import UIKit
 
-import HPExtensions
 import HPCommonUI
 import Then
 import RxSwift

@@ -199,34 +199,3 @@ extension TicketSelectViewController: UITableViewDelegate {
 
 
 
-//TODO: Tuist 오류로 인해 ViewController 따로 빼놓은 상태
-extension UIView {
-    
-    
-    func createTicketView(_ rect: CGRect, backgroundColor: UIColor, image: UIImage) -> UIView {
-
-        let ticketView = UIView(frame: rect)
-        let logoImageView = UIImageView(image: image)
-        
-        ticketView.backgroundColor = backgroundColor
-        logoImageView.contentMode = .scaleToFill
-        
-        ticketView.addSubview(logoImageView)
-        
-        logoImageView.snp.makeConstraints {
-            $0.width.equalTo(28)
-            $0.height.equalTo(23)
-            $0.center.equalToSuperview()
-        }
-        
-        
-        let maskPath = UIBezierPath(shouldRoundRect: ticketView.bounds, topLeftRadius: 10, topRightRadius: 3, bottomLeftRadius: 10, bottomRightRadius: 3)
-        let maskLayer = CAShapeLayer()
-        
-        maskLayer.path = maskPath.cgPath
-        ticketView.layer.mask = maskLayer
-        
-        return ticketView
-    }
-    
-}
