@@ -7,7 +7,7 @@
 
 import Foundation
 
-
+//TODO: Almofire에 제공되는 EventMonitor 수정
 public struct LogFile {
     public static func logging<T>(_ object: T?, filename: String = #file, line: Int = #line, funcName: String = #function) {
         if let obj = object {
