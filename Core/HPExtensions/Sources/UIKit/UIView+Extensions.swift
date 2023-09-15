@@ -7,6 +7,8 @@
 
 import UIKit
 
+//TODO: Circular dependency between modules 'HPExtensions' and 'HPCommonUI'
+
 
 public extension UIView {
     
