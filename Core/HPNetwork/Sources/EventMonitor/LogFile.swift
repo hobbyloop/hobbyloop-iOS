@@ -1,11 +1,12 @@
 //
 //  LogFile.swift
-//  HPExtensions
+//  HPNetwork
 //
-//  Created by 김진우 on 2023/05/22.
+//  Created by Kim dohyun on 2023/09/15.
 //
 
 import Foundation
+
 
 public struct LogFile {
     public static func logging<T>(_ object: T?, filename: String = #file, line: Int = #line, funcName: String = #function) {

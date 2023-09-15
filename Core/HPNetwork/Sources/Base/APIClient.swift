@@ -7,7 +7,6 @@
 
 import Foundation
 
-import HPExtensions
 import HPCommon
 import Alamofire
 import RxSwift
