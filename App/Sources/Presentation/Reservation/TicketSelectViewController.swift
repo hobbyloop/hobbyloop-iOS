@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import ReactorKit
 
 import HPCommonUI
 
@@ -33,6 +34,33 @@ public final class TicketSelectViewController: UIViewController {
         $0.textAlignment = .left
     }
     
+    
+    private let ticketButton: HPButton = HPButton(
+        cornerRadius: 10,
+        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+    ).then {
+        $0.setTitle("이용권", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
+    }
+    
+    private let loofPassButton: HPButton = HPButton(
+        cornerRadius: 10,
+        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+    ).then {
+        
+        $0.setTitle("루프패스", for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
+    }
+    
+    
+    private let ticketSelectTableView: UITableView = UITableView().then {
+        $0.separatorStyle = .none
+        $0.backgroundColor = HPCommonUIAsset.lightblack.color
+        $0.estimatedRowHeight = 234
+    }
+    
     //MARK: LifeCycle
     
     public override func viewDidLoad() {
@@ -45,7 +73,10 @@ public final class TicketSelectViewController: UIViewController {
     
     private func configure() {
         self.view.backgroundColor = .white
-        [ticketInfoLabel, ticketImageView, ticketdescriptionLabel].forEach {
+        
+        [ticketInfoLabel, ticketImageView, ticketdescriptionLabel,
+         ticketSelectTableView, ticketButton, loofPassButton
+        ].forEach {
             self.view.addSubview($0)
         }
         
@@ -69,6 +100,29 @@ public final class TicketSelectViewController: UIViewController {
             $0.right.equalToSuperview()
             $0.height.equalTo(14)
         }
+        
+        
+        ticketButton.snp.makeConstraints {
+            $0.top.equalTo(ticketdescriptionLabel.snp.bottom).offset(18)
+            $0.left.equalTo(17)
+            $0.width.equalTo(69)
+            $0.height.equalTo(26)
+        }
+        
+        loofPassButton.snp.makeConstraints {
+            $0.top.equalTo(ticketButton)
+            $0.left.equalTo(ticketButton.snp.right).offset(8)
+            $0.width.equalTo(69)
+            $0.height.equalTo(26)
+        }
+        
+        ticketSelectTableView.snp.makeConstraints {
+            $0.top.equalTo(loofPassButton.snp.bottom).offset(31)
+            $0.left.right.bottom.equalToSuperview()
+        }
+        
+        
+        
     }
     
     
