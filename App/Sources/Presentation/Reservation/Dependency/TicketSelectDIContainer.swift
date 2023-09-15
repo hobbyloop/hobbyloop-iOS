@@ -19,7 +19,7 @@ final class TicketSelectDIContainer: DIContainer {
     typealias Reactor = TicketSelectViewReactor
     
     func makeViewController() -> TicketSelectViewController {
-        return TicketSelectViewController()
+        return TicketSelectViewController(reactor: makeReactor())
     }
     
     func makeReactor() -> TicketSelectViewReactor {

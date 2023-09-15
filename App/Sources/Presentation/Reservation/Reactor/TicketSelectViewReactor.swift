@@ -19,15 +19,27 @@ public final class TicketSelectViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
+        case setTicketInfoItem
     }
     
     public struct State {
         var isLoading: Bool
+        @Pulse var section: [TicketSelectSection]
     }
     
     
     init() {
-        self.initialState = State(isLoading: false)
+        self.initialState = State(
+            isLoading: false,
+            section: [
+                .reservationTicket([
+                    .reservationTicketItem,
+                ]),
+                .reservationTicketClass([
+                    .reservationTicketItem
+                ])
+            ]
+        )
     }
     
     
@@ -35,7 +47,10 @@ public final class TicketSelectViewReactor: Reactor {
         
         switch action {
         case .viewDidLoad:
-            return .just(.setLoading(true))
+            return .concat([
+                .just(.setTicketInfoItem),
+                .just(.setLoading(false))
+            ])
         }
         
     }
@@ -48,6 +63,8 @@ public final class TicketSelectViewReactor: Reactor {
         case let .setLoading(isLoading):
             
             newState.isLoading = isLoading
+            
+        case .setTicketInfoItem: break
         }
         
         

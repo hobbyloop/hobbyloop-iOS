@@ -21,6 +21,9 @@ public final class TicketSelectCell: UITableViewCell {
     
     private let nameLabel: UILabel = UILabel().then {
         $0.text = "발란스 스튜디오"
+        $0.textColor = HPCommonUIAsset.lightblack.color
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textAlignment = .left
     }
     
     private let underLine: UIView = UIView().then {
@@ -58,7 +61,7 @@ public final class TicketSelectCell: UITableViewCell {
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(31)
             $0.left.equalTo(iconImageView.snp.right).offset(11)
-            $0.height.equalTo(14)
+            $0.height.equalTo(20)
             $0.centerY.equalTo(iconImageView)
         }
         

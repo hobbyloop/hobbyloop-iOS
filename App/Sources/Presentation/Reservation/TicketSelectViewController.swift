@@ -9,10 +9,11 @@ import UIKit
 import SnapKit
 import Then
 import ReactorKit
+import RxDataSources
 
 import HPCommonUI
 
-public final class TicketSelectViewController: UIViewController {
+public final class TicketSelectViewController: BaseViewController<TicketSelectViewReactor> {
     
     
     //MARK: Property
@@ -54,14 +55,31 @@ public final class TicketSelectViewController: UIViewController {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
     }
     
-    
-    private let ticketSelectTableView: UITableView = UITableView().then {
+    private lazy var ticketSelectDataSource: RxTableViewSectionedReloadDataSource<TicketSelectSection> = .init { dataSource, tableView, indexPath, sectionItem in
+        switch sectionItem {
+        case .reservationTicketItem:
+            guard let ticketSelectCell = tableView.dequeueReusableCell(withIdentifier: "TicketSelectCell", for: indexPath) as? TicketSelectCell else { return UITableViewCell() }
+            return ticketSelectCell
+        }
+    }
+        
+    private lazy var ticketSelectTableView: UITableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.separatorStyle = .none
-        $0.backgroundColor = HPCommonUIAsset.lightblack.color
-        $0.estimatedRowHeight = 234
+        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.register(TicketSelectCell.self, forCellReuseIdentifier: "TicketSelectCell")
+        $0.register(TicketSelectReusableView.self, forHeaderFooterViewReuseIdentifier: "TicketSelectReusableView")
     }
     
     //MARK: LifeCycle
+    
+    override public init(reactor: TicketSelectViewReactor?) {
+        defer { self.reactor = reactor }
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,9 +143,56 @@ public final class TicketSelectViewController: UIViewController {
         
     }
     
+    public override func bind(reactor: TicketSelectViewReactor) {
+        
+        Observable
+            .just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        self.ticketSelectTableView
+            .rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .drive(ticketSelectTableView.rx.items(dataSource: self.ticketSelectDataSource))
+            .disposed(by: disposeBag)
+    }
     
     
     
     
 }
 
+
+
+
+extension TicketSelectViewController: UITableViewDelegate {
+    
+    
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        guard let ticketHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "TicketSelectReusableView") as? TicketSelectReusableView else { return UIView() }
+        
+        return ticketHeaderView
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 14
+    }
+    
+    
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        guard let ticketFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "TicketSelectReusableView") as? TicketSelectReusableView else { return UIView() }
+        
+        return ticketFooterView
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+}
