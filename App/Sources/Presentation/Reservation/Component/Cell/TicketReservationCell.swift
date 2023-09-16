@@ -12,7 +12,7 @@ import Then
 import HPCommonUI
 import HPExtensions
 
-public final class ReservationTicketCell: UITableViewCell {
+public final class TicketReservationCell: UITableViewCell {
     
     //MARK: Property
     

@@ -33,10 +33,10 @@ public final class TicketSelectViewReactor: Reactor {
             isLoading: false,
             section: [
                 .reservationTicket([
-                    .reservationTicketItem,
+                    .reservationTicketItem(TicketSelectCellReactor.init(section: [.personLesson([.ticketItem])]))
                 ]),
                 .reservationTicketClass([
-                    .reservationTicketItem
+                    .reservationTicketItem(TicketSelectCellReactor.init(section: [.groupLesson([.ticketItem])]))
                 ])
             ]
         )

@@ -57,8 +57,9 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     
     private lazy var ticketSelectDataSource: RxTableViewSectionedReloadDataSource<TicketSelectSection> = .init { dataSource, tableView, indexPath, sectionItem in
         switch sectionItem {
-        case .reservationTicketItem:
+        case let .reservationTicketItem(cellReactor):
             guard let ticketSelectCell = tableView.dequeueReusableCell(withIdentifier: "TicketSelectCell", for: indexPath) as? TicketSelectCell else { return UITableViewCell() }
+            ticketSelectCell.reactor = cellReactor
             return ticketSelectCell
         }
     }
@@ -66,6 +67,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     private lazy var ticketSelectTableView: UITableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.separatorStyle = .none
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.rowHeight = UITableView.automaticDimension
         $0.register(TicketSelectCell.self, forCellReuseIdentifier: "TicketSelectCell")
         $0.register(TicketSelectReusableView.self, forHeaderFooterViewReuseIdentifier: "TicketSelectReusableView")
     }
@@ -182,6 +184,11 @@ extension TicketSelectViewController: UITableViewDelegate {
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 14
+    }
+    
+    
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 300
     }
     
     

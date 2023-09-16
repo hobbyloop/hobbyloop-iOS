@@ -34,5 +34,5 @@ public enum TicketSelectSection: SectionModelType {
 
 //MARK: Item
 public enum TicketSelectItem {
-    case reservationTicketItem
+    case reservationTicketItem(TicketSelectCellReactor)
 }

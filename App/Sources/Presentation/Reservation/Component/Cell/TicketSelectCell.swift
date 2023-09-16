@@ -9,11 +9,18 @@ import UIKit
 
 import Then
 import SnapKit
+import RxDataSources
+import ReactorKit
 import HPCommonUI
 
 public final class TicketSelectCell: UITableViewCell {
     
     //MARK: Property
+    
+    public typealias Reactor = TicketSelectCellReactor
+    
+    public var disposeBag: DisposeBag = DisposeBag()
+    
     private let iconImageView: UIImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
         $0.image = HPCommonUIAsset.pilatesFilled.image
@@ -30,8 +37,21 @@ public final class TicketSelectCell: UITableViewCell {
         $0.backgroundColor = HPCommonUIAsset.mercury.color
     }
     
+    
+    private lazy var ticketInfoDataSource: RxTableViewSectionedReloadDataSource<TicketReservationSection> = .init { dataSource, tableView, indexPath, sectionItem in
+        switch sectionItem {
+        case .ticketItem:
+            guard let reservationCell = tableView.dequeueReusableCell(withIdentifier: "TicketReservationCell", for: indexPath) as? TicketReservationCell else { return UITableViewCell() }
+            
+            return reservationCell
+            
+
+        }
+    }
+    
     private let ticketInfoTableView: UITableView = UITableView().then {
         $0.separatorStyle = .none
+        $0.register(TicketReservationCell.self, forCellReuseIdentifier: "TicketReservationCell")
     }
 
     
@@ -82,3 +102,17 @@ public final class TicketSelectCell: UITableViewCell {
 }
 
 
+
+extension TicketSelectCell: ReactorKit.View {
+    
+    
+    public func bind(reactor: Reactor) {
+
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .drive(ticketInfoTableView.rx.items(dataSource: self.ticketInfoDataSource))
+            .disposed(by: disposeBag)
+        
+        
+    }
+}
