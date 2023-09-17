@@ -18,6 +18,21 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
     public var calendarState: HPCalendarState = .now
     
     
+    public func calculateDateDifference(day: Int) -> String {
+        switch day {
+        case 0, 6:
+            return "linen"
+        case 1, 5:
+            return "lightPeach"
+        case 2, 4:
+            return "peach"
+        case 3:
+            return "deepOrange"
+        default:
+            return "deepOrange"
+        }
+    }
+    
     
     public func getEndOfDays(month: Int) -> Int {
         let defaultMonth: [Int] = [1,3,5,7,8,10,12]
@@ -75,7 +90,7 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
                             day: "\(days - startOfDays + 1)",
                             weekDay: weekDay,
                             nowDay:"\(nowDate.day)",
-                            color: "",
+                            color: "horizontalDivider",
                             isCompare: false
                         )
                     )
@@ -87,7 +102,7 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
                             day: "\(days - startOfDays + 1)",
                             weekDay: weekDay,
                             nowDay: "\(nowDate.day)",
-                            color: "",
+                            color: calculateDateDifference(day: ((days - startOfDays) % 7)),
                             isCompare: true
                         )
                     )

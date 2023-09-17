@@ -24,4 +24,5 @@ public protocol HPCalendarBubbleDelegateProxy {
     func configureBubbleCalendarDay() -> Observable<HPCalendarViewReactor.Mutation>
     func configureBubbleCalendarWeek(month: Int, day: Int) -> String
     func getEndOfDays(month: Int) -> Int
+    func calculateDateDifference(day: Int) -> String
 }
