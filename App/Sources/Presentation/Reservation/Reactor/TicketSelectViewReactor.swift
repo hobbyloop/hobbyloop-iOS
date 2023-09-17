@@ -34,10 +34,10 @@ public final class TicketSelectViewReactor: Reactor {
             isLoading: false,
             section: [
                 .reservationTicket([
-                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "6:1 그룹레슨 30회", lessoneDate: "2023.04.20 - 2023.06.20")))
+                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "6:1 그룹레슨 30회", lessoneDate: "2023.04.20 - 2023.06.20", color: "black")))
                 ]),
                 .reservationTicket([
-                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "1:1 개인레슨 20회", lessoneDate: "2023.09.17 - 2023.09.30")))
+                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "1:1 개인레슨 20회", lessoneDate: "2023.09.17 - 2023.09.30", color: "beanRed")))
                 ])
             ]
         )

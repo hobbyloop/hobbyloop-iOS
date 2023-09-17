@@ -155,6 +155,13 @@ extension TicketInfoView: ReactorKit.View {
             .map { $0.lessonDate }
             .bind(to: lessonDateLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        //TODO: TicketView Instance Property로 선언시 적용
+//        reactor.state
+//            .map { $0.color }
+//            .map { HPCommonUIColors.Color(named: $0, in: HPCommonUIResources.bundle, compatibleWith: nil) }
+//            .bind(to: self.ticketView.rx.backgroundColor)
+//            .disposed(by: disposeBag)
     }
     
 }

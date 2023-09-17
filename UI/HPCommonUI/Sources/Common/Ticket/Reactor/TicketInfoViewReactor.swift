@@ -23,12 +23,14 @@ public class TicketInfoViewReactor: Reactor {
     public struct State {
         var lessonName: String
         var lessonDate: String
+        var color: String
     }
     
-    public init(lessonName: String, lessoneDate: String) {
+    public init(lessonName: String, lessoneDate: String, color: String) {
         self.initialState = State(
             lessonName: lessonName,
-            lessonDate: lessoneDate
+            lessonDate: lessoneDate,
+            color: color
         )
     }
 
