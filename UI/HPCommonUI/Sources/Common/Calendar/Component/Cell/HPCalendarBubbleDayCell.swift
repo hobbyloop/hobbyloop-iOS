@@ -119,11 +119,13 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
         
         reactor.state
             .map { $0.day }
+            .distinctUntilChanged()
             .bind(to: dayLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.weekDay }
+            .distinctUntilChanged()
             .bind(to: weekDayLabel.rx.text)
             .disposed(by: disposeBag)
         

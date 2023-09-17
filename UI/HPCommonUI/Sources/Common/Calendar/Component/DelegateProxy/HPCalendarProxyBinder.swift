@@ -55,7 +55,8 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         
         if month > 1 {
             for i in 1 ..< month {
-                totalday += getEndOfDays(month: i)
+                let endDay: Int = getEndOfDays(month: i)
+                totalday += endDay
             }
             totalday = totalday + day
         } else if month == 1 {
@@ -63,13 +64,11 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         }
         
         var index: Int = (totalday) % 7
-        
-        if index > 0 {
-            index = index - 1
+        if totalday + day % 7 == 0 {
+            index = 6
+        } else {
+            index = (totalday - 1) % 7
         }
-            
-        
-        
         return weekOfDay[index]
     }
     
