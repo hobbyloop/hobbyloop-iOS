@@ -12,15 +12,51 @@ import ReactorKit
 
 
 public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDelegateProxy, HPCalendarInterface {
-    
-    
-    
+
     //MARK: Property
     public var nowDate: Date = Date()
     public var calendarState: HPCalendarState = .now
     
     
-    //TODO: HPCalendar 과거 일경우 False 미래 혹은 현재 일경우 True 값으로 리턴하여 색상 변경
+    
+    public func getEndOfDays(month: Int) -> Int {
+        let defaultMonth: [Int] = [1,3,5,7,8,10,12]
+        var endDay: Int = 0
+        if month == 2 {
+            endDay = 28
+        }else if defaultMonth.contains(month) {
+            endDay = 31
+        }else {
+            endDay = 30
+        }
+        
+        return endDay
+    }
+    
+    
+    public func configureBubbleCalendarWeek(month: Int, day: Int) -> String {
+        var totalday: Int = 0
+        let weekOfDay = nowDate.getWeekDays(identifier: "ko_KR")
+        
+        if month > 1 {
+            for i in 1 ..< month {
+                totalday += getEndOfDays(month: i)
+            }
+            totalday = totalday + day
+        } else if month == 1 {
+            totalday = day
+        }
+        
+        var index: Int = (totalday) % 7
+        
+        if index > 0 {
+            index = index - 1
+        }
+            
+        
+        
+        return weekOfDay[index]
+    }
     
     public func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         var calendarSectionItem: [CalendarSectionItem] = []
@@ -31,12 +67,13 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
             if 1 > (days - startOfDays + 1) {
                 continue
             }
+            var weekDay = configureBubbleCalendarWeek(month: nowDate.month, day: days)
             if (days - startOfDays + 1) < nowDate.day {
                 calendarSectionItem.append(
                     CalendarSectionItem.bubbleItem(
                         HPCalendarBubbleDayCellReactor(
                             day: "\(days - startOfDays + 1)",
-                            weekDay: "월",
+                            weekDay: weekDay,
                             nowDay:"\(nowDate.day)",
                             color: "",
                             isCompare: false
@@ -48,7 +85,7 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
                     CalendarSectionItem.bubbleItem(
                         HPCalendarBubbleDayCellReactor(
                             day: "\(days - startOfDays + 1)",
-                            weekDay: "월",
+                            weekDay: weekDay,
                             nowDay: "\(nowDate.day)",
                             color: "",
                             isCompare: true

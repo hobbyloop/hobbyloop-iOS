@@ -47,7 +47,7 @@ public extension Date {
         var calendar = Calendar.current
         calendar.locale = Locale(identifier: identifier)
         
-        return calendar.weekdaySymbols
+        return calendar.shortWeekdaySymbols
     }
     
     
