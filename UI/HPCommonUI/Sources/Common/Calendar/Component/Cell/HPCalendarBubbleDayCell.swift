@@ -157,5 +157,11 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
             .map { $0.nowDay == $0.day ? HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16) : HPCommonUIFontFamily.Pretendard.regular.font(size: 16) }
             .bind(to: weekDayLabel.rx.font)
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.color }
+            .map { HPCommonUIColors.Color(named: $0, in: HPCommonUIResources.bundle, compatibleWith: nil)}
+            .bind(to: bubbleView.rx.backgroundColor)
+            .disposed(by: disposeBag)
     }
 }
