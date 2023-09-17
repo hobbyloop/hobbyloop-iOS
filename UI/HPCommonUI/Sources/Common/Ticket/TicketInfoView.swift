@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import Then
 import ReactorKit
+import RxCocoa
 
 
 public final class TicketInfoView: UIView {
@@ -45,12 +46,12 @@ public final class TicketInfoView: UIView {
     }
     
     
-    public init(ticketSize: CGSize, ticketColor: UIColor, ticketImage: UIImage) {
+    public init(reactor: TicketInfoViewReactor? = nil, ticketSize: CGSize, ticketColor: UIColor, ticketImage: UIImage) {
         self.ticketSize = ticketSize
         self.ticketColor = ticketColor
         self.ticketImage = ticketImage
-        
         super.init(frame: .zero)
+        self.reactor = reactor
         
         configure()
     }
@@ -145,7 +146,15 @@ extension TicketInfoView: ReactorKit.View {
     
     
     public func bind(reactor: Reactor) {
+        reactor.state
+            .map { $0.lessonName }
+            .bind(to: lessonNameLabel.rx.text)
+            .disposed(by: disposeBag)
         
+        reactor.state
+            .map { $0.lessonDate }
+            .bind(to: lessonDateLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
 }

@@ -8,6 +8,7 @@
 import Foundation
 
 import ReactorKit
+import HPCommonUI
 
 
 public final class TicketSelectCellReactor: Reactor {
@@ -18,13 +19,13 @@ public final class TicketSelectCellReactor: Reactor {
     public typealias Action = NoAction
     
     public struct State {
-        @Pulse var section: [TicketReservationSection]
+        @Pulse var model: TicketInfoViewReactor
     }
     
     
-    public init(section: [TicketReservationSection]) {
-        self.initialState = State(section: section)
-        print("ticket Select Cell Reactor Section: \(section)")
+    public init(model: TicketInfoViewReactor) {
+        self.initialState = State(model: model)
+        print("ticket Select Cell Reactor Section: \(model)")
 
     }
     

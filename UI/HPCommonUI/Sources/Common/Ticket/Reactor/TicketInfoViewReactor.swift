@@ -10,7 +10,7 @@ import Foundation
 import ReactorKit
 
 
-public final class TicketInfoViewReactor: Reactor {
+public class TicketInfoViewReactor: Reactor {
     
     public var initialState: State
     
@@ -25,10 +25,10 @@ public final class TicketInfoViewReactor: Reactor {
         var lessonDate: String
     }
     
-    public init() {
+    public init(lessonName: String, lessoneDate: String) {
         self.initialState = State(
-            lessonName: "",
-            lessonDate: ""
+            lessonName: lessonName,
+            lessonDate: lessoneDate
         )
     }
 

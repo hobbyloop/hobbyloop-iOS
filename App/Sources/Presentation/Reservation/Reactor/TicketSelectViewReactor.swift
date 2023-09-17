@@ -8,6 +8,7 @@
 import Foundation
 
 import ReactorKit
+import HPCommonUI
 
 public final class TicketSelectViewReactor: Reactor {
     public var initialState: State
@@ -33,10 +34,10 @@ public final class TicketSelectViewReactor: Reactor {
             isLoading: false,
             section: [
                 .reservationTicket([
-                    .reservationTicketItem(TicketSelectCellReactor.init(section: [.personLesson([.ticketItem])]))
+                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "6:1 그룹레슨 30회", lessoneDate: "2023.04.20 - 2023.06.20")))
                 ]),
-                .reservationTicketClass([
-                    .reservationTicketItem(TicketSelectCellReactor.init(section: [.groupLesson([.ticketItem])]))
+                .reservationTicket([
+                    .reservationTicketItem(TicketSelectCellReactor(model: TicketInfoViewReactor(lessonName: "1:1 개인레슨 20회", lessoneDate: "2023.09.17 - 2023.09.30")))
                 ])
             ]
         )

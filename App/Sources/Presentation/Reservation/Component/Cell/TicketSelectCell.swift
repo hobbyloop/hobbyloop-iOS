@@ -37,23 +37,21 @@ public final class TicketSelectCell: UITableViewCell {
         $0.backgroundColor = HPCommonUIAsset.mercury.color
     }
     
+    //TODO: API DTO에 따라 TicketInfoView Count 값이 넘겨질 경우 Multi TableView 구성 구현
     
-    private lazy var ticketInfoDataSource: RxTableViewSectionedReloadDataSource<TicketReservationSection> = .init { dataSource, tableView, indexPath, sectionItem in
-        switch sectionItem {
-        case .ticketItem:
-            guard let reservationCell = tableView.dequeueReusableCell(withIdentifier: "TicketReservationCell", for: indexPath) as? TicketReservationCell else { return UITableViewCell() }
-            
-            return reservationCell
-            
-
-        }
+    private lazy var ticketStakView: UIStackView = UIStackView().then {
+        $0.spacing = 26
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.distribution = .fillEqually
     }
     
-    private let ticketInfoTableView: UITableView = UITableView().then {
-        $0.separatorStyle = .none
-        $0.register(TicketReservationCell.self, forCellReuseIdentifier: "TicketReservationCell")
-    }
-
+    
+    private lazy var ticketView: TicketInfoView = TicketInfoView(
+        ticketSize: CGSize(width: 70, height: 40),
+        ticketColor: HPCommonUIAsset.black.color,
+        ticketImage: HPCommonUIAsset.ticketlogoFilled.image
+    )
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -68,7 +66,9 @@ public final class TicketSelectCell: UITableViewCell {
     
     //MARK: Configure
     private func configure() {
-        [iconImageView, nameLabel, underLine, ticketInfoTableView].forEach {
+        ticketStakView.addArrangedSubview(ticketView)
+        
+        [iconImageView, nameLabel, underLine, ticketStakView].forEach {
             self.contentView.addSubview($0)
         }
         
@@ -93,9 +93,14 @@ public final class TicketSelectCell: UITableViewCell {
             $0.right.equalToSuperview().offset(-14)
         }
         
-        ticketInfoTableView.snp.makeConstraints {
-            $0.top.equalTo(underLine.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
+        ticketView.snp.makeConstraints {
+            $0.width.height.equalToSuperview()
+        }
+        
+        ticketStakView.snp.makeConstraints {
+            $0.top.equalTo(underLine.snp.bottom).offset(1)
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
         
     }
@@ -108,12 +113,9 @@ extension TicketSelectCell: ReactorKit.View {
     
     
     public func bind(reactor: Reactor) {
-
-        reactor.pulse(\.$section)
-            .asDriver(onErrorJustReturn: [])
-            .drive(ticketInfoTableView.rx.items(dataSource: self.ticketInfoDataSource))
+        reactor.state
+            .map { $0.model}
+            .bind(to: ticketView.rx.reactor)
             .disposed(by: disposeBag)
-        
-        
     }
 }
