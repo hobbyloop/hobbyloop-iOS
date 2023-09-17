@@ -37,13 +37,14 @@ public final class TicketReservationCell: UITableViewCell {
     }
     
     private let arrowImageView: UIImageView = UIImageView().then {
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFit
         $0.image = HPCommonUIAsset.rightarrow.image
     }
     
     
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         configure()
     }
     
@@ -68,7 +69,7 @@ public final class TicketReservationCell: UITableViewCell {
         lessonNameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(29)
             $0.left.equalTo(lessonTicketView.snp.right).offset(19)
-            $0.height.equalTo(10)
+            $0.height.equalTo(13)
             $0.right.equalTo(arrowImageView.snp.left).offset(-10)
         }
         
@@ -76,13 +77,14 @@ public final class TicketReservationCell: UITableViewCell {
             $0.top.equalTo(lessonNameLabel.snp.bottom).offset(7)
             $0.left.equalTo(lessonTicketView.snp.right).offset(19)
             $0.height.equalTo(12)
-            $0.right.equalTo(arrowImageView.snp.right).offset(-10)
+            $0.right.equalTo(arrowImageView.snp.left).offset(-10)
         }
         
         arrowImageView.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.equalTo(20)
+            $0.height.equalTo(20)
             $0.centerY.equalTo(lessonTicketView)
-            $0.right.equalToSuperview().offset(-16)
+            $0.right.equalToSuperview().offset(-24)
         }
         
     }
