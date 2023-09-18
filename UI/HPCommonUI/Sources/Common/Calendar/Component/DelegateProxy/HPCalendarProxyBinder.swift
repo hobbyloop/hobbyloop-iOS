@@ -10,7 +10,9 @@ import Foundation
 import RxSwift
 import ReactorKit
 
-
+/**
+     하비루프 Calendar business logic을 담당하는 Object 입니다.
+*/
 public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDelegateProxy, HPCalendarInterface {
 
     //MARK: Property
@@ -18,6 +20,14 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
     public var calendarState: HPCalendarState = .now
     
     
+    /**
+     HPCalendarBubbleDelegateProxy Protocol Method 이며, Weekly Calendar의 요일에 따라 Color를 Binding 처리하기 위한 Method 입니다.
+     
+     - Parameters:
+        - day : Int Type의 날짜
+     
+     - Returns : HPCommonUI Assets Color Name 을 String 형식으로 반환
+     */
     public func calculateDateDifference(day: Int) -> String {
         switch day {
         case 0, 6:
@@ -33,7 +43,13 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         }
     }
     
-    
+    /**
+     HPCalendarBubbleDelegateProxy Protocol Method 이며, 모든 달의 마지막 날짜를 구하기 위한 Method 입니다.
+     - Parameters:
+        - month : Int Type의 월
+     
+     - Returns : 해당 월의 마지막 날짜를 Int Type으로 반환
+     */
     public func getEndOfDays(month: Int) -> Int {
         let defaultMonth: [Int] = [1,3,5,7,8,10,12]
         var endDay: Int = 0
@@ -48,7 +64,15 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return endDay
     }
     
-    
+    /**
+     HPCalendarBubbleDelegateProxy Protocol Method 이며, 요일을 구하기 위한 Method 입니다.
+     
+     - Parameters:
+        - month : Int Type의 월
+        - day : Int Type의 날짜
+     
+     - Returns : 요일일 String Type으로 반환
+     */
     public func configureBubbleCalendarWeek(month: Int, day: Int) -> String {
         var totalday: Int = 0
         let weekOfDay = nowDate.getWeekDays(identifier: "ko_KR")
@@ -72,6 +96,11 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return weekOfDay[index]
     }
     
+    /**
+     HPCalendarBubbleDelegateProxy Protocol Method 이며 최종적으로 Interface를 구성하며, CalendarSectionItem에 Item을 부여해주는 Method 이다.
+     
+     - Returns : HPCalendarViewReactor의 (setCalendarItems) Mutation을 반환한다.
+     */
     public func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         var calendarSectionItem: [CalendarSectionItem] = []
         var startOfDays = (nowDate.weekday - 1)
@@ -112,12 +141,21 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return .just(.setCalendarItems(calendarSectionItem))
     }
     
-    
+    /**
+     HPCalendarBubbleDelegateProxy Protocol Method 이며 현재시간을 Update 하기위한 Method이다
+     
+     - Returns : HPCalendarViewReactor의 (setBubbleCalendarDay) Mutation을 반환한다.
+     */
     public func configureBubbleCalendarDay() -> Observable<HPCalendarViewReactor.Mutation> {
         return .just(.setBubbleCalendarDay(self.nowDate.day))
     }
     
     
+    /**
+     HPCalendarDelgateProxy Protocol Method 이며 최종적으로 Interface를 구성하여, CalendarSectionItem에 Item을 부여해주는 Method 이다.
+     
+     - Returns : HPCalendarViewReactor의 (setCalendarItems) Mutation을 반환한다.
+     */
     public func configureCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .now)
         
@@ -145,7 +183,11 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return .just(.setCalendarItems(calendarSectionItem))
     }
     
-    
+    /**
+    HPCalendarDelgateProxy Protocol Method 다음 달의 요일을 Update 하기 위한 Method이다.
+     
+     - Returns : 다음 달의 요일을 Update 한 후,  HPCalendarViewReactor의 (setCalendarItems) Mutation을 반환한다.
+     */
     public func updateNextDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .next)
         var updateCalendarSectionItem: [CalendarSectionItem] = []
@@ -177,7 +219,11 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return .just(.setCalendarItems(updateCalendarSectionItem))
     }
     
-    
+    /**
+    HPCalendarDelgateProxy Protocol Method 지난 달의 요일을 Update 하기 위한 Method이다.
+     
+     - Returns : 지난 달의 요일을 Update 한 후,  HPCalendarViewReactor의 (setCalendarItems) Mutation을 반환한다.
+     */
     public func updatePreviousDateCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         updateCalendarDate(state: .previous)
         var previousCalendarSectionItem: [CalendarSectionItem] = []
@@ -210,17 +256,36 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
         return .just(.setCalendarItems(previousCalendarSectionItem))
     }
     
+    /**
+    HPCalendarDelgateProxy Protocol Method 이며 HPCalendarInterface nowDate의 Date Type을 update 하기 위한 Method 이다.
+     
+     - Returns : HPCalendarInterface nowDate를 다음 달로 Update 한 후 HPCalendarViewReactor의 (setUpdateMonthItem) Mutation을 반환한다.
+     */
     public func updateNextMonthCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         
         return .just(.setUpdateMonthItem("\(self.nowDate.month)"))
     }
     
+    
+    /**
+     HPCalendarProxyBinder의 Method 이며, 현재 월에 해당하는 일 수를 구하기 위한 Method 이다.
+     - Parameters:
+        - date : HPCalendarInterface의 nowDate
+     
+     - Returns: Int Type의 일 수를 반환
+     
+     */
     public func setConfigureDays(date: Date) -> Int {
         
         return Calendar.current.range(of: .day, in: .month, for: date)?.count ?? Int()
     }
     
     
+    /**
+     HPCalendarDelgateProxy의 Method 이며, 다음 달, 지난 달을 계산하기 위한 Method
+     - Parameters:
+        - state : HPCalendarState 상태에 따라 Month 계산
+     */
     public func updateCalendarDate(state: HPCalendarState) {
         switch state {
         case .previous:
