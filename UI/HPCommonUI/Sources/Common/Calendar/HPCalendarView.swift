@@ -244,7 +244,6 @@ extension HPCalendarView: ReactorKit.View {
         Observable
             .just(())
             .map { Reactor.Action.changeCalendarStyle(self.isStyle)}
-            .debug("Load View HP Calendar View")
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -290,7 +289,7 @@ extension HPCalendarView: ReactorKit.View {
             }.disposed(by: disposeBag)
         
         
-        
+        //TODO: 추가 Cell Action 있을시 로직 추가
         calendarCollectionView
             .rx.itemSelected
             .withUnretained(self)

@@ -15,7 +15,7 @@ public final class HPCalendarViewReactor: Reactor {
     
     //MARK: Property
     public var initialState: State
-    public var calendarConfigureProxy: HPCalendarDelgateProxy & HPCalendarBubbleDelegateProxy & HPCalendarInterface = HPCalendarProxyBinder()
+    public var calendarConfigureProxy: HPCalendarDelgateProxy & HPCalendarBubbleDelegateProxy & HPCalendarInterface
     
     
     //MARK: Action
@@ -43,7 +43,8 @@ public final class HPCalendarViewReactor: Reactor {
     }
     
     
-    public init() {
+    public init(calendarConfigureProxy: HPCalendarDelgateProxy & HPCalendarBubbleDelegateProxy & HPCalendarInterface) {
+        self.calendarConfigureProxy = calendarConfigureProxy
         self.initialState = State(
             days: [],
             month: "",

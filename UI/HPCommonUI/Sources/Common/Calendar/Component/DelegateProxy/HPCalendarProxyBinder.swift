@@ -13,13 +13,13 @@ import ReactorKit
 /**
      하비루프 Calendar business logic을 담당하는 Object 입니다.
 */
-public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDelegateProxy, HPCalendarInterface {
+public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDelegateProxy, HPCalendarInterface {
 
     //MARK: Property
     public var nowDate: Date = Date()
     public var calendarState: HPCalendarState = .now
     
-    
+    public init() { }
     /**
      HPCalendarBubbleDelegateProxy Protocol Method 이며, Weekly Calendar의 요일에 따라 Color를 Binding 처리하기 위한 Method 입니다.
      
@@ -110,12 +110,13 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
             if 1 > (days - startOfDays + 1) {
                 continue
             }
-            var weekDay = configureBubbleCalendarWeek(month: nowDate.month, day: days)
-            if (days - startOfDays + 1) < nowDate.day {
+            var weekMonthDay = days - startOfDays + 1
+            var weekDay = configureBubbleCalendarWeek(month: nowDate.month, day: weekMonthDay)
+            if weekMonthDay < nowDate.day {
                 calendarSectionItem.append(
                     CalendarSectionItem.bubbleItem(
                         HPCalendarBubbleDayCellReactor(
-                            day: "\(days - startOfDays + 1)",
+                            day: "\(weekMonthDay)",
                             weekDay: weekDay,
                             nowDay:"\(nowDate.day)",
                             color: "horizontalDivider",
@@ -127,10 +128,10 @@ public final class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubb
                 calendarSectionItem.append(
                     CalendarSectionItem.bubbleItem(
                         HPCalendarBubbleDayCellReactor(
-                            day: "\(days - startOfDays + 1)",
+                            day: "\(weekMonthDay)",
                             weekDay: weekDay,
                             nowDay: "\(nowDate.day)",
-                            color: calculateDateDifference(day: ((days - startOfDays) % 7)),
+                            color: calculateDateDifference(day: ((weekMonthDay) % 7)),
                             isCompare: true
                         )
                     )

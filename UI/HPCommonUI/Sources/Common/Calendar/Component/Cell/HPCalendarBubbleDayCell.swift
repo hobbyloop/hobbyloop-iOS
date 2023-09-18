@@ -15,32 +15,11 @@ import Then
 import SnapKit
 
 
-public final class HPCalendarBubbleDayCellReactor: Reactor {
+public final class HPCalendarBubbleDayCell: UICollectionViewCell {
     
-    public var initialState: State
+    public var disposeBag: DisposeBag = DisposeBag()
     
-    
-    public typealias Action = NoAction
-    
-    public struct State {
-        var day: String
-        var weekDay: String
-        var nowDay: String
-        var color: String
-        var isCompare: Bool
-    }
-    
-    public init(day: String, weekDay: String, nowDay: String, color: String, isCompare: Bool) {
-        self.initialState = State(day: day, weekDay: weekDay, nowDay: nowDay, color: color, isCompare: isCompare)
-    }
-}
-
-
-final class HPCalendarBubbleDayCell: UICollectionViewCell {
-    
-    var disposeBag: DisposeBag = DisposeBag()
-    
-    typealias Reactor = HPCalendarBubbleDayCellReactor
+    public typealias Reactor = HPCalendarBubbleDayCellReactor
     
     private let bubbleView: UIView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.deepOrange.color
@@ -115,7 +94,7 @@ final class HPCalendarBubbleDayCell: UICollectionViewCell {
 
 extension HPCalendarBubbleDayCell: ReactorKit.View {
     
-    func bind(reactor: Reactor) {
+    public func bind(reactor: Reactor) {
         
         reactor.state
             .map { $0.day }
