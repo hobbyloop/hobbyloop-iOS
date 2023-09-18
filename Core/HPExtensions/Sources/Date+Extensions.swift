@@ -44,7 +44,6 @@ public extension Date {
         return self.calendar.range(of: .day, in: .month, for: nowDate)?.count ?? Int()
     }
     
-    //TODO: Protocol에 넣을지, Date Extension 넣을지 고민 
     func getWeekDays(identifier: String) -> [String] {
         var calendar = Calendar.current
         calendar.locale = Locale(identifier: identifier)
