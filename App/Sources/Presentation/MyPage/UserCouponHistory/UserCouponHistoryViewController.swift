@@ -106,6 +106,46 @@ final class UserCouponHistoryViewController: UIViewController {
         }
     }
     
+    // MARK: - 이용내역 부분
+    private let historyTitleLabel = UILabel().then {
+        $0.text = "이용내역"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+    }
+    
+    private let prevMonthButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.leftPolygon.image, for: .normal)
+        $0.tintColor = .black
+        $0.snp.makeConstraints {
+            $0.width.equalTo(15)
+            $0.height.equalTo(10)
+        }
+    }
+    
+    private let monthLabel = UILabel().then {
+        $0.text = "9월"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
+    }
+    
+    private let nextMonthButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.rightPolygon.image, for: .normal)
+        $0.tintColor = HPCommonUIAsset.deepSeparator.color
+        $0.snp.makeConstraints {
+            $0.width.equalTo(15)
+            $0.height.equalTo(10)
+        }
+        $0.isEnabled = false
+    }
+    
+    private lazy var monthControlStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 8
+        
+        [prevMonthButton, monthLabel, nextMonthButton].forEach($0.addArrangedSubview(_:))
+    }
+    
+    private let historyTableView = UITableView()
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,6 +155,7 @@ final class UserCouponHistoryViewController: UIViewController {
         layoutCouponTypeButtons()
         layoutCouponListView()
         layoutSetStartDateButton()
+        layoutCouponUsageHistoryPart()
     }
     
     // MARK: - layout methods
@@ -151,6 +192,24 @@ final class UserCouponHistoryViewController: UIViewController {
         setCouponStartDateButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(couponListView.snp.bottom).offset(38)
+        }
+    }
+    
+    private func layoutCouponUsageHistoryPart() {
+        [historyTitleLabel, monthControlStack, historyTableView].forEach(view.addSubview(_:))
+        historyTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(setCouponStartDateButton.snp.bottom).offset(22)
+            $0.leading.equalToSuperview().offset(41)
+        }
+        
+        monthControlStack.snp.makeConstraints {
+            $0.top.equalTo(historyTitleLabel.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().offset(41)
+        }
+        
+        historyTableView.snp.makeConstraints {
+            $0.top.equalTo(monthControlStack.snp.bottom).offset(30)
+            $0.bottom.leading.trailing.equalToSuperview()
         }
     }
 }
