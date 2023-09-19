@@ -144,12 +144,18 @@ final class UserCouponHistoryViewController: UIViewController {
         [prevMonthButton, monthLabel, nextMonthButton].forEach($0.addArrangedSubview(_:))
     }
     
-    private let historyTableView = UITableView()
+    private let historyTableView = UITableView().then {
+        $0.separatorStyle = .none
+    }
     
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        historyTableView.dataSource = self
+        historyTableView.delegate = self
+        historyTableView.rowHeight = CouponUsageHistoryCell.height
+        historyTableView.register(CouponUsageHistoryCell.self, forCellReuseIdentifier: CouponUsageHistoryCell.identifier)
         
         layoutCustomNavigationBar()
         layoutCouponTypeButtons()
@@ -211,5 +217,25 @@ final class UserCouponHistoryViewController: UIViewController {
             $0.top.equalTo(monthControlStack.snp.bottom).offset(30)
             $0.bottom.leading.trailing.equalToSuperview()
         }
+    }
+}
+
+// MARK: - table view data source
+extension UserCouponHistoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 6
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CouponUsageHistoryCell.identifier) as! CouponUsageHistoryCell
+        
+        return cell
+    }
+}
+
+// MARK: - table view delegate
+extension UserCouponHistoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.selectionStyle = .none
     }
 }
