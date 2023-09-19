@@ -51,17 +51,14 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
      - Returns : 해당 월의 마지막 날짜를 Int Type으로 반환
      */
     public func getEndOfDays(month: Int) -> Int {
-        let defaultMonth: [Int] = [1,3,5,7,8,10,12]
-        var endDay: Int = 0
-        if month == 2 {
-            endDay = 28
-        }else if defaultMonth.contains(month) {
-            endDay = 31
-        }else {
-            endDay = 30
+        switch month {
+        case 2:
+            return 28
+        case 1,3,5,7,8,10,12:
+            return 31
+        default:
+            return 30
         }
-        
-        return endDay
     }
     
     /**
