@@ -160,11 +160,9 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
             }
             
             //TODO: 년,월,일 Compare 로직 부분 분기 처리 고민후 수정
-            if Date().month == nowDate.month && currentDays < nowDate.day {
-                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
-            } else {
-                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
-            }
+            let isNowCompare = Date().month == nowDate.month && currentDays < nowDate.day
+            
+            calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: !isNowCompare)))
             
         }
         
@@ -193,17 +191,13 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
             }
             
             if Calendar.current.compare(Date(), to: nowDate, toGranularity: .month) == .orderedSame {
-                if Date().month == nowDate.month && currentDays < nowDate.day {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
-                } else {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
-                }
+                let isNowCompare = Date().month == nowDate.month && (days - currentDays + 1) < nowDate.day
+                
+                updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: !isNowCompare)))
             } else {
-                if Date().dateCompare(fromDate: nowDate) {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
-                } else {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
-                }
+                let isCompare = Date().dateCompare(fromDate: nowDate)
+                
+                updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: isCompare)))
             }
         }
         
@@ -231,19 +225,12 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
                 previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String(), isCompare: false)))
                 continue
             }
-            
             if Calendar.current.compare(Date(), to: nowDate, toGranularity: .month) == .orderedSame {
-                if Date().month == nowDate.month && (days - previousStartOfDays + 1) < nowDate.day {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
-                } else {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
-                }
+                let isNowCompare = Date().month == nowDate.month && (days - previousStartOfDays + 1) < nowDate.day
+                previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: !isNowCompare)))
             } else {
-                if Date().dateCompare(fromDate: nowDate) {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
-                } else {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
-                }
+                let isCompare = Date().dateCompare(fromDate: nowDate)
+                previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: isCompare)))
             }
 
         }
