@@ -102,12 +102,8 @@ public final class HPCalendarViewReactor: Reactor {
             newState.section[calendarSectionIndex] = .calendar(items)
         case let .setUpdateMonthItem(nextMonth):
             newState.month = nextMonth
-            
-            return newState
         case let .updateCalendarStyle(style):
-            
             newState.style = style
-            
         case let .setBubbleCalendarDay(nowDay):
             newState.nowDay = nowDay
         }
