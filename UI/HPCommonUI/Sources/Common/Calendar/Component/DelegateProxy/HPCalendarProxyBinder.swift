@@ -117,7 +117,7 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
                         weekDay: weekDay,
                         nowDay: "\(nowDate.day)",
                         color: weekMonthDay < nowDate.day ? "horizontalDivider" : calculateDateDifference(day: ((weekMonthDay) % 7)),
-                        isCompare: weekMonthDay < nowDate.day ? true : false
+                        isCompare: weekMonthDay < nowDate.day ? false : true
                     )
                 )
             )
