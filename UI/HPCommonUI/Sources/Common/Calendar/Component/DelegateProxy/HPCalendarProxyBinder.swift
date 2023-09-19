@@ -151,16 +151,19 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
         var totalDays = startOfDays + setConfigureDays(date: nowDate)
         
         for days in Int() ..< totalDays {
+            
+            var currentDays = days - startOfDays + 1
+            
             if days < startOfDays {
                 calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String(), isCompare: false)))
                 continue
             }
             
             //TODO: 년,월,일 Compare 로직 부분 분기 처리 고민후 수정
-            if Date().month == nowDate.month && (days - startOfDays + 1) < nowDate.day {
-                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - startOfDays + 1)", isCompare: false)))
+            if Date().month == nowDate.month && currentDays < nowDate.day {
+                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
             } else {
-                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - startOfDays + 1)", isCompare: true)))
+                calendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
             }
             
         }
@@ -180,23 +183,26 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
         var updateStartOfDays = (nowDate.weekday - 1)
         var updateTotalDays = updateStartOfDays + setConfigureDays(date: nowDate)
         
+        
         for days in Int() ..< updateTotalDays {
+            
+            var currentDays = days - updateStartOfDays + 1
             if days < updateStartOfDays {
                 updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String(), isCompare: false)))
                 continue
             }
             
             if Calendar.current.compare(Date(), to: nowDate, toGranularity: .month) == .orderedSame {
-                if Date().month == nowDate.month && (days - updateStartOfDays + 1) < nowDate.day {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - updateStartOfDays + 1)", isCompare: false)))
+                if Date().month == nowDate.month && currentDays < nowDate.day {
+                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
                 } else {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - updateStartOfDays + 1)", isCompare: true)))
+                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
                 }
             } else {
                 if Date().dateCompare(fromDate: nowDate) {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - updateStartOfDays + 1)", isCompare: true)))
+                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
                 } else {
-                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - updateStartOfDays + 1)", isCompare: false)))
+                    updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
                 }
             }
         }
@@ -218,6 +224,9 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
         
         for days in Int() ..< previousTotalDays {
             
+            
+            var currentDays = days - previousStartOfDays + 1
+            
             if days < previousStartOfDays {
                 previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: String(), isCompare: false)))
                 continue
@@ -225,15 +234,15 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
             
             if Calendar.current.compare(Date(), to: nowDate, toGranularity: .month) == .orderedSame {
                 if Date().month == nowDate.month && (days - previousStartOfDays + 1) < nowDate.day {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - previousStartOfDays + 1)", isCompare: false)))
+                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
                 } else {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - previousStartOfDays + 1)", isCompare: true)))
+                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
                 }
             } else {
                 if Date().dateCompare(fromDate: nowDate) {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - previousStartOfDays + 1)", isCompare: true)))
+                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: true)))
                 } else {
-                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(days - previousStartOfDays + 1)", isCompare: false)))
+                    previousCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: false)))
                 }
             }
 
