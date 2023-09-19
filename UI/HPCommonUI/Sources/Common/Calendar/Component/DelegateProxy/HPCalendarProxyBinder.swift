@@ -191,11 +191,11 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
             }
             
             if Calendar.current.compare(Date(), to: nowDate, toGranularity: .month) == .orderedSame {
-                let isNowCompare = Date().month == nowDate.month && (days - currentDays + 1) < nowDate.day
+                var isNowCompare = Date().month == nowDate.month && (days - updateStartOfDays + 1) < nowDate.day
                 
                 updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: !isNowCompare)))
             } else {
-                let isCompare = Date().dateCompare(fromDate: nowDate)
+                var isCompare = Date().dateCompare(fromDate: nowDate)
                 
                 updateCalendarSectionItem.append(CalendarSectionItem.calendarItem(HPCalendarDayCellReactor(days: "\(currentDays)", isCompare: isCompare)))
             }
