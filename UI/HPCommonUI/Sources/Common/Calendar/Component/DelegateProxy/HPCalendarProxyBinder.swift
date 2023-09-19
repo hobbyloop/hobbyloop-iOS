@@ -109,31 +109,19 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
             }
             var weekMonthDay = days - startOfDays + 1
             var weekDay = configureBubbleCalendarWeek(month: nowDate.month, day: weekMonthDay)
-            if weekMonthDay < nowDate.day {
-                calendarSectionItem.append(
-                    CalendarSectionItem.bubbleItem(
-                        HPCalendarBubbleDayCellReactor(
-                            day: "\(weekMonthDay)",
-                            weekDay: weekDay,
-                            nowDay:"\(nowDate.day)",
-                            color: "horizontalDivider",
-                            isCompare: false
-                        )
+            
+            calendarSectionItem.append(
+                CalendarSectionItem.bubbleItem(
+                    HPCalendarBubbleDayCellReactor(
+                        day: "\(weekMonthDay)",
+                        weekDay: weekDay,
+                        nowDay: "\(nowDate.day)",
+                        color: weekMonthDay < nowDate.day ? "horizontalDivider" : calculateDateDifference(day: ((weekMonthDay) % 7)),
+                        isCompare: weekMonthDay < nowDate.day ? true : false
                     )
                 )
-            } else {
-                calendarSectionItem.append(
-                    CalendarSectionItem.bubbleItem(
-                        HPCalendarBubbleDayCellReactor(
-                            day: "\(weekMonthDay)",
-                            weekDay: weekDay,
-                            nowDay: "\(nowDate.day)",
-                            color: calculateDateDifference(day: ((weekMonthDay) % 7)),
-                            isCompare: true
-                        )
-                    )
-                )
-            }
+            )
+            
         }
         
         return .just(.setCalendarItems(calendarSectionItem))
