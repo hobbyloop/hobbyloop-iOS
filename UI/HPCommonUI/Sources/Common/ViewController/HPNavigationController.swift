@@ -13,6 +13,7 @@ import SnapKit
 public enum HPNavigationBarType: Equatable {
     case home
     case ticket
+    case reservation
     case lessonDetail
     case none
 }
@@ -24,6 +25,7 @@ public protocol HPNavigationProxy {
     var scrollBarAppearance: UINavigationBarAppearance { get }
     var defaultBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
+    func setReservationNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
 }
 
@@ -149,6 +151,18 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
         
     }
+    
+    public func setReservationNavigationBarButtonItem() {
+        
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(image: HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+        ]
+        
+        self.navigationBar.topItem?.title = ""
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        
+    }
 }
 
 
@@ -161,6 +175,8 @@ extension HPNavigationController: UINavigationControllerDelegate {
             setHomeNavigationBarButtonItem()
         case .ticket:
             setTicketNavigationBarButtonItem()
+        case .reservation:
+            setReservationNavigationBarButtonItem()
         case .lessonDetail: break
         case .none:
             self.navigationItem.setHidesBackButton(true, animated: true)

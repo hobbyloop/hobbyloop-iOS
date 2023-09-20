@@ -93,7 +93,6 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     
     private func configure() {
         self.view.backgroundColor = .white
-        
         [ticketInfoLabel, ticketImageView, ticketdescriptionLabel,
          ticketSelectTableView, ticketButton, loofPassButton
         ].forEach {
@@ -101,14 +100,14 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
         }
         
         ticketImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(18)
             $0.left.equalToSuperview().offset(17)
             $0.width.equalTo(26)
             $0.height.equalTo(20)
         }
         
         ticketInfoLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(18)
             $0.left.equalTo(ticketImageView.snp.right).offset(10)
             $0.centerY.equalTo(ticketImageView)
             $0.height.equalTo(20)
