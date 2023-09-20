@@ -8,7 +8,7 @@
 import UIKit
 import HPCommonUI
 
-final class CouponUsageHistoryCell: UITableViewCell {
+public final class CouponUsageHistoryCell: UITableViewCell {
     static let identifier = "CouponUsageHistoryCell"
     static let height: CGFloat = 54
     
