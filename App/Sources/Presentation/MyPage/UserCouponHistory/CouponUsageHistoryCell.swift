@@ -12,26 +12,62 @@ final class CouponUsageHistoryCell: UITableViewCell {
     static let identifier = "CouponUsageHistoryCell"
     static let height: CGFloat = 54
     
-    let dateLabel = UILabel().then {
+    private let dateLabel = UILabel().then {
         $0.text = "03.10"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.historyDateLabel.color
     }
     
-    let studioNameLabel = UILabel().then {
+    var date: String {
+        get {
+            dateLabel.text ?? ""
+        }
+        
+        set {
+            dateLabel.text = newValue
+        }
+    }
+    
+    private let studioNameLabel = UILabel().then {
         $0.text = "필라피티 스튜디오"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
     }
     
-    let historyContentLabel = UILabel().then {
+    var studioName: String {
+        get {
+            studioNameLabel.text ?? ""
+        }
+        
+        set {
+            studioNameLabel.text = newValue
+        }
+    }
+    
+    private let historyContentLabel = UILabel().then {
         $0.text = "1회 충전"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    let remainingCountLabel = UILabel().then {
+    var historyContent: String {
+        get {
+            historyContentLabel.text ?? ""
+        }
+        
+        set {
+            historyContentLabel.text = newValue
+        }
+    }
+    
+    private let remainingCountLabel = UILabel().then {
         $0.text = "5회"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.historyDateLabel.color
+    }
+    
+    var remainingCount = 5 {
+        didSet {
+            remainingCountLabel.text = "\(remainingCount)회"
+        }
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
