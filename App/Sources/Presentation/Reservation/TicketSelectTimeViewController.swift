@@ -12,8 +12,9 @@ import Then
 import RxSwift
 import RxCocoa
 import RxDataSources
+import HPCommonUI
 
-public final class TicketSelectTimeViewController: UIViewController {
+public final class TicketSelectTimeViewController: BaseViewController<TicketSelectTimeViewReactor> {
     
     
     private lazy var profileDataSource: RxCollectionViewSectionedReloadDataSource<TicketInstructorProfileSection> = .init { dataSource, collectionView, indexPath, sectionItem in
@@ -34,6 +35,15 @@ public final class TicketSelectTimeViewController: UIViewController {
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
+    }
+    
+    override public init(reactor: TicketSelectTimeViewReactor?) {
+        defer { self.reactor = reactor }
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     
@@ -79,5 +89,10 @@ public final class TicketSelectTimeViewController: UIViewController {
         return instructorProfileSection
     }
     
+    
+    
+    public override func bind(reactor: TicketSelectTimeViewReactor) {
+        
+    }
     
 }
