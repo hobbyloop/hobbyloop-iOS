@@ -18,17 +18,20 @@ public final class TicketSelectTimeViewController: UIViewController {
     
     private lazy var profileDataSource: RxCollectionViewSectionedReloadDataSource<TicketInstructorProfileSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
-        return UICollectionViewCell()
+        guard let instructorProfileCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketInstructorProfileCell", for: indexPath) as? TicketInstructorProfileCell else { return UICollectionViewCell() }
+        
+        return instructorProfileCell
     }
     
-    private lazy var profileCollectionViewLayout: UICollectionViewCompositionalLayout? = UICollectionViewCompositionalLayout { section, _ in
+    private lazy var profileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
         
-        return nil
+        return self.createInstructorProfileLayout()
     }
     
     
-    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: profileCollectionViewLayout ?? UICollectionViewLayout()).then {
+    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: profileCollectionViewLayout).then {
         
+        $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
     }
@@ -36,13 +39,44 @@ public final class TicketSelectTimeViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        configure()
+    }
+    
+    private func configure() {
+        self.view.backgroundColor = .white
+        
+        self.view.addSubview(profileCollectionView)
+        
+        profileCollectionView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(285)
+        }
+        
     }
     
     
-    private func createInstructorProfileLayout() -> NSCollectionLayoutSection? {
+    private func createInstructorProfileLayout() -> NSCollectionLayoutSection {
+        
+        let instructorProfileLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(285)
+        )
+        
+        let instructorProfileItem = NSCollectionLayoutItem(layoutSize: instructorProfileLayoutSize)
+        
+        let instructorProfileGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: instructorProfileLayoutSize,
+            subitem: instructorProfileItem,
+            count: 1
+        )
+        
+        let instructorProfileSection = NSCollectionLayoutSection(group: instructorProfileGroup)
         
         
-        return nil
+        instructorProfileSection.orthogonalScrollingBehavior = .groupPagingCentered
+        
+        return instructorProfileSection
     }
     
     
