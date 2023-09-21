@@ -34,7 +34,19 @@ public final class TicketSelectTimeViewReactor: Reactor {
             isLoading: false,
             profileSection: [
                 .instructorProfile([
-                    .instructorProfileItem
+                    .instructorProfileItem(TicketInstructorProfileCellReactor(
+                        imageURL: "profile",
+                        numberOfPages: 3,
+                        currentPage: 1
+                    )),
+                    .instructorProfileItem(TicketInstructorProfileCellReactor(
+                        imageURL: "profile",
+                        numberOfPages: 3,
+                        currentPage: 2)),
+                    .instructorProfileItem(TicketInstructorProfileCellReactor(
+                        imageURL: "profile",
+                        numberOfPages: 3,
+                        currentPage: 3))
                 ])
             
             ]

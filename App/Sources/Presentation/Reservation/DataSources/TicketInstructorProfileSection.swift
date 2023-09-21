@@ -33,6 +33,6 @@ public enum TicketInstructorProfileSection: SectionModelType {
   수업 예약 강사 프로필 Item
  */
 public enum TicketInstructorProfileItem {
-    case instructorProfileItem
+    case instructorProfileItem(TicketInstructorProfileCellReactor)
     
 }

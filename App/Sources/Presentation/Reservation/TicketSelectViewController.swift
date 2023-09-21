@@ -17,6 +17,10 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     
     
     //MARK: Property
+    private lazy var containerView: UIView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.white.color
+    }
+    
     private let ticketInfoLabel: UILabel = UILabel().then {
         $0.text = "3개의 이용권이 있어요"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
@@ -92,11 +96,24 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     //MARK: Configure
     
     private func configure() {
-        self.view.backgroundColor = .white
-        [ticketInfoLabel, ticketImageView, ticketdescriptionLabel,
-         ticketSelectTableView, ticketButton, loofPassButton
-        ].forEach {
+        self.view.backgroundColor = HPCommonUIAsset.systemBackground.color
+        self.containerView.layer.cornerRadius = 15
+        self.containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        self.containerView.clipsToBounds = true
+        
+        [containerView,ticketSelectTableView].forEach {
             self.view.addSubview($0)
+        }
+        
+        [ticketInfoLabel, ticketImageView,ticketdescriptionLabel,
+         ticketButton, loofPassButton].forEach {
+            self.containerView.addSubview($0)
+        }
+        
+        containerView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(231)
         }
         
         ticketImageView.snp.makeConstraints {
@@ -136,7 +153,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
         }
         
         ticketSelectTableView.snp.makeConstraints {
-            $0.top.equalTo(loofPassButton.snp.bottom).offset(31)
+            $0.top.equalTo(containerView.snp.bottom).offset(6)
             $0.left.right.bottom.equalToSuperview()
         }
         

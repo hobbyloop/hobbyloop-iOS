@@ -19,9 +19,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     
     private lazy var profileDataSource: RxCollectionViewSectionedReloadDataSource<TicketInstructorProfileSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
-        guard let instructorProfileCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketInstructorProfileCell", for: indexPath) as? TicketInstructorProfileCell else { return UICollectionViewCell() }
-        
-        return instructorProfileCell
+        switch sectionItem {
+        case let .instructorProfileItem(cellReactor):
+            guard let instructorProfileCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketInstructorProfileCell", for: indexPath) as? TicketInstructorProfileCell else { return UICollectionViewCell() }
+            instructorProfileCell.reactor = cellReactor
+            
+            return instructorProfileCell
+        }
     }
     
     private lazy var profileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
@@ -93,6 +97,16 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     
     public override func bind(reactor: TicketSelectTimeViewReactor) {
         
+        Observable
+            .just(())
+            .map {Reactor.Action.viewDidLoad}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$profileSection)
+            .asDriver(onErrorJustReturn: [])
+            .drive(profileCollectionView.rx.items(dataSource: self.profileDataSource))
+            .disposed(by: disposeBag)
     }
     
 }
