@@ -594,15 +594,16 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.textChange
             .distinctUntilChanged()
             .map { $0?.count ?? 0 == 13 }
+            .skip(1)
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .bind(onNext: { (owner, isEnabled) in
-                
                 if isEnabled {
-                    owner.certificationButton.rx.base.isEnabled = isEnabled
+                    owner.certificationButton.isEnabled = isEnabled
                 } else {
                     owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
-                    owner.certificationButton.rx.base.isEnabled = isEnabled
+                    owner.certificationButton.isEnabled = isEnabled
+                    owner.hideDropdownAnimation()
                 }
             }).disposed(by: disposeBag)
         
@@ -613,7 +614,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .withUnretained(self)
             .bind(onNext: { owner, _ in
                 HapticUtil.impact(.light).generate()
-                owner.certificationButton.rx.base.isSelected = true
+                owner.certificationButton.isSelected = true
                 owner.showDropdownAnimation()
             }).disposed(by: disposeBag)
         
@@ -625,6 +626,14 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: phoneView.textFieldView.rx.text)
             .disposed(by: disposeBag)
             
+        phoneView.textFieldView
+            .rx.textChange
+            .filter { !($0?.count ?? 0 <= 12) }
+            .skip(1)
+            .map { _ in Reactor.Action.didChangePhoneNumber}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         
         certificationButton
             .rx.tap
@@ -654,11 +663,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         nameView
             .textFieldView.rx.textChange
-            .compactMap { $0?.isEmpty }
+            .compactMap { $0?.isEmpty ?? false || $0?.filter { $0.isNumber }.count ?? 0 >= 1 }
             .skip(1)
             .withUnretained(self)
             .bind(onNext: { owner, isError in
-                self.nameView.rx.base.isError = isError
+                self.nameView.isError = isError
                 if isError {
                     owner.nameView.snp.remakeConstraints {
                         $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
@@ -709,7 +718,7 @@ extension SignUpViewController: SignUpViewAnimatable {
             guard let self = `self` else { return }
             self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
             
-            self.phoneView.snp.remakeConstraints {
+            self.phoneView.snp.makeConstraints {
                 $0.left.equalTo(self.nameView)
                 $0.height.equalTo(80)
                 $0.right.equalTo(self.certificationButton.snp.left).offset(-8)
@@ -717,13 +726,13 @@ extension SignUpViewController: SignUpViewAnimatable {
             }
             
             
-            self.authCodeView.snp.remakeConstraints {
+            self.authCodeView.snp.makeConstraints {
                 $0.top.equalTo(self.phoneView.snp.bottom).offset(20)
                 $0.left.right.equalTo(self.phoneView)
                 $0.height.equalTo(0)
             }
             
-            self.authCodeButton.snp.remakeConstraints {
+            self.authCodeButton.snp.makeConstraints {
                 $0.height.equalTo(0)
                 $0.width.equalTo(0)
                 $0.top.equalTo(self.authCodeView.textFieldView)
@@ -731,7 +740,7 @@ extension SignUpViewController: SignUpViewAnimatable {
             }
             
             
-            self.termsView.snp.remakeConstraints {
+            self.termsView.snp.makeConstraints {
                 $0.left.right.equalTo(self.nameView)
                 $0.height.equalTo(160)
                 $0.bottom.equalTo(self.modifyDescriptionLabel.snp.bottom).offset(-34)
@@ -749,9 +758,11 @@ extension SignUpViewController: SignUpViewAnimatable {
                 $0.bottom.equalTo(self.termsView.snp.top).offset(-36)
             }
             
-            self.authCodeButton.snp.updateConstraints {
+            self.authCodeButton.snp.remakeConstraints {
                 $0.width.equalTo(83)
                 $0.height.equalTo(50)
+                $0.top.equalTo(self.authCodeView.textFieldView)
+                $0.right.equalToSuperview().offset(-15)
             }
             
             

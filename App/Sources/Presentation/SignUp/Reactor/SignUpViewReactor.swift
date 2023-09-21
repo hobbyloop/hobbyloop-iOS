@@ -59,6 +59,7 @@ public final class SignUpViewReactor: Reactor {
         case updateToNickName(String)
         case updateToBirthDay(String)
         case updateToPhoneNumber(String)
+        case didChangePhoneNumber
     }
     
     public enum Mutation {
@@ -167,6 +168,11 @@ public final class SignUpViewReactor: Reactor {
             
         case let .updateToPhoneNumber(phoneNumber):
             return .just(.setUserPhoneNumber(phoneNumber))
+            
+            
+        case .didChangePhoneNumber:
+            
+            return .just(.setCertificationState(!self.currentState.ceritifcationState))
         }
     }
     
