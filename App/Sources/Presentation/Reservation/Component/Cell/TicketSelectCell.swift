@@ -11,11 +11,19 @@ import Then
 import SnapKit
 import RxDataSources
 import ReactorKit
+import RxGesture
 import HPCommonUI
+
+public protocol TicketUserInfoViewDelegate: AnyObject {
+    func createTicketTimeViewController()
+}
+
+
 
 public final class TicketSelectCell: UITableViewCell {
     
     //MARK: Property
+    weak var delegate: TicketUserInfoViewDelegate?
     
     public typealias Reactor = TicketSelectCellReactor
     
@@ -36,8 +44,6 @@ public final class TicketSelectCell: UITableViewCell {
     private let underLine: UIView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.mercury.color
     }
-    
-    //TODO: API DTO에 따라 TicketInfoView Count 값이 넘겨질 경우 Multi TableView 구성 구현
     
     private lazy var ticketStakView: UIStackView = UIStackView().then {
         $0.spacing = 26
@@ -117,5 +123,13 @@ extension TicketSelectCell: ReactorKit.View {
             .map { $0.model}
             .bind(to: ticketView.rx.reactor)
             .disposed(by: disposeBag)
+        
+        ticketView.rx
+            .tapGesture()
+            .when(.recognized)
+            .withUnretained(self)
+            .bind(onNext: { owner, _ in
+                owner.delegate?.createTicketTimeViewController()
+            }).disposed(by: disposeBag)
     }
 }

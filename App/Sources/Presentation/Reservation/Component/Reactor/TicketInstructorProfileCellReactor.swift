@@ -18,8 +18,8 @@ public final class TicketInstructorProfileCellReactor: Reactor {
     public struct State {
         //TODO: Repository 에서 URL로 데이터 변환하도록 코드 추가
         var imageURL: String
-        @Pulse var numberOfPages: Int
-        var currentPage: Int
+        var numberOfPages: Int
+        @Pulse var currentPage: Int
     }
     
     public init(imageURL: String, numberOfPages: Int, currentPage: Int) {

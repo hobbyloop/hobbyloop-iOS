@@ -47,12 +47,14 @@ public final class TicketInstructorProfileCell: UICollectionViewCell {
         
         profileImage.snp.makeConstraints {
             $0.top.left.right.equalToSuperview()
+            $0.height.equalTo(270)
         }
         
         pageControl.snp.makeConstraints {
-            $0.top.equalTo(profileImage.snp.bottom).offset(14)
+            $0.top.equalTo(profileImage.snp.bottom).offset(7)
+            $0.height.equalTo(8)
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-7)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -63,6 +65,22 @@ public final class TicketInstructorProfileCell: UICollectionViewCell {
 extension TicketInstructorProfileCell: ReactorKit.View {
     
     public func bind(reactor: Reactor) {
+        
+        
+        //TODO: API 통신 후 Image URL로 Binding 처리하도록 수정
+        reactor.state
+            .map { $0.imageURL }
+            .map { HPCommonUIImages.Image(named: $0, in: HPCommonUIResources.bundle, with: nil) }
+            .asDriver(onErrorJustReturn: UIImage())
+            .drive(profileImage.rx.image)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$currentPage)
+            .observe(on: MainScheduler.asyncInstance)
+            .asDriver(onErrorJustReturn: 0)
+            .drive(pageControl.rx.currentPage)
+            .disposed(by: disposeBag)
+        
         
     }
     

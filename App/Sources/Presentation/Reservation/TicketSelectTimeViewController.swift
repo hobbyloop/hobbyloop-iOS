@@ -81,8 +81,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         
         let instructorProfileGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: instructorProfileLayoutSize,
-            subitem: instructorProfileItem,
-            count: 1
+            subitems: [instructorProfileItem]
         )
         
         let instructorProfileSection = NSCollectionLayoutSection(group: instructorProfileGroup)

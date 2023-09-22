@@ -16,6 +16,7 @@ import HPCommonUI
 public final class TicketSelectViewController: BaseViewController<TicketSelectViewReactor> {
     
     
+    
     //MARK: Property
     private lazy var containerView: UIView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.white.color
@@ -64,6 +65,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
         case let .reservationTicketItem(cellReactor):
             guard let ticketSelectCell = tableView.dequeueReusableCell(withIdentifier: "TicketSelectCell", for: indexPath) as? TicketSelectCell else { return UITableViewCell() }
             ticketSelectCell.reactor = cellReactor
+            ticketSelectCell.delegate = self
             return ticketSelectCell
         }
     }
@@ -221,4 +223,13 @@ extension TicketSelectViewController: UITableViewDelegate {
 }
 
 
-
+extension TicketSelectViewController: TicketUserInfoViewDelegate {
+    
+    
+    public func createTicketTimeViewController() {
+        let ticketSelectTimeDIController = TicketSelectTimeDIContainer().makeViewController()
+        self.navigationController?.pushViewController(ticketSelectTimeDIController, animated: true)
+        
+    }
+    
+}
