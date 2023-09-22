@@ -60,11 +60,11 @@ class MainBaseViewController<T: ReactorKit.Reactor>: BaseViewController<T>, UIGe
                 .rx.tap
                 .bind { [weak self] in
                     guard let `self` = self else { return }
-                    if toggle {
-                        exerciseViewAdd()
-                        toggle = false
+                    if self.toggle {
+                        self.exerciseViewAdd()
+                        self.toggle = false
                     } else {
-                        touchView()
+                        self.touchView()
                     }
                 }.disposed(by: disposeBag)
             
