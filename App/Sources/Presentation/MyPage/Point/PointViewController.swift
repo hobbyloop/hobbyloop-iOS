@@ -71,6 +71,27 @@ final class PointViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     
+    // MARK: - 포인트 사용 시 주의사항 파트 UI
+    private let pointNoticeTitleLabel = UILabel().then {
+        $0.text = "포인트 사용 시 유의사항"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+    }
+    
+    private let pointNoticeContentLabel = UILabel().then {
+        // TODO: 문구 수정
+        $0.text = "외국인은 국제법과 조약이 정하는 바에 의하여 그 지위가 보장된다. 국가는 법률이 정하는 바에 의하여 재외국민을 보호할 의무를 진다. 국무회의는 대통령·국무총리와 15인 이상 30인 이하의 국무위원으로 구성한다. 군사재판 관할하기 위하여 특별법원으로서 군사법원을 둘 수 있다. 국회는 정부의 동의없이 정부가 제출한 지출예산 각항의 금액을 증가하거나 새 비목을 설치할 수 없다."
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textColor = HPCommonUIAsset.userInfoLabel.color
+        $0.numberOfLines = 0
+        $0.textAlignment = .justified
+    }
+    
+    private let pointNoticeView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 12
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,7 +105,10 @@ final class PointViewController: UIViewController {
         configNavigationBar()
         layoutPointInfoView()
         layoutPointHistoryView()
+        layoutPointNoticeView()
         addActions()
+        
+        // TODO: 내 이용권 화면 PR 머지된 후에 cell 재활용하기
     }
     
     // MARK: - layout
@@ -156,12 +180,23 @@ final class PointViewController: UIViewController {
             $0.bottom.equalToSuperview().offset(-19)
         }
         
-        view.addSubview(pointHistoryView)
+        backgroundView.addSubview(pointHistoryView)
         
         pointHistoryView.snp.makeConstraints {
             $0.top.equalTo(pointInfoView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(243)
+        }
+    }
+    
+    private func layoutPointNoticeView() {
+        [pointNoticeTitleLabel, pointNoticeContentLabel].forEach(pointNoticeView.addArrangedSubview(_:))
+        
+        backgroundView.addSubview(pointNoticeView)
+        pointNoticeView.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().offset(-47)
         }
     }
     
