@@ -8,18 +8,33 @@
 import UIKit
 import HPCommonUI
 
-class PointViewController: UIViewController {
+final class PointViewController: UIViewController {
+    private let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 33, height: 22)).then {
+        $0.setImage(HPCommonUIAsset.leftarrow.image, for: .normal)
+    }
+    
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configNavigationBar()
+        addActions()
     }
     
+    // MARK: - layout
     private func configNavigationBar() {
         navigationItem.title = "포인트"
-        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 33, height: 22))
-        backButton.setImage(HPCommonUIAsset.leftarrow.image, for: .normal)
         navigationItem.setHidesBackButton(true, animated: false)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+    }
+    
+    // MARK: - add button actions
+    private func addActions() {
+        backButton.addTarget(self, action: #selector(popVC), for: .touchUpInside)
+    }
+    
+    // MARK: - button actions
+    @objc private func popVC() {
+        navigationController?.popViewController(animated: true)
     }
 }
