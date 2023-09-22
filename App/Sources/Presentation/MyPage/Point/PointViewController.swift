@@ -60,6 +60,17 @@ final class PointViewController: UIViewController {
         $0.backgroundColor = .systemBackground
     }
     
+    // MARK: - 포인트 사용내역 UI
+    private let pointHistoryTitleLabel = UILabel().then {
+        $0.text = "포인트 사용내역"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+    }
+    
+    private let pointHistoryTableView = UITableView()
+    private let pointHistoryView = UIView().then {
+        $0.backgroundColor = .systemBackground
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +83,7 @@ final class PointViewController: UIViewController {
         }
         configNavigationBar()
         layoutPointInfoView()
+        layoutPointHistoryView()
         addActions()
     }
     
@@ -127,6 +139,29 @@ final class PointViewController: UIViewController {
         pointInfoView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(145)
+        }
+    }
+    
+    private func layoutPointHistoryView() {
+        [pointHistoryTitleLabel, pointHistoryTableView].forEach(pointHistoryView.addSubview(_:))
+        
+        pointHistoryTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(19)
+        }
+        
+        pointHistoryTableView.snp.makeConstraints {
+            $0.top.equalTo(pointHistoryTitleLabel.snp.bottom).offset(15)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-19)
+        }
+        
+        view.addSubview(pointHistoryView)
+        
+        pointHistoryView.snp.makeConstraints {
+            $0.top.equalTo(pointInfoView.snp.bottom).offset(14)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(243)
         }
     }
     
