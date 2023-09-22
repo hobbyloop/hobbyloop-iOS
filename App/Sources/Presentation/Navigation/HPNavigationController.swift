@@ -1,12 +1,13 @@
 //
 //  HPNavigationController.swift
-//  HPCommonUI
+//  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/06/21.
+//  Created by Kim dohyun on 2023/09/22.
 //
 
 import UIKit
 
+import HPCommonUI
 import HPExtensions
 import Then
 import SnapKit
@@ -26,6 +27,7 @@ public protocol HPNavigationProxy {
     var defaultBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
+    func setTicketDetailNavigationBarButtonItem() -> Void
 }
 
 
@@ -146,8 +148,38 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             searchbarButtonItem
         ]
         
+        self.navigationItem.setHidesBackButton(false, animated: true)
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        
+    }
+    
+    public func setTicketDetailNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        let bookMarkButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        let customDotButtonItem = UIButton(type: .system)
+        
+        
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        bookMarkButtonItem.setImage(HPCommonUIAsset.unArchive.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        customDotButtonItem.setImage(HPCommonUIAsset.dot.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        spacerbarButtonItem.width = 13
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        rightBarButtonItems = [
+            UIBarButtonItem(customView: bookMarkButtonItem),
+            spacerbarButtonItem,
+            UIBarButtonItem(customView: customDotButtonItem)
+        ]
+        
+        self.navigationItem.setHidesBackButton(<#T##hidesBackButton: Bool##Bool#>, animated: <#T##Bool#>)
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        
         
     }
 }
@@ -156,18 +188,21 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
 extension HPNavigationController: UINavigationControllerDelegate {
     
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
-        switch navigationBarType {
-        case .home:
+        
+        switch viewController {
+        case is HomeViewController:
             setHomeNavigationBarButtonItem()
-        case .ticket:
+        case is TicketViewController:
             setTicketNavigationBarButtonItem()
-        case .lessonDetail: break
-        case .none:
-            self.navigationItem.setHidesBackButton(true, animated: true)
+        case is TicketDetailViewController:
+            setTicketDetailNavigationBarButtonItem()
             
+        default:
+            configure()
         }
         
         
     }
 }
+
+
