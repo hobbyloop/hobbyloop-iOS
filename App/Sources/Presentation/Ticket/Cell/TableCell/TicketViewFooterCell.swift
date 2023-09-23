@@ -81,9 +81,8 @@ class TicketViewFooterCell: UICollectionViewCell {
         }
         
         stackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(17)
-            $0.bottom.equalToSuperview().offset(-17)
+            $0.leading.trailing.centerY.equalToSuperview()
+            $0.height.equalTo(38)
         }
         
     }

@@ -137,7 +137,7 @@ class TicketCollectionViewCell: UICollectionViewCell {
         storeStackView.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(46)
+            $0.height.equalTo(47)
         }
         
         tableView.snp.makeConstraints {
@@ -171,7 +171,7 @@ extension TicketCollectionViewCell: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        67
+        69
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
