@@ -10,7 +10,7 @@ import SnapKit
 import HPCommonUI
 import Then
 
-class MyPageViewController: UIViewController {
+final class MyPageViewController: UIViewController {
     // MARK: - navigation bar
     private let customNavigationBar = UIView().then {
         $0.backgroundColor = .systemBackground
