@@ -280,17 +280,13 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
         
         callButton.rx
             .tap
-            .bind { [weak self] in
-                guard let self = self else { return }
-                callClickEvent.onNext(Void())
-            }.disposed(by: disposeBag)
+            .bind(to: callClickEvent)
+            .disposed(by: disposeBag)
         
         messageButton.rx
             .tap
-            .bind { [weak self] in
-                guard let self = self else { return }
-                messageClickEvent.onNext(Void())
-            }.disposed(by: disposeBag)
+            .bind(to: messageClickEvent)
+            .disposed(by: disposeBag)
         
         workTimeButton.rx
             .tap
@@ -303,7 +299,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
         workTimeClickEvent.subscribe { [weak self] _ in
             guard let self = self else { return }
             print("운영시간 OFF")
-            self.workTimeView.isHidden = true
+            workTimeView.isHidden = true
         }.disposed(by: disposeBag)
         
         reviewView.rx.tapGesture()

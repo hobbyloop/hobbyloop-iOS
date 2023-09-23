@@ -17,6 +17,7 @@ public enum TicketHeaderType {
 
 class TicketCollectionReusableView: UICollectionReusableView {
     public var publish = PublishSubject<TicketHeaderType>()
+    public var location = ReplaySubject<String>.create(bufferSize: 1)
     private var disposeBag = DisposeBag()
     private var loopPassButtonFlag = false
     
@@ -220,6 +221,17 @@ class TicketCollectionReusableView: UICollectionReusableView {
         loopPassButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
         ticketButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
         
+        location.subscribe { loc in
+            guard let loc = loc.element else { return }
+            let attributedString = loc.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), UIColor.black)
+            self.locationButton.setAttributedTitle(attributedString, for: .normal)
+            
+            let subText = "변경"
+            let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
+            let subRange = (subText as NSString).range(of: subText)
+            subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
+            self.locationButtonRightLabel.attributedText = subAttributedString
+        }.disposed(by: disposeBag)
     }
     
     @objc private func loopPassClick() {
