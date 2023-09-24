@@ -30,7 +30,7 @@ public final class TicketSelectTimeDIContainer: DIContainer {
     }
     
     public func makeReactor() -> Reactor {
-        return TicketSelectTimeViewReactor()
+        return TicketSelectTimeViewReactor(ticketSelectTimeRepository: makeRepository())
     }
     
 }

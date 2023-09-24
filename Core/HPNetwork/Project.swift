@@ -6,6 +6,7 @@ let network = Project.makeModule(
     products: [.framework(.dynamic)],
     dependencies: [
         .Project.Core.foundation,
-        .Project.Core.common
+        .Project.Core.common,
+        .Project.Core.domain
     ]
 )

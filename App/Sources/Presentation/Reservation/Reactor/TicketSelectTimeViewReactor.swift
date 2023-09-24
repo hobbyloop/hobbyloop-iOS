@@ -7,12 +7,14 @@
 
 import Foundation
 
+import HPDomain
 import ReactorKit
 
 
 public final class TicketSelectTimeViewReactor: Reactor {
     
     public var initialState: State
+    private let ticketSelectTimeRepository: TicketSelectTimeViewRepo
     
     
     public enum Action {
@@ -21,6 +23,7 @@ public final class TicketSelectTimeViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
+        case setInstructorItems(Instructor)
         case setProfileSectionItem
     }
     
@@ -29,7 +32,8 @@ public final class TicketSelectTimeViewReactor: Reactor {
         @Pulse var profileSection: [TicketInstructorProfileSection]
     }
     
-    init() {
+    init(ticketSelectTimeRepository: TicketSelectTimeViewRepo) {
+        self.ticketSelectTimeRepository = ticketSelectTimeRepository
         self.initialState = State(
             isLoading: false,
             profileSection: [
@@ -58,7 +62,11 @@ public final class TicketSelectTimeViewReactor: Reactor {
         
         switch action {
         case .viewDidLoad:
-            return .just(.setProfileSectionItem)
+            return .concat([
+                .just(.setProfileSectionItem),
+                ticketSelectTimeRepository.responseInstructorList(id: 2)
+            
+            ])
         }
     }
     
@@ -70,6 +78,8 @@ public final class TicketSelectTimeViewReactor: Reactor {
             newState.isLoading = isLoading
             
         case .setProfileSectionItem: break
+        case let .setInstructorItems(items):
+            print("Instructor items: \(items)")
         }
         return newState
     }
