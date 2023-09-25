@@ -14,29 +14,11 @@ import Then
 
 
 
-final class HPCalendarWeekCellReactor: Reactor {
-    var initialState: State
+public final class HPCalendarWeekCell: UICollectionViewCell {
     
-    typealias Action = NoAction
-
+    public typealias Reactor = HPCalendarWeekCellReactor
     
-    struct State {
-        var week: String
-    }
-    
-    init(week: String) {
-        self.initialState = State(week: week)
-    }
-    
-}
-
-
-
-final class HPCalendarWeekCell: UICollectionViewCell {
-    
-    typealias Reactor = HPCalendarWeekCellReactor
-    
-    var disposeBag: DisposeBag = DisposeBag()
+    public var disposeBag: DisposeBag = DisposeBag()
     
     public let weekDayLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
@@ -75,7 +57,7 @@ final class HPCalendarWeekCell: UICollectionViewCell {
 extension HPCalendarWeekCell: ReactorKit.View {
 
     
-    func bind(reactor: Reactor) {
+    public func bind(reactor: Reactor) {
         reactor.state
             .map { $0.week }
             .asDriver(onErrorJustReturn: "")
