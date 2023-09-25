@@ -66,7 +66,9 @@ final class PointViewController: UIViewController {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
     }
     
-    private let pointHistoryTableView = UITableView()
+    private let pointHistoryTableView = UITableView().then { _ in
+        // TODO: 내 이용권 화면 PR 머지된 후에 cell 재활용하기
+    }
     private let pointHistoryView = UIView().then {
         $0.backgroundColor = .systemBackground
     }
@@ -96,22 +98,24 @@ final class PointViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        layoutBackgroundView()
+        configNavigationBar()
+        layoutPointInfoView()
+        layoutPointHistoryView()
+        layoutPointNoticeView()
+        addActions()
+    }
+    
+    // MARK: - layout
+    private func layoutBackgroundView() {
         view.addSubview(backgroundView)
         
         backgroundView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
-        configNavigationBar()
-        layoutPointInfoView()
-        layoutPointHistoryView()
-        layoutPointNoticeView()
-        addActions()
-        
-        // TODO: 내 이용권 화면 PR 머지된 후에 cell 재활용하기
     }
     
-    // MARK: - layout
     private func configNavigationBar() {
         navigationController?.navigationBar.backgroundColor = .systemBackground
         navigationItem.title = "포인트"
