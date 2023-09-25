@@ -52,15 +52,23 @@ public final class APIClient: APIService {
     public func requestToAuthentication(_ router: Router, completion: @escaping (String) -> Void) {
         AF.request(router)
             .responseString(emptyResponseCodes: [200, 204],completionHandler: { response in
-                var chiperToken = ""
+                var chiperAccessToken = ""
+                var chiperRefreshToken = ""
+                
                 switch response.result {
                 case .success(_):
                     do {
-                        if let responseHeader = response.response?.value(forHTTPHeaderField: "Authorization") {
-                            chiperToken = try CryptoUtil.makeEncryption(responseHeader)
-                            UserDefaults.standard.set(chiperToken, forKey: .accessToken)
+                        
+                        // TODO: API 협의후 Data Decoding 하도록 조율
+                        if let accessToken = response.response?.value(forHTTPHeaderField: "Authorization"),
+                           let refreshToken = response.response?.value(forHTTPHeaderField: "Authorization-refresh") {
+                            chiperAccessToken = try CryptoUtil.makeEncryption(accessToken)
+                            chiperRefreshToken = try CryptoUtil.makeEncryption(refreshToken)
+                            
+                            UserDefaults.standard.set(chiperAccessToken, forKey: .accessToken)
+                            UserDefaults.standard.set(chiperRefreshToken, forKey: .refreshToken)
                         }
-                        completion(chiperToken)
+                        completion(chiperAccessToken)
                     } catch {
                         debugPrint(error.localizedDescription)
                     }

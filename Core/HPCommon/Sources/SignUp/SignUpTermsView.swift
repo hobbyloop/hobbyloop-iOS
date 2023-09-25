@@ -9,7 +9,9 @@ import UIKit
 
 import HPCommonUI
 import HPExtensions
+import ReactorKit
 import SnapKit
+import RxGesture
 import Then
 
 
@@ -40,7 +42,7 @@ public enum SignUpTermsType: Equatable {
 
 //TODO: SignUpTerms Type을 통해 Selected 처리 -> Reactor 추가
 
-public final class SignUpTermsView: UIView {
+public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
     
     // MARK: Property
     private let termsTitleLabel: UILabel = UILabel().then {
@@ -60,10 +62,8 @@ public final class SignUpTermsView: UIView {
     
     public let termsInfoView: SignUpTermsCheckBoxView = SignUpTermsCheckBoxView(checkBoxType: .info)
     
-    
-    
-    public override init(frame: CGRect) {
-        super.init(frame: .zero)
+    public override init(reactor: SignUpTermsViewReactor? = nil) {
+        super.init(reactor: reactor)
         configure()
     }
     
@@ -116,124 +116,107 @@ public final class SignUpTermsView: UIView {
         
     }
     
-    
-}
-
-
-public final class SignUpTermsCheckBoxView: UIView {
-    
-    
-    // MARK: Property
-    
-    public private(set) var checkBoxType: SignUpTermsType
-    
-    private let checkBoxButton: HPButton = HPButton(
-        cornerRadius: 4,
-        borderColor: HPCommonUIAsset.deepSeparator.color.cgColor
-    ).then {
-        $0.setImage(UIImage(), for: .normal)
-        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
-    }
-    
-    private let termsDescriptionLabel: UILabel = UILabel().then {
-        $0.textColor = HPCommonUIAsset.black.color
-        $0.textAlignment = .left
-        $0.numberOfLines = 1
-    }
-    
-    public let termsDetailLabel: UILabel = UILabel().then {
-        $0.text = "자세히"
-        $0.textColor = HPCommonUIAsset.originSeparator.color
-        $0.textAlignment = .justified
-        $0.numberOfLines = 1
-        $0.setUnderLineAttributed(
-            targetString: "자세히",
-            font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-            underlineColor: HPCommonUIAsset.originSeparator.color,
-            underlineStyle: .single,
-            textColor: HPCommonUIAsset.originSeparator.color
-        )
-    }
-    
-    
-    public init(checkBoxType: SignUpTermsType) {
-        self.checkBoxType = checkBoxType
-        super.init(frame: .zero)
-        configureUI(type: checkBoxType)
-        configureLayout(type: checkBoxType)
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    
-    // MARK: Configure
-    private func configureUI(type: SignUpTermsType) {
-        switch type {
-            
-        case .all:
-            
-            [checkBoxButton, termsDescriptionLabel].forEach {
-                addSubview($0)
-            }
-            
-            checkBoxButton.snp.makeConstraints {
-                $0.width.height.equalTo(24)
-                $0.top.left.equalToSuperview()
-            }
-            
-            termsDescriptionLabel.snp.makeConstraints {
-                $0.centerY.equalTo(checkBoxButton)
-                $0.height.equalTo(15)
-                $0.left.equalTo(checkBoxButton.snp.right).offset(10)
-            }
-            
-        default:
-            
-            [checkBoxButton, termsDescriptionLabel, termsDetailLabel].forEach {
-                addSubview($0)
-            }
-            
-            checkBoxButton.snp.makeConstraints {
-                $0.width.height.equalTo(24)
-                $0.top.left.equalToSuperview()
-            }
-            
-            termsDescriptionLabel.snp.makeConstraints {
-                $0.centerY.equalTo(checkBoxButton)
-                $0.height.equalTo(15)
-                $0.left.equalTo(checkBoxButton.snp.right).offset(10)
-            }
-            
-            termsDetailLabel.snp.makeConstraints {
-                $0.centerY.equalTo(termsDescriptionLabel)
-                $0.right.equalToSuperview().offset(-10)
-                $0.height.equalTo(15)
-                $0.width.equalTo(45)
-            }
+    // TODO: Figma Design대로 코드 리펙토링
+    private func didTapCheckBox(type: SignUpTermsType) {
+        if type == .all {
+            termsAllView.didTapCheckBoxButton(isSelected: true)
+            termsInfoView.didTapCheckBoxButton(isSelected: true)
+            termsReceiveView.didTapCheckBoxButton(isSelected: true)
+        } else if type == .receive {
+            termsReceiveView.didTapCheckBoxButton(isSelected: true)
+        } else {
+            termsInfoView.didTapCheckBoxButton(isSelected: true)
         }
     }
     
     
-    private func configureLayout(type: SignUpTermsType) {
+    public override func bind(reactor: SignUpTermsViewReactor) {
         
-        switch type {
-        case .all:
-            termsDescriptionLabel.text = type.setTermsTitleLabel()
-            termsDescriptionLabel.font = type.setTermsFontColor()
-        case .receive:
-            termsDescriptionLabel.text = type.setTermsTitleLabel()
-            termsDescriptionLabel.font = type.setTermsFontColor()
-        case .info:
-            termsDescriptionLabel.text = type.setTermsTitleLabel()
-            termsDescriptionLabel.font = type.setTermsFontColor()
-        default:
-            break
-        }
+        termsAllView
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture All")
+            .map { _ in Reactor.Action.didTapAllSelectBox(.all) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        termsReceiveView
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture Receive")
+            .map { _ in Reactor.Action.didTapReceiveSelectBox(.receive) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        termsInfoView
+            .checkBoxButton.rx
+            .tap
+            .debug("Tap Gesture Info")
+            .map { _ in Reactor.Action.didTapInfoSelectBox(.info) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.allTermsType == .all }
+            .map { $0.allTermsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
+                self.didTapCheckBox(type: .all)
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.receiveTermsType == .receive }
+            .map { $0.receiveTermsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
+                self.didTapCheckBox(type: .receive)
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.infoTermsType == .info }
+            .map { $0.infoTermsType }
+            .asDriver(onErrorJustReturn: .none)
+            .drive(onNext: { [weak self] type in
+                guard let `self` = self else { return }
+                self.didTapCheckBox(type: .info)
+            }).disposed(by: disposeBag)
+        
+        reactor.state
+            .filter { $0.allTermsType  == .none }
+            .map { $0.allTermsType == .all }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsAllView.didTapCheckBoxButton(isSelected: isSelected)
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.receiveTermsType  == .none }
+            .map { $0.receiveTermsType == .receive }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsReceiveView.didTapCheckBoxButton(isSelected: isSelected)
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.state
+            .filter { $0.infoTermsType  == .none }
+            .map { $0.infoTermsType == .info }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isSelected in
+                guard let `self` = self else { return }
+                self.termsInfoView.didTapCheckBoxButton(isSelected: isSelected)
+            }).disposed(by: disposeBag)
+        
+        
+        
+        
+        
     }
-
+    
     
 }

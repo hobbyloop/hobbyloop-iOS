@@ -7,5 +7,6 @@ let extensions = Project.makeModule(
     products: [.framework(.static)],
     dependencies: [
         .Project.UI.common
+        .Project.Core.thirdParty,
     ]
 )
