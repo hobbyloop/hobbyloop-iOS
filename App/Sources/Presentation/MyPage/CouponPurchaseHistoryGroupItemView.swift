@@ -11,7 +11,7 @@ import SnapKit
 
 /// 각 구매 내역을 시설 및 이용권 이름별로 grouping하여 하나의 item으로 보여주는 view.
 /// 마이페이지 화면의 이용권 구매내역 파트에서 사용
-class CouponPurchaseHistoryGroupItemView: UIView {
+final class CouponPurchaseHistoryGroupItemView: UIView {
     private let logoImageView = UIImageView.circularImageView(radius: 25)
     private let studioNameLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)

@@ -5,7 +5,8 @@
 //  Created by Kim dohyun on 2023/06/01.
 //
 
-//TODO: Dependencies issue 있음, 추후 수정
+import ReactorKit
+import UIKit
 import RxSwift
 
 private var streams: [String: Any] = [:]
@@ -33,3 +34,13 @@ public extension HPStreamType {
 
 
 
+extension Reactive where Base: UITextField {
+    
+    public var textChange: Observable<String?> {
+        return Observable.merge(
+            self.base.rx.observe(String.self, "text"),
+            self.base.rx.controlEvent(.editingChanged).withLatestFrom(self.base.rx.text)
+        )
+    }
+    
+}

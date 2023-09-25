@@ -12,16 +12,16 @@ import Then
 import SnapKit
 
 public enum SignUpType: String {
-    case name
-    case nickname
-    case birthDay
-    case phone
-    case authcode
+    case name = "이름"
+    case nickname = "닉네임"
+    case birthDay = "출생년도"
+    case phone = "전화번호"
+    case authcode = "인증번호"
     
     func setTitleLabelText() -> String {
         switch self {
         case .name: return "이름 *"
-        case .nickname: return "닉네임 *"
+        case .nickname: return "닉네임"
         case .birthDay: return "출생년도 *"
         case .phone: return "전화번호 인증*"
         case .authcode: return ""
@@ -37,6 +37,7 @@ public enum SignUpType: String {
         case .authcode: return "인증번호를 입력해주세요"
         }
     }
+
 }
 
 
@@ -45,6 +46,28 @@ public final class SignUpInfoView: UIView {
     
     //MARK: Property
     public private(set) var titleType: SignUpType
+    private let filled: Bool
+    
+    public var isError: Bool = false {
+        didSet {
+            if isError {
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.error.color.cgColor
+                self.descriptionLabel.text = "\(self.titleType.rawValue)을 다시 확인해주세요."
+                descriptionLabel.snp.remakeConstraints {
+                    $0.left.right.equalToSuperview()
+                    $0.bottom.equalToSuperview().offset(-11)
+                }
+            } else {
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+                self.descriptionLabel.text = ""
+                descriptionLabel.snp.remakeConstraints {
+                    $0.top.equalTo(textFieldView.snp.bottom)
+                    $0.left.right.equalToSuperview()
+                    $0.height.equalTo(0)
+                }
+            }
+        }
+    }
     
     public let titleLabel: UILabel = UILabel().then {
         $0.textColor = HPCommonUIAsset.black.color
@@ -58,34 +81,49 @@ public final class SignUpInfoView: UIView {
         $0.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
     }
     
-    public lazy var textFiledView: UITextField = UITextField().then {
-        $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
-        $0.layer.borderWidth = 1
+    public lazy var textFieldView: UITextField = UITextField().then {
+        if filled {
+            $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+            $0.textColor = UIColor(red: 0x6C / 255, green: 0x6C / 255, blue: 0x6C / 255, alpha: 1)
+        } else {
+            $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            $0.layer.borderWidth = 1
+        }
         $0.layer.masksToBounds = true
         $0.borderStyle = .none
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         $0.leftViewMode = .always
         $0.layer.cornerRadius = 8
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
     }
     
-    public init(titleType: SignUpType) {
+    
+    public lazy var descriptionLabel: UILabel = UILabel().then {
+        $0.textColor = HPCommonUIAsset.error.color
+        $0.numberOfLines = 1
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textAlignment = .left
+    }
+    
+    public init(titleType: SignUpType, filled: Bool = false) {
         self.titleType = titleType
+        self.filled = filled
         super.init(frame: .zero)
         
         switch titleType {
         case .birthDay:
             configure()
-            textFiledView.isUserInteractionEnabled = false
-            textFiledView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
+            textFieldView.isUserInteractionEnabled = false
+            textFieldView.setupRightImage(image: HPCommonUIAsset.downarrow.image)
         case .phone:
             configure()
-            textFiledView.keyboardType = .numberPad
-            textFiledView.textContentType = .oneTimeCode
+            textFieldView.keyboardType = .numberPad
+            textFieldView.textContentType = .oneTimeCode
         case .authcode:
             authConfigure()
         default:
             configure()
-            textFiledView.isUserInteractionEnabled = true
+            textFieldView.isUserInteractionEnabled = true
         }
     }
     
@@ -95,11 +133,13 @@ public final class SignUpInfoView: UIView {
     
     // MARK: Configure
     private func configure() {
-        textFiledView.placeholder = titleType.setPlaceholderText()
+        textFieldView.attributedPlaceholder = NSAttributedString(string: titleType.setPlaceholderText(), attributes: [
+            .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        ])
         titleLabel.text = titleType.setTitleLabelText()
         
         
-        [titleLabel, textFiledView].forEach {
+        [titleLabel, textFieldView, descriptionLabel].forEach {
             addSubview($0)
         }
         
@@ -109,23 +149,47 @@ public final class SignUpInfoView: UIView {
             $0.height.equalTo(19)
         }
         
-        textFiledView.snp.makeConstraints {
+        textFieldView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.height.equalTo(48)
         }
         
-        self.snp.makeConstraints {
-            $0.height.equalTo(80)
+        descriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(textFieldView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(0)
         }
+
         
     }
     
+    public func updateSuccessLayout() {
+        self.descriptionLabel.text = ""
+        
+        descriptionLabel.snp.remakeConstraints {
+            $0.top.equalTo(textFieldView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(0)
+        }
+    }
+    
+    
+    public func updateErrorLayout(type: SignUpType) {
+        
+        self.descriptionLabel.text = "\(type.rawValue)을 다시 확인해주세요."
+        descriptionLabel.snp.remakeConstraints {
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-11)
+        }
+        
+        
+    }
     
     private func authConfigure() {
-        self.addSubview(textFiledView)
+        self.addSubview(textFieldView)
         
-        textFiledView.snp.makeConstraints {
+        textFieldView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
