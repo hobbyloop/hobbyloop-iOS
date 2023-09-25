@@ -152,13 +152,12 @@ public final class SignUpViewReactor: Reactor {
             
         case .didTapCertificationButton:
             
-            guard self.currentState.ceritifcationState else { return .just(.setCertificationState(true)) }
-            return .just(.setCertificationState(false))
+            guard self.currentState.ceritifcationState else { return .empty() }
+            return .just(.setCertificationState(self.currentState.ceritifcationState))
             
         case let .didTapCreateUserButton(name, nickName, gender, birth, phoneNumber):
             let startLoading = Observable<Mutation>.just(.setLoading(true))
             let endLoading = Observable<Mutation>.just(.setLoading(false))
-            print("name: \(name) and action : \(nickName) and : \(gender) and : \(birth) and : \(phoneNumber)")
             
             return .concat(
                 startLoading,

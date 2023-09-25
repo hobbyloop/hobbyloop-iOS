@@ -81,7 +81,7 @@ public final class SignUpInfoView: UIView {
         $0.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
     }
     
-    public lazy var textFiledView: UITextField = UITextField().then {
+    public lazy var textFieldView: UITextField = UITextField().then {
         if filled {
             $0.backgroundColor = HPCommonUIAsset.lightBackground.color
             $0.textColor = UIColor(red: 0x6C / 255, green: 0x6C / 255, blue: 0x6C / 255, alpha: 1)
