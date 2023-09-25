@@ -73,6 +73,7 @@ public final class CouponUsageHistoryCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
+        self.selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
