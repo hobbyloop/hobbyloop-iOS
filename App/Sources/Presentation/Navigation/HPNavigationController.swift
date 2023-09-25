@@ -11,16 +11,13 @@ import HPCommonUI
 import HPExtensions
 import Then
 import SnapKit
-
-public enum HPNavigationBarType: Equatable {
-    case home
-    case ticket
-    case lessonDetail
-    case none
-}
+import RxSwift
+import RxCocoa
 
 
 public protocol HPNavigationProxy {
+    
+    var disposeBag: DisposeBag { get }
     var rightBarButtonItems: [UIBarButtonItem] { get }
     var leftBarButtonItems: [UIBarButtonItem] { get }
     var scrollBarAppearance: UINavigationBarAppearance { get }
@@ -32,20 +29,17 @@ public protocol HPNavigationProxy {
 
 
 public final class HPNavigationController: UINavigationController, HPNavigationProxy {
-    
-    public private(set) var navigationBarType: HPNavigationBarType
-    
+        
+    public var disposeBag: DisposeBag = DisposeBag()
     public var defaultBarAppearance: UINavigationBarAppearance
     public var scrollBarAppearance: UINavigationBarAppearance
     public var rightBarButtonItems: [UIBarButtonItem] = []
     public var leftBarButtonItems: [UIBarButtonItem] = []
     
-    public init(navigationBarType: HPNavigationBarType,
-                rootViewController: UIViewController,
+    public init(rootViewController: UIViewController,
                 defaultBarAppearance: UINavigationBarAppearance,
                 scrollBarAppearance: UINavigationBarAppearance
     ) {
-        self.navigationBarType = navigationBarType
         self.defaultBarAppearance = defaultBarAppearance
         self.scrollBarAppearance = scrollBarAppearance
         super.init(rootViewController: rootViewController)
@@ -166,6 +160,12 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         customDotButtonItem.setImage(HPCommonUIAsset.dot.image.withRenderingMode(.alwaysOriginal), for: .normal)
         spacerbarButtonItem.width = 13
         
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                NotificationCenter.default.post(name: .popToViewController, object: nil)
+            }).disposed(by: disposeBag)
+        
         leftBarButtonItems = [
             UIBarButtonItem(customView: backButtonItem)
         ]
@@ -176,7 +176,6 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             UIBarButtonItem(customView: customDotButtonItem)
         ]
         
-        self.navigationItem.setHidesBackButton(<#T##hidesBackButton: Bool##Bool#>, animated: <#T##Bool#>)
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
         
