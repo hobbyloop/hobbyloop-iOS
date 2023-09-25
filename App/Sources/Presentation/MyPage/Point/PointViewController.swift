@@ -66,8 +66,11 @@ final class PointViewController: UIViewController {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
     }
     
-    private let pointHistoryTableView = UITableView().then { _ in
-        // TODO: 내 이용권 화면 PR 머지된 후에 cell 재활용하기
+    private lazy var pointHistoryTableView = UITableView().then {
+        $0.separatorStyle = .none
+        $0.dataSource = self
+        $0.rowHeight = HPHistoryCell.height
+        $0.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
     }
     private let pointHistoryView = UIView().then {
         $0.backgroundColor = .systemBackground
@@ -212,5 +215,22 @@ final class PointViewController: UIViewController {
     // MARK: - button actions
     @objc private func popVC() {
         navigationController?.popViewController(animated: true)
+    }
+}
+
+// MARK: - table view data source
+extension PointViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: HPHistoryCell.identifier) as! HPHistoryCell
+        cell.dateText = "03.10"
+        cell.title = "필라피티 스튜디오"
+        cell.historyContent = "+30,000P"
+        cell.remainingAmountText = "70,000P"
+        
+        return cell
     }
 }
