@@ -46,6 +46,7 @@ public final class SignUpInfoView: UIView {
     
     //MARK: Property
     public private(set) var titleType: SignUpType
+    private let filled: Bool
     
     public var isError: Bool = false {
         didSet {
@@ -80,9 +81,14 @@ public final class SignUpInfoView: UIView {
         $0.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
     }
     
-    public lazy var textFieldView: UITextField = UITextField().then {
-        $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
-        $0.layer.borderWidth = 1
+    public lazy var textFiledView: UITextField = UITextField().then {
+        if filled {
+            $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+            $0.textColor = UIColor(red: 0x6C / 255, green: 0x6C / 255, blue: 0x6C / 255, alpha: 1)
+        } else {
+            $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            $0.layer.borderWidth = 1
+        }
         $0.layer.masksToBounds = true
         $0.borderStyle = .none
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
@@ -99,8 +105,9 @@ public final class SignUpInfoView: UIView {
         $0.textAlignment = .left
     }
     
-    public init(titleType: SignUpType) {
+    public init(titleType: SignUpType, filled: Bool = false) {
         self.titleType = titleType
+        self.filled = filled
         super.init(frame: .zero)
         
         switch titleType {
