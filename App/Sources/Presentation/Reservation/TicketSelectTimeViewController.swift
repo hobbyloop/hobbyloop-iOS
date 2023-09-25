@@ -41,6 +41,11 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         $0.showsVerticalScrollIndicator = false
     }
     
+    private lazy var introduceProfileView: TicketIntroduceView = TicketIntroduceView().then {
+        $0.backgroundColor = HPCommonUIAsset.white.color
+        
+    }
+    
     override public init(reactor: TicketSelectTimeViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -59,12 +64,21 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     private func configure() {
         self.view.backgroundColor = .white
         
-        self.view.addSubview(profileCollectionView)
+        [profileCollectionView, introduceProfileView].forEach {
+            self.view.addSubview($0)
+        }
+        
         
         profileCollectionView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(285)
+        }
+        
+        introduceProfileView.snp.makeConstraints {
+            $0.top.equalTo(profileCollectionView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(48)
         }
         
     }
