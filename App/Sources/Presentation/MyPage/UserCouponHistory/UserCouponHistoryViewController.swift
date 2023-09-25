@@ -9,32 +9,9 @@ import UIKit
 import HPCommonUI
 
 final class UserCouponHistoryViewController: UIViewController {
-    // MARK: - custom navigation bar
-    private let backButton = UIButton(configuration: .plain()).then {
-        $0.configuration?.image = HPCommonUIAsset.leftarrow.image
-        
-        $0.snp.makeConstraints {
-            $0.width.equalTo(21)
-            $0.height.equalTo(22)
-        }
-    }
-    
-    private let navigationTitleLabel = UILabel().then {
-        $0.text = "내 이용권"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-    }
-    
-    private lazy var customNavigationBar = UIView().then {
-        [backButton, navigationTitleLabel].forEach($0.addSubview(_:))
-        
-        navigationTitleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        
-        backButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
-        }
+    // MARK: - navigation bar back button
+    private let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 33, height: 22)).then {
+        $0.setImage(HPCommonUIAsset.leftarrow.image, for: .normal)
     }
     
     // MARK: - coupon type buttons
@@ -155,7 +132,7 @@ final class UserCouponHistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layoutCustomNavigationBar()
+        configureNavigationBar()
         layoutCouponTypeButtons()
         layoutCouponListView()
         layoutSetStartDateButton()
@@ -163,21 +140,18 @@ final class UserCouponHistoryViewController: UIViewController {
     }
     
     // MARK: - layout methods
-    private func layoutCustomNavigationBar() {
-        view.addSubview(customNavigationBar)
-        
-        customNavigationBar.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(44)
-            $0.height.equalTo(56)
-        }
+    private func configureNavigationBar() {
+        navigationController?.navigationBar.backgroundColor = .systemBackground
+        navigationItem.title = "내 이용권"
+        navigationItem.setHidesBackButton(true, animated: false)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
     private func layoutCouponTypeButtons() {
         [normalCouponButton, loopPassCouponButton].forEach(categoryButtonsStack.addArrangedSubview(_:))
         view.addSubview(categoryButtonsStack)
         categoryButtonsStack.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom).offset(16)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
             $0.leading.equalToSuperview().offset(16)
         }
     }
