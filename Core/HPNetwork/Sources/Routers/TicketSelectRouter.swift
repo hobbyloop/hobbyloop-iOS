@@ -41,7 +41,7 @@ extension TicketSelectRouter: Router {
         case let .getInstructorList(id):
             return .query(
                 [
-                "centerId": id
+                "facilityId": id
                 ]
             )
         default:
@@ -57,7 +57,7 @@ extension TicketSelectRouter: Router {
             print(error.localizedDescription)
         }
         return [
-            "Authorization": "\(token)",
+            "Authorization": "Bearer \(token)",
             "Accept": "*/*"
          ]
     }
