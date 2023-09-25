@@ -6,19 +6,18 @@
 //
 
 import UIKit
-import HPCommonUI
 
-public final class CouponUsageHistoryCell: UITableViewCell {
-    static let identifier = "CouponUsageHistoryCell"
+public final class HPHistoryCell: UITableViewCell {
+    static let identifier = "HistoryCell"
     static let height: CGFloat = 54
     
     private let dateLabel = UILabel().then {
-        $0.text = "03.10"
+        $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.historyDateLabel.color
     }
     
-    var date: String {
+    public var dateText: String {
         get {
             dateLabel.text ?? ""
         }
@@ -28,27 +27,27 @@ public final class CouponUsageHistoryCell: UITableViewCell {
         }
     }
     
-    private let studioNameLabel = UILabel().then {
-        $0.text = "필라피티 스튜디오"
+    private let titleLabel = UILabel().then {
+        $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
     }
     
-    var studioName: String {
+    public var title: String {
         get {
-            studioNameLabel.text ?? ""
+            titleLabel.text ?? ""
         }
         
         set {
-            studioNameLabel.text = newValue
+            titleLabel.text = newValue
         }
     }
     
     private let historyContentLabel = UILabel().then {
-        $0.text = "1회 충전"
+        $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    var historyContent: String {
+    public var historyContent: String {
         get {
             historyContentLabel.text ?? ""
         }
@@ -58,15 +57,19 @@ public final class CouponUsageHistoryCell: UITableViewCell {
         }
     }
     
-    private let remainingCountLabel = UILabel().then {
-        $0.text = "5회"
+    private let remainingAmountLabel = UILabel().then {
+        $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.historyDateLabel.color
     }
     
-    var remainingCount = 5 {
-        didSet {
-            remainingCountLabel.text = "\(remainingCount)회"
+    public var remainingAmountText: String {
+        get {
+            remainingAmountLabel.text ?? ""
+        }
+        
+        set {
+            remainingAmountLabel.text = newValue
         }
     }
     
@@ -81,14 +84,14 @@ public final class CouponUsageHistoryCell: UITableViewCell {
     }
     
     private func configure() {
-        [dateLabel, studioNameLabel, historyContentLabel, remainingCountLabel].forEach(contentView.addSubview(_:))
+        [dateLabel, titleLabel, historyContentLabel, remainingAmountLabel].forEach(contentView.addSubview(_:))
         
         dateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(11)
             $0.leading.equalToSuperview().offset(41)
         }
         
-        studioNameLabel.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.top.equalTo(dateLabel.snp.top)
             $0.leading.equalTo(dateLabel.snp.trailing).offset(17)
         }
@@ -98,7 +101,7 @@ public final class CouponUsageHistoryCell: UITableViewCell {
             $0.top.equalTo(dateLabel.snp.top)
         }
         
-        remainingCountLabel.snp.makeConstraints {
+        remainingAmountLabel.snp.makeConstraints {
             $0.trailing.equalTo(historyContentLabel.snp.trailing)
             $0.top.equalTo(historyContentLabel.snp.bottom).offset(4)
         }

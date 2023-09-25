@@ -124,8 +124,8 @@ final class UserCouponHistoryViewController: UIViewController {
     private lazy var historyTableView = UITableView().then {
         $0.separatorStyle = .none
         $0.dataSource = self
-        $0.rowHeight = CouponUsageHistoryCell.height
-        $0.register(CouponUsageHistoryCell.self, forCellReuseIdentifier: CouponUsageHistoryCell.identifier)
+        $0.rowHeight = HPHistoryCell.height
+        $0.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
     }
     
     // MARK: - life cycle
@@ -199,7 +199,11 @@ extension UserCouponHistoryViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CouponUsageHistoryCell.identifier) as! CouponUsageHistoryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: HPHistoryCell.identifier) as! HPHistoryCell
+        cell.dateText = "03.10"
+        cell.title = "필라피티 스튜디오"
+        cell.historyContent = "+30,000P"
+        cell.remainingAmountText = "70,000P"
         
         return cell
     }
