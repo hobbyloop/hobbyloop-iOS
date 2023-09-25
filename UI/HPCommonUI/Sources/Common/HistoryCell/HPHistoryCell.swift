@@ -8,8 +8,8 @@
 import UIKit
 
 public final class HPHistoryCell: UITableViewCell {
-    static let identifier = "HistoryCell"
-    static let height: CGFloat = 54
+    public static let identifier = "HistoryCell"
+    public static let height: CGFloat = 54
     
     private let dateLabel = UILabel().then {
         $0.text = ""

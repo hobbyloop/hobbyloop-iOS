@@ -202,8 +202,8 @@ extension UserCouponHistoryViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: HPHistoryCell.identifier) as! HPHistoryCell
         cell.dateText = "03.10"
         cell.title = "필라피티 스튜디오"
-        cell.historyContent = "+30,000P"
-        cell.remainingAmountText = "70,000P"
+        cell.historyContent = "1회 충전"
+        cell.remainingAmountText = "5회"
         
         return cell
     }
