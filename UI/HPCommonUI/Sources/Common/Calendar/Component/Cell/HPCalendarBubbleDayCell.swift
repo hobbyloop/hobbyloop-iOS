@@ -13,7 +13,7 @@ import RxCocoa
 import ReactorKit
 import Then
 import SnapKit
-import HPExtensions
+import HPFoundation
 
 
 public final class HPCalendarBubbleDayCell: UICollectionViewCell {

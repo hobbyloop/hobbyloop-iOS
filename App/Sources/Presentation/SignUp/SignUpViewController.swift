@@ -705,6 +705,15 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        
+        reactor.state
+            .filter { $0.userAccountEntity?.status == 200}
+            .bind(onNext: { _ in
+                guard let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                scene.window?.rootViewController = CustomTabBarController()
+                scene.window?.makeKeyAndVisible()
+            }).disposed(by: disposeBag)
+        
     
     }
 }

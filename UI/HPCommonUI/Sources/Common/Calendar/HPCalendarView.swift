@@ -7,7 +7,7 @@
 
 import UIKit
 
-import HPExtensions
+import HPFoundation
 import RxDataSources
 import ReactorKit
 import Then

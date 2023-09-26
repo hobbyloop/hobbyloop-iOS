@@ -9,7 +9,7 @@ import Foundation
 
 import RxSwift
 import ReactorKit
-import HPExtensions
+import HPFoundation
 
 /**
      하비루프 Calendar business logic을 담당하는 Object 입니다.
