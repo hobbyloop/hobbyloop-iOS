@@ -34,7 +34,7 @@ final class SignUpDIContainer: DIContainer {
     }
     
     func makeRepository() -> SignUpViewRepo {
-        return SignUpViewRepository(APIService: signUpClient)
+        return SignUpViewRepository()
     }
     
     func makeReactor() -> SignUpViewReactor {

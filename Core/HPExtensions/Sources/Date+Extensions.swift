@@ -10,36 +10,45 @@ import Foundation
 
 public extension Date {
     
+    var calendar: Calendar {
+        return Calendar.current
+    }
     
     var day: Int {
-        return Calendar.current.component(.day, from: .now)
+        return self.calendar.component(.day, from: .now)
     }
     
     var year: Int {
-        return Calendar.current.component(.year, from: nowDate)
+        return self.calendar.component(.year, from: nowDate)
     }
     
     var month: Int {
-        return Calendar.current.component(.month, from: nowDate)
+        return self.calendar.component(.month, from: nowDate)
     }
     
     
     var weekday: Int {
-        return Calendar.current.component(.weekday, from: nowDate)
+        return self.calendar.component(.weekday, from: nowDate)
     }
-    
     
     
     var components: DateComponents {
-        return Calendar.current.dateComponents([.year, .month],from: self)
+        return self.calendar.dateComponents([.year, .month], from: self)
     }
     
     var nowDate: Date {
-        return Calendar.current.date(from: components) ?? Date()
+        return self.calendar.date(from: components) ?? Date()
     }
     
     var rangeOfdays: Int {
-        return Calendar.current.range(of: .day, in: .month, for: nowDate)?.count ?? Int()
+        return self.calendar.range(of: .day, in: .month, for: nowDate)?.count ?? Int()
+    }
+    
+    func getWeekDays(identifier: String) -> [String] {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: identifier)
+        
+        return calendar.shortWeekdaySymbols
     }
     
     

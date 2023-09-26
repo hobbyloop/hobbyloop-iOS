@@ -13,9 +13,9 @@ import Then
 
 
 
-final class CalendarCell: UICollectionViewCell {
+public final class CalendarCell: UICollectionViewCell {
     
-    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor())
+    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), calendarContentView: HPCalendarContentView(), isStyle: .default)
     
     
     override init(frame: CGRect) {

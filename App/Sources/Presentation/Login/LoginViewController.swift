@@ -12,13 +12,10 @@ import HPFoundation
 import HPExtensions
 import HPNetwork
 import HPCommon
-import RxKakaoSDKAuth
-import KakaoSDKUser
 import Then
 import SnapKit
 import ReactorKit
 import NaverThirdPartyLogin
-import GoogleSignIn
 
 final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Property
@@ -31,6 +28,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     private lazy var indicatorView: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
         $0.color = .gray
     }
     
@@ -39,9 +37,6 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.contentMode = .scaleToFill
     }
     
-    private let dashLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIColors.Color.clear
-    }
     
     private let backgroundImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.background.image.withRenderingMode(.alwaysOriginal)
@@ -66,7 +61,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     private let underLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.deepWhite.color
+        $0.backgroundColor = HPCommonUIAsset.defaultSeparator.color
     }
     
     override init(reactor: LoginViewReactor?) {
@@ -89,20 +84,10 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         configure()
     }
     
-    override func viewDidLayoutSubviews() {
-        dashLineView.makeDashedBorder(
-            start: CGPoint(x: dashLineView.bounds.minX, y: dashLineView.bounds.minY),
-            end: CGPoint(x: dashLineView.bounds.size.width, y: dashLineView.bounds.maxY),
-            color: HPCommonUIAsset.deepWhite.color.cgColor
-        )
-    }
     
     // MARK: Configure
     private func configure() {
-        
-
-        [backgroundImageView, logoImageView, loginStckView,
-         underLineView, indicatorView, dashLineView].forEach {
+        [logoImageView, loginStckView, underLineView, indicatorView].forEach {
             view.addSubview($0)
         }
         
@@ -114,10 +99,6 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             $0.center.equalToSuperview()
         }
         
-        backgroundImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         logoImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(80)
             $0.centerX.equalToSuperview()
@@ -125,22 +106,14 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
             $0.height.equalTo(65)
         }
         
-        dashLineView.snp.makeConstraints {
-            $0.top.equalTo(logoImageView.snp.bottom).offset(50)
-            $0.left.equalToSuperview().offset(35)
-            $0.right.equalToSuperview().offset(-35)
-            $0.height.equalTo(1)
-        }
-        
         loginStckView.snp.makeConstraints {
-            $0.top.equalTo(dashLineView.snp.bottom).offset(103)
-            $0.left.equalToSuperview().offset(45)
-            $0.right.equalToSuperview().offset(-45)
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(100)
             $0.height.equalTo(245)
         }
         
         underLineView.snp.makeConstraints {
-            $0.top.equalTo(loginStckView.snp.bottom).offset(50)
+            $0.top.equalTo(loginStckView.snp.bottom).offset(80)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(1)
@@ -150,83 +123,49 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     public override func bind(reactor: LoginViewReactor) {
         
-        Observable.just(())
-            .map { Reactor.Action.viewDidLoad }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.isLoading }
-            .asDriver(onErrorJustReturn: false)
-            .drive(indicatorView.rx.isAnimating)
+            .bind(to: indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
         
         kakaoLoginButton
             .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { Reactor.Action.didTapKakaoLogin(.kakao) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         naverLoginButton
             .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { Reactor.Action.didTapNaverLogin(.naver) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         googleLoginButton
             .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { Reactor.Action.didTapGoogleLogin(self, .google) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { Reactor.Action.didTapAppleLogin(.apple) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .kakao && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .kakao)
-            }).disposed(by: disposeBag)
         
         Observable
-            .zip(
+            .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
                 reactor.state.map { $0.authToken }.distinctUntilChanged()
-            ).filter { $0.0 == .naver && !$0.1.isEmpty }
-            .map { _ in () }
+            ).filter {!$0.1.isEmpty }
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .naver)
-            }).disposed(by: disposeBag)
-        
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .google && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .google)
-            }).disposed(by: disposeBag)
-        
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken}.distinctUntilChanged()
-            ).filter { $0.0 == .apple && !$0.1.isEmpty }
-            .map { _ in () }
-            .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.didShowSingUpController(accountType: .apple)
+            .bind(onNext: { (owner, state) in
+                owner.didShowSingUpController(accountType: state.0)
             }).disposed(by: disposeBag)
     }
 }

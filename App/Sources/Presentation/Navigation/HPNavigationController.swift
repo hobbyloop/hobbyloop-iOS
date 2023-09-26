@@ -1,49 +1,45 @@
 //
 //  HPNavigationController.swift
-//  HPCommonUI
+//  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/06/21.
+//  Created by Kim dohyun on 2023/09/22.
 //
 
 import UIKit
 
+import HPCommonUI
 import HPExtensions
 import Then
 import SnapKit
-
-public enum HPNavigationBarType: Equatable {
-    case home
-    case ticket
-    case lessonDetail
-    case none
-}
+import RxSwift
+import RxCocoa
 
 
 public protocol HPNavigationProxy {
+    
+    var disposeBag: DisposeBag { get }
     var rightBarButtonItems: [UIBarButtonItem] { get }
     var leftBarButtonItems: [UIBarButtonItem] { get }
     var scrollBarAppearance: UINavigationBarAppearance { get }
     var defaultBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
+    func setTicketDetailNavigationBarButtonItem() -> Void
 }
 
 
 public final class HPNavigationController: UINavigationController, HPNavigationProxy {
-    
-    public private(set) var navigationBarType: HPNavigationBarType
-    
+        
+    public var disposeBag: DisposeBag = DisposeBag()
     public var defaultBarAppearance: UINavigationBarAppearance
     public var scrollBarAppearance: UINavigationBarAppearance
     public var rightBarButtonItems: [UIBarButtonItem] = []
     public var leftBarButtonItems: [UIBarButtonItem] = []
     
-    public init(navigationBarType: HPNavigationBarType,
-                rootViewController: UIViewController,
+    public init(rootViewController: UIViewController,
                 defaultBarAppearance: UINavigationBarAppearance,
                 scrollBarAppearance: UINavigationBarAppearance
     ) {
-        self.navigationBarType = navigationBarType
         self.defaultBarAppearance = defaultBarAppearance
         self.scrollBarAppearance = scrollBarAppearance
         super.init(rootViewController: rootViewController)
@@ -146,8 +142,43 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             searchbarButtonItem
         ]
         
+        self.navigationItem.setHidesBackButton(false, animated: true)
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        
+    }
+    
+    public func setTicketDetailNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        let bookMarkButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        let customDotButtonItem = UIButton(type: .system)
+        
+        
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        bookMarkButtonItem.setImage(HPCommonUIAsset.unArchive.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        customDotButtonItem.setImage(HPCommonUIAsset.dot.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        spacerbarButtonItem.width = 13
+        
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                NotificationCenter.default.post(name: .popToViewController, object: nil)
+            }).disposed(by: disposeBag)
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        rightBarButtonItems = [
+            UIBarButtonItem(customView: bookMarkButtonItem),
+            spacerbarButtonItem,
+            UIBarButtonItem(customView: customDotButtonItem)
+        ]
+        
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
+        
         
     }
 }
@@ -156,18 +187,21 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
 extension HPNavigationController: UINavigationControllerDelegate {
     
     public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        //TODO: navigationBarType에 따라 NavigationBarButton Item 세팅
-        switch navigationBarType {
-        case .home:
+        
+        switch viewController {
+        case is HomeViewController:
             setHomeNavigationBarButtonItem()
-        case .ticket:
+        case is TicketViewController:
             setTicketNavigationBarButtonItem()
-        case .lessonDetail: break
-        case .none:
-            self.navigationItem.setHidesBackButton(true, animated: true)
+        case is TicketDetailViewController:
+            setTicketDetailNavigationBarButtonItem()
             
+        default:
+            configure()
         }
         
         
     }
 }
+
+

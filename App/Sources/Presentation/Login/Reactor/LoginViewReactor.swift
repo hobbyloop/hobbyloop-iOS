@@ -29,7 +29,6 @@ public final class LoginViewReactor: Reactor {
     
     //MARK: Action
     public enum Action {
-        case viewDidLoad
         case didTapKakaoLogin(AccountType)
         case didTapNaverLogin(AccountType)
         case didTapGoogleLogin(AnyObject, AccountType)
@@ -48,9 +47,9 @@ public final class LoginViewReactor: Reactor {
     public struct State {
         var isLoading: Bool
         @Pulse var authToken: String
-        @Pulse var accountType: AccountType
-        @Pulse var isShowNaverLogin: Void?
-        @Pulse var isShowGoogleLogin: Void?
+        var accountType: AccountType
+        var isShowNaverLogin: Void?
+        var isShowGoogleLogin: Void?
     }
     
     
@@ -81,57 +80,43 @@ public final class LoginViewReactor: Reactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         
         let startLoading = Observable<Mutation>.just(.setLoading(true))
-        let endLoading = Observable<Mutation>.just(.setLoading(false))
         
         switch action {
-        case .viewDidLoad:
-            
-            return .concat(
-                startLoading,
-                endLoading
-            )
         case let .didTapKakaoLogin(type):
             let kakaoTypeMutation = Observable<Mutation>.just(.setAccountType(type))
-            
-            
-            return .concat(
+            return .concat([
                 startLoading,
                 kakaoTypeMutation,
-                loginRepository.resultKakaoLogin(),
-                endLoading
-            )
+                loginRepository.resultKakaoLogin()
+            ])
             
         case let .didTapNaverLogin(type):
             let naverTypeMutation = Observable<Mutation>.just(.setAccountType(type))
             
-            return .concat(
+            return .concat([
                 startLoading,
                 naverTypeMutation,
-                loginRepository.responseNaverLogin(),
-                endLoading
-            )
+                loginRepository.responseNaverLogin()
+            ])
             
         case let .didTapGoogleLogin(viewController, type):
             let googleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
             
             
-            return .concat(
+            return .concat([
                 startLoading,
                 googleTypeMutation,
-                loginRepository.responseGoogleLogin(to: viewController),
-                endLoading
-            )
+                loginRepository.responseGoogleLogin(to: viewController)
+            ])
             
         case let .didTapAppleLogin(type):
             let appleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
             
-            return .concat(
+            return .concat([
                 startLoading,
                 appleTypeMutation,
-                loginRepository.responseAppleLogin(),
-                endLoading
-            
-            )
+                loginRepository.responseAppleLogin()
+            ])
         }
         
     }
@@ -172,7 +157,10 @@ private extension LoginViewReactor {
     func requestGoogleAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .responseAccessToken(token):
-            return .just(.setAccessToken(token))
+            return .concat([
+                .just(.setAccessToken(token)),
+                .just(.setLoading(false))
+            ])
         }
     }
     

@@ -61,22 +61,22 @@ final class UserInfoEditViewController: UIViewController {
     // MARK: - input view
     private let nameInputView = SignUpInfoView(titleType: .name, filled: true).then {
         $0.titleLabel.text = "이름"
-        $0.textFiledView.text = "김지원"
+        $0.textFieldView.text = "김지원"
     }
     
     private let nickNameInputView = SignUpInfoView(titleType: .nickname, filled: true).then {
         $0.titleLabel.text = "닉네임"
-        $0.textFiledView.text = "지원"
+        $0.textFieldView.text = "지원"
     }
     
     private let birthDayInputView = SignUpInfoView(titleType: .birthDay, filled: true).then {
         $0.titleLabel.text = "출생년도"
-        $0.textFiledView.text = "1996년 12월 10일"
+        $0.textFieldView.text = "1996년 12월 10일"
     }
     
     private let phoneNumberInputView = SignUpInfoView(titleType: .phone, filled: true).then {
         $0.titleLabel.text = "전화번호"
-        $0.textFiledView.text = "010-1234-5678"
+        $0.textFieldView.text = "010-1234-5678"
     }
     
     // MARK: - calendar
@@ -152,7 +152,7 @@ final class UserInfoEditViewController: UIViewController {
             .asDriver(onErrorJustReturn: Date())
             .drive(onNext: { [weak self] date in
                 guard let `self` = self else { return }
-                self.birthDayInputView.textFiledView.text = date.convertToString()
+                self.birthDayInputView.textFieldView.text = date.convertToString()
             }).disposed(by: disposeBag)
     }
     

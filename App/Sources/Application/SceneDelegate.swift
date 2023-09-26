@@ -24,7 +24,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = .init(windowScene: scene)
         let loginDIContainer = LoginDIContainer()
         window?.rootViewController = HPNavigationController(
-            navigationBarType: .none,
             rootViewController: loginDIContainer.makeViewController(),
             defaultBarAppearance: UINavigationBarAppearance(),
             scrollBarAppearance: UINavigationBarAppearance()
