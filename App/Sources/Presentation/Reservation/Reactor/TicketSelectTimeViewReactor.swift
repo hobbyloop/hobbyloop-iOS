@@ -9,6 +9,7 @@ import Foundation
 
 import HPDomain
 import ReactorKit
+import HPCommonUI
 
 
 public final class TicketSelectTimeViewReactor: Reactor {
@@ -19,16 +20,19 @@ public final class TicketSelectTimeViewReactor: Reactor {
     
     public enum Action {
         case viewDidLoad
+        case didTapCalendarStyleButton
     }
     
     public enum Mutation {
         case setLoading(Bool)
         case setInstructorItems(Instructor)
         case setProfileSectionItem
+        case setCalendarStyle(CalendarStyle)
     }
     
     public struct State {
         var isLoading: Bool
+        var isStyle: CalendarStyle
         @Pulse var profileSection: [TicketInstructorProfileSection]
     }
     
@@ -36,6 +40,7 @@ public final class TicketSelectTimeViewReactor: Reactor {
         self.ticketSelectTimeRepository = ticketSelectTimeRepository
         self.initialState = State(
             isLoading: false,
+            isStyle: .bubble,
             profileSection: [
                 .instructorProfile([
                     .instructorProfileItem(TicketInstructorProfileCellReactor(
@@ -67,6 +72,11 @@ public final class TicketSelectTimeViewReactor: Reactor {
                 ticketSelectTimeRepository.responseInstructorList(id: 2)
             
             ])
+            
+        case .didTapCalendarStyleButton:
+            return .just(
+                .setCalendarStyle(self.currentState.isStyle == .bubble ? .default : .bubble)
+            )
         }
     }
     
@@ -78,6 +88,8 @@ public final class TicketSelectTimeViewReactor: Reactor {
             newState.isLoading = isLoading
             
         case .setProfileSectionItem: break
+        case let .setCalendarStyle(isStyle):
+            newState.isStyle = isStyle
         case let .setInstructorItems(items):
             print("Instructor items: \(items)")
         }

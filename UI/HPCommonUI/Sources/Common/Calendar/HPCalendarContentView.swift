@@ -57,8 +57,7 @@ public final class HPCalendarContentView: UIView {
         calendarMonthLabel.snp.makeConstraints {
             $0.width.lessThanOrEqualTo(45)
             $0.height.equalTo(14)
-            $0.top.equalToSuperview().offset(20)
-            $0.centerX.equalToSuperview()
+            $0.center.equalToSuperview()
         }
         
         previousButton.snp.makeConstraints {

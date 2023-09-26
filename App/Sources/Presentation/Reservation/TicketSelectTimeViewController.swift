@@ -16,6 +16,17 @@ import HPCommonUI
 
 public final class TicketSelectTimeViewController: BaseViewController<TicketSelectTimeViewReactor> {
     
+    private let ticketStyleButton: UIButton = UIButton(type: .custom).then {
+        $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: .normal)
+        $0.setImage(HPCommonUIAsset.calendarFilled.image, for: .selected)
+    }
+    
+    private let calendarContentView = HPCalendarContentView()
+    
+    private lazy var ticketCalendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), isStyle: .bubble).then {
+        $0.color = HPCommonUIAsset.white.color
+    }
+    
     
     private lazy var profileDataSource: RxCollectionViewSectionedReloadDataSource<TicketInstructorProfileSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
@@ -64,13 +75,19 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     private func configure() {
         self.view.backgroundColor = .white
         
-        [profileCollectionView, introduceProfileView].forEach {
+        [ticketCalendarView, profileCollectionView, introduceProfileView, ticketStyleButton].forEach {
             self.view.addSubview($0)
         }
         
         
+        ticketStyleButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(8)
+            $0.right.equalToSuperview().offset(-26)
+            $0.width.height.equalTo(24)
+        }
+        
         profileCollectionView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            $0.top.equalTo(ticketCalendarView.snp.bottom)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(285)
         }
@@ -120,6 +137,37 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             .asDriver(onErrorJustReturn: [])
             .drive(profileCollectionView.rx.items(dataSource: self.profileDataSource))
             .disposed(by: disposeBag)
+        
+        ticketStyleButton
+            .rx.tap
+            .map { Reactor.Action.didTapCalendarStyleButton}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isStyle }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { isStyle in
+                self.ticketCalendarView.isStyle = isStyle
+                //TODO: Global Action 으로 처리하도록 변경
+                self.ticketCalendarView.reactor?.action.onNext(.changeCalendarStyle(isStyle))
+                if isStyle == .default {
+                    self.ticketCalendarView.calendarContentView = self.calendarContentView
+                    self.ticketCalendarView.snp.updateConstraints {
+                        $0.height.equalTo(301)
+                    }
+                } else {
+                    self.ticketCalendarView.calendarContentView = nil
+                    self.ticketCalendarView.snp.remakeConstraints {
+                        $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.topMargin)
+                        $0.left.right.equalToSuperview()
+                        $0.height.equalTo(132)
+                    }
+                    
+                }
+                self.ticketCalendarView.layoutIfNeeded()
+                
+            }).disposed(by: disposeBag)
     }
     
 }

@@ -16,6 +16,15 @@ import SnapKit
 
 public final class HPCalendarView: UIView {
     
+    public var color: UIColor = .white {
+        didSet {
+            self.calendarCollectionView.backgroundColor = color
+        }
+        
+        
+    }
+    
+    
     public var isStyle: CalendarStyle  {
         didSet {
             if self.isStyle == .default {
@@ -33,7 +42,33 @@ public final class HPCalendarView: UIView {
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
 
-    public weak var calendarContentView: HPCalendarContentView?
+    public weak var calendarContentView: HPCalendarContentView? {
+        didSet {
+            if let calendarContentView = self.calendarContentView {
+                [calendarContentView, calendarCollectionView].forEach {
+                    self.addSubview($0)
+                }
+                
+                calendarContentView.snp.makeConstraints {
+                    $0.left.right.top.equalToSuperview()
+                    $0.height.equalTo(40)
+                }
+                calendarCollectionView.snp.remakeConstraints {
+                    $0.top.equalTo(calendarContentView.snp.bottom)
+                    $0.left.right.bottom.equalToSuperview()
+                }
+
+            } else {
+                self.addSubview(calendarCollectionView)
+
+
+                calendarCollectionView.snp.remakeConstraints {
+                    $0.top.left.right.equalToSuperview()
+                    $0.bottom.equalToSuperview().offset(-20)
+                }
+            }
+        }
+    }
     
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
@@ -91,8 +126,7 @@ public final class HPCalendarView: UIView {
     
     //MARK: Configure
     private func configure() {
-        self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
-
+       
         if let calendarContentView = self.calendarContentView {
             [calendarContentView, calendarCollectionView].forEach {
                 self.addSubview($0)
@@ -267,7 +301,7 @@ extension HPCalendarView: ReactorKit.View {
         
         reactor.pulse(\.$section)
             .debug("test calendar Section")
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
         
