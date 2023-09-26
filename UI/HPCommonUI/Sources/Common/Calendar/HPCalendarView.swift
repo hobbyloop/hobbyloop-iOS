@@ -17,11 +17,10 @@ import SnapKit
 public final class HPCalendarView: UIView {
     
     public var color: UIColor = .white {
+        //TODO: BackgroundColor Setting 부분 수정
         didSet {
             self.calendarCollectionView.backgroundColor = color
         }
-        
-        
     }
     
     
@@ -44,29 +43,7 @@ public final class HPCalendarView: UIView {
 
     public weak var calendarContentView: HPCalendarContentView? {
         didSet {
-            if let calendarContentView = self.calendarContentView {
-                [calendarContentView, calendarCollectionView].forEach {
-                    self.addSubview($0)
-                }
-                
-                calendarContentView.snp.makeConstraints {
-                    $0.left.right.top.equalToSuperview()
-                    $0.height.equalTo(40)
-                }
-                calendarCollectionView.snp.remakeConstraints {
-                    $0.top.equalTo(calendarContentView.snp.bottom)
-                    $0.left.right.bottom.equalToSuperview()
-                }
-
-            } else {
-                self.addSubview(calendarCollectionView)
-
-
-                calendarCollectionView.snp.remakeConstraints {
-                    $0.top.left.right.equalToSuperview()
-                    $0.bottom.equalToSuperview().offset(-20)
-                }
-            }
+            self.configure()
         }
     }
     
@@ -136,20 +113,18 @@ public final class HPCalendarView: UIView {
                 $0.left.right.top.equalToSuperview()
                 $0.height.equalTo(40)
             }
-            calendarCollectionView.snp.makeConstraints {
+            
+            calendarCollectionView.snp.remakeConstraints {
                 $0.top.equalTo(calendarContentView.snp.bottom)
-                $0.left.equalToSuperview().offset(16)
-                $0.right.equalToSuperview().offset(-16)
-                $0.bottom.equalToSuperview()
+                $0.left.right.bottom.equalToSuperview()
             }
 
         } else {
             self.addSubview(calendarCollectionView)
 
 
-            calendarCollectionView.snp.makeConstraints {
-                $0.top.left.right.equalToSuperview()
-                $0.bottom.equalToSuperview().offset(-20)
+            calendarCollectionView.snp.remakeConstraints {
+                $0.top.left.right.bottom.equalToSuperview()
             }
         }
         
@@ -250,7 +225,7 @@ public final class HPCalendarView: UIView {
             layoutSize: bubbleCalendarItemSize
         )
         
-        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7)
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 20, trailing: 7)
         
         let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: bubbleCalendarGroupSize,
@@ -321,15 +296,6 @@ extension HPCalendarView: ReactorKit.View {
             .bind { index in
                 self.calendarCollectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
             }.disposed(by: disposeBag)
-        
-        
-        //TODO: 추가 Cell Action 있을시 로직 추가
-        calendarCollectionView
-            .rx.itemSelected
-            .withUnretained(self)
-            .subscribe(onNext: { owner, indexPath in
                 
-            }).disposed(by: disposeBag)
-        
     }
 }

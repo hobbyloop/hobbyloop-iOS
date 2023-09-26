@@ -8,7 +8,6 @@
 import UIKit
 
 import HPCommonUI
-import HPExtensions
 import ReactorKit
 import SnapKit
 import RxGesture

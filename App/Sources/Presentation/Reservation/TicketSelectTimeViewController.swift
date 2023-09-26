@@ -16,13 +16,26 @@ import HPCommonUI
 
 public final class TicketSelectTimeViewController: BaseViewController<TicketSelectTimeViewReactor> {
     
+    
+    private lazy var scrollView: UIScrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+    }
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+    }
+    
     private let ticketStyleButton: UIButton = UIButton(type: .custom).then {
         $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: .normal)
         $0.setImage(HPCommonUIAsset.calendarFilled.image, for: .selected)
     }
     
-    private let calendarContentView = HPCalendarContentView()
-    
+    private let calendarContentView = HPCalendarContentView().then {
+        $0.backgroundColor = HPCommonUIAsset.white.color
+    }
+        
     private lazy var ticketCalendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), isStyle: .bubble).then {
         $0.color = HPCommonUIAsset.white.color
     }
@@ -52,6 +65,11 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         $0.showsVerticalScrollIndicator = false
     }
     
+    private lazy var ticketScheduleCollectionView: UICollectionViewCompositionalLayout? = UICollectionViewCompositionalLayout { _, _ in
+        
+        return nil
+    }
+    
     private lazy var introduceProfileView: TicketIntroduceView = TicketIntroduceView().then {
         $0.backgroundColor = HPCommonUIAsset.white.color
         
@@ -73,10 +91,28 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     private func configure() {
-        self.view.backgroundColor = .white
+        
+        self.view.backgroundColor = HPCommonUIAsset.systemBackground.color
+        self.view.addSubview(scrollView)
+        
+        scrollView.addSubview(containerView)
+        
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.left.right.bottom.equalToSuperview()
+        }
+        
+        
+        containerView.snp.makeConstraints {
+            $0.left.right.top.bottom.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+            $0.height.equalTo(scrollView.frameLayoutGuide)
+        }
+        
+        
         
         [ticketCalendarView, profileCollectionView, introduceProfileView, ticketStyleButton].forEach {
-            self.view.addSubview($0)
+            containerView.addSubview($0)
         }
         
         
@@ -144,6 +180,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        
+        reactor.state
+            .map { $0.isStyle == .bubble ? false : true }
+            .bind(to: ticketStyleButton.rx.isSelected)
+            .disposed(by: disposeBag)
+            
+        
         reactor.state
             .map { $0.isStyle }
             .observe(on: MainScheduler.instance)
@@ -161,7 +204,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
                     self.ticketCalendarView.snp.remakeConstraints {
                         $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.topMargin)
                         $0.left.right.equalToSuperview()
-                        $0.height.equalTo(132)
+                        $0.height.equalTo(125)
                     }
                     
                 }
