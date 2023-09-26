@@ -13,14 +13,12 @@ import HPCommonUI
 final class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
     
     private let homeController = HPNavigationController(
-        navigationBarType: .home,
         rootViewController: HomeDIContainer().makeViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )
     
     private let ticketReservationController = HPNavigationController(
-        navigationBarType: .reservation,
         rootViewController: TicketSelectDIContainer().makeViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()

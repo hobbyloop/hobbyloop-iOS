@@ -1,9 +1,10 @@
 //
 //  UIImageView+Extensions.swift
-//  HPExtensions
+//  HPCommonUI
 //
-//  Created by 김남건 on 2023/09/02.
+//  Created by Kim dohyun on 2023/09/26.
 //
+
 
 import UIKit
 import SnapKit

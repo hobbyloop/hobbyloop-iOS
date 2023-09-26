@@ -16,7 +16,6 @@ class SearchViewController: MainBaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
         configure()
     }
     

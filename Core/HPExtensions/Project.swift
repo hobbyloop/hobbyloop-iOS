@@ -4,9 +4,8 @@ import ProjectDescriptionHelpers
 
 let extensions = Project.makeModule(
     name: "HPExtensions",
-    products: [.framework(.static)],
+    products: [.framework(.dynamic)],
     dependencies: [
-        .Project.UI.common
-        .Project.Core.thirdParty,
+        .Project.Core.thirdParty
     ]
 )

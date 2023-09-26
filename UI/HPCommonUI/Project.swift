@@ -6,6 +6,6 @@ let common = Project.makeModule(
     products: [.framework(.dynamic)],
     dependencies: [
         .Project.Core.thirdParty,
-        .Project.Core.foundation
+        .Project.Core.extensions
     ]
 )

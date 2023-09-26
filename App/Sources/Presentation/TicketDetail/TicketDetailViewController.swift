@@ -59,15 +59,9 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: .detail)
         
         configure()
         
-        bodyView.view.snp.makeConstraints {
-            guard let headerView else { return }
-            $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
         
     }
 }

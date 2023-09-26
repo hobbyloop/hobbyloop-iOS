@@ -1,14 +1,11 @@
 //
 //  UIView+Extensions.swift
-//  HPFoundation
+//  HPCommonUI
 //
-//  Created by Kim dohyun on 2023/05/28.
+//  Created by Kim dohyun on 2023/09/26.
 //
 
 import UIKit
-
-import HPCommonUI
-//TODO: Circular dependency between modules 'HPExtensions' and 'HPCommonUI'
 
 
 public extension UIView {

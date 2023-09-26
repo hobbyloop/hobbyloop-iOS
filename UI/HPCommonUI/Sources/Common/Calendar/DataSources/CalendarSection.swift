@@ -42,4 +42,5 @@ public enum CalendarSection: SectionModelType {
 
 public enum CalendarSectionItem {
     case calendarItem(HPCalendarDayCellReactor)
+    case bubbleItem(HPCalendarBubbleDayCellReactor)
 }

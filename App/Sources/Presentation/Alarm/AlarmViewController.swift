@@ -15,7 +15,7 @@ class AlarmViewController: MainBaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
+//        headerView = HeaderView(type: headerType)
         configure()
     }
 }

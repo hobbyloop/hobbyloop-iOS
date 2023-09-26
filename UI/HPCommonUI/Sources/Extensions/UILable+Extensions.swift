@@ -1,9 +1,12 @@
 //
-//  UILabel+Extensions.swift
-//  HPFoundation
+//  UILable+Extensions.swift
+//  HPCommonUI
 //
-//  Created by Kim dohyun on 2023/05/25.
+//  Created by Kim dohyun on 2023/09/26.
 //
+
+import UIKit
+
 
 import UIKit
 
@@ -81,3 +84,4 @@ public extension UILabel {
     }
     
 }
+
