@@ -19,9 +19,9 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     public var isStyle: CalendarStyle = .bubble {
         didSet {
             if isStyle == .default {
-                self.profileCollectionView.collectionViewLayout = montlyProfileCollectionViewLayout
+                self.profileCollectionView.collectionViewLayout = monthlyProfileCollectionViewLayout
             } else {
-                self.profileCollectionView.collectionViewLayout = weeklyprofileCollectionViewLayout
+                self.profileCollectionView.collectionViewLayout = weeklyProfileCollectionViewLayout
             }
         }
     }
@@ -48,14 +48,14 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         
         switch dataSource {
         case .instructorCalendar:
-            return self.createTicketCalendarLayout()
+            return self.createWeeklyTicketCalendarLayout()
         case .instructorProfile:
             return self.createInstructorProfileLayout()
             
         }
     }
     
-    private lazy var montlyProfileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
+    private lazy var monthlyProfileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
         let dataSource = self.profileDataSource[section]
         switch dataSource {
         case .instructorCalendar:
@@ -67,7 +67,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     
-    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.isStyle == .bubble ? weeklyProfileCollectionViewLayout : montlyProfileCollectionViewLayout).then {
+    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.isStyle == .bubble ? weeklyProfileCollectionViewLayout : monthlyProfileCollectionViewLayout).then {
         
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
@@ -128,49 +128,49 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     private func createMonthlyTicketCalendarLayout() -> NSCollectionLayoutSection {
-        let ticketCalendarLayoutSize = NSCollectionLayoutSize(
+        let ticketMontlyCalendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
             heightDimension: .absolute(310)
         )
         
     
         
-        let ticketCalendarLayoutItem = NSCollectionLayoutItem(layoutSize: ticketCalendarLayoutSize)
+        let ticketMonthlyCalendarLayoutItem = NSCollectionLayoutItem(layoutSize: ticketMontlyCalendarLayoutSize)
         
-        let ticketCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: ticketCalendarLayoutSize,
-            subitem: ticketCalendarLayoutItem,
+        let ticketMonthlyCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: ticketMontlyCalendarLayoutSize,
+            subitem: ticketMonthlyCalendarLayoutItem,
             count: 1
 
         )
         
-        let ticketCalendarSection = NSCollectionLayoutSection(group: ticketCalendarLayoutGroup)
+        let ticketMonthlyCalendarSection = NSCollectionLayoutSection(group: ticketMonthlyCalendarLayoutGroup)
         
-        return ticketCalendarSection
+        return ticketMonthlyCalendarSection
     }
     
-    private func createTicketCalendarLayout() -> NSCollectionLayoutSection {
+    private func createWeeklyTicketCalendarLayout() -> NSCollectionLayoutSection {
         
         
-        let ticketCalendarLayoutSize = NSCollectionLayoutSize(
+        let ticketWeeklyCalendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
             heightDimension: .estimated(130)
         )
         
     
         
-        let ticketCalendarLayoutItem = NSCollectionLayoutItem(layoutSize: ticketCalendarLayoutSize)
+        let ticketWeeklyCalendarLayoutItem = NSCollectionLayoutItem(layoutSize: ticketWeeklyCalendarLayoutSize)
         
-        let ticketCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: ticketCalendarLayoutSize,
-            subitem: ticketCalendarLayoutItem,
+        let ticketWeeklyCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: ticketWeeklyCalendarLayoutSize,
+            subitem: ticketWeeklyCalendarLayoutItem,
             count: 1
 
         )
         
-        let ticketCalendarSection = NSCollectionLayoutSection(group: ticketCalendarLayoutGroup)
+        let ticketWeeklyCalendarSection = NSCollectionLayoutSection(group: ticketWeeklyCalendarLayoutGroup)
         
-        return ticketCalendarSection
+        return ticketWeeklyCalendarSection
     }
     
     
