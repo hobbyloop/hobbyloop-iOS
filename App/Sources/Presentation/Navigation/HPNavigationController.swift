@@ -26,6 +26,7 @@ public protocol HPNavigationProxy {
     func setReservationNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
     func setTicketDetailNavigationBarButtonItem() -> Void
+    func setTicketSelectNavigationBarButtonItem() -> Void
 }
 
 
@@ -177,6 +178,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             UIBarButtonItem(customView: customDotButtonItem)
         ]
         
+        self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
         
@@ -194,6 +196,26 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         
     }
+    
+    public func setTicketSelectNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                NotificationCenter.default.post(name: .popToViewController, object: nil)
+            }).disposed(by: disposeBag)
+        
+        leftBarButtonItems = [
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+
+    }
 }
 
 
@@ -207,7 +229,9 @@ extension HPNavigationController: UINavigationControllerDelegate {
         case is TicketViewController:
             setTicketNavigationBarButtonItem()
         case is TicketDetailViewController:
-            setTicketDetailNavigationBarButtonItem()            
+            setTicketDetailNavigationBarButtonItem()
+        case is TicketSelectTimeViewController:
+            setTicketSelectNavigationBarButtonItem()
         default:
             configure()
         }

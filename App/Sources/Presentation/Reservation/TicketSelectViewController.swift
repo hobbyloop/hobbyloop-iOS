@@ -229,6 +229,7 @@ extension TicketSelectViewController: TicketUserInfoViewDelegate {
     public func createTicketTimeViewController() {
         let ticketSelectTimeDIController = TicketSelectTimeDIContainer().makeViewController()
         ticketSelectTimeDIController.hidesBottomBarWhenPushed = true
+        ticketSelectTimeDIController.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.pushViewController(ticketSelectTimeDIController, animated: true)
         
     }

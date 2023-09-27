@@ -220,7 +220,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
                 layoutSize: ticketScheduleHeaderLayoutSize,
                 elementKind: UICollectionView.elementKindSectionHeader,
                 alignment: .top
-            )        
+            )
         ]
         
         
@@ -258,6 +258,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             .map { $0.isStyle == .bubble ? false : true }
             .bind(to: ticketStyleButton.rx.isSelected)
             .disposed(by: disposeBag)
+        
+        NotificationCenter
+            .default.rx
+            .notification(.popToViewController)
+            .subscribe(onNext: { _ in
+                self.navigationController?.popViewController(animated: true)
+            }).disposed(by: disposeBag)
             
         
         reactor.state
