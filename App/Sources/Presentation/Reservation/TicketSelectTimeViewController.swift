@@ -43,7 +43,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         }
     }
     
-    private lazy var weeklyprofileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
+    private lazy var weeklyProfileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
         let dataSource = self.profileDataSource[section]
         
         switch dataSource {
@@ -67,7 +67,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     
-    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.isStyle == .bubble ? weeklyprofileCollectionViewLayout : montlyProfileCollectionViewLayout).then {
+    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.isStyle == .bubble ? weeklyProfileCollectionViewLayout : montlyProfileCollectionViewLayout).then {
         
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
