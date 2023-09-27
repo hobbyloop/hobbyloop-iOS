@@ -199,6 +199,8 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     public func setTicketSelectNavigationBarButtonItem() {
         let backButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 20
         
         backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
@@ -210,6 +212,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             }).disposed(by: disposeBag)
         
         leftBarButtonItems = [
+            spacerbarButtonItem,
             UIBarButtonItem(customView: backButtonItem)
         ]
         

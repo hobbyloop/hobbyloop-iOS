@@ -14,15 +14,18 @@ import RxDataSources
  
  */
 public enum TicketInstructorProfileSection: SectionModelType {
+    case instructorCalendar([TicketInstructorProfileItem])
     case instructorProfile([TicketInstructorProfileItem])
     
     public var items: [TicketInstructorProfileItem] {
         switch self {
+        case let .instructorCalendar(items): return items
         case let .instructorProfile(items): return items
         }
     }
     public init(original: TicketInstructorProfileSection, items: [TicketInstructorProfileItem]) {
         switch original {
+        case .instructorCalendar: self = .instructorCalendar(items)
         case .instructorProfile: self = .instructorProfile(items)
         }
     }
@@ -33,28 +36,7 @@ public enum TicketInstructorProfileSection: SectionModelType {
   수업 예약 강사 프로필 Item
  */
 public enum TicketInstructorProfileItem {
+    case instructorCalendarItem(TicketCalendarCellReactor)
     case instructorProfileItem(TicketInstructorProfileCellReactor)
     
-}
-
-
-public enum TicketScheduleSection: SectionModelType {
-    case instructorSchedule([TicketScheduleItem])
-    
-    public var items: [TicketScheduleItem] {
-        switch self {
-        case let .instructorSchedule(items): return items
-        }
-    }
-    
-    public init(original: TicketScheduleSection, items: [TicketScheduleItem]) {
-        switch original {
-        case .instructorSchedule: self = .instructorSchedule(items)
-        }
-    }
-}
-
-
-public enum TicketScheduleItem {
-    case instructorScheduleItem
 }

@@ -101,6 +101,7 @@ public final class HPCalendarView: UIView {
     }
     
     
+    
     //MARK: Configure
     private func configure() {
        
@@ -213,7 +214,7 @@ public final class HPCalendarView: UIView {
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(54),
-            heightDimension: .fractionalHeight(1.0)
+            heightDimension: .absolute(130)
         )
         
         let bubbleCalendarGroupSize = NSCollectionLayoutSize(

@@ -13,7 +13,7 @@ import Then
 import HPCommonUI
 
 
-
+//TODO: Compositinal Layout 으로 수정
 public final class TicketIntroduceView: UIView {
     
     

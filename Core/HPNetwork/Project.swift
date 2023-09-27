@@ -7,6 +7,7 @@ let network = Project.makeModule(
     dependencies: [
         .Project.Core.foundation,
         .Project.Core.common,
-        .Project.Core.domain
+        .Project.Core.domain,
+        .Project.Core.extensions
     ]
 )
