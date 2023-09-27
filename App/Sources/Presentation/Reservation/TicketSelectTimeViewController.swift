@@ -73,10 +73,15 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             return ticketScheduleCell
         }
         
+    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let ticketScheduleReusableView = collectionView
+            .dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketScheduleReusableView", for: indexPath) as? TicketScheduleReusableView else { return UICollectionReusableView() }
+        return ticketScheduleReusableView
     }
     
     private lazy var ticketScheduleCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: ticketScheduleCollectionViewLayout).then {
         $0.register(TicketScheduleCell.self, forCellWithReuseIdentifier: "TicketScheduleCell")
+        $0.register(TicketScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketScheduleReusableView")
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
     }
@@ -196,6 +201,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             heightDimension: .estimated(self.view.frame.size.height)
         )
         
+        let ticketScheduleHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(46)
+        )
+        
+        
+        
         let ticketScheduleLayoutGroup = NSCollectionLayoutGroup.vertical(
             layoutSize: ticketScheduleLayoutGroupSize,
             subitems: [ticketScheduleLayoutItem]
@@ -203,6 +215,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         
         let ticketScheduleLayoutSection = NSCollectionLayoutSection(group: ticketScheduleLayoutGroup)
         
+        ticketScheduleLayoutSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: ticketScheduleHeaderLayoutSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )        
+        ]
         
         
         return ticketScheduleLayoutSection
