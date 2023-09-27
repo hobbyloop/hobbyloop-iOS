@@ -42,6 +42,17 @@ public extension UIView {
     }
     
     
+    func createNoneImageTicketView(_ rect: CGRect, backgroundColor: UIColor) {
+        self.backgroundColor = backgroundColor
+        
+        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 35, topRightRadius: 13, bottomLeftRadius: 13, bottomRightRadius: 13)
+        let maskLayer = CAShapeLayer()
+        
+        maskLayer.path = maskPath.cgPath
+        self.layer.mask = maskLayer
+    }
+    
+    
     func createTicketView(_ rect: CGRect, backgroundColor: UIColor, image: UIImage) -> UIView {
 
         let ticketView = UIView(frame: rect)

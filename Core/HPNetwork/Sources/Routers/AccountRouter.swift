@@ -8,6 +8,7 @@
 import Foundation
 
 import Alamofire
+import HPExtensions
 import HPCommon
 
 public enum AccountRouter {

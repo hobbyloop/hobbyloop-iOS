@@ -36,3 +36,25 @@ public enum TicketInstructorProfileItem {
     case instructorProfileItem(TicketInstructorProfileCellReactor)
     
 }
+
+
+public enum TicketScheduleSection: SectionModelType {
+    case instructorSchedule([TicketScheduleItem])
+    
+    public var items: [TicketScheduleItem] {
+        switch self {
+        case let .instructorSchedule(items): return items
+        }
+    }
+    
+    public init(original: TicketScheduleSection, items: [TicketScheduleItem]) {
+        switch original {
+        case .instructorSchedule: self = .instructorSchedule(items)
+        }
+    }
+}
+
+
+public enum TicketScheduleItem {
+    case instructorScheduleItem
+}

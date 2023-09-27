@@ -33,6 +33,7 @@ public final class TicketSelectTimeViewReactor: Reactor {
     public struct State {
         var isLoading: Bool
         var isStyle: CalendarStyle
+        @Pulse var scheduleSection: [TicketScheduleSection]
         @Pulse var profileSection: [TicketInstructorProfileSection]
     }
     
@@ -41,6 +42,14 @@ public final class TicketSelectTimeViewReactor: Reactor {
         self.initialState = State(
             isLoading: false,
             isStyle: .bubble,
+            scheduleSection: [
+                .instructorSchedule([
+                    .instructorScheduleItem,
+                    .instructorScheduleItem,
+                    .instructorScheduleItem,
+                    .instructorScheduleItem
+                ])
+            ],
             profileSection: [
                 .instructorProfile([
                     .instructorProfileItem(TicketInstructorProfileCellReactor(

@@ -65,9 +65,25 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         $0.showsVerticalScrollIndicator = false
     }
     
-    private lazy var ticketScheduleCollectionView: UICollectionViewCompositionalLayout? = UICollectionViewCompositionalLayout { _, _ in
+    private lazy var ticketScheduleDataSource: RxCollectionViewSectionedReloadDataSource<TicketScheduleSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
-        return nil
+        switch sectionItem {
+        case .instructorScheduleItem:
+            guard let ticketScheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketScheduleCell", for: indexPath) as? TicketScheduleCell else { return UICollectionViewCell() }
+            return ticketScheduleCell
+        }
+        
+    }
+    
+    private lazy var ticketScheduleCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: ticketScheduleCollectionViewLayout).then {
+        $0.register(TicketScheduleCell.self, forCellWithReuseIdentifier: "TicketScheduleCell")
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    private lazy var ticketScheduleCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+        
+        return self.createTicketScheduleLayout()
     }
     
     private lazy var introduceProfileView: TicketIntroduceView = TicketIntroduceView().then {
@@ -106,12 +122,11 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         containerView.snp.makeConstraints {
             $0.left.right.top.bottom.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide)
-            $0.height.equalTo(scrollView.frameLayoutGuide)
         }
         
         
         
-        [ticketCalendarView, profileCollectionView, introduceProfileView, ticketStyleButton].forEach {
+        [ticketCalendarView, profileCollectionView, introduceProfileView, ticketStyleButton, ticketScheduleCollectionView].forEach {
             containerView.addSubview($0)
         }
         
@@ -132,6 +147,12 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             $0.top.equalTo(profileCollectionView.snp.bottom)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(48)
+        }
+        
+        ticketScheduleCollectionView.snp.makeConstraints {
+            $0.top.equalTo(introduceProfileView.snp.bottom).offset(15)
+            $0.height.equalTo(660)
+            $0.left.right.bottom.equalToSuperview()
         }
         
     }
@@ -160,6 +181,34 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     
+    private func createTicketScheduleLayout() -> NSCollectionLayoutSection {
+        
+        let ticketScheduleLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(191)
+        )
+        
+        let ticketScheduleLayoutItem = NSCollectionLayoutItem(layoutSize: ticketScheduleLayoutSize)
+        
+        
+        let ticketScheduleLayoutGroupSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(self.view.frame.size.height)
+        )
+        
+        let ticketScheduleLayoutGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: ticketScheduleLayoutGroupSize,
+            subitems: [ticketScheduleLayoutItem]
+        )
+        
+        let ticketScheduleLayoutSection = NSCollectionLayoutSection(group: ticketScheduleLayoutGroup)
+        
+        
+        
+        return ticketScheduleLayoutSection
+    }
+    
+    
     
     public override func bind(reactor: TicketSelectTimeViewReactor) {
         
@@ -172,6 +221,11 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         reactor.pulse(\.$profileSection)
             .asDriver(onErrorJustReturn: [])
             .drive(profileCollectionView.rx.items(dataSource: self.profileDataSource))
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$scheduleSection)
+            .asDriver(onErrorJustReturn: [])
+            .drive(ticketScheduleCollectionView.rx.items(dataSource: self.ticketScheduleDataSource))
             .disposed(by: disposeBag)
         
         ticketStyleButton
