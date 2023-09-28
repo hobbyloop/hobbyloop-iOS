@@ -18,14 +18,10 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     
     public var isStyle: CalendarStyle = .bubble {
         didSet {
-            if isStyle == .default {
-                self.profileCollectionView.collectionViewLayout = monthlyProfileCollectionViewLayout
-            } else {
-                self.profileCollectionView.collectionViewLayout = weeklyProfileCollectionViewLayout
-            }
+            self.profileCollectionView.collectionViewLayout.invalidateLayout()
         }
     }
-    
+
     private lazy var profileDataSource: RxCollectionViewSectionedReloadDataSource<TicketInstructorProfileSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
         switch sectionItem {
@@ -43,31 +39,23 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         }
     }
     
-    private lazy var weeklyProfileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
+    private lazy var profileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
         let dataSource = self.profileDataSource[section]
         
         switch dataSource {
         case .instructorCalendar:
-            return self.createWeeklyTicketCalendarLayout()
+            if self.isStyle == .default {
+                return self.createMonthlyTicketCalendarLayout()
+            } else {
+                return self.createWeeklyTicketCalendarLayout()
+            }
         case .instructorProfile:
             return self.createInstructorProfileLayout()
             
         }
     }
     
-    private lazy var monthlyProfileCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, environment in
-        let dataSource = self.profileDataSource[section]
-        switch dataSource {
-        case .instructorCalendar:
-            return self.createMonthlyTicketCalendarLayout()
-        case .instructorProfile:
-            return self.createInstructorProfileLayout()
-        }
-        
-    }
-    
-    
-    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.isStyle == .bubble ? weeklyProfileCollectionViewLayout : monthlyProfileCollectionViewLayout).then {
+    private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: profileCollectionViewLayout).then {
         
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
