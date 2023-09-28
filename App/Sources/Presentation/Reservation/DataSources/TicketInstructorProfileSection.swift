@@ -16,17 +16,23 @@ import RxDataSources
 public enum TicketInstructorProfileSection: SectionModelType {
     case instructorCalendar([TicketInstructorProfileItem])
     case instructorProfile([TicketInstructorProfileItem])
+    case instructorIntroduce([TicketInstructorProfileItem])
+    case instructorSchedule([TicketInstructorProfileItem])
     
     public var items: [TicketInstructorProfileItem] {
         switch self {
         case let .instructorCalendar(items): return items
         case let .instructorProfile(items): return items
+        case let .instructorIntroduce(items): return items
+        case let .instructorSchedule(items): return items
         }
     }
     public init(original: TicketInstructorProfileSection, items: [TicketInstructorProfileItem]) {
         switch original {
         case .instructorCalendar: self = .instructorCalendar(items)
         case .instructorProfile: self = .instructorProfile(items)
+        case .instructorIntroduce: self = .instructorIntroduce(items)
+        case .instructorSchedule: self = .instructorSchedule(items)
         }
     }
     
@@ -38,5 +44,7 @@ public enum TicketInstructorProfileSection: SectionModelType {
 public enum TicketInstructorProfileItem {
     case instructorCalendarItem(TicketCalendarCellReactor)
     case instructorProfileItem(TicketInstructorProfileCellReactor)
+    case instructorIntroduceItem
+    case instructorScheduleItem
     
 }

@@ -45,8 +45,8 @@ public final class TicketScheduleReusableView: UICollectionReusableView {
         }
         
         scheduleTimeImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(22)
-            $0.left.equalToSuperview().offset(26)
+            $0.top.equalToSuperview().offset(15)
+            $0.left.equalToSuperview().offset(22)
             $0.width.height.equalTo(16)
         }
         

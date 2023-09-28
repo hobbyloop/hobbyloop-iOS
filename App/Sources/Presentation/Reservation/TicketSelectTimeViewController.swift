@@ -18,7 +18,9 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     
     public var isStyle: CalendarStyle = .bubble {
         didSet {
-            self.profileCollectionView.collectionViewLayout.invalidateLayout()
+            DispatchQueue.main.async {
+                self.profileCollectionView.collectionViewLayout.invalidateLayout()
+            }
         }
     }
 
@@ -36,6 +38,25 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             guard let instructorProfileCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketInstructorProfileCell", for: indexPath) as? TicketInstructorProfileCell else { return UICollectionViewCell() }
             instructorProfileCell.reactor = cellReactor
             return instructorProfileCell
+            
+        case .instructorIntroduceItem:
+            guard let instructorIntroduceCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketInstructorIntroduceCell", for: indexPath) as? TicketInstructorIntroduceCell else { return UICollectionViewCell() }
+            
+            return instructorIntroduceCell
+            
+        case .instructorScheduleItem:
+            guard let instructorScheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketScheduleCell", for: indexPath) as? TicketScheduleCell else { return UICollectionViewCell() }
+            
+            return instructorScheduleCell
+        }
+    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        
+        switch dataSource[indexPath] {
+        case .instructorScheduleItem:
+            guard let ticketScheduleView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketScheduleReusableView", for: indexPath) as? TicketScheduleReusableView else { return UICollectionReusableView() }
+            return ticketScheduleView
+        default:
+            return UICollectionReusableView()
         }
     }
     
@@ -52,6 +73,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         case .instructorProfile:
             return self.createInstructorProfileLayout()
             
+        case .instructorIntroduce:
+            return self.createInstructorIntroduceLayout()
+            
+        case .instructorSchedule:
+            return self.createInstructorScheduleLayout()
+
+            
         }
     }
     
@@ -59,6 +87,9 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
+        $0.register(TicketInstructorIntroduceCell.self, forCellWithReuseIdentifier: "TicketInstructorIntroduceCell")
+        $0.register(TicketScheduleCell.self, forCellWithReuseIdentifier: "TicketScheduleCell")
+        $0.register(TicketScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketScheduleReusableView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
     }
@@ -159,6 +190,62 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         let ticketWeeklyCalendarSection = NSCollectionLayoutSection(group: ticketWeeklyCalendarLayoutGroup)
         
         return ticketWeeklyCalendarSection
+    }
+    
+    private func createInstructorIntroduceLayout() -> NSCollectionLayoutSection {
+        let instructorIntroduceLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(48)
+        )
+        
+        let instructorIntroduceLayoutItem = NSCollectionLayoutItem(layoutSize: instructorIntroduceLayoutSize)
+        
+        let instructorIntroduceGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: instructorIntroduceLayoutSize,
+            subitem: instructorIntroduceLayoutItem,
+            count: 1
+        )
+        
+        let instructorIntroduceSection = NSCollectionLayoutSection(group: instructorIntroduceGroup)
+        
+        return instructorIntroduceSection
+        
+    }
+    
+    private func createInstructorScheduleLayout() -> NSCollectionLayoutSection {
+        let instructorScheduleLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(191)
+        )
+        
+        
+        let instructorScheduleLayoutItem = NSCollectionLayoutItem(layoutSize: instructorScheduleLayoutSize)
+        
+        
+        let instructorScheduleGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: instructorScheduleLayoutSize,
+            subitems: [instructorScheduleLayoutItem]
+        )
+        
+        instructorScheduleGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        
+        let instructorScheduleSection = NSCollectionLayoutSection(group: instructorScheduleGroup)
+        
+        let instructorScheduleSectionHeaderSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(46)
+        )
+    
+        instructorScheduleSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: instructorScheduleSectionHeaderSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+        instructorScheduleSection.contentInsets = NSDirectionalEdgeInsets(top: 40, leading: 0, bottom: 0, trailing: 0)
+        
+        return instructorScheduleSection
     }
     
     

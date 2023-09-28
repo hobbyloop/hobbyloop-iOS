@@ -24,6 +24,7 @@ public final class TicketCalendarCell: UICollectionViewCell {
     //MARK: Property
     
     public weak var delegate: TicketCalendarDelegate?
+    
     public typealias Reactor = TicketCalendarCellReactor
     public var disposeBag: DisposeBag = DisposeBag()
     private lazy var calendarContentView: HPCalendarContentView = HPCalendarContentView()

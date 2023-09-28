@@ -1,21 +1,19 @@
 //
-//  TicketIntroduceView.swift
+//  TicketInstructorIntroduceCell.swift
 //  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/09/25.
+//  Created by Kim dohyun on 2023/09/28.
 //
 
 import UIKit
-
 
 import SnapKit
 import Then
 import HPCommonUI
 
 
-//TODO: Compositinal Layout 으로 수정
-public final class TicketIntroduceView: UIView {
-    
+
+public final class TicketInstructorIntroduceCell: UICollectionViewCell {
     
     private let sportsTypeImageView: UIImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
@@ -41,21 +39,19 @@ public final class TicketIntroduceView: UIView {
         
     }
     
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
     
-    
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     private func configure() {
         [sportsTypeImageView, nameLabel, profileButton].forEach {
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         }
         
         sportsTypeImageView.snp.makeConstraints {
@@ -81,4 +77,5 @@ public final class TicketIntroduceView: UIView {
         
         
     }
+    
 }

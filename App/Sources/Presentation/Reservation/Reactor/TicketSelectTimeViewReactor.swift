@@ -55,6 +55,14 @@ public final class TicketSelectTimeViewReactor: Reactor {
                         imageURL: "profile",
                         numberOfPages: 3,
                         currentPage: 2))
+                ]),
+                .instructorIntroduce([
+                    .instructorIntroduceItem
+                ]),
+                .instructorSchedule([
+                    .instructorScheduleItem,
+                    .instructorScheduleItem,
+                    .instructorScheduleItem
                 ])
             
             ]

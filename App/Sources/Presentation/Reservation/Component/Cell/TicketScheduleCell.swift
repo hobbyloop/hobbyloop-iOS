@@ -44,8 +44,8 @@ public final class TicketScheduleCell: UICollectionViewCell {
         }
         
         circleView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(15)
-            $0.left.equalToSuperview().offset(27)
+            $0.top.equalToSuperview().offset(12)
+            $0.left.equalToSuperview().offset(11)
             $0.width.height.equalTo(5)
         }
         
@@ -57,9 +57,8 @@ public final class TicketScheduleCell: UICollectionViewCell {
         
         scheduleView.snp.makeConstraints {
             $0.top.equalTo(dateLabel.snp.bottom).offset(14)
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-15)
+            $0.left.right.bottom.equalToSuperview()
+           
         }
     }
     
