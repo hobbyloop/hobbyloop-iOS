@@ -20,13 +20,13 @@ public final class LoginManager: Authenticationable {
     static let shaerd: LoginManager = LoginManager()
     
     //MARK: Property
-    private(set) var accessToken: String = "" {
+    public private(set) var accessToken: String = "" {
         didSet{
             UserDefaults.standard.set(accessToken, forKey: .accessToken)
         }
     }
     
-    private(set) var refreshToken: String = "" {
+    public private(set) var refreshToken: String = "" {
         didSet {
             UserDefaults.standard.set(refreshToken, forKey: .refreshToken)
         }
