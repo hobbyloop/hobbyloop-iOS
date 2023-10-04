@@ -5,14 +5,15 @@
 //  Created by Kim dohyun on 2023/10/04.
 //
 
-import HPExtensions
-
-import Alamofire
 import Foundation
+
+import HPExtensions
+import Alamofire
 
 public protocol Authenticationable {
     func isLogin() -> Bool
     func updateToken(accessToken: String, refreshToken: String)
+    func removeToken()
 }
 
 public final class LoginManager: Authenticationable {
@@ -38,9 +39,10 @@ public final class LoginManager: Authenticationable {
 }
 
 
-public extension LoginManager {
+extension LoginManager {
     
-    func isLogin() -> Bool {
+    
+    public func isLogin() -> Bool {
         if UserDefaults.standard.string(forKey: .accessToken).isEmpty {
             return false
         } else {
@@ -48,10 +50,14 @@ public extension LoginManager {
         }
     }
     
-    
-    func updateToken(accessToken: String, refreshToken: String) {
+    public func updateToken(accessToken: String, refreshToken: String) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
+    }
+    
+    public func removeToken() {
+        self.accessToken = ""
+        self.refreshToken = ""
     }
 }
 
