@@ -284,6 +284,7 @@ extension HPCalendarView: ReactorKit.View {
         
         NotificationCenter.default
             .rx.notification(.NSCalendarDayChanged)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 print("notification changed date")
                 guard let style = self?.reactor?.currentState.style else { return }
