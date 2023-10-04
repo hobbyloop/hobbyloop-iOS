@@ -101,6 +101,8 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
      */
     public func configureBubbleCalendar() -> Observable<HPCalendarViewReactor.Mutation> {
         var calendarSectionItem: [CalendarSectionItem] = []
+        
+        //TODO: Month compare 로직 추가
         var startOfDays = (nowDate.weekday - 1)
         var totalDays = startOfDays + setConfigureDays(date: nowDate)
         
