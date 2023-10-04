@@ -23,10 +23,10 @@ final class TicketSelectDIContainer: DIContainer {
     }
     
     func makeReactor() -> TicketSelectViewReactor {
-        return TicketSelectViewReactor()
+        return TicketSelectViewReactor(ticketSelectRepository: makeRepository())
     }
     
-    func makeRepository() -> Repository {
+    func makeRepository() -> TicketSelectViewRepo {
         return TicketSelectViewRepository()
     }
     

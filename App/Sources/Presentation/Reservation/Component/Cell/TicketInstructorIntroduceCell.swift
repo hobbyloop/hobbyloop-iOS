@@ -57,8 +57,7 @@ public final class TicketInstructorIntroduceCell: UICollectionViewCell {
         sportsTypeImageView.snp.makeConstraints {
             $0.left.equalToSuperview().offset(22)
             $0.top.equalToSuperview().offset(14)
-            $0.height.equalTo(21)
-            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(21)
         }
         
         nameLabel.snp.makeConstraints {

@@ -9,18 +9,19 @@ import Foundation
 
 import ReactorKit
 import HPCommonUI
+import HPDomain
 
 public final class TicketSelectViewReactor: Reactor {
     public var initialState: State
     
-    
+    private let ticketSelectRepository: TicketSelectViewRepo
     public enum Action {
         case viewDidLoad
     }
     
     public enum Mutation {
         case setLoading(Bool)
-        case setTicketInfoItem
+        case setTicketInfoItem(TicketInfo)
     }
     
     public struct State {
@@ -29,7 +30,8 @@ public final class TicketSelectViewReactor: Reactor {
     }
     
     
-    init() {
+    init(ticketSelectRepository: TicketSelectViewRepo) {
+        self.ticketSelectRepository = ticketSelectRepository
         self.initialState = State(
             isLoading: false,
             section: [
@@ -49,7 +51,7 @@ public final class TicketSelectViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return .concat([
-                .just(.setTicketInfoItem),
+                ticketSelectRepository.responseUserTicketList(),
                 .just(.setLoading(false))
             ])
         }
@@ -65,7 +67,8 @@ public final class TicketSelectViewReactor: Reactor {
             
             newState.isLoading = isLoading
             
-        case .setTicketInfoItem: break
+        case let .setTicketInfoItem(items):
+            print("userTicket Info Items: \(items)")
         }
         
         

@@ -14,6 +14,7 @@ import HPExtensions
 
 public enum TicketSelectRouter {
     case getFacilityList
+    case getUserTicketList
     case getInstructorList(_ id: Int)
 }
 
@@ -31,7 +32,8 @@ extension TicketSelectRouter: Router {
         switch self {
         case .getFacilityList:
             return "/api/v1/facility/list/all"
-            
+        case .getUserTicketList:
+            return "/api/v1/ticket/user/list"
         case .getInstructorList:
             return "/api/v1/instructor"
         }

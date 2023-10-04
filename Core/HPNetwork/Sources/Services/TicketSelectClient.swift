@@ -20,6 +20,7 @@ import RxSwift
  */
 public protocol TicketSelectService: AnyObject {
     func requestToInstructorList(id: Int) -> Single<Instructor>
+    func requestToTicketInfoList() -> Single<TicketInfo>
         
 }
 
@@ -55,5 +56,23 @@ extension TicketSelectClient {
         
     }
     
+    
+    public func requestToTicketInfoList() -> Single<TicketInfo> {
+        return Single.create { single -> Disposable in
+            AF.request(TicketSelectRouter.getUserTicketList)
+                .validate(statusCode: 200..<300)
+                .responseDecodable(of: TicketInfo.self) { response in
+                    switch response.result {
+                    case let .success(data):
+                        single(.success(data))
+                    case let .failure(error):
+                        print(error.localizedDescription)
+                        single(.failure(error))
+                    }
+                }
+            
+            return Disposables.create()
+        }
+    }
 }
 

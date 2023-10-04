@@ -84,12 +84,14 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: profileCollectionViewLayout).then {
-        
+        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
         $0.register(TicketInstructorIntroduceCell.self, forCellWithReuseIdentifier: "TicketInstructorIntroduceCell")
         $0.register(TicketScheduleCell.self, forCellWithReuseIdentifier: "TicketScheduleCell")
         $0.register(TicketScheduleReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketScheduleReusableView")
+        $0.collectionViewLayout.register(SystemBackgroundDecorationView.self, forDecorationViewOfKind: "SystemBackgroundDecorationView")
+        $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
     }
@@ -112,8 +114,6 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     
 
     private func configure() {
-        
-        self.view.backgroundColor = HPCommonUIAsset.systemBackground.color
         self.view.addSubview(profileCollectionView)
         
         
@@ -138,7 +138,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             subitems: [instructorProfileItem]
         )
         
+        
+        let instructorProfileDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
         let instructorProfileSection = NSCollectionLayoutSection(group: instructorProfileGroup)
+
+        
+        instructorProfileSection.decorationItems = [instructorProfileDecorationItem]
         
         
         instructorProfileSection.orthogonalScrollingBehavior = .groupPaging
@@ -163,7 +169,10 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
 
         )
         
+        let ticketMontlyDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
         let ticketMonthlyCalendarSection = NSCollectionLayoutSection(group: ticketMonthlyCalendarLayoutGroup)
+        
+        ticketMonthlyCalendarSection.decorationItems = [ticketMontlyDecorationItem]
         
         return ticketMonthlyCalendarSection
     }
@@ -187,7 +196,10 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
 
         )
         
+        let ticketWeeklyDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
         let ticketWeeklyCalendarSection = NSCollectionLayoutSection(group: ticketWeeklyCalendarLayoutGroup)
+        ticketWeeklyCalendarSection.decorationItems = [ticketWeeklyDecorationItem]
         
         return ticketWeeklyCalendarSection
     }
@@ -195,7 +207,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     private func createInstructorIntroduceLayout() -> NSCollectionLayoutSection {
         let instructorIntroduceLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .estimated(48)
+            heightDimension: .estimated(78)
         )
         
         let instructorIntroduceLayoutItem = NSCollectionLayoutItem(layoutSize: instructorIntroduceLayoutSize)
@@ -206,7 +218,14 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             count: 1
         )
         
+        let instructorIntroduceDecorationtItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
+        instructorIntroduceDecorationtItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 18, trailing: 0)
+        
+        
         let instructorIntroduceSection = NSCollectionLayoutSection(group: instructorIntroduceGroup)
+        
+        instructorIntroduceSection.decorationItems = [instructorIntroduceDecorationtItem]
         
         return instructorIntroduceSection
         
@@ -236,6 +255,9 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             heightDimension: .absolute(46)
         )
     
+        let instructorScheduleDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
+        instructorScheduleSection.decorationItems = [instructorScheduleDecorationItem]
         instructorScheduleSection.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: instructorScheduleSectionHeaderSize,
@@ -243,7 +265,6 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
                 alignment: .top
             )
         ]
-        instructorScheduleSection.contentInsets = NSDirectionalEdgeInsets(top: 40, leading: 0, bottom: 0, trailing: 0)
         
         return instructorScheduleSection
     }
