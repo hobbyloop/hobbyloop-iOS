@@ -11,48 +11,32 @@ import HPCommon
 import HPCommonUI
 
 class ReservationCollectionCell: UICollectionViewCell {
-    private lazy var mainImageView: UIImageView = {
-        return UIImageView()
-    }()
+    private lazy var mainImageView: UIImageView = UIImageView()
     
-    private lazy var titleView: UIView = {
-       return UIView()
-    }()
+    private lazy var titleView: UIView = UIView()
     
-    private lazy var titleStack: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 6
-        }
-    }()
+    private lazy var titleStack: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 6
+    }
     
-    private lazy var titleImageView: UIImageView = {
-        return UIImageView()
-    }()
+    private lazy var titleImageView: UIImageView = UIImageView()
     
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.font = UIFont().fontWithName(type: .bold, size: 14)
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.font = UIFont().fontWithName(type: .bold, size: 14)
+    }
     
-    private lazy var starReview: StarReviewView = {
-        return StarReviewView()
-    }()
+    private lazy var starReview: StarReviewView = StarReviewView()
     
-    private lazy var teacherName: UILabel = {
-        return UILabel().then {
-            $0.font = UIFont().fontWithName(type: .light, size: 10)
-        }
-    }()
+    private lazy var teacherName: UILabel = UILabel().then {
+        $0.font = UIFont().fontWithName(type: .light, size: 10)
+    }
     
-    private lazy var teachingDetail: UILabel = {
-        return UILabel().then {
-            $0.numberOfLines = 0
-            $0.font = UIFont().fontWithName(type: .regular, size: 11)
-            $0.lineBreakStrategy = .hangulWordPriority
-        }
-    }()
+    private lazy var teachingDetail: UILabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.font = UIFont().fontWithName(type: .regular, size: 11)
+        $0.lineBreakStrategy = .hangulWordPriority
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

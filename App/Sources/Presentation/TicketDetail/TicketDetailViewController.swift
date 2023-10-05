@@ -18,40 +18,36 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     private var view2 = ClassInfoViewController()
     private lazy var viewControllers = [view1, view2]
     
-    private lazy var bodyView: TabmanViewController = {
-        return TabmanViewController().then {
-            // Create bar
-            $0.dataSource = self
-            let bar = TMBar.ButtonBar()
-            bar.backgroundView.style = .blur(style: .regular)
-            bar.backgroundColor = .white
-            bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 17.0, bottom: 0.0, right: 17.0)
-            bar.buttons.customize { (button) in
-                button.tintColor = UIColor(red: 123/255, green: 123/255, blue: 123/255, alpha: 1) // 선택 안되어 있을 때
-                button.selectedTintColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1) // 선택 되어 있을 때
-                button.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-            }
-            // 인디케이터 조정
-            bar.indicator.weight = .light
-            bar.indicator.tintColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(0.4)
-            bar.indicator.overscrollBehavior = .bounce
-            bar.layout.alignment = .leading
-            bar.layout.contentMode = .fit
-            bar.layout.transitionStyle = .snap // Customize
-            
-            // Add to view
-            $0.addBar(bar, dataSource: self, at: .top)
+    private lazy var bodyView: TabmanViewController = TabmanViewController().then {
+        // Create bar
+        $0.dataSource = self
+        let bar = TMBar.ButtonBar()
+        bar.backgroundView.style = .blur(style: .regular)
+        bar.backgroundColor = .white
+        bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 17.0, bottom: 0.0, right: 17.0)
+        bar.buttons.customize { (button) in
+            button.tintColor = UIColor(red: 123/255, green: 123/255, blue: 123/255, alpha: 1) // 선택 안되어 있을 때
+            button.selectedTintColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1) // 선택 되어 있을 때
+            button.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
         }
-    }()
+        // 인디케이터 조정
+        bar.indicator.weight = .light
+        bar.indicator.tintColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(0.4)
+        bar.indicator.overscrollBehavior = .bounce
+        bar.layout.alignment = .leading
+        bar.layout.contentMode = .fit
+        bar.layout.transitionStyle = .snap // Customize
+        
+        // Add to view
+        $0.addBar(bar, dataSource: self, at: .top)
+    }
     
-    private lazy var paymentButton: UIButton = {
-        return UIButton().then {
-            $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
-            $0.setTitle("결제하기", for: .normal)
-            $0.setTitleColor(.white, for: .normal)
-            $0.layer.cornerRadius = 10
-        }
-    }()
+    private lazy var paymentButton: UIButton = UIButton().then {
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+        $0.setTitle("결제하기", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.layer.cornerRadius = 10
+    }
     
     private var viewIndex: Int = 0
     

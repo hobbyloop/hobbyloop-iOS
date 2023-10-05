@@ -15,41 +15,31 @@ class FacilityInfoCollectionAnnouncement: UICollectionViewCell, FacilityInfoNavi
     internal lazy var announcementEvent = PublishSubject<Bool>()
     internal lazy var disposeBag = DisposeBag()
     
-    private lazy var titleStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 6
-            $0.alignment = .center
-        }
-    }()
+    private lazy var titleStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 6
+        $0.alignment = .center
+    }
     
-    private lazy var titleImageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = HPCommonUIAsset.notificationFilled.image.withRenderingMode(.alwaysOriginal)
-        }
-    }()
+    private lazy var titleImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.notificationFilled.image.withRenderingMode(.alwaysOriginal)
+    }
     
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "공지사항"
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.text = "공지사항"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+    }
     
-    private lazy var subscribeLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-            $0.textColor = HPCommonUIAsset.originSeparator.color
-            $0.numberOfLines = 0
-        }
-    }()
+    private lazy var subscribeLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.numberOfLines = 0
+    }
     
-    public lazy var openButton: UIButton = {
-        return UIButton().then {
-            $0.setImage(HPCommonUIAsset.downarrow.image, for: .normal)
-            $0.setImage(HPCommonUIAsset.uparrow.image, for: .application)
-        }
-    }()
+    public lazy var openButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.downarrow.image, for: .normal)
+        $0.setImage(HPCommonUIAsset.uparrow.image, for: .application)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

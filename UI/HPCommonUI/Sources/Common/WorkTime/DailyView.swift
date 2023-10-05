@@ -7,22 +7,16 @@
 
 import UIKit
 
-import HPCommonUI
-
 public class DailyView: UIView {
-    private var dayLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-            $0.textColor = HPCommonUIAsset.originSeparator.color
-        }
-    }()
+    private var dayLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.originSeparator.color
+    }
     
-    private var timeLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-            $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
-        }
-    }()
+    private var timeLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

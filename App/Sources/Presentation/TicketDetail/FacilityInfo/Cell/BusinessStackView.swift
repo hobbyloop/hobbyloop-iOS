@@ -10,19 +10,15 @@ import HPCommonUI
 
 class BusinessStackView: UIStackView {
     private let textColor: UIColor = UIColor(red: 166/255, green: 166/255, blue: 166/255, alpha: 1)
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.textColor = textColor
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.textColor = textColor
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
+    }
     
-    private lazy var subscribeLabel: UILabel = {
-        return UILabel().then {
-            $0.textColor = textColor
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        }
-    }()
+    private lazy var subscribeLabel: UILabel = UILabel().then {
+        $0.textColor = textColor
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

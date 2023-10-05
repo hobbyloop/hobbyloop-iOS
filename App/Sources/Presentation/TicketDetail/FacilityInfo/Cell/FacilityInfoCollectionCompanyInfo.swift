@@ -9,32 +9,26 @@ import UIKit
 import HPCommonUI
 
 class FacilityInfoCollectionCompanyInfo: UICollectionViewCell {
-    private lazy var mainStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .vertical
-            $0.alignment = .center
-            $0.distribution = .fill
-            $0.spacing = 26
-        }
-    }()
+    private lazy var mainStackView: UIStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .center
+        $0.distribution = .fill
+        $0.spacing = 26
+    }
     
-    private lazy var logoImageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = HPCommonUIAsset.hobbyloop.image.withRenderingMode(.alwaysOriginal)
-            $0.contentMode = .scaleAspectFit
-            $0.snp.makeConstraints {
-                $0.height.width.equalTo(90)
-            }
+    private lazy var logoImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.hobbyloop.image.withRenderingMode(.alwaysOriginal)
+        $0.contentMode = .scaleAspectFit
+        $0.snp.makeConstraints {
+            $0.height.width.equalTo(90)
         }
-    }()
+    }
     
-    private lazy var textLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-            $0.lineBreakStrategy = .hangulWordPriority
-            $0.numberOfLines = 0
-        }
-    }()
+    private lazy var textLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.lineBreakStrategy = .hangulWordPriority
+        $0.numberOfLines = 0
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

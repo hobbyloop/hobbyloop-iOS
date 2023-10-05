@@ -29,121 +29,101 @@ class TicketCollectionReusableView: UICollectionReusableView {
     public var disposeBag = DisposeBag()
     private var loopPassButtonFlag = false
     
-    private lazy var labelStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .vertical
-            $0.spacing = 14
-            $0.alignment = .leading
-            $0.distribution = .fill
-            $0.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-            $0.isLayoutMarginsRelativeArrangement = true
-        }
-    }()
+    private lazy var labelStackView: UIStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 14
+        $0.alignment = .leading
+        $0.distribution = .fill
+        $0.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        $0.isLayoutMarginsRelativeArrangement = true
+    }
     
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "시설 / 이용권 조회"
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.text = "시설 / 이용권 조회"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
+    }
     
-    private lazy var descriptionLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "원하는 시설을 구경하고 이용권을 구매해보세요!"
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        }
-    }()
+    private lazy var descriptionLabel: UILabel = UILabel().then {
+        $0.text = "원하는 시설을 구경하고 이용권을 구매해보세요!"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+    }
     
-    private lazy var buttonStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 8
-            $0.isLayoutMarginsRelativeArrangement = false
-            $0.alignment = .center
-            $0.distribution = .fillEqually
-        }
-    }()
+    private lazy var buttonStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.isLayoutMarginsRelativeArrangement = false
+        $0.alignment = .center
+        $0.distribution = .fillEqually
+    }
     
-    private lazy var ticketButton: UIButton = {
-        return UIButton().then {
-            let text = "이용권"
-            let attributedString = NSMutableAttributedString(string: text)
-            let range = (text as NSString).range(of: text)
-            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
-            attributedString.addAttribute(.foregroundColor, value: loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
-            $0.setAttributedTitle(attributedString, for: .normal)
-            
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 13
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
-        }
-    }()
+    private lazy var ticketButton: UIButton = UIButton().then {
+        let text = "이용권"
+        let attributedString = NSMutableAttributedString(string: text)
+        let range = (text as NSString).range(of: text)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
+        attributedString.addAttribute(.foregroundColor, value: loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
+        $0.setAttributedTitle(attributedString, for: .normal)
+        
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 13
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+    }
     
-    private lazy var loopPassButton: UIButton = {
-        return UIButton().then {
-            let text = "루프패스"
-            let attributedString = NSMutableAttributedString(string: text)
-            let range = (text as NSString).range(of: text)
-            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
-            attributedString.addAttribute(.foregroundColor, value: !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
-            $0.setAttributedTitle(attributedString, for: .normal)
-            
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 13
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
-        }
-    }()
+    private lazy var loopPassButton: UIButton = UIButton().then {
+        let text = "루프패스"
+        let attributedString = NSMutableAttributedString(string: text)
+        let range = (text as NSString).range(of: text)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
+        attributedString.addAttribute(.foregroundColor, value: !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
+        $0.setAttributedTitle(attributedString, for: .normal)
+        
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 13
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+    }
     
-    private lazy var locationStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 1
-            $0.alignment = .center
-        }
-    }()
+    private lazy var locationStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 1
+        $0.alignment = .center
+    }
     
-    private lazy var locationImageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = HPCommonUIAsset.locationFilled.image.withTintColor(HPCommonUIAsset.deepOrange.color)
-        }
-    }()
+    private lazy var locationImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.locationFilled.image.withTintColor(HPCommonUIAsset.deepOrange.color)
+    }
     
-    public lazy var locationButton: UIButton = {
-        return UIButton().then {
-            let mainText = "위치를 설정해주세요"
-            let attributedString = mainText.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), UIColor.black)
-            $0.setAttributedTitle(attributedString, for: .normal)
-            
-            var configure = UIButton.Configuration.plain()
-            
-            $0.addSubview(locationButtonRightLabel)
-            
-            locationButtonRightLabel.snp.makeConstraints {
-                $0.trailing.equalToSuperview().offset(0)
-                $0.centerY.equalToSuperview()
-            }
-            
-            configure.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: $0.bounds.width + 26)
-            $0.configuration = configure
+    public lazy var locationButton: UIButton = UIButton().then {
+        let mainText = "위치를 설정해주세요"
+        let attributedString = mainText.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), UIColor.black)
+        $0.setAttributedTitle(attributedString, for: .normal)
+        
+        var configure = UIButton.Configuration.plain()
+        
+        $0.addSubview(locationButtonRightLabel)
+        
+        locationButtonRightLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(0)
+            $0.centerY.equalToSuperview()
         }
-    }()
+        
+        configure.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: $0.bounds.width + 26)
+        $0.configuration = configure
+    }
     
-    private lazy var locationButtonRightLabel: UILabel = {
-        return UILabel(frame: CGRect(x: 0,
-                                     y: 0,
-                                     width: 0,
-                                     height: 0)).then {
-            let subText = "설정"
-            let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
-            let subRange = (subText as NSString).range(of: subText)
-            subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
-            $0.attributedText = subAttributedString
-            $0.contentMode = .scaleAspectFit
-            $0.layer.masksToBounds = true
-        }
-    }()
+    private lazy var locationButtonRightLabel: UILabel = UILabel(frame: CGRect(x: 0,
+                                                                               y: 0,
+                                                                               width: 0,
+                                                                               height: 0)).then {
+        let subText = "설정"
+        let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
+        let subRange = (subText as NSString).range(of: subText)
+        subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
+        $0.attributedText = subAttributedString
+        $0.contentMode = .scaleAspectFit
+        $0.layer.masksToBounds = true
+    }
     
     public lazy var sortButton: UIButton = {
         var filled = UIButton.Configuration.filled()
@@ -154,7 +134,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
             
             $0.setAttributedTitle(
                 text.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-                                        HPCommonUIAsset.semiblack.color
+                                        HPCommonUIAsset.lightblack.color
                                        ),for: .normal)
             $0.tintColor = .white
             let size = CGSize(width: 14, height: 14)

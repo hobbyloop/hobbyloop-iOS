@@ -11,29 +11,23 @@ import SnapKit
 import HPCommonUI
 
 class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
-    private var stackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 10
-            $0.axis = .horizontal
-            $0.alignment = .center
-        }
-    }()
+    private var stackView: UIStackView = UIStackView().then {
+        $0.spacing = 10
+        $0.axis = .horizontal
+        $0.alignment = .center
+    }
     
-    private var ticketImageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
-            $0.snp.makeConstraints {
-                $0.width.equalTo(24)
-                $0.height.equalTo(24)
-            }
+    private var ticketImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
+        $0.snp.makeConstraints {
+            $0.width.equalTo(24)
+            $0.height.equalTo(24)
         }
-    }()
+    }
     
-    private var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        }
-    }()
+    private var titleLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+    }
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

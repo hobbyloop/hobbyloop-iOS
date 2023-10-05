@@ -20,152 +20,120 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
     
     internal lazy var disposeBag = DisposeBag()
     
-    private lazy var centerImageView: UIImageView = {
-        return UIImageView()
-    }()
+    private lazy var centerImageView: UIImageView = UIImageView()
     
-    private lazy var mainStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .vertical
-            $0.distribution = .fillProportionally
-            $0.spacing = 16
+    private lazy var mainStackView: UIStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .fillProportionally
+        $0.spacing = 16
+    }
+    
+    private lazy var companyView: UIView = UIView()
+    
+    private lazy var titleStackView: UIStackView = UIStackView().then {
+        $0.spacing = 8
+        $0.axis = .vertical
+        $0.alignment = .leading
+    }
+    
+    private lazy var titleAndIconStackView: UIStackView = UIStackView().then {
+        $0.spacing = 5
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.snp.makeConstraints {
+            $0.height.equalTo(24)
         }
-    }()
+    }
     
-    private lazy var companyView: UIView = {
-        return UIView()
-    }()
-    
-    private lazy var titleStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 8
-            $0.axis = .vertical
-            $0.alignment = .leading
+    private lazy var loopPassLabel: UILabel = UILabel().then {
+        $0.text = "루프패스"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
+        $0.textColor = .white
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+        $0.layer.cornerRadius = 10
+        $0.layer.masksToBounds = true
+        $0.textAlignment = .center
+        $0.snp.makeConstraints {
+            $0.height.equalTo(20)
+            $0.width.equalTo(50)
         }
-    }()
+    }
     
-    private lazy var titleAndIconStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 5
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.snp.makeConstraints {
-                $0.height.equalTo(24)
-            }
+    private lazy var refundableCompanyLabel: UILabel = UILabel().then {
+        $0.text = "중도환불 가능업체"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
+        $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = HPCommonUIAsset.separator.color.withAlphaComponent(1).cgColor
+        $0.layer.borderWidth = 1
+        $0.textAlignment = .center
+        $0.snp.makeConstraints {
+            $0.height.equalTo(20)
+            $0.width.equalTo(90)
         }
-    }()
+    }
     
-    private lazy var loopPassLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "루프패스"
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
-            $0.textColor = .white
-            $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
-            $0.layer.cornerRadius = 10
-            $0.layer.masksToBounds = true
-            $0.textAlignment = .center
-            $0.snp.makeConstraints {
-                $0.height.equalTo(20)
-                $0.width.equalTo(50)
-            }
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 18)
+    }
     
-    private lazy var refundableCompanyLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "중도환불 가능업체"
-            $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
-            $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
-            $0.layer.cornerRadius = 10
-            $0.layer.borderColor = HPCommonUIAsset.separator.color.withAlphaComponent(1).cgColor
-            $0.layer.borderWidth = 1
-            $0.textAlignment = .center
-            $0.snp.makeConstraints {
-                $0.height.equalTo(20)
-                $0.width.equalTo(90)
-            }
-        }
-    }()
+    private lazy var descriptionLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+        $0.textColor = .black.withAlphaComponent(0.45)
+    }
     
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 18)
-        }
-    }()
+    private lazy var communicationStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 15
+    }
     
-    private lazy var descriptionLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-            $0.textColor = .black.withAlphaComponent(0.45)
-        }
-    }()
+    private lazy var callButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.callFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
     
-    private lazy var communicationStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 15
-        }
-    }()
+    private lazy var messageButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.textFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
     
-    private lazy var callButton: UIButton = {
-        return UIButton().then {
-            $0.setImage(HPCommonUIAsset.callFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
-        }
-    }()
+    private lazy var workTimeButton: UIButton = UIButton().then {
+        var configure = UIButton.Configuration.plain()
+        let imageSize = CGSize(width: 12, height: 12)
+        configure.image = HPCommonUIAsset.downarrow.image.imageWith(newSize: imageSize)
+        configure.imagePlacement = .trailing
+        configure.imagePadding = 6
+        configure.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: $0.bounds.width + 26, bottom: 0, trailing: 0)
+        configure.titlePadding = 6
+        $0.configuration = configure
+        
+        let fullText = "운영시간"
+        let range = (fullText as NSString).range(of: "운영시간")
+        let attributedString = NSMutableAttributedString(string: fullText)
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 16), range: range)
+        $0.setAttributedTitle(attributedString, for: .normal)
+        $0.tintColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
     
-    private lazy var messageButton: UIButton = {
-        return UIButton().then {
-            $0.setImage(HPCommonUIAsset.textFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
-        }
-    }()
+    private lazy var operatingAndReviewView: UIView = UIView()
     
-    private lazy var workTimeButton: UIButton = {
-        return UIButton().then {
-            var configure = UIButton.Configuration.plain()
-            let imageSize = CGSize(width: 12, height: 12)
-            configure.image = HPCommonUIAsset.downarrow.image.imageWith(newSize: imageSize)
-            configure.imagePlacement = .trailing
-            configure.imagePadding = 6
-            configure.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: $0.bounds.width + 26, bottom: 0, trailing: 0)
-            configure.titlePadding = 6
-            $0.configuration = configure
-            
-            let fullText = "운영시간"
-            let range = (fullText as NSString).range(of: "운영시간")
-            let attributedString = NSMutableAttributedString(string: fullText)
-            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 16), range: range)
-            $0.setAttributedTitle(attributedString, for: .normal)
-            $0.tintColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-    }()
+    private lazy var reviewView: StarReviewView = StarReviewView()
     
-    private lazy var operatingAndReviewView: UIView = {
-        return UIView()
-    }()
-    
-    private lazy var reviewView: StarReviewView = {
-        return StarReviewView()
-    }()
-    
-    private lazy var workTimeView: WorkTimeView = {
-        return WorkTimeView().then {
-            let daily = [DailyTime(day: "월", time: "11:30 - 21:30"),
-                         DailyTime(day: "화", time: "11:30 - 21:30"),
-                         DailyTime(day: "수", time: "11:30 - 21:30"),
-                         DailyTime(day: "목", time: "11:30 - 21:30"),
-                         DailyTime(day: "금", time: "11:30 - 21:30"),
-                         DailyTime(day: "토", time: "11:30 - 21:30"),
-                         DailyTime(day: "일", time: "11:30 - 21:30")
-            ]
-            $0.configure(daily)
-            $0.backgroundColor = .white
-            $0.layer.cornerRadius = 10
-            $0.layer.borderColor = HPCommonUIAsset.lightSeparator.color.cgColor
-            $0.layer.borderWidth = 1
-            $0.isHidden = true
-        }
-    }()
+    private lazy var workTimeView: WorkTimeView = WorkTimeView().then {
+        let daily = [DailyTime(day: "월", time: "11:30 - 21:30"),
+                     DailyTime(day: "화", time: "11:30 - 21:30"),
+                     DailyTime(day: "수", time: "11:30 - 21:30"),
+                     DailyTime(day: "목", time: "11:30 - 21:30"),
+                     DailyTime(day: "금", time: "11:30 - 21:30"),
+                     DailyTime(day: "토", time: "11:30 - 21:30"),
+                     DailyTime(day: "일", time: "11:30 - 21:30")
+        ]
+        $0.configure(daily)
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = HPCommonUIAsset.lightSeparator.color.cgColor
+        $0.layer.borderWidth = 1
+        $0.isHidden = true
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

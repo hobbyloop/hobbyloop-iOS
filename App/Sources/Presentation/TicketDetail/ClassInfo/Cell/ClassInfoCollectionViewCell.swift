@@ -9,27 +9,21 @@ import UIKit
 import HPCommonUI
 
 class ClassInfoCollectionViewCell: UICollectionViewCell {
-    private lazy var titleStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.spacing = 7
-        }
-    }()
+    private lazy var titleStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 7
+    }
     
-    private lazy var titleImage: UIImageView = {
-        return UIImageView().then {
-            let size = CGSize(width: 24, height: 24)
-            $0.image = HPCommonUIAsset.ticketOutlined.image.imageWith(newSize: size)
-        }
-    }()
+    private lazy var titleImage: UIImageView = UIImageView().then {
+        let size = CGSize(width: 24, height: 24)
+        $0.image = HPCommonUIAsset.ticketOutlined.image.imageWith(newSize: size)
+    }
     
-    private lazy var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "예약 가능 수업"
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        }
-    }()
+    private lazy var titleLabel: UILabel = UILabel().then {
+        $0.text = "예약 가능 수업"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+    }
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()

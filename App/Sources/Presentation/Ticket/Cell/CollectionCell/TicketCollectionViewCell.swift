@@ -10,90 +10,65 @@ import UIKit
 import HPCommonUI
 
 class TicketCollectionViewCell: UICollectionViewCell {
-    private var imageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = UIImage(named: "TicketTestImage")
-        }
-    }()
+    private var imageView: UIImageView = UIImageView().then {
+        $0.image = UIImage(named: "TicketTestImage")
+    }
     
-    private var storeStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .horizontal
-            $0.alignment = .fill
-            $0.distribution = .fillEqually
-        }
-    }()
+    private var storeStackView: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .fill
+        $0.distribution = .fillEqually
+    }
     
-    private var titleStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 9
-            $0.axis = .vertical
-            $0.alignment = .leading
-        }
-    }()
+    private var titleStackView: UIStackView = UIStackView().then {
+        $0.spacing = 9
+        $0.axis = .vertical
+        $0.alignment = .leading
+    }
     
-    private var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 20)
-        }
-    }()
+    private var titleLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 20)
+    }
     
-    private var descriptionLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        }
-    }()
+    private var descriptionLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+    }
     
-    private var archiveButton: UIButton = {
-        return UIButton().then {
-            $0.setImage(HPCommonUIAsset.archiveOutlined.image.withRenderingMode(.alwaysOriginal), for: .normal)
-            $0.setImage(HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal), for: .selected)
-        }
-    }()
+    private var archiveButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.archiveOutlined.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        $0.setImage(HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal), for: .selected)
+    }
     
-    private var rightStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 9
-            $0.axis = .vertical
-            $0.alignment = .trailing
-        }
-    }()
+    private var rightStackView: UIStackView = UIStackView().then {
+        $0.spacing = 9
+        $0.axis = .vertical
+        $0.alignment = .trailing
+    }
     
-    private var starStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 5
-            $0.axis = .horizontal
-        }
-    }()
+    private var starStackView: UIStackView = UIStackView().then {
+        $0.spacing = 5
+        $0.axis = .horizontal
+    }
     
-    private var starImageView: UIImageView = {
-        return UIImageView().then {
-            $0.tintColor = UIColor(red: 255/255, green: 194/255, blue: 0, alpha: 1)
-            $0.snp.makeConstraints {
-                $0.width.height.equalTo(13)
-            }
-        }
-    }()
+    private var starImageView: UIImageView = UIImageView().then {
+        $0.tintColor = UIColor(red: 255/255, green: 194/255, blue: 0, alpha: 1)
+    }
     
-    private var starLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        }
-    }()
+    private var starLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+    }
     
-    public lazy var tableView: UITableView = {
-        return UITableView().then {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.register(TicketTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: "HeaderCell")
-            $0.register(TicketTableViewCell.self, forCellReuseIdentifier: "BodyCell")
-            $0.separatorInset = .zero
-            $0.separatorStyle = .singleLine
-            $0.separatorInsetReference = .fromCellEdges
-            $0.delegate = self
-            $0.dataSource = self
-            $0.backgroundColor = .clear
-        }
-    }()
+    public lazy var tableView: UITableView = UITableView().then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.register(TicketTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: "HeaderCell")
+        $0.register(TicketTableViewCell.self, forCellReuseIdentifier: "BodyCell")
+        $0.separatorInset = .zero
+        $0.separatorStyle = .singleLine
+        $0.separatorInsetReference = .fromCellEdges
+        $0.delegate = self
+        $0.dataSource = self
+        $0.backgroundColor = .clear
+    }
     
     private var data: [Int]?
     
@@ -138,6 +113,10 @@ class TicketCollectionViewCell: UICollectionViewCell {
             $0.top.equalTo(imageView.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(47)
+        }
+        
+        starImageView.snp.makeConstraints {
+            $0.width.height.equalTo(13)
         }
         
         tableView.snp.makeConstraints {

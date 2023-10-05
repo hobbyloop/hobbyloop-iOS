@@ -6,31 +6,24 @@
 //
 
 import UIKit
-import HPCommonUI
 
 /// Notice: 별이 달리고 리뷰 개수가 적혀있는 뷰 입니다.
 /// Layout: Width: 110, Height: 20
 /// How use?: View에 RxGesture를 활용해서 액션을 추가해 사용합니다.
 /// Configure에 리뷰 개수를 넣어줍니다.
 public final class StarReviewView: UIView {
-    private var starImageView: UIImageView = {
-        return UIImageView().then {
-            $0.tintColor = UIColor(red: 255/255, green: 212/255, blue: 75/255, alpha: 1)
-            $0.image = UIImage(systemName: "star.fill")?.withRenderingMode(.alwaysOriginal)
-        }
-    }()
+    private var starImageView: UIImageView = UIImageView().then {
+        $0.tintColor = UIColor(red: 255/255, green: 212/255, blue: 75/255, alpha: 1)
+        $0.image = UIImage(systemName: "star.fill")?.withRenderingMode(.alwaysOriginal)
+    }
     
-    private var starLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 11)
-        }
-    }()
+    private var starLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 11)
+    }
     
-    private var starArrowImageView: UIImageView = {
-        return UIImageView().then {
-            $0.tintColor = .black
-        }
-    }()
+    private var starArrowImageView: UIImageView = UIImageView().then {
+        $0.tintColor = .black
+    }
     
     override init(frame: CGRect) {
         super.init(frame: .zero)

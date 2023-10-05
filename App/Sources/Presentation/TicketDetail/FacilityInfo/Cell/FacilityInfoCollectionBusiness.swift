@@ -10,47 +10,35 @@ import HPCommonUI
 
 class FacilityInfoCollectionBusiness: UICollectionViewCell {
     private let titleColor = UIColor(red: 166/255, green: 166/255, blue: 166/255, alpha: 1)
-    private lazy var mainStackView: UIStackView = {
-        return UIStackView().then {
-            $0.axis = .vertical
-            $0.alignment = .leading
-            $0.spacing = 8
-        }
-    }()
+    private lazy var mainStackView: UIStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 8
+    }
     
-    private lazy var businessTitleLabel: UILabel = {
-        return UILabel().then {
-            $0.text = "사업자 정보"
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-            $0.textColor = titleColor
-            $0.lineBreakStrategy = .hangulWordPriority
-            $0.numberOfLines = 0
-        }
-    }()
+    private lazy var businessTitleLabel: UILabel = UILabel().then {
+        $0.text = "사업자 정보"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.textColor = titleColor
+        $0.lineBreakStrategy = .hangulWordPriority
+        $0.numberOfLines = 0
+    }
     
-    private lazy var representativeStackView: BusinessStackView = {
-        return BusinessStackView().then {
-            $0.configure("대표자", "김하비")
-        }
-    }()
+    private lazy var representativeStackView: BusinessStackView = BusinessStackView().then {
+        $0.configure("대표자", "김하비")
+    }
     
-    private lazy var openingDateStackView: BusinessStackView = {
-        return BusinessStackView().then {
-            $0.configure("개업일자", "2023년 7월 19일")
-        }
-    }()
+    private lazy var openingDateStackView: BusinessStackView = BusinessStackView().then {
+        $0.configure("개업일자", "2023년 7월 19일")
+    }
     
-    private lazy var businessNumberStackView: BusinessStackView = {
-        return BusinessStackView().then {
-            $0.configure("사업장 번호", "123456789")
-        }
-    }()
+    private lazy var businessNumberStackView: BusinessStackView = BusinessStackView().then {
+        $0.configure("사업장 번호", "123456789")
+    }
     
-    private lazy var mailOrderNumberStackView: BusinessStackView = {
-        return BusinessStackView().then {
-            $0.configure("통신판매 번호", "123456789")
-        }
-    }()
+    private lazy var mailOrderNumberStackView: BusinessStackView = BusinessStackView().then {
+        $0.configure("통신판매 번호", "123456789")
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
