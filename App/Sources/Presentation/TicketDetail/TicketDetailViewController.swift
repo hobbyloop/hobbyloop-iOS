@@ -79,6 +79,7 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
         
         bodyView.view.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         paymentButton.snp.makeConstraints {
@@ -87,7 +88,13 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
             $0.bottom.equalToSuperview().inset(UIApplication.shared.safeAreaBottom)
             $0.height.equalTo(56)
         }
-        
+    }
+    
+    private func bindRx() {
+        NotificationCenter.default.rx.notification(.popToViewController)
+            .bind(onNext: { _ in
+                self.navigationController?.popViewController(animated: false)
+            }).disposed(by: disposeBag)
     }
 }
 

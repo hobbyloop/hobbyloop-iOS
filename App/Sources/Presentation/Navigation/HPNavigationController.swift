@@ -117,9 +117,6 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     
     public func setTicketNavigationBarButtonItem() {
-        //TODO: TicketDetailViewController일 경우 RightBarButtonitem Reset
-        
-        
         let notificationButton = UIButton(type: .system)
         notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
@@ -149,6 +146,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     public func setTicketDetailNavigationBarButtonItem() {
+        //TODO: TicketDetailViewController일 경우 RightBarButtonitem Reset
         let backButtonItem = UIButton(type: .system)
         let bookMarkButtonItem = UIButton(type: .system)
         let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
@@ -178,7 +176,9 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
-        
+        self.navigationBar.topItem?.titleView = UILabel().then({ label in
+            label.attributedText = "발란스 스튜디오".stringToAttributed(HPCommonUIFontFamily.Pretendard.bold.font(size: 20), .black)
+        })
         
     }
 }
