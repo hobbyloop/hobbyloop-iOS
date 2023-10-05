@@ -13,7 +13,7 @@ import HPCommonUI
 import RxCocoa
 import RxSwift
 
-class TicketViewController: MainBaseViewController<TicketViewReactor> {
+class TicketViewController: BaseViewController<TicketViewReactor> {
     var item = [1, 2, 3, 4]
     lazy var itemObservable = Observable.of(item)
     public var location = ReplaySubject<String>.create(bufferSize: 1)
@@ -27,8 +27,6 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
         layout.sectionInset = UIEdgeInsets(top: 24, left: 10, bottom: 10, right: 10)
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             view.addSubview($0)
-            guard let headerView else { return }
-            view.bringSubviewToFront(headerView)
             $0.delegate = self
             $0.dataSource = self
             $0.backgroundColor = .clear
@@ -46,17 +44,13 @@ class TicketViewController: MainBaseViewController<TicketViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
         configure()
     }
     
-    override func configure() {
-        super.configure()
-        
+    private func configure() {
+        self.view.backgroundColor = .white
         collectionView.snp.makeConstraints {
-            guard let headerView else { return }
-            $0.bottom.leading.trailing.equalToSuperview()
-            $0.top.equalTo(headerView.snp.bottom)
+            $0.top.bottom.leading.trailing.equalToSuperview()
         }
         //
         //        itemObservable
@@ -178,7 +172,7 @@ extension TicketViewController: CLLocationManagerDelegate {
                         }
                         
                         if let thoroughfare = placemark.subLocality {
-                            address = "\(address) \(thoroughfare) "
+                            address = "\(address) \(thoroughfare)"
                             print(thoroughfare) // 동인동4가
                         }
                         

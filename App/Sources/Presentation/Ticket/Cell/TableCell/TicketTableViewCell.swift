@@ -16,6 +16,8 @@ class TicketTableViewCell: UITableViewCell {
         layout.itemSize = .init(width: 205, height: 67)
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.showsVerticalScrollIndicator = false
+            $0.showsHorizontalScrollIndicator = false
             $0.register(TicketViewFooterCell.self, forCellWithReuseIdentifier: "BodyCell")
             $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             $0.dataSource = self

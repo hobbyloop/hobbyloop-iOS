@@ -13,7 +13,7 @@ import Tabman
 import Pageboy
 import RxSwift
 
-class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
+class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     private var view1 = FacilityInfoViewController()
     private var view2 = ClassInfoViewController()
     private lazy var viewControllers = [view1, view2]
@@ -64,24 +64,20 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.topViewController?.tabBarController?.tabBar.isHidden = false
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: .detail)
-        
-        configure()
+        initLayout()
+        bindRx()
+    }
+    
+    private func initLayout() {
+        self.view.backgroundColor = .white
         
         [bodyView.view, paymentButton].forEach {
             self.view.addSubview($0)
         }
         
         bodyView.view.snp.makeConstraints {
-            guard let headerView else { return }
-            $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
