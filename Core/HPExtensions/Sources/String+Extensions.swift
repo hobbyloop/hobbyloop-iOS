@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import HPCommonUI
 
 public extension String {
     
