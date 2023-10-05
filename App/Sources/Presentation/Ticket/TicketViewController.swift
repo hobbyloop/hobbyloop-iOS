@@ -50,6 +50,11 @@ class TicketViewController: BaseViewController<TicketViewReactor> {
         configure()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     private func configure() {
         self.view.backgroundColor = .white
         collectionView.snp.makeConstraints {
@@ -70,6 +75,14 @@ extension TicketViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketCollectionViewCell", for: indexPath) as? TicketCollectionViewCell else { return UICollectionViewCell() }
         cell.configure(item)
+        
+        cell.cellSelect
+            .subscribe { event in
+                let index = self.item[event.element ?? 0]
+                let viewController = TicketDetailViewController(1)
+                self.navigationController?.pushViewController(viewController, animated: false)
+                self.tabBarController?.tabBar.isHidden = true
+            }.disposed(by: disposeBag)
         return cell
     }
     

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import RxSwift
+
 class TicketTableViewCell: UITableViewCell {
     public lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -21,8 +23,11 @@ class TicketTableViewCell: UITableViewCell {
             $0.register(TicketViewFooterCell.self, forCellWithReuseIdentifier: "BodyCell")
             $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             $0.dataSource = self
+            $0.delegate = self
         }
     }()
+    
+    public let cellSelect: PublishSubject<Int> = PublishSubject<Int>()
     
     var data: [Int]?
     
@@ -58,5 +63,11 @@ extension TicketTableViewCell: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BodyCell", for: indexPath) as? TicketViewFooterCell else { return UICollectionViewCell() }
         cell.configure("6:1 그룹레슨 30회")
         return cell
+    }
+}
+
+extension TicketTableViewCell: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        cellSelect.onNext(indexPath.row)
     }
 }

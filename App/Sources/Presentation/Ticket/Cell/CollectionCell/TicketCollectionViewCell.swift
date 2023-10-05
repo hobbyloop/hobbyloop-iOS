@@ -7,6 +7,7 @@
 
 import UIKit
 
+import RxSwift
 import HPCommonUI
 
 class TicketCollectionViewCell: UICollectionViewCell {
@@ -71,6 +72,8 @@ class TicketCollectionViewCell: UICollectionViewCell {
     }
     
     private var data: [Int]?
+    public let cellSelect: PublishSubject<Int> = PublishSubject<Int>()
+    private let disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -146,6 +149,9 @@ extension TicketCollectionViewCell: UITableViewDataSource {
         cell.configure(data!)
         cell.layoutMargins = .zero
         cell.preservesSuperviewLayoutMargins = false
+        cell.cellSelect
+            .bind(to: cellSelect)
+            .disposed(by: disposeBag)
         return cell
     }
     
