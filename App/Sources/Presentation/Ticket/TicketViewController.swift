@@ -16,7 +16,8 @@ import RxSwift
 class TicketViewController: BaseViewController<TicketViewReactor> {
     var item = [1, 2, 3, 4]
     lazy var itemObservable = Observable.of(item)
-    public var location = ReplaySubject<String>.create(bufferSize: 1)
+    private var location = PublishSubject<String>()
+    private var sortStandard = PublishSubject<SortStandard>()
     let locationManager = CLLocationManager()
     
     private lazy var collectionView: UICollectionView = {
@@ -54,14 +55,6 @@ class TicketViewController: BaseViewController<TicketViewReactor> {
         collectionView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
-        //
-        //        itemObservable
-        //            .observe(on: MainScheduler.instance)
-        //            .bind(to: collectionView.rx.items) { collectionView, row, item in
-        //                let cell = UICollectionViewCell()
-        //                cell.backgroundColor = .blue
-        //                return cell
-        //            }.disposed(by: disposeBag)
     }
     
     public override func bind(reactor: TicketViewReactor) {
@@ -88,9 +81,22 @@ extension TicketViewController: UICollectionViewDataSource {
                 for: indexPath
               ) as? TicketCollectionReusableView else {return UICollectionReusableView()}
         header.locationButton.addTarget(self, action: #selector(loactionSettingButtonClick), for: .touchDown)
-        self.location
+        
+        header.sortButton
+            .rx
+            .tap
+            .subscribe { _ in
+                print("Sort")
+            }.disposed(by: header.disposeBag)
+        
+        sortStandard
+            .bind(to: header.sortStandard)
+            .disposed(by: header.disposeBag)
+        
+        location
             .bind(to: header.location)
-            .disposed(by: disposeBag)
+            .disposed(by: header.disposeBag)
+        
         return header
     }
     
@@ -169,7 +175,7 @@ extension TicketViewController: CLLocationManagerDelegate {
                         var address = ""
                         
                         if let locality = placemark.locality {
-                            address = "\(address) \(locality) "
+                            address = "\(address) \(locality)"
                             print(locality) // 대구광역시
                         }
                         
