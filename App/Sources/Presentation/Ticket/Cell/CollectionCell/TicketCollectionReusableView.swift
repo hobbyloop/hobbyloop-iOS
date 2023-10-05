@@ -15,10 +15,18 @@ public enum TicketHeaderType {
     case location
 }
 
+public enum SortStandard {
+    case starScore
+    case recency
+    case sales
+    case reviews
+}
+
 class TicketCollectionReusableView: UICollectionReusableView {
     public var publish = PublishSubject<TicketHeaderType>()
-    public var location = ReplaySubject<String>.create(bufferSize: 1)
-    private var disposeBag = DisposeBag()
+    public var location = PublishSubject<String>()
+    public var sortStandard = PublishSubject<SortStandard>()
+    public var disposeBag = DisposeBag()
     private var loopPassButtonFlag = false
     
     private lazy var labelStackView: UIStackView = {
@@ -123,31 +131,31 @@ class TicketCollectionReusableView: UICollectionReusableView {
     }()
     
     private lazy var locationButtonRightLabel: UILabel = {
-       return UILabel(frame: CGRect(x: 0,
-                                    y: 0,
-                                    width: 0,
-                                    height: 0)).then {
-           let subText = "설정"
-           let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
-           let subRange = (subText as NSString).range(of: subText)
-           subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
-           $0.attributedText = subAttributedString
-           $0.contentMode = .scaleAspectFit
-           $0.layer.masksToBounds = true
-       }
+        return UILabel(frame: CGRect(x: 0,
+                                     y: 0,
+                                     width: 0,
+                                     height: 0)).then {
+            let subText = "설정"
+            let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
+            let subRange = (subText as NSString).range(of: subText)
+            subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
+            $0.attributedText = subAttributedString
+            $0.contentMode = .scaleAspectFit
+            $0.layer.masksToBounds = true
+        }
     }()
     
-    private lazy var sortButton: UIButton = {
+    public lazy var sortButton: UIButton = {
         var filled = UIButton.Configuration.filled()
         filled.imagePadding = 1
         filled.imagePlacement = .trailing
         return UIButton(configuration: filled, primaryAction: nil).then {
             let text = "별점순"
-            let range = (text as NSString).range(of: text)
-            let attributedString = NSMutableAttributedString(string: text)
-            attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 14), range: range)
-            $0.setAttributedTitle(attributedString, for: .normal)
             
+            $0.setAttributedTitle(
+                text.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                                        HPCommonUIAsset.semiblack.color
+                                       ),for: .normal)
             $0.tintColor = .white
             let size = CGSize(width: 14, height: 14)
             $0.setImage(HPCommonUIAsset.downarrow.image.withRenderingMode(.alwaysOriginal).imageWith(newSize: size), for: .normal)
@@ -157,6 +165,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         initLayout()
+        bindRx()
     }
     
     required init?(coder: NSCoder) {
@@ -207,6 +216,12 @@ class TicketCollectionReusableView: UICollectionReusableView {
             $0.width.height.equalTo(24)
         }
         
+        loopPassButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
+        ticketButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
+        
+    }
+    
+    private func bindRx() {
         publish.subscribe { event in
             guard let event = event.element else { return }
             switch event {
@@ -217,9 +232,6 @@ class TicketCollectionReusableView: UICollectionReusableView {
                 break
             }
         }.disposed(by: disposeBag)
-        
-        loopPassButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
-        ticketButton.addTarget(self, action: #selector(loopPassClick), for: .touchDown)
         
         location.subscribe { loc in
             guard let loc = loc.element else { return }
@@ -232,25 +244,47 @@ class TicketCollectionReusableView: UICollectionReusableView {
             subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
             self.locationButtonRightLabel.attributedText = subAttributedString
         }.disposed(by: disposeBag)
+        
+        sortStandard
+            .subscribe {
+                guard let element = $0.element else { return }
+                var title = ""
+                switch element {
+                    
+                case .starScore:
+                    title = "별점순"
+                case .recency:
+                    title = "최신순"
+                case .sales:
+                    title = "판매순"
+                case .reviews:
+                    title = "리뷰순"
+                }
+                self.sortButton.setAttributedTitle(
+                    title.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                                             HPCommonUIAsset.semiblack.color
+                                            ),for: .normal
+                )
+            }
+            .disposed(by: disposeBag)
     }
     
     @objc private func loopPassClick() {
         loopPassButtonFlag.toggle()
         
         let loopText = "루프패스"
-        let loopAttributedString = NSMutableAttributedString(string: loopText)
-        let loopRange = (loopText as NSString).range(of: loopText)
-        loopAttributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: loopRange)
-        loopAttributedString.addAttribute(.foregroundColor, value: !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: loopRange)
-        loopPassButton.setAttributedTitle(loopAttributedString, for: .normal)
+        
+        loopPassButton.setAttributedTitle(loopText.stringToAttributed(
+            HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12),
+            !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color
+        ),for: .normal)
         loopPassButton.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
         
         let text = "이용권"
-        let attributedString = NSMutableAttributedString(string: text)
-        let range = (text as NSString).range(of: text)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
-        attributedString.addAttribute(.foregroundColor, value: loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
-        ticketButton.setAttributedTitle(attributedString, for: .normal)
+        ticketButton.setAttributedTitle(text.stringToAttributed(
+            HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12),
+            loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color
+        ),for: .normal)
         
         ticketButton.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
     }
