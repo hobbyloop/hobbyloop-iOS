@@ -41,6 +41,8 @@ class ClassInfoCollectionViewCell: UICollectionViewCell {
             $0.isScrollEnabled = false
             $0.dataSource = self
             $0.delegate = self
+            $0.showsVerticalScrollIndicator = false
+            $0.showsHorizontalScrollIndicator = false
             $0.automaticallyAdjustsScrollIndicatorInsets = false
             $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 18, right: 0)
             $0.register(ReservationCollectionCell.self, forCellWithReuseIdentifier: "ReservationCollectionCell")

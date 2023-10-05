@@ -19,6 +19,8 @@ class ClassInfoViewController: UIViewController {
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             $0.dataSource = self
             $0.delegate = self
+            $0.showsVerticalScrollIndicator = false
+            $0.showsHorizontalScrollIndicator = false
             $0.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
             $0.automaticallyAdjustsScrollIndicatorInsets = false
             $0.contentInset = UIEdgeInsets(top: 17, left: 0, bottom: 121, right: 0)

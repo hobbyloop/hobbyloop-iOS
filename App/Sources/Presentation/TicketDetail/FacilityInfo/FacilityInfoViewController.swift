@@ -37,6 +37,8 @@ Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계
             $0.dataSource = self
             $0.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
             $0.automaticallyAdjustsScrollIndicatorInsets = false
+            $0.showsVerticalScrollIndicator = false
+            $0.showsHorizontalScrollIndicator = false
             $0.contentInset = UIEdgeInsets(top: 17, left: 0, bottom: 121, right: 0)
             $0.register(
                 FacilityInfoCollectionReusableView.self,
@@ -92,8 +94,7 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
             cell.announcementEvent.bind { [weak self] status in
                 guard let self = self else { return }
                 openFlag.toggle()
-                collectionView.reloadItems(at: [indexPath])
-                collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+                collectionView.collectionViewLayout.invalidateLayout()
             }.disposed(by: cell.disposeBag)
             
             return cell

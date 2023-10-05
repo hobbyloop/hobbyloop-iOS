@@ -31,6 +31,8 @@ class TicketViewController: BaseViewController<TicketViewReactor> {
             $0.dataSource = self
             $0.backgroundColor = .clear
             $0.automaticallyAdjustsScrollIndicatorInsets = false
+            $0.showsVerticalScrollIndicator = false
+            $0.showsHorizontalScrollIndicator = false
             $0.contentInset = UIEdgeInsets(top: 18, left: 10, bottom: 10, right: 10)
             $0.register(TicketCollectionViewCell.self, forCellWithReuseIdentifier: "TicketCollectionViewCell")
             $0.register(
