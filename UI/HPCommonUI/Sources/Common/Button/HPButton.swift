@@ -15,6 +15,30 @@ import RxCocoa
 
 public final class HPButton: UIButton {
     
+    public var isConfirm: Bool = false {
+        didSet {
+            if isConfirm {
+                self.backgroundColor = HPCommonUIAsset.deepOrange.color
+                self.isEnabled = true
+            } else {
+                self.backgroundColor = HPCommonUIAsset.santaGray.color
+                self.isEnabled = false
+            }
+        }
+    }
+    
+    public override var isSelected: Bool {
+        
+        didSet {
+            if isSelected {
+                self.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            } else {
+                self.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+            }
+        }
+    }
+    
+    
     private var cornerRadius: CGFloat = 10.0
     private var borderColor: CGColor?
     private var disposeBag: DisposeBag = DisposeBag()
@@ -45,12 +69,6 @@ public final class HPButton: UIButton {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    public func didTapHPButton(_ color: UIColor) {
-        self.layer.borderColor = color.cgColor
-        self.setTitleColor(color, for: .normal)
     }
     
     
