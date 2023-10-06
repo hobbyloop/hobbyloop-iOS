@@ -124,8 +124,26 @@ public class HPCalendarProxyBinder: HPCalendarDelgateProxy, HPCalendarBubbleDele
                     )
                 )
             )
-            
         }
+        
+        //TODO: 현재 일 값 기준으로 다음주, 지난주 수요일 값 비교해서 for문 indexing
+        if getEndOfDays(month: nowDate.month) - 1...31 ~= nowDate.day {
+            updateCalendarDate(state: .next)
+            for days in (1 ..< 4) {
+                var weekDay = configureBubbleCalendarWeek(month: nowDate.month, day: days)
+                calendarSectionItem.append(CalendarSectionItem.bubbleItem(
+                    HPCalendarBubbleDayCellReactor(
+                        day: "\(days)",
+                        weekDay: weekDay,
+                        nowDay: "",
+                        color: calculateDateDifference(day: days),
+                        isCompare: true
+                    )
+                )
+            )
+        }
+    }
+        
         
         return .just(.setCalendarItems(calendarSectionItem))
     }

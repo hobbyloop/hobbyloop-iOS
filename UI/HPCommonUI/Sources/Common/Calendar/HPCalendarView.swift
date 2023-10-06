@@ -289,8 +289,8 @@ extension HPCalendarView: ReactorKit.View {
                 print("notification changed date")
                 guard let style = self?.reactor?.currentState.style else { return }
                 self?.reactor?.action.onNext(.changeCalendarStyle(style))
+                self?.calendarCollectionView.collectionViewLayout.invalidateLayout()
             }).disposed(by: disposeBag)
-
         reactor.state
             .map { $0.nowDay }
             .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
