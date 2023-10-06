@@ -15,6 +15,7 @@ import HPDomain
 
 public enum ReservationRouter {
     case getReservationList
+    case monthlyReservationList(parameter: ReservationParameters)
 }
 
 
@@ -26,16 +27,34 @@ extension ReservationRouter: Router {
     
     
     public var path: String {
-        return "/api/v1/reservation"
+        switch self {
+        case .getReservationList:
+            return "/api/v1/reservation"
+        case .monthlyReservationList:
+            return "/api/v1/reservation/monthly/list"
+        }
     }
     
     public var headers: HTTPHeaders {
+        var token: String = ""
+        
+        do {
+            token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+        } catch {
+            print(error.localizedDescription)
+        }
+        return [
+            "Authorization": "\(token)",
+            "Accept": "application/json"
+        ]
+    }
+    
+    public var parameters: HPParameterType {
         switch self {
-        case .getReservationList:
-            return [
-                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcwMzA2MzE5NiwidXNlcm5hbWUiOiJLQUtBT18yNzU2NzQ4NjkwIn0.atgaUMY1DD-jlzlRudeiaf0m12D8N-tKmDB-_TiaTZUwL6aVVfXcq43rgl_2djG66PPrmct0fSs8l4ANhw1pGg",
-                "Accept": "*/*"
-            ]
+        case let .monthlyReservationList(parameters):
+            return .query(parameters)
+        default:
+            return .none
         }
     }
     

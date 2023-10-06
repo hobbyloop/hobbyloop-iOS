@@ -90,16 +90,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
     
     func makeRootViewController() {
-        DispatchQueue.main.async {
-            let loginDIContainer = LoginDIContainer()
-            self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = HPNavigationController(
-                rootViewController: loginDIContainer.makeViewController(),
-                defaultBarAppearance: UINavigationBarAppearance(),
-                scrollBarAppearance: UINavigationBarAppearance()
-            )
-            self.window?.makeKeyAndVisible()
+        if UserDefaults.standard.string(forKey: .accessToken).isEmpty {
+            
+            DispatchQueue.main.async {
+                let loginDIContainer = LoginDIContainer()
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                self.window?.rootViewController = HPNavigationController(
+                    rootViewController: loginDIContainer.makeViewController(),
+                    defaultBarAppearance: UINavigationBarAppearance(),
+                    scrollBarAppearance: UINavigationBarAppearance()
+                )
+                self.window?.makeKeyAndVisible()
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                self.window?.rootViewController = CustomTabBarController()
+                self.window?.makeKeyAndVisible()
+            }
         }
+
     }
     
 }

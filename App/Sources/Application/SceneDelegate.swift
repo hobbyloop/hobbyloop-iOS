@@ -22,13 +22,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
-        let loginDIContainer = LoginDIContainer()
-        window?.rootViewController = HPNavigationController(
-            rootViewController: loginDIContainer.makeViewController(),
-            defaultBarAppearance: UINavigationBarAppearance(),
-            scrollBarAppearance: UINavigationBarAppearance()
-        )
-        window?.makeKeyAndVisible()
+        
+        if UserDefaults.standard.string(forKey: .accessToken).isEmpty {
+            DispatchQueue.main.async {
+                let loginDIContainer = LoginDIContainer()
+                self.window?.rootViewController = HPNavigationController(
+                    rootViewController: loginDIContainer.makeViewController(),
+                    defaultBarAppearance: UINavigationBarAppearance(),
+                    scrollBarAppearance: UINavigationBarAppearance()
+                )
+                self.window?.makeKeyAndVisible()
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.window?.rootViewController = CustomTabBarController()
+                self.window?.makeKeyAndVisible()
+            }
+        }
         
     }
     

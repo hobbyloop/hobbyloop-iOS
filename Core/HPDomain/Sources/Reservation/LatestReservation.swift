@@ -8,18 +8,24 @@
 import Foundation
 
 public struct LatestReservation: Decodable {
-    public let statusCode: Int
-    public let data: LatestReservationInfo
+    public let statusCode: String?
+    public let data: LatestReservationInfo?
+    public let exceptionCode: String?
+    public let message: String?
     
     public enum CodingKeys: String, CodingKey {
         case statusCode = "status"
         case data
+        case exceptionCode
+        case message
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.statusCode = try container.decodeIfPresent(Int.self, forKey: .statusCode) ?? 500
+        self.statusCode = try container.decode(String.self, forKey: .statusCode)
         self.data = try container.decode(LatestReservationInfo.self, forKey: .data)
+        self.exceptionCode = try container.decodeIfPresent(String.self, forKey: .exceptionCode) ?? nil
+        self.message = try container.decodeIfPresent(String.self, forKey: .message) ?? nil
     }
     
 }
