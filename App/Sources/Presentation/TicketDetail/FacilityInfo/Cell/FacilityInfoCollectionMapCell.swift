@@ -45,12 +45,6 @@ class FacilityInfoCollectionMapCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        textLabel.preferredMaxLayoutWidth = textLabel.frame.size.width
-        super.layoutSubviews()
-    }
-    
     private func initLayout() {
         backgroundColor = .white
         

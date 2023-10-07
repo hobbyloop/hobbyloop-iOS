@@ -156,7 +156,7 @@ extension TicketCollectionViewCell: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        69
+        return 69
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

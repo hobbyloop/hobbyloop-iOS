@@ -12,8 +12,8 @@ import HPCommon
 import HPCommonUI
 
 class FacilityInfoCollectionAnnouncement: UICollectionViewCell, FacilityInfoNavigatable {
-    internal lazy var announcementEvent = PublishSubject<Bool>()
-    internal lazy var disposeBag = DisposeBag()
+    lazy var announcementEvent = PublishSubject<Bool>()
+    lazy var disposeBag = DisposeBag()
     
     private lazy var titleStackView: UIStackView = UIStackView().then {
         $0.axis = .horizontal

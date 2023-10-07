@@ -94,7 +94,7 @@ extension ClassInfoCollectionViewCell: UICollectionViewDelegateFlowLayout {
 
 extension ClassInfoCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        text.count
+        return text.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

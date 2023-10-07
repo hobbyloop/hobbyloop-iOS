@@ -72,7 +72,7 @@ extension ClassInfoViewController: UICollectionViewDelegateFlowLayout {
 
 extension ClassInfoViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        1
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
