@@ -33,7 +33,9 @@ public final class TicketNoticeCell: UICollectionViewCell {
         self.contentView.addSubview(noticeTextView)
         
         noticeTextView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
         }
     }
     

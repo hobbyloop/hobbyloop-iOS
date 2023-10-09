@@ -8,12 +8,14 @@
 import UIKit
 
 import HPCommonUI
+import RxCocoa
+import RxSwift
 import RxDataSources
 import SnapKit
 import Then
 
 
-public final class TicketReservationViewController: UIViewController {
+public final class TicketReservationViewController: BaseViewController<TicketReservationViewReactor> {
     
     
     private lazy var reservationDataSource: RxCollectionViewSectionedReloadDataSource<TicketReservationSection> = .init { dataSource, collectionView, indexPath, sectionItem in
@@ -29,6 +31,15 @@ public final class TicketReservationViewController: UIViewController {
             return UICollectionViewCell()
         }
         
+    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        switch dataSource[indexPath] {
+        case .reservationNoticeItem:
+            guard let noticeReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketNoticeReusableView", for: indexPath) as? TicketNoticeReusableView else { return UICollectionReusableView() }
+            return noticeReusableView
+        default:
+            return UICollectionReusableView()
+        }
+
     }
     
     
@@ -55,8 +66,21 @@ public final class TicketReservationViewController: UIViewController {
         $0.register(TicketReservationCell.self, forCellWithReuseIdentifier: "TicketReservationCell")
         $0.register(TicketNoticeCell.self, forCellWithReuseIdentifier: "TicketNoticeCell")
         $0.register(TicketNoticeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketNoticeReusableView")
+        $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
+    }
+    
+    
+    
+    
+    public override init(reactor: TicketReservationViewReactor?) {
+        defer { self.reactor = reactor }
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     
@@ -79,16 +103,18 @@ public final class TicketReservationViewController: UIViewController {
     private func createReservationTicketLayout() -> NSCollectionLayoutSection {
         
         let ticketReservationLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(179)
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(140)
         )
         
         let ticketReservationItem = NSCollectionLayoutItem(
             layoutSize: ticketReservationLayoutSize
         )
         
+        let ticketReservationGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(self.view.frame.size.width), heightDimension: .absolute(179))
+        
         let ticketReservationGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: ticketReservationLayoutSize,
+            layoutSize: ticketReservationGroupSize,
             subitem: ticketReservationItem,
             count: 1
         )
@@ -97,9 +123,13 @@ public final class TicketReservationViewController: UIViewController {
             elementKind: "\(WhiteBackgroundDecorationView.self)"
         )
         
+        ticketReservationDecorationItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 18, trailing: 0)
+        
         let ticketReservationSection = NSCollectionLayoutSection(
             group: ticketReservationGroup
         )
+        
+        ticketReservationSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 0, bottom: 0, trailing: 0)
         
         ticketReservationSection.decorationItems = [ticketReservationDecorationItem]
         
@@ -112,7 +142,7 @@ public final class TicketReservationViewController: UIViewController {
         
         let ticketNoticeLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(136)
+            heightDimension: .estimated(88)
         )
         
         let ticketNoticeItem = NSCollectionLayoutItem(
@@ -163,5 +193,31 @@ public final class TicketReservationViewController: UIViewController {
     }
     
     
+    public override func bind(reactor: Reactor) {
+        
+        
+        Observable
+            .just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        
+        reactor.pulse(\.$reservationSection)
+            .asDriver(onErrorJustReturn: [])
+            .drive(reservationCollectionView.rx.items(dataSource: self.reservationDataSource))
+            .disposed(by: disposeBag)
+        
+        
+        
+        NotificationCenter
+            .default.rx
+            .notification(.popToViewController)
+            .subscribe(onNext: { _ in
+                self.navigationController?.popViewController(animated: true)
+            }).disposed(by: disposeBag)
+        
+        
+    }
     
 }

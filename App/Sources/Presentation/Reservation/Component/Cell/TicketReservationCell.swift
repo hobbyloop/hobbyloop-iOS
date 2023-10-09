@@ -37,7 +37,9 @@ public final class TicketReservationCell: UICollectionViewCell {
         self.contentView.addSubview(reservationTicketView)
         
         reservationTicketView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
         }
         
     }

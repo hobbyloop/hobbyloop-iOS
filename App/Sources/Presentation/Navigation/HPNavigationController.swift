@@ -262,7 +262,7 @@ extension HPNavigationController {
         let titleLabel: UILabel = UILabel()
         titleLabel.text = "수업예약"
         titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        titleLabel.textColor = HPCommonUIAsset.defaultSeparator.color
+        titleLabel.textColor = HPCommonUIAsset.black.color
         
         backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
