@@ -11,48 +11,36 @@ import HPCommonUI
 import SnapKit
 
 class TicketViewFooterCell: UICollectionViewCell {
-    private var stackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 14
-            $0.axis = .horizontal
-            $0.alignment = .leading
-            $0.distribution = .fill
-        }
-    }()
+    private var stackView: UIStackView = UIStackView().then {
+        $0.spacing = 14
+        $0.axis = .horizontal
+        $0.alignment = .leading
+        $0.distribution = .fill
+    }
     
-    private var imageStackView: UIStackView = {
-        return UIStackView().then {
-            $0.alignment = .center
-            $0.distribution = .fill
-        }
-    }()
+    private var imageStackView: UIStackView = UIStackView().then {
+        $0.alignment = .center
+        $0.distribution = .fill
+    }
     
-    private var ticketImageView: UIImageView = {
-        return UIImageView().then {
-            $0.image = HPCommonUIAsset.hpTicket.image.withRenderingMode(.alwaysOriginal)
-            $0.snp.makeConstraints {
-                $0.width.equalTo(52)
-                $0.height.equalTo(32)
-            }
+    private var ticketImageView: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.hpTicket.image.withRenderingMode(.alwaysOriginal)
+        $0.snp.makeConstraints {
+            $0.width.equalTo(52)
+            $0.height.equalTo(32)
         }
-    }()
+    }
     
-    private var labelStackView: UIStackView = {
-        return UIStackView().then {
-            $0.spacing = 3
-            $0.axis = .vertical
-        }
-    }()
+    private var labelStackView: UIStackView = UIStackView().then {
+        $0.spacing = 3
+        $0.axis = .vertical
+    }
     
-    private var titleLabel: UILabel = {
-        return UILabel().then {
-            $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        }
-    }()
+    private var titleLabel: UILabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+    }
     
-    private var descriptionLabel: UILabel = {
-        return UILabel()
-    }()
+    private var descriptionLabel: UILabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -81,9 +69,8 @@ class TicketViewFooterCell: UICollectionViewCell {
         }
         
         stackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(17)
-            $0.bottom.equalToSuperview().offset(-17)
+            $0.leading.trailing.centerY.equalToSuperview()
+            $0.height.equalTo(38)
         }
         
     }

@@ -5,11 +5,20 @@
 //  Created by Kim dohyun on 2023/06/05.
 //
 
-import Foundation
-
+import UIKit
 
 public extension String {
     
+    func stringToAttributed(_ font: UIFont,
+                            _ color: UIColor) -> NSMutableAttributedString {
+        
+        let attributedString = NSMutableAttributedString(string: self)
+        let range = (self as NSString).range(of: self)
+        attributedString.addAttribute(.font, value: font, range: range)
+        attributedString.addAttribute(.foregroundColor, value: color, range: range)
+        
+        return attributedString
+    }
     
     func toPhoneNumber() -> String {
         let digits = digitsOnly
@@ -63,6 +72,17 @@ public extension String {
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
         guard let newDate = dateFormatter.date(from: self) else { return Date() }
         return newDate
+    }
+    
+    func heightForView(font: UIFont, width: CGFloat) -> CGFloat{
+        let label: UILabel = UILabel(frame: CGRectMake(0, 0, width, CGFloat.greatestFiniteMagnitude))
+        label.numberOfLines = 0
+        label.lineBreakStrategy = .hangulWordPriority
+        label.font = font
+        label.text = self
+
+        label.sizeToFit()
+        return label.frame.height
     }
     
 }

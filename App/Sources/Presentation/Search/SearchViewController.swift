@@ -12,12 +12,10 @@ import HPCommonUI
 import RxSwift
 import RxCocoa
 
-class SearchViewController: MainBaseViewController<HomeViewReactor> {
+class SearchViewController: BaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
-        configure()
     }
     
 }
