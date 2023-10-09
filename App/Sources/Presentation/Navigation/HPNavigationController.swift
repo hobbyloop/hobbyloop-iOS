@@ -27,6 +27,7 @@ public protocol HPNavigationProxy {
     func setTicketNavigationBarButtonItem() -> Void
     func setTicketDetailNavigationBarButtonItem() -> Void
     func setTicketSelectNavigationBarButtonItem() -> Void
+    func setTicketReservationNavigationBarButtonItem() -> Void
 }
 
 
@@ -74,6 +75,40 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     
+    
+    
+}
+
+
+extension HPNavigationController: UINavigationControllerDelegate {
+    
+    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        
+        switch viewController {
+        case is HomeViewController:
+            setHomeNavigationBarButtonItem()
+        case is TicketViewController:
+            setTicketNavigationBarButtonItem()
+        case is TicketDetailViewController:
+            setTicketDetailNavigationBarButtonItem()
+        case is TicketSelectTimeViewController:
+            setTicketSelectNavigationBarButtonItem()
+        case is TicketReservationViewController:
+            setTicketReservationNavigationBarButtonItem()
+        default:
+            configure()
+        }
+        
+        
+    }
+}
+
+
+
+
+extension HPNavigationController {
+    
+    
     public func setHomeNavigationBarButtonItem() {
         
         defaultBarAppearance.backgroundColor = HPCommonUIAsset.systemBackground.color
@@ -119,8 +154,6 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     
     public func setTicketNavigationBarButtonItem() {
-        //TODO: TicketDetailViewController일 경우 RightBarButtonitem Reset
-        
         
         let notificationButton = UIButton(type: .system)
         notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -219,28 +252,35 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
 
     }
-}
-
-
-extension HPNavigationController: UINavigationControllerDelegate {
     
-    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    
+    public func setTicketReservationNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 20
         
-        switch viewController {
-        case is HomeViewController:
-            setHomeNavigationBarButtonItem()
-        case is TicketViewController:
-            setTicketNavigationBarButtonItem()
-        case is TicketDetailViewController:
-            setTicketDetailNavigationBarButtonItem()
-        case is TicketSelectTimeViewController:
-            setTicketSelectNavigationBarButtonItem()
-        default:
-            configure()
-        }
+        let titleLabel: UILabel = UILabel()
+        titleLabel.text = "수업예약"
+        titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        titleLabel.textColor = HPCommonUIAsset.defaultSeparator.color
         
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                NotificationCenter.default.post(name: .popToViewController, object: nil)
+            }).disposed(by: disposeBag)
+        
+        leftBarButtonItems = [
+            spacerbarButtonItem,
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        self.navigationBar.topItem?.titleView = titleLabel
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         
     }
+    
+    
 }
-
-
