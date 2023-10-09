@@ -36,6 +36,10 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         case .reservationNoticeItem:
             guard let noticeReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketNoticeReusableView", for: indexPath) as? TicketNoticeReusableView else { return UICollectionReusableView() }
             return noticeReusableView
+            
+        case .reservationTypeItem:
+            guard let typeReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketTypeReusableView", for: indexPath) as? TicketTypeReusableView else { return UICollectionReusableView() }
+            return typeReusableView
         default:
             return UICollectionReusableView()
         }
@@ -66,6 +70,7 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         $0.register(TicketReservationCell.self, forCellWithReuseIdentifier: "TicketReservationCell")
         $0.register(TicketNoticeCell.self, forCellWithReuseIdentifier: "TicketNoticeCell")
         $0.register(TicketNoticeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketNoticeReusableView")
+        $0.register(TicketTypeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketTypeReusableView")
         $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
