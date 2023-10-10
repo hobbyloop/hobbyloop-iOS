@@ -26,7 +26,12 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
             return ticketCell
         case .reservationNoticeItem:
             guard let noticeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketNoticeCell", for: indexPath) as? TicketNoticeCell else { return UICollectionViewCell() }
+            
             return noticeCell
+        case .reservationTypeItem:
+            guard let typeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketTypeCell", for: indexPath) as? TicketTypeCell else { return UICollectionViewCell() }
+            
+            return typeCell
         default:
             return UICollectionViewCell()
         }
@@ -69,6 +74,7 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
         $0.register(TicketReservationCell.self, forCellWithReuseIdentifier: "TicketReservationCell")
         $0.register(TicketNoticeCell.self, forCellWithReuseIdentifier: "TicketNoticeCell")
+        $0.register(TicketTypeCell.self, forCellWithReuseIdentifier: "TicketTypeCell")
         $0.register(TicketNoticeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketNoticeReusableView")
         $0.register(TicketTypeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketTypeReusableView")
         $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
@@ -188,7 +194,44 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
     
     
     private func createReservationTypeLayout() -> NSCollectionLayoutSection? {
-        return nil
+        let ticketTypeLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(292)
+        )
+        
+        let ticketTypeLayoutItem = NSCollectionLayoutItem(
+            layoutSize: ticketTypeLayoutSize
+        )
+        
+        let ticketTypeLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: ticketTypeLayoutSize,
+            subitems: [ticketTypeLayoutItem]
+        )
+        
+        let ticketTypeDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
+        ticketTypeDecorationItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 18, trailing: 0)
+        
+        let ticketTypeSectionHeaderSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(48)
+        )
+        
+        let ticketTypeSection = NSCollectionLayoutSection(group: ticketTypeLayoutGroup)
+        ticketTypeSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: ticketTypeSectionHeaderSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        
+        ]
+        
+        ticketTypeSection.orthogonalScrollingBehavior = .groupPagingCentered
+        
+        
+        
+        return ticketTypeSection
     }
     
     private func createReservationUserInfoLayout() -> NSCollectionLayoutSection? {
