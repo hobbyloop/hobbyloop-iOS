@@ -306,14 +306,6 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         
         
         
-        NotificationCenter
-            .default.rx
-            .notification(.popToViewController)
-            .subscribe(onNext: { _ in
-                self.navigationController?.popViewController(animated: true)
-            }).disposed(by: disposeBag)
-        
-        
     }
     
 }

@@ -46,6 +46,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             
         case .instructorScheduleItem:
             guard let instructorScheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketScheduleCell", for: indexPath) as? TicketScheduleCell else { return UICollectionViewCell() }
+            instructorScheduleCell.delegate = self
             
             return instructorScheduleCell
         }
@@ -284,15 +285,6 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             .drive(profileCollectionView.rx.items(dataSource: self.profileDataSource))
             .disposed(by: disposeBag)
                 
-        
-        NotificationCenter
-            .default.rx
-            .notification(.popToViewController)
-            .subscribe(onNext: { _ in
-                self.navigationController?.popViewController(animated: true)
-            }).disposed(by: disposeBag)
-            
-
     }
     
 }
@@ -301,5 +293,13 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
 extension TicketSelectTimeViewController: TicketCalendarDelegate {
     public func didTapCalendarStyleButton(isStyle: CalendarStyle) {
         self.isStyle = isStyle
+    }
+}
+
+extension TicketSelectTimeViewController: TicketScheduleDelegate {
+    public func createTicketReservationView() {
+        let ticketReservationDIController = TicketReservationDIContainer().makeViewController()
+        ticketReservationDIController.navigationItem.setHidesBackButton(true, animated: false)
+        self.navigationController?.pushViewController(ticketReservationDIController, animated: true)
     }
 }

@@ -10,10 +10,20 @@ import UIKit
 import Then
 import SnapKit
 import HPCommonUI
+import RxGesture
+import RxSwift
+import RxCocoa
+
+public protocol TicketScheduleDelegate: AnyObject {
+    func createTicketReservationView()
+}
 
 public final class TicketScheduleCell: UICollectionViewCell {
     
     //MARK: Property
+    private let disposeBag: DisposeBag = DisposeBag()
+    public weak var delegate: TicketScheduleDelegate?
+    
     private let circleView: UIImageView = UIImageView.circularImageView(radius: 4).then {
         $0.backgroundColor = HPCommonUIAsset.deepOrange.color
     }
@@ -60,6 +70,14 @@ public final class TicketScheduleCell: UICollectionViewCell {
             $0.left.right.bottom.equalToSuperview()
            
         }
+        
+        scheduleView
+            .rx.tapGesture()
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .bind(onNext: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.delegate?.createTicketReservationView()
+            }).disposed(by: disposeBag)
     }
     
     

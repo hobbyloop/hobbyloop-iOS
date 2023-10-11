@@ -14,11 +14,13 @@ public final class TicketUserInfoCell: UICollectionViewCell {
     private let userNameView: SignUpInfoView = SignUpInfoView(titleType: .name, filled: true).then {
         $0.titleLabel.text = "이름"
         $0.textFieldView.text = "김지원"
+        $0.textFieldView.isUserInteractionEnabled = false
     }
     
     private let userPhoneView: SignUpInfoView = SignUpInfoView(titleType: .phone, filled: true).then {
         $0.titleLabel.text = "전화번호"
         $0.textFieldView.text = "010-1234-5678"
+        $0.textFieldView.isUserInteractionEnabled = false
     }
     
     override public init(frame: CGRect) {

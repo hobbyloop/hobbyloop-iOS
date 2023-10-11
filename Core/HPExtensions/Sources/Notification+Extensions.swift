@@ -10,7 +10,6 @@ import Foundation
 
 public extension Notification.Name {
     
-    static let popToViewController = Notification.Name("popToViewController")
     static let searchToViewController = Notification.Name("searchToViewController")
     static let notiToViewController = Notification.Name("notiToViewController")
     

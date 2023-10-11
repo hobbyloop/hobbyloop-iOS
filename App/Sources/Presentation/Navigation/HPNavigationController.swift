@@ -241,7 +241,7 @@ extension HPNavigationController {
         backButtonItem
             .rx.tap
             .bind(onNext: {
-                NotificationCenter.default.post(name: .popToViewController, object: nil)
+                self.popViewController(animated: true)
             }).disposed(by: disposeBag)
         
         leftBarButtonItems = [
@@ -269,7 +269,7 @@ extension HPNavigationController {
         backButtonItem
             .rx.tap
             .bind(onNext: {
-                NotificationCenter.default.post(name: .popToViewController, object: nil)
+                self.popViewController(animated: true)
             }).disposed(by: disposeBag)
         
         leftBarButtonItems = [
