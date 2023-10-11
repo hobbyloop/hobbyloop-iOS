@@ -36,7 +36,8 @@ public final class TicketReservationViewReactor: Reactor {
             reservationSection: [
                 .reservationTicket([.reservationTicketItem]),
                 .reservationNotice([.reservationNoticeItem]),
-                .reservationType([.reservationTypeItem])
+                .reservationType([.reservationTypeItem]),
+                .reservationUserInfo([.reservationUserInfoItem])
             
             ]
         )

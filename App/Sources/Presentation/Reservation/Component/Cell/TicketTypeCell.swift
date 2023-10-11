@@ -67,8 +67,7 @@ public final class TicketTypeCell: UICollectionViewCell {
         
         ticketTypeView.snp.makeConstraints {
             $0.top.equalTo(loopPassButton.snp.bottom).offset(20)
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
+            $0.left.right.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-30)
         }
         

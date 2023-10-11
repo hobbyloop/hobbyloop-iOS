@@ -21,9 +21,14 @@ public final class HPCouponCell: UICollectionViewCell {
     
     private var pageControl: HPPageControl = HPPageControl()
     
-    private let couponImageView: UIImageView = UIImageView().then {
+    private lazy var couponImageView: UIImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
         $0.image = HPCommonUIAsset.seasonCoupon.image
+        $0.layer.shadowOffset = CGSize(width: 0, height: 8)
+        $0.layer.shadowRadius = 10 / UIScreen.main.scale
+        $0.layer.shadowOpacity = 0.3
+        $0.layer.shadowColor = HPCommonUIAsset.shadow.color.cgColor
+        $0.layer.masksToBounds = false
     }
     
     private let couponContentView: UIStackView = UIStackView().then {

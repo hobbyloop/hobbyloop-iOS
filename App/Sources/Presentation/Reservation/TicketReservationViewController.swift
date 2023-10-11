@@ -32,8 +32,10 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
             guard let typeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketTypeCell", for: indexPath) as? TicketTypeCell else { return UICollectionViewCell() }
             
             return typeCell
-        default:
-            return UICollectionViewCell()
+            
+        case .reservationUserInfoItem:
+            guard let userInfoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketUserInfoCell", for: indexPath) as? TicketUserInfoCell else { return UICollectionViewCell() }
+            return userInfoCell
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
@@ -45,6 +47,10 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         case .reservationTypeItem:
             guard let typeReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketTypeReusableView", for: indexPath) as? TicketTypeReusableView else { return UICollectionReusableView() }
             return typeReusableView
+            
+        case .reservationUserInfoItem:
+            guard let userInfoReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TicketUserInfoReusableView", for: indexPath) as? TicketUserInfoReusableView else { return UICollectionReusableView() }
+            return userInfoReusableView
         default:
             return UICollectionReusableView()
         }
@@ -75,8 +81,10 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         $0.register(TicketReservationCell.self, forCellWithReuseIdentifier: "TicketReservationCell")
         $0.register(TicketNoticeCell.self, forCellWithReuseIdentifier: "TicketNoticeCell")
         $0.register(TicketTypeCell.self, forCellWithReuseIdentifier: "TicketTypeCell")
+        $0.register(TicketUserInfoCell.self, forCellWithReuseIdentifier: "TicketUserInfoCell")
         $0.register(TicketNoticeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketNoticeReusableView")
         $0.register(TicketTypeReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketTypeReusableView")
+        $0.register(TicketUserInfoReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "TicketUserInfoReusableView")
         $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
@@ -241,8 +249,43 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
     
     private func createReservationUserInfoLayout() -> NSCollectionLayoutSection? {
         
+        let userInfoLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(260)
+        )
         
-        return nil
+        let userInfoLayoutItem = NSCollectionLayoutItem(
+            layoutSize: userInfoLayoutSize
+        )
+        
+        let userInfoLayoutGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: userInfoLayoutSize,
+            subitem: userInfoLayoutItem,
+            count: 1
+        )
+        
+        let userInfoDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        
+        userInfoDecorationItem.contentInsets =  NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 18, trailing: 0)
+        
+        let userInfoSectionHeaderSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(48)
+        )
+        
+        let userInfoSection = NSCollectionLayoutSection(group: userInfoLayoutGroup)
+        
+        userInfoSection.decorationItems = [userInfoDecorationItem]
+        
+        userInfoSection.boundarySupplementaryItems = [
+            NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: userInfoSectionHeaderSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        ]
+        
+        return userInfoSection
     }
     
     

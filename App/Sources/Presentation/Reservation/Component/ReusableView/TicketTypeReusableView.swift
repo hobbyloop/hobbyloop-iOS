@@ -21,7 +21,7 @@ public final class TicketTypeReusableView: UICollectionReusableView {
     
     private let typeTitleLabel: UILabel = UILabel().then {
         $0.text = "예약방법"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.textColor = HPCommonUIAsset.black.color
         $0.textAlignment = .justified
     }
