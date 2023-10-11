@@ -153,15 +153,20 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         
         let ticketNoticeLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(88)
+            heightDimension: .estimated(78)
         )
         
         let ticketNoticeItem = NSCollectionLayoutItem(
             layoutSize: ticketNoticeLayoutSize
         )
         
+        let ticketNoticeGroupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .absolute(100)
+        )
+        
         let ticketNoticeGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: ticketNoticeLayoutSize,
+            layoutSize: ticketNoticeGroupSize,
             subitem: ticketNoticeItem,
             count: 1
         )
@@ -169,6 +174,8 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         let ticketNoticeDecorationItem = NSCollectionLayoutDecorationItem.background(
             elementKind: "\(WhiteBackgroundDecorationView.self)"
         )
+        
+        ticketNoticeDecorationItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 18, trailing: 0)
         
         let ticketNoticeSection = NSCollectionLayoutSection(
             group: ticketNoticeGroup
@@ -196,7 +203,7 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
     private func createReservationTypeLayout() -> NSCollectionLayoutSection? {
         let ticketTypeLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .estimated(292)
+            heightDimension: .estimated(330)
         )
         
         let ticketTypeLayoutItem = NSCollectionLayoutItem(
@@ -218,6 +225,8 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         )
         
         let ticketTypeSection = NSCollectionLayoutSection(group: ticketTypeLayoutGroup)
+        
+        ticketTypeSection.decorationItems = [ticketTypeDecorationItem]
         ticketTypeSection.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: ticketTypeSectionHeaderSize,
@@ -226,10 +235,6 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
             )
         
         ]
-        
-        ticketTypeSection.orthogonalScrollingBehavior = .groupPagingCentered
-        
-        
         
         return ticketTypeSection
     }

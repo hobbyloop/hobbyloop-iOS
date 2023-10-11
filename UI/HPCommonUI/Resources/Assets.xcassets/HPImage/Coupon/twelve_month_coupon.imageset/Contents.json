@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "ticketlogo_filled.png",
+      "filename" : "twelve_month_coupon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "ticketlogo_filled 1.png",
+      "filename" : "twelve_month_coupon 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "ticketlogo_filled 2.png",
+      "filename" : "twelve_month_coupon 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

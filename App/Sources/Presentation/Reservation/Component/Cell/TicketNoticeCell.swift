@@ -16,6 +16,7 @@ public final class TicketNoticeCell: UICollectionViewCell {
         $0.textColor = HPCommonUIAsset.originSeparator.color
         $0.isUserInteractionEnabled = false
         $0.text = "balance SUDIO는 강사진과 트레이너들의 체계적인 Pilates & Wegiht Program 제공하는 퍼스널 트레이닝 스튜디오 입니..."
+        $0.backgroundColor = .clear
     }
     
     

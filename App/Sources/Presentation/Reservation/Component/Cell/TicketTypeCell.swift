@@ -8,6 +8,8 @@
 import UIKit
 
 import HPCommonUI
+import RxCocoa
+import RxSwift
 
 public final class TicketTypeCell: UICollectionViewCell {
     
@@ -29,6 +31,8 @@ public final class TicketTypeCell: UICollectionViewCell {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
+    private let ticketTypeView: HPCouponListView = HPCouponListView(reactor: HPCouponViewReactor(sectionType: .ticket))
+    
     
     
     override public init(frame: CGRect) {
@@ -43,7 +47,7 @@ public final class TicketTypeCell: UICollectionViewCell {
     
     private func configure() {
         
-        [ticketButton, loopPassButton].forEach {
+        [ticketButton, loopPassButton, ticketTypeView].forEach {
             self.contentView.addSubview($0)
         }
         
@@ -59,6 +63,13 @@ public final class TicketTypeCell: UICollectionViewCell {
             $0.width.height.equalTo(ticketButton)
             $0.left.equalTo(ticketButton.snp.right).offset(8)
             $0.centerY.equalTo(ticketButton)
+        }
+        
+        ticketTypeView.snp.makeConstraints {
+            $0.top.equalTo(loopPassButton.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().offset(-30)
         }
         
     }
