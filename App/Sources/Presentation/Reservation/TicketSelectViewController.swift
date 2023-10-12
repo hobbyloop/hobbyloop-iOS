@@ -30,6 +30,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     }
     
     private let ticketImageView: UIImageView = UIImageView().then {
+        $0.contentMode = .scaleToFill
         $0.image = HPCommonUIAsset.ticket.image
     }
     
@@ -119,10 +120,8 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
         }
         
         ticketImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(18)
             $0.left.equalToSuperview().offset(17)
-            $0.width.equalTo(26)
-            $0.height.equalTo(20)
+            $0.width.height.equalTo(30)
         }
         
         ticketInfoLabel.snp.makeConstraints {

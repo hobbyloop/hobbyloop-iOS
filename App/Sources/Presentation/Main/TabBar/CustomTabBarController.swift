@@ -24,7 +24,11 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         scrollBarAppearance: UINavigationBarAppearance()
     )
     
-    private let dummyView = CustomNavigationViewController(rootViewController: TicketViewController(HeaderType: .main))
+    private let dummyView = HPNavigationController(
+        rootViewController: TicketDIContainer().makeViewController(),
+        defaultBarAppearance: UINavigationBarAppearance(),
+        scrollBarAppearance: UINavigationBarAppearance()
+    )
     
     
     private let dummyView3 = HPNavigationController(
@@ -57,9 +61,9 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         homeController.tabBarItem.title = "홈"
         homeController.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
+        dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
         dummyView.tabBarItem.title = "이용권"
-        dummyView.tabBarItem.image = HPCommonUIAsset.ticket.image.withRenderingMode(.alwaysOriginal)
+        dummyView.tabBarItem.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
         
         
         dummyView3.view.backgroundColor = .blue
