@@ -25,8 +25,19 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     )
     
     private let dummyView = CustomNavigationViewController(rootViewController: TicketViewController(HeaderType: .main))
-    private let dummyView3 = CustomNavigationViewController(rootViewController: UIViewController())
-    private let dummyView4 = CustomNavigationViewController(rootViewController: UIViewController())
+    
+    
+    private let dummyView3 = HPNavigationController(
+        rootViewController: HomeDIContainer().makeViewController(),
+        defaultBarAppearance: UINavigationBarAppearance(),
+        scrollBarAppearance: UINavigationBarAppearance()
+    )
+    
+    private let dummyView4 = HPNavigationController(
+        rootViewController: HomeDIContainer().makeViewController(),
+        defaultBarAppearance: UINavigationBarAppearance(),
+        scrollBarAppearance: UINavigationBarAppearance()
+    )
     
     private var shapeLayer: CALayer?
     private let font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
