@@ -27,6 +27,7 @@ public final class HPCalendarView: UIView {
         }
     }
     
+    public var weekViewColor: UIColor
 
     // MARK: Property
     
@@ -75,9 +76,11 @@ public final class HPCalendarView: UIView {
     public init(
         reactor: HPCalendarViewReactor,
         calendarContentView: HPCalendarContentView? = nil,
-        isStyle: CalendarStyle
+        isStyle: CalendarStyle,
+        weekViewColor: UIColor = HPCommonUIAsset.white.color
     ) {
         self.isStyle = isStyle
+        self.weekViewColor = weekViewColor
         super.init(frame: .zero)
         self.reactor = reactor
         self.calendarContentView = calendarContentView
@@ -255,6 +258,7 @@ extension HPCalendarView: ReactorKit.View {
                 if style == .default {
                     self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
                         guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+                        weekDayReusableView.backgroundColor = self.weekViewColor
                         return weekDayReusableView
                     }
                 } else {

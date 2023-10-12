@@ -15,7 +15,7 @@ import Then
 
 public final class CalendarCell: UICollectionViewCell {
     
-    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), calendarContentView: HPCalendarContentView(), isStyle: .default)
+    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), calendarContentView: HPCalendarContentView(), isStyle: .default, weekViewColor: HPCommonUIAsset.systemBackground.color)
     
     
     override init(frame: CGRect) {

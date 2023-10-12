@@ -96,7 +96,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         
         
         leftBarButtonItems = [
-            UIBarButtonItem(image: HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+            UIBarButtonItem(image: HPCommonUIAsset.hobbyloop.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
         ]
         
         
