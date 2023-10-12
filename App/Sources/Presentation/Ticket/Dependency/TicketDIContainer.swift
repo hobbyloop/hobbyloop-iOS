@@ -17,7 +17,7 @@ class TicketDIContainer: DIContainer {
     public typealias Reactor = TicketViewReactor
     
     func makeViewController() -> TicketViewController {
-        return TicketViewController(reactor: makeReactor(), HeaderType: .main)
+        return TicketViewController(reactor: makeReactor())
     }
     
     func makeRepository() -> TicketViewRepo {

@@ -137,7 +137,7 @@ final class MyPageViewController: UIViewController {
     }
     
     private lazy var remainingCouponButton = horizontalStackButton(
-        imageView: UIImageView(image: HPCommonUIAsset.ticket.image).then({
+        imageView: UIImageView(image: HPCommonUIAsset.ticketFilled.image).then({
             $0.snp.makeConstraints {
                 $0.width.equalTo(18.89)
                 $0.height.equalTo(13.93)

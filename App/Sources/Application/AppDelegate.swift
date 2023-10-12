@@ -94,7 +94,6 @@ private extension AppDelegate {
             let loginDIContainer = LoginDIContainer()
             self.window = UIWindow(frame: UIScreen.main.bounds)
             self.window?.rootViewController = HPNavigationController(
-                navigationBarType: .none,
                 rootViewController: loginDIContainer.makeViewController(),
                 defaultBarAppearance: UINavigationBarAppearance(),
                 scrollBarAppearance: UINavigationBarAppearance()
