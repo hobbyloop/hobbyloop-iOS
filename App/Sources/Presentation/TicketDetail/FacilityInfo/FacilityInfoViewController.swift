@@ -93,7 +93,7 @@ extension FacilityInfoViewController: UICollectionViewDataSource {
             cell.configure(text)
             cell.announcementEvent.bind { [weak self] status in
                 guard let self = self else { return }
-                openFlag.toggle()
+                self.openFlag.toggle()
                 collectionView.collectionViewLayout.invalidateLayout()
             }.disposed(by: cell.disposeBag)
             
