@@ -251,7 +251,7 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
         
         let userInfoLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .estimated(260)
+            heightDimension: .estimated(300)
         )
         
         let userInfoLayoutItem = NSCollectionLayoutItem(
