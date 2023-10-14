@@ -156,7 +156,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     private func createMonthlyTicketCalendarLayout() -> NSCollectionLayoutSection {
         let ticketMontlyCalendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(310)
+            heightDimension: .absolute(280)
         )
         
     

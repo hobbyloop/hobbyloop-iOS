@@ -276,7 +276,6 @@ extension HPCalendarView: ReactorKit.View {
         
         
         reactor.pulse(\.$section)
-            .debug("test calendar Section")
             .observe(on: MainScheduler.asyncInstance)
             .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
@@ -286,11 +285,11 @@ extension HPCalendarView: ReactorKit.View {
             .rx.notification(.NSCalendarDayChanged)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
-                print("notification changed date")
                 guard let style = self?.reactor?.currentState.style else { return }
                 self?.reactor?.action.onNext(.changeCalendarStyle(style))
                 self?.calendarCollectionView.collectionViewLayout.invalidateLayout()
             }).disposed(by: disposeBag)
+        
         reactor.state
             .map { $0.nowDay }
             .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
