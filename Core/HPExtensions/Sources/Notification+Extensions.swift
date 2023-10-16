@@ -18,4 +18,7 @@ public extension Notification.Name {
     static let bookMarkAction = Notification.Name("bookMarkAction")
     static let settingAction = Notification.Name("settingAction")
     
+    
+    static let reloadCalendar = Notification.Name("reloadCalendar")
+    
 }

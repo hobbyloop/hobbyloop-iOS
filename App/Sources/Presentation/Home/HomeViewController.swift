@@ -229,7 +229,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         calendarSection.decorationItems = [calendarSectionBackground]
                 
-        calendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return calendarSection
     }

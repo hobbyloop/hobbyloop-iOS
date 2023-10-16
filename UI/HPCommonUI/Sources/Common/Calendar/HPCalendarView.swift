@@ -12,6 +12,7 @@ import RxDataSources
 import ReactorKit
 import Then
 import SnapKit
+import HPExtensions
 
 
 public final class HPCalendarView: UIView {
@@ -279,6 +280,13 @@ extension HPCalendarView: ReactorKit.View {
             .observe(on: MainScheduler.asyncInstance)
             .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.itemCount }
+            .withUnretained(self)
+            .subscribe(onNext: { owner, count in
+                NotificationCenter.default.post(name: .reloadCalendar, object: count)
+            }).disposed(by: disposeBag)
         
         
         NotificationCenter.default

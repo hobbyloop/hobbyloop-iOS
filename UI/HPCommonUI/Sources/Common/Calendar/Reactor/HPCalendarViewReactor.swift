@@ -35,7 +35,7 @@ public final class HPCalendarViewReactor: Reactor {
     
     //MARK: State
     public struct State {
-        var days: [String]
+        var itemCount: Int
         var month: String
         var nowDay: Int
         var style: CalendarStyle
@@ -46,7 +46,7 @@ public final class HPCalendarViewReactor: Reactor {
     public init(calendarConfigureProxy: HPCalendarDelgateProxy & HPCalendarBubbleDelegateProxy & HPCalendarInterface) {
         self.calendarConfigureProxy = calendarConfigureProxy
         self.initialState = State(
-            days: [],
+            itemCount: 0,
             month: "",
             nowDay: 1,
             style: .default,
@@ -100,6 +100,7 @@ public final class HPCalendarViewReactor: Reactor {
         case let .setCalendarItems(items):
             let calendarSectionIndex = self.getIndex(section: .calendar([]))
             newState.section[calendarSectionIndex] = .calendar(items)
+            newState.itemCount = items.count
         case let .setUpdateMonthItem(nextMonth):
             newState.month = nextMonth
         case let .updateCalendarStyle(style):

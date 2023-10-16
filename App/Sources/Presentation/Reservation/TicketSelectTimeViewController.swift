@@ -13,10 +13,19 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 import HPCommonUI
+import HPExtensions
 
 public final class TicketSelectTimeViewController: BaseViewController<TicketSelectTimeViewReactor> {
     
     public var isStyle: CalendarStyle = .bubble {
+        didSet {
+            DispatchQueue.main.async {
+                self.profileCollectionView.collectionViewLayout.invalidateLayout()
+            }
+        }
+    }
+    
+    public var numberOfItems: Int = 0 {
         didSet {
             DispatchQueue.main.async {
                 self.profileCollectionView.collectionViewLayout.invalidateLayout()
@@ -67,7 +76,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         switch dataSource {
         case .instructorCalendar:
             if self.isStyle == .default {
-                return self.createMonthlyTicketCalendarLayout()
+               return self.numberOfItems >= 36 ? self.adjustHeightForMonthlyTicketCalendarLayout() : self.createMonthlyTicketCalendarLayout()
             } else {
                 return self.createWeeklyTicketCalendarLayout()
             }
@@ -156,7 +165,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     private func createMonthlyTicketCalendarLayout() -> NSCollectionLayoutSection {
         let ticketMontlyCalendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(280)
+            heightDimension: .estimated(280)
         )
         
     
@@ -167,7 +176,6 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             layoutSize: ticketMontlyCalendarLayoutSize,
             subitem: ticketMonthlyCalendarLayoutItem,
             count: 1
-
         )
         
         let ticketMontlyDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
@@ -176,6 +184,31 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
         ticketMonthlyCalendarSection.decorationItems = [ticketMontlyDecorationItem]
         
         return ticketMonthlyCalendarSection
+    }
+    
+    
+    private func adjustHeightForMonthlyTicketCalendarLayout() -> NSCollectionLayoutSection {
+        let monthlyCalendarLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width),
+            heightDimension: .estimated(310)
+        )
+        
+    
+        
+        let monthlyCalendarLayoutItem = NSCollectionLayoutItem(layoutSize: monthlyCalendarLayoutSize)
+        
+        let monthlyCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: monthlyCalendarLayoutSize,
+            subitem: monthlyCalendarLayoutItem,
+            count: 1
+        )
+        
+        let montlyDecorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        let monthlyCalendarSection = NSCollectionLayoutSection(group: monthlyCalendarLayoutGroup)
+        
+        monthlyCalendarSection.decorationItems = [montlyDecorationItem]
+        
+        return monthlyCalendarSection
     }
     
     private func createWeeklyTicketCalendarLayout() -> NSCollectionLayoutSection {
@@ -285,6 +318,16 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
             .drive(profileCollectionView.rx.items(dataSource: self.profileDataSource))
             .disposed(by: disposeBag)
                 
+        
+        NotificationCenter.default
+            .rx.notification(.reloadCalendar)
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .subscribe(onNext: { owner, noti in
+                guard let count = noti.object as? Int else { return }
+                owner.numberOfItems = count
+            }).disposed(by: disposeBag)
+        
     }
     
 }
