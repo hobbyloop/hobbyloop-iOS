@@ -9,7 +9,7 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
-import HPExtensions
+import HPFoundation
 import RxSwift
 import RxCocoa
 import RxGesture

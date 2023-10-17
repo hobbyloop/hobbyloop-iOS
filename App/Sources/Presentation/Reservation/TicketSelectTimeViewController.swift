@@ -13,7 +13,7 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 import HPCommonUI
-import HPExtensions
+import HPFoundation
 
 public final class TicketSelectTimeViewController: BaseViewController<TicketSelectTimeViewReactor> {
     

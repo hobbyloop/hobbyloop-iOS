@@ -1,10 +1,3 @@
-//
-//  Notification+Extensions.swift
-//  HPExtensions
-//
-//  Created by Kim dohyun on 2023/09/25.
-//
-
 import Foundation
 
 
