@@ -7,9 +7,6 @@
 
 import UIKit
 
-
-import UIKit
-
 public extension UILabel {
     
     func setAttributedText(

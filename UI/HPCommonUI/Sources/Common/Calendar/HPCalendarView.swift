@@ -35,17 +35,19 @@ public final class HPCalendarView: UIView {
         }
     }
     
+    public var isStatus: Bool = false {
+        didSet {
+            configure()
+        }
+    }
+    
 
     // MARK: Property
     
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
 
-    public weak var calendarContentView: HPCalendarContentView? {
-        didSet {
-            self.configure()
-        }
-    }
+    private var calendarContentView: HPCalendarContentView
     
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
@@ -86,13 +88,13 @@ public final class HPCalendarView: UIView {
     
     public init(
         reactor: HPCalendarViewReactor,
-        calendarContentView: HPCalendarContentView? = nil,
+        calendarContentView: HPCalendarContentView,
         isStyle: CalendarStyle
     ) {
         self.isStyle = isStyle
+        self.calendarContentView = calendarContentView
         super.init(frame: .zero)
         self.reactor = reactor
-        self.calendarContentView = calendarContentView
         configure()
     }
     
@@ -105,7 +107,14 @@ public final class HPCalendarView: UIView {
     //MARK: Configure
     private func configure() {
        
-        if let calendarContentView = self.calendarContentView {
+        if isStatus {
+            self.addSubview(calendarCollectionView)
+
+
+            calendarCollectionView.snp.remakeConstraints {
+                $0.top.left.right.bottom.equalToSuperview()
+            }
+        } else {
             [calendarContentView, calendarCollectionView].forEach {
                 self.addSubview($0)
             }
@@ -119,38 +128,9 @@ public final class HPCalendarView: UIView {
                 $0.top.equalTo(calendarContentView.snp.bottom)
                 $0.left.right.bottom.equalToSuperview()
             }
-
-        } else {
-            self.addSubview(calendarCollectionView)
-
-
-            calendarCollectionView.snp.remakeConstraints {
-                $0.top.left.right.bottom.equalToSuperview()
-            }
         }
         
-        
-        guard let contentView = self.calendarContentView,
-              let reactor = self.reactor else { return }
-        
-        contentView
-            .nextButton.rx.tap.debug("Tap Next Button Action")
-            .map { Reactor.Action.didTapNextDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-            
-        contentView
-            .previousButton.rx.tap
-            .map { Reactor.Action.didTapPreviousDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-            
-            
-        reactor.state
-            .map { "\($0.month)월" }
-            .bind(to: contentView.calendarMonthLabel.rx.text)
-            .disposed(by: disposeBag)
-        
+                
     }
 
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
@@ -250,6 +230,28 @@ extension HPCalendarView: ReactorKit.View {
     
     public func bind(reactor: Reactor) {
         
+
+
+        self.calendarContentView
+            .nextButton.rx.tap.debug("Tap Next Button Action")
+            .map { Reactor.Action.didTapNextDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+        self.calendarContentView
+            .previousButton.rx.tap
+            .map { Reactor.Action.didTapPreviousDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+            
+        reactor.state
+            .map { "\($0.month)월" }
+            .bind(to:  calendarContentView.calendarMonthLabel.rx.text)
+            .disposed(by: disposeBag)
+            
+
+            
 
         Observable
             .just(())

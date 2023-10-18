@@ -27,10 +27,9 @@ public final class TicketCalendarCell: UICollectionViewCell {
     
     public typealias Reactor = TicketCalendarCellReactor
     public var disposeBag: DisposeBag = DisposeBag()
-    private lazy var calendarContentView: HPCalendarContentView = HPCalendarContentView()
     
     private lazy var calendarView: HPCalendarView = HPCalendarView(
-        reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()),
+        reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), calendarContentView: HPCalendarContentView(),
         isStyle: .bubble
     )
     
@@ -90,18 +89,17 @@ extension TicketCalendarCell: ReactorKit.View {
             .disposed(by: disposeBag)
         
         reactor.state
+            .map { $0.isStyle == .bubble ? true : false }
+            .bind(to: calendarView.rx.isStatus)
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .map { $0.isStyle }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { isStyle in
                 self.calendarView.isStyle = isStyle
                 self.delegate?.didTapCalendarStyleButton(isStyle: isStyle)
                 self.calendarView.reactor?.action.onNext(.changeCalendarStyle(isStyle))
-                if isStyle == .default {
-                    self.calendarView.calendarContentView = self.calendarContentView
-                } else {
-                    self.calendarView.calendarContentView = nil
-                }
-                self.calendarView.layoutIfNeeded()
             })
             .disposed(by: disposeBag)
         
