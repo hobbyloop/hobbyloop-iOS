@@ -115,7 +115,6 @@ public final class CouponView: UIView {
         let countUnitLabelRange = (newString as NSString).range(of: "회")
         
         let attributedString = NSMutableAttributedString(string: newString)
-        attributedString.addAttribute(.foregroundColor, value: UIColor(red: 0xDC / 255, green: 0xFF / 255, blue: 0x05 / 255, alpha: 1), range: countLabelRange)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: countLabelRange)
         attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: countUnitLabelRange)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 12), range: countUnitLabelRange)
