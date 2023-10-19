@@ -53,6 +53,26 @@ public final class CouponView: UIView {
         
         periodLabel.text = "\(dateformatter.string(from: coupon.start)) - \(dateformatter.string(from: coupon.end))"
         
+        let days = Int(coupon.end.timeIntervalSince(coupon.start)) / (24 * 60 * 60) + 1
+        
+        switch days {
+        case 1...31:
+            backgroundImageView.image = HPCommonUIAsset.oneMonthCoupon.image
+        case 32...90:
+            backgroundImageView.image = HPCommonUIAsset.threeMonthCoupon.image
+        case 91...180:
+            backgroundImageView.image = HPCommonUIAsset.sixMonthCoupon.image
+        case 181...240:
+            backgroundImageView.image = HPCommonUIAsset.nineMonthCoupon.image
+        case 241...365:
+            backgroundImageView.image = HPCommonUIAsset.twelveMonthCoupon.image
+        default:
+            backgroundImageView.image = HPCommonUIAsset.seasonCoupon.image
+        }
+        
+        [companyNameLabel, countLabel, periodLabel].forEach {
+            $0.textColor = ((91...180) ~= days) ? .white : .black
+        }
         layout()
     }
     
