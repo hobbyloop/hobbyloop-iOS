@@ -11,6 +11,10 @@ import SnapKit
 import Then
 
 public final class CouponView: UIView {
+    private let backgroundImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.oneMonthCoupon.image
+    }
+    
     private let logoImageView = UIImageView().then {
         $0.sizeToFit()
         $0.snp.makeConstraints { make in
@@ -48,8 +52,27 @@ public final class CouponView: UIView {
         dateformatter.dateFormat = "YYYY.MM.dd"
         
         periodLabel.text = "\(dateformatter.string(from: coupon.start)) - \(dateformatter.string(from: coupon.end))"
-        self.backgroundColor = .black
         
+        let days = Int(coupon.end.timeIntervalSince(coupon.start)) / (24 * 60 * 60) + 1
+        
+        switch days {
+        case 1...31:
+            backgroundImageView.image = HPCommonUIAsset.oneMonthCoupon.image
+        case 32...90:
+            backgroundImageView.image = HPCommonUIAsset.threeMonthCoupon.image
+        case 91...180:
+            backgroundImageView.image = HPCommonUIAsset.sixMonthCoupon.image
+        case 181...240:
+            backgroundImageView.image = HPCommonUIAsset.nineMonthCoupon.image
+        case 241...365:
+            backgroundImageView.image = HPCommonUIAsset.twelveMonthCoupon.image
+        default:
+            backgroundImageView.image = HPCommonUIAsset.seasonCoupon.image
+        }
+        
+        [companyNameLabel, countLabel, periodLabel].forEach {
+            $0.textColor = ((91...180) ~= days) ? .white : .black
+        }
         layout()
     }
     
@@ -58,6 +81,11 @@ public final class CouponView: UIView {
     }
     
     private func layout() {
+        self.addSubview(backgroundImageView)
+        backgroundImageView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalToSuperview()
+        }
+        
         let labelsStack = UIStackView()
         labelsStack.axis = .vertical
         labelsStack.alignment = .leading
@@ -72,11 +100,11 @@ public final class CouponView: UIView {
         
         [logoImageView, labelsStack].forEach(contentStack.addArrangedSubview(_:))
         
-        self.addSubview(contentStack)
+        backgroundImageView.addSubview(contentStack)
         
         contentStack.snp.makeConstraints { make in
-            make.centerX.equalTo(self.snp.centerX).offset(10)
-            make.centerY.equalTo(self.snp.centerY)
+            make.centerX.equalTo(backgroundImageView.snp.centerX).offset(10)
+            make.centerY.equalTo(backgroundImageView.snp.centerY)
         }
         
     }
@@ -87,19 +115,10 @@ public final class CouponView: UIView {
         let countUnitLabelRange = (newString as NSString).range(of: "회")
         
         let attributedString = NSMutableAttributedString(string: newString)
-        attributedString.addAttribute(.foregroundColor, value: UIColor(red: 0xDC / 255, green: 0xFF / 255, blue: 0x05 / 255, alpha: 1), range: countLabelRange)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: countLabelRange)
         attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: countUnitLabelRange)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 12), range: countUnitLabelRange)
         
         countLabel.attributedText = attributedString
-    }
-    
-    public override func draw(_ rect: CGRect) {
-        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
-        
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = maskPath.cgPath
-        self.layer.mask = maskLayer
     }
 }
