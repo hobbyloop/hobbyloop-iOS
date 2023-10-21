@@ -242,7 +242,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
                 }
                 self.sortButton.setAttributedTitle(
                     title.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-                                             HPCommonUIAsset.black.color
+                                             HPCommonUIAsset.horizontalDivider.color
                                             ),for: .normal
                 )
             }

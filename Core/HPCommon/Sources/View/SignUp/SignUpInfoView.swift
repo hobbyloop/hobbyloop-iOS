@@ -51,7 +51,7 @@ public final class SignUpInfoView: UIView {
     public var isError: Bool = false {
         didSet {
             if isError {
-                self.textFieldView.layer.borderColor = HPCommonUIAsset.error.color.cgColor
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.boldRed.color.cgColor
                 self.descriptionLabel.text = "\(self.titleType.rawValue)을 다시 확인해주세요."
                 descriptionLabel.snp.remakeConstraints {
                     $0.left.right.equalToSuperview()
@@ -99,7 +99,7 @@ public final class SignUpInfoView: UIView {
     
     
     public lazy var descriptionLabel: UILabel = UILabel().then {
-        $0.textColor = HPCommonUIAsset.error.color
+        $0.textColor = HPCommonUIAsset.boldRed.color
         $0.numberOfLines = 1
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textAlignment = .left

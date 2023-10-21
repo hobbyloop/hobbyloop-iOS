@@ -7,13 +7,13 @@
 
 import UIKit
 
+
 import HPCommonUI
 import HPExtensions
 import Then
 import SnapKit
 import RxSwift
 import RxCocoa
-
 
 public protocol HPNavigationProxy {
     
@@ -23,8 +23,11 @@ public protocol HPNavigationProxy {
     var scrollBarAppearance: UINavigationBarAppearance { get }
     var defaultBarAppearance: UINavigationBarAppearance { get }
     func setHomeNavigationBarButtonItem() -> Void
+    func setReservationNavigationBarButtonItem() -> Void
     func setTicketNavigationBarButtonItem() -> Void
     func setTicketDetailNavigationBarButtonItem() -> Void
+    func setTicketSelectNavigationBarButtonItem() -> Void
+    func setTicketReservationNavigationBarButtonItem() -> Void
 }
 
 
@@ -72,6 +75,40 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     
+    
+    
+}
+
+
+extension HPNavigationController: UINavigationControllerDelegate {
+    
+    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        
+        switch viewController {
+        case is HomeViewController:
+            setHomeNavigationBarButtonItem()
+        case is TicketViewController:
+            setTicketNavigationBarButtonItem()
+        case is TicketDetailViewController:
+            setTicketDetailNavigationBarButtonItem()
+        case is TicketSelectTimeViewController:
+            setTicketSelectNavigationBarButtonItem()
+        case is TicketReservationViewController:
+            setTicketReservationNavigationBarButtonItem()
+        default:
+            configure()
+        }
+        
+        
+    }
+}
+
+
+
+
+extension HPNavigationController {
+    
+    
     public func setHomeNavigationBarButtonItem() {
         
         defaultBarAppearance.backgroundColor = HPCommonUIAsset.systemBackground.color
@@ -117,6 +154,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     
     
     public func setTicketNavigationBarButtonItem() {
+        
         let notificationButton = UIButton(type: .system)
         notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
         
@@ -146,7 +184,6 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
     }
     
     public func setTicketDetailNavigationBarButtonItem() {
-        //TODO: TicketDetailViewController일 경우 RightBarButtonitem Reset
         let backButtonItem = UIButton(type: .system)
         let bookMarkButtonItem = UIButton(type: .system)
         let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
@@ -161,7 +198,7 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
         backButtonItem
             .rx.tap
             .bind(onNext: {
-                NotificationCenter.default.post(name: .popToViewController, object: nil)
+                self.popViewController(animated: true)
             }).disposed(by: disposeBag)
         
         leftBarButtonItems = [
@@ -174,34 +211,76 @@ public final class HPNavigationController: UINavigationController, HPNavigationP
             UIBarButtonItem(customView: customDotButtonItem)
         ]
         
+        self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         self.navigationBar.topItem?.rightBarButtonItems = rightBarButtonItems
-        self.navigationBar.topItem?.titleView = UILabel().then({ label in
-            label.attributedText = "발란스 스튜디오".stringToAttributed(HPCommonUIFontFamily.Pretendard.bold.font(size: 20), .black)
-        })
+        
         
     }
-}
-
-
-extension HPNavigationController: UINavigationControllerDelegate {
     
-    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    public func setReservationNavigationBarButtonItem() {
         
-        switch viewController {
-        case is HomeViewController:
-            setHomeNavigationBarButtonItem()
-        case is TicketViewController:
-            setTicketNavigationBarButtonItem()
-        case is TicketDetailViewController:
-            setTicketDetailNavigationBarButtonItem()
-            
-        default:
-            configure()
-        }
         
+        leftBarButtonItems = [
+            UIBarButtonItem(image: HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+        ]
+        
+        self.navigationBar.topItem?.title = ""
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
         
     }
+    
+    public func setTicketSelectNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 20
+        
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                self.popViewController(animated: true)
+            }).disposed(by: disposeBag)
+        
+        leftBarButtonItems = [
+            spacerbarButtonItem,
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+
+    }
+    
+    
+    public func setTicketReservationNavigationBarButtonItem() {
+        let backButtonItem = UIButton(type: .system)
+        let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
+        spacerbarButtonItem.width = 20
+        
+        let titleLabel: UILabel = UILabel()
+        titleLabel.text = "수업예약"
+        titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        titleLabel.textColor = HPCommonUIAsset.black.color
+        
+        backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        backButtonItem
+            .rx.tap
+            .bind(onNext: {
+                self.popViewController(animated: true)
+            }).disposed(by: disposeBag)
+        
+        leftBarButtonItems = [
+            spacerbarButtonItem,
+            UIBarButtonItem(customView: backButtonItem)
+        ]
+        
+        self.navigationBar.topItem?.titleView = titleLabel
+        self.navigationBar.topItem?.leftBarButtonItems = leftBarButtonItems
+        
+    }
+    
+    
 }
-
-

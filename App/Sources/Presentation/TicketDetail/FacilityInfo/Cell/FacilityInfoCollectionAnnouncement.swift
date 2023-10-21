@@ -97,7 +97,7 @@ class FacilityInfoCollectionAnnouncement: UICollectionViewCell, FacilityInfoNavi
     private func bind() {
         openButton.rx.tap.bind { [weak self] in
             guard let self = self else { return }
-            announcementEvent.onNext(false)
+            self.announcementEvent.onNext(false)
         }.disposed(by: disposeBag)
     }
     

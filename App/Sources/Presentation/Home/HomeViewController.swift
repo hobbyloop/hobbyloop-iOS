@@ -9,7 +9,7 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
-import HPExtensions
+import HPFoundation
 import RxSwift
 import RxCocoa
 import RxGesture
@@ -19,6 +19,15 @@ import RxDataSources
 final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     // MARK: Property
+    
+    
+    public var numberOfItems: Int = 0 {
+        didSet {
+            DispatchQueue.main.async {
+                self.homeCollectionView.collectionViewLayout.invalidateLayout()
+            }
+        }
+    }
     
     private lazy var homeDataSource: RxCollectionViewSectionedReloadDataSource<HomeSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
@@ -84,7 +93,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         case .userInfoClass:
             return self.userInfoProvideLayout()
         case .calendarClass:
-            return self.createCalendarLayout()
+            return self.numberOfItems >= 36 ? self.adjustCalendarLayout() : self.createCalendarLayout()
             
         case .ticketClass:
             return self.createTicketLayout()
@@ -201,6 +210,36 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         return ticketSection
     }
     
+    private func adjustCalendarLayout() -> NSCollectionLayoutSection {
+        let dynamicCalendarLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width - 32),
+            heightDimension: .estimated(310)
+        )
+        let dynamicCalendarGroupSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(310)
+        )
+        
+        let calendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: dynamicCalendarLayoutSize
+        )
+        
+        let dynamicCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: dynamicCalendarGroupSize,
+            subitem: calendarLayoutItem,
+            count: 1
+        )
+        
+        let dynamicCalendarSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        
+        
+        let dynamicCalendarSection = NSCollectionLayoutSection(group: dynamicCalendarLayoutGroup)
+        
+        dynamicCalendarSection.decorationItems = [dynamicCalendarSectionBackground]
+                
+        
+        return dynamicCalendarSection
+    }
     
     private func createCalendarLayout() -> NSCollectionLayoutSection {
         let calendarLayoutSize = NSCollectionLayoutSize(
@@ -229,7 +268,6 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         calendarSection.decorationItems = [calendarSectionBackground]
                 
-        calendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return calendarSection
     }
@@ -404,6 +442,14 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
             .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
             .disposed(by: disposeBag)
         
+        
+        NotificationCenter.default
+            .rx.notification(.reloadCalendar)
+            .withUnretained(self)
+            .subscribe(onNext: { owner, noti in
+                guard let count = noti.object as? Int else { return }
+                owner.numberOfItems = count
+            }).disposed(by: disposeBag)
     }
     
 }

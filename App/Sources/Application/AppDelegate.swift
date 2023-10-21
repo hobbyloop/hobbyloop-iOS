@@ -90,16 +90,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
     
     func makeRootViewController() {
-        DispatchQueue.main.async {
-            let loginDIContainer = LoginDIContainer()
+        //TODO: LoginServcie Single Tone Pattern 구현하여 로그인 관련 로직 구현
+        if UserDefaults().string(forKey: .accessToken).isEmpty {
+            DispatchQueue.main.async {
+                let loginDIContainer = LoginDIContainer()
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                self.window?.rootViewController = HPNavigationController(
+                    rootViewController: loginDIContainer.makeViewController(),
+                    defaultBarAppearance: UINavigationBarAppearance(),
+                    scrollBarAppearance: UINavigationBarAppearance()
+                )
+                self.window?.makeKeyAndVisible()
+            }
+        } else {
             self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = HPNavigationController(
-                rootViewController: loginDIContainer.makeViewController(),
-                defaultBarAppearance: UINavigationBarAppearance(),
-                scrollBarAppearance: UINavigationBarAppearance()
-            )
+            self.window?.rootViewController = CustomTabBarController()
             self.window?.makeKeyAndVisible()
         }
+        
     }
     
 }
