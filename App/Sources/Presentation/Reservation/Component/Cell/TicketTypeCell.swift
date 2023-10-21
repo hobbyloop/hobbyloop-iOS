@@ -31,7 +31,14 @@ public final class TicketTypeCell: UICollectionViewCell {
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
-    private let ticketTypeView: HPCouponListView = HPCouponListView(reactor: HPCouponViewReactor(sectionType: .ticket))
+    private let ticketTypeView: CouponListView = CouponListView(coupons: [
+        //TODO: 더미데이터, 추후 서버 API 데이터로 반영 예정
+        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
+        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
+        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
+        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date())
+    
+    ])
     
     
     
