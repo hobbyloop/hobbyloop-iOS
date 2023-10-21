@@ -15,10 +15,23 @@
 
 default_platform(:ios)
 
+appName = "Hobbyloop"
+webhook_url = "https://discord.com/api/webhooks/1113104187350327336/u7TEPQ_ilgwnCwb3oy77IEmiuhgllqt_JDYJNNROrVZbJVGsRU_WqHyG7bxkABroxULB"
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    build_app(scheme: "Hobbyloop")
+    get_Certificate()
+    build_app(
+      scheme:appName,
+      workspace: appName + ".xcworkspace"
+    )
     upload_to_testflight
+
   end
+end
+
+
+def get_Certificate
+  get_certificates
+  get_provisioning_profile
 end

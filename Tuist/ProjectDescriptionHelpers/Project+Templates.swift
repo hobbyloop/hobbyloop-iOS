@@ -41,7 +41,7 @@ extension Project {
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                entitlements: .relativeToRoot("App/Hobbyloop.entitlements"),
+                entitlements: .relativeToRoot("Hobbyloop.entitlements"),
                 scripts: [],
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: targetSettings
