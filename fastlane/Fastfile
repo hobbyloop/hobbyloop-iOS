@@ -15,23 +15,30 @@
 
 default_platform(:ios)
 
-appName = "Hobbyloop"
-webhook_url = "https://discord.com/api/webhooks/1113104187350327336/u7TEPQ_ilgwnCwb3oy77IEmiuhgllqt_JDYJNNROrVZbJVGsRU_WqHyG7bxkABroxULB"
+APP_NAME = "Hobbyloop"
+SCHEME = "Hobbyloop"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1113104187350327336/u7TEPQ_ilgwnCwb3oy77IEmiuhgllqt_JDYJNNROrVZbJVGsRU_WqHyG7bxkABroxULB"
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    get_Certificate()
+
+	# app_store_connect_api_key(is_key_content_base64: true, in_house: false)
+
+
     build_app(
-      scheme:appName,
-      workspace: appName + ".xcworkspace"
+      workspace: "#{APP_NAME}.xcworkspace",
+      scheme: "#{SCHEME}",
+      export_method: "app-store"
     )
-    upload_to_testflight
 
+	increment_build_number({ build_number: latest_testflight_build_number() + 1 })
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+
+	discord_notifier(
+      webhook_url: "#{WEBHOOK_URL}",
+      title: "🚀 #{APP_NAME} iOS 배포 성공",
+      description: "#{APP_NAME} iOS를 앱스토어에 성공적으로 배포하였습니다 !"
+    )
   end
-end
-
-
-def get_Certificate
-  get_certificates
-  get_provisioning_profile
 end

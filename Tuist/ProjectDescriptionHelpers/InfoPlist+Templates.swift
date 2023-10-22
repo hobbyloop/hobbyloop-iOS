@@ -18,7 +18,7 @@ extension InfoPlist {
             "CFBundleDisplayName" : .string(name),
             "CFBundleIdentifier" : .string("com.sideproj.\(name)"),
             "CFBundleShortVersionString" : .string("1.0"),
-            "CFBundleVersion" : .string("0"),
+            "CFBundleVersion" : .string("1"),
             "CFBuildVersion" : .string("0"),
             "UILaunchStoryboardName" : .string("Launch Screen"),
             "UISupportedInterfaceOrientations" : .array([.string("UIInterfaceOrientationPortrait")]),
