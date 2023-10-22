@@ -13,6 +13,8 @@ extension InfoPlist {
         
         return [
             "ITSAppUsesNonExemptEncryption": .boolean(false),
+            "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
+            "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
             "CFBundleDisplayName" : .string(name),

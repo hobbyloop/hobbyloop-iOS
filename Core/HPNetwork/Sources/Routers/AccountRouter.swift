@@ -8,10 +8,11 @@
 import Foundation
 
 import Alamofire
+import HPExtensions
 import HPCommon
 
 public enum AccountRouter {
-    case getNaverUserInfo
+    case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
     case createUserInfo(birth: String, gender: String, name: String, nickname: String, phoneNumber: String)
 }
@@ -53,8 +54,11 @@ extension AccountRouter: Router {
     public var headers: HTTPHeaders {
 
         switch self {
-        case .getNaverUserInfo:
-            return [:]
+        case let .getNaverUserInfo(type, accessToken):
+            return [
+                "Authorization":"\(type) \(accessToken)",
+                "Content-Type": "application/json"
+            ]
             
         case let .getAccessToken(_, accessToken):
             return [
@@ -62,19 +66,39 @@ extension AccountRouter: Router {
                 "Accept": "*/*"
             ]
             
-        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+        case .createUserInfo:
+            
+            var token: String = ""
+            
+            do {
+                token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
+            } catch {
+                print(error.localizedDescription)
+            }
+            
             return [
+                "Authorization":"\(token)",
+                "Content-Type": "application/json"
+            ]
+        }
+    }
+    
+    public var parameters: HPParameterType {
+        
+        switch self {
+            
+        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+            return .body([
                 "birth": birth,
                 "gender": gender,
                 "name": name,
                 "nickname": nickname,
                 "phoneNum": phoneNumber
-            ]
-
+            ])
+        default:
+            return .none
         }
     }
-    
-    
     
     
 }

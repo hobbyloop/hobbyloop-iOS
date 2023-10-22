@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionViewDelegate {
+public final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionViewDelegate {
 
     
     private let weekEntity: [String] = ["일", "월", "화", "수", "목", "금", "토"]
@@ -42,14 +42,13 @@ final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionVi
     
     
     private func configure() {
-        weekCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         [weekCollectionView, weekUnderLineView].forEach {
             self.addSubview($0)
         }
         weekCollectionView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
+            $0.left.equalToSuperview()
+            $0.right.equalToSuperview()
         }
         
         weekUnderLineView.snp.makeConstraints {
@@ -65,11 +64,11 @@ final class HPCalendarWeekReusableView: UICollectionReusableView, UICollectionVi
 
 
 extension HPCalendarWeekReusableView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.weekEntity.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let weekCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarWeekCell", for: indexPath) as? HPCalendarWeekCell else { return UICollectionViewCell() }
         weekCell.reactor = HPCalendarWeekCellReactor(week: self.weekEntity[indexPath.row])
@@ -81,16 +80,16 @@ extension HPCalendarWeekReusableView: UICollectionViewDataSource {
 
 extension HPCalendarWeekReusableView: UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let contentSpacing: Int = 32
         return CGSize(width: (Int(collectionView.frame.size.width) - contentSpacing) / 7, height: 40)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return .zero
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return .zero
     }
 

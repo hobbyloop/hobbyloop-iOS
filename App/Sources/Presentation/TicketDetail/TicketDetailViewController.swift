@@ -13,40 +13,43 @@ import Tabman
 import Pageboy
 import RxSwift
 
-class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
-    var view1 = FacilityInfoViewController()
-    var view2 = UIViewController()
-    var view3 = UIViewController()
-    private lazy var viewControllers = [view1, view2, view3]
+class TicketDetailViewController: BaseViewController<HomeViewReactor> {
+    private var view1 = FacilityInfoViewController()
+    private var view2 = ClassInfoViewController()
+    private lazy var viewControllers = [view1, view2]
     
-    private lazy var bodyView: TabmanViewController = {
-        return TabmanViewController().then {
-            self.view.addSubview($0.view)
-            // Create bar
-            $0.dataSource = self
-            let bar = TMBar.ButtonBar()
-            bar.backgroundView.style = .blur(style: .regular)
-            bar.backgroundColor = .white
-            bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 17.0, bottom: 0.0, right: 17.0)
-            bar.buttons.customize { (button) in
-                button.tintColor = UIColor(red: 123/255, green: 123/255, blue: 123/255, alpha: 1) // 선택 안되어 있을 때
-                button.selectedTintColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1) // 선택 되어 있을 때
-                button.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-            }
-            // 인디케이터 조정
-            bar.indicator.weight = .light
-            bar.indicator.tintColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(0.4)
-            bar.indicator.overscrollBehavior = .bounce
-            bar.layout.alignment = .leading
-            bar.layout.contentMode = .fit
-            bar.layout.transitionStyle = .snap // Customize
-            
-            // Add to view
-            $0.addBar(bar, dataSource: self, at: .top)
+    private lazy var bodyView: TabmanViewController = TabmanViewController().then {
+        // Create bar
+        $0.dataSource = self
+        let bar = TMBar.ButtonBar()
+        bar.backgroundView.style = .blur(style: .regular)
+        bar.backgroundColor = .white
+        bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 17.0, bottom: 0.0, right: 17.0)
+        bar.buttons.customize { (button) in
+            button.tintColor = UIColor(red: 123/255, green: 123/255, blue: 123/255, alpha: 1) // 선택 안되어 있을 때
+            button.selectedTintColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1) // 선택 되어 있을 때
+            button.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
         }
-    }()
+        // 인디케이터 조정
+        bar.indicator.weight = .light
+        bar.indicator.tintColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(0.4)
+        bar.indicator.overscrollBehavior = .bounce
+        bar.layout.alignment = .leading
+        bar.layout.contentMode = .fit
+        bar.layout.transitionStyle = .snap // Customize
+        
+        // Add to view
+        $0.addBar(bar, dataSource: self, at: .top)
+    }
     
-    public var viewIndex: Int = 0
+    private lazy var paymentButton: UIButton = UIButton().then {
+        $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+        $0.setTitle("결제하기", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.layer.cornerRadius = 10
+    }
+    
+    private var viewIndex: Int = 0
     
     init(_ index: Int = 0) {
         super.init()
@@ -59,16 +62,31 @@ class TicketDetailViewController: MainBaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: .detail)
+        initLayout()
+        bindRx()
+    }
+    
+    private func initLayout() {
+        self.view.backgroundColor = .white
         
-        configure()
-        
-        bodyView.view.snp.makeConstraints {
-            guard let headerView else { return }
-            $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+        [bodyView.view, paymentButton].forEach {
+            self.view.addSubview($0)
         }
         
+        bodyView.view.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        paymentButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview().inset(UIApplication.shared.safeAreaBottom)
+            $0.height.equalTo(56)
+        }
+    }
+    
+    private func bindRx() {
     }
 }
 
@@ -93,15 +111,13 @@ extension TicketDetailViewController: PageboyViewControllerDataSource, TMBarData
             case 0:
                 return "시설정보"
             case 1:
-                return "수업정보"
-            case 2:
-                return "이용권 구매"
+                return "이용권‧수업 정보"
             default :
                 return ""
             }
         }
         
-        var barItem = TMBarItem(title: title)
+        let barItem = TMBarItem(title: title)
         
         return barItem
     }

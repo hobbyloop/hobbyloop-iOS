@@ -13,9 +13,11 @@ import Then
 
 
 
-final class CalendarCell: UICollectionViewCell {
+public final class CalendarCell: UICollectionViewCell {
     
-    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor())
+    private let calendarView: HPCalendarView = HPCalendarView(reactor: HPCalendarViewReactor(calendarConfigureProxy: HPCalendarProxyBinder()), calendarContentView: HPCalendarContentView(), isStyle: .default).then {
+        $0.color = HPCommonUIAsset.systemBackground.color
+    }
     
     
     override init(frame: CGRect) {

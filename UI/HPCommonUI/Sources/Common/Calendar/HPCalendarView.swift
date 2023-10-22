@@ -7,37 +7,48 @@
 
 import UIKit
 
-
+import HPFoundation
 import RxDataSources
 import ReactorKit
 import Then
 import SnapKit
 
 
-
 public final class HPCalendarView: UIView {
+    
+    public var color: UIColor = .white {
+        //TODO: BackgroundColor Setting 부분 수정
+        didSet {
+            self.calendarCollectionView.backgroundColor = color
+        }
+    }
+    
+    
+    public var isStyle: CalendarStyle  {
+        didSet {
+            if self.isStyle == .default {
+                self.calendarCollectionView.collectionViewLayout = calendarCollectionViewLayout
+                
+            } else {
+                self.calendarCollectionView.collectionViewLayout = bubbleCollectionViewLayout
+            }
+        }
+    }
+    
+    public var isStatus: Bool = false {
+        didSet {
+            configure()
+        }
+    }
+    
 
     // MARK: Property
     
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
-    private lazy var calendarMonthLabel: UILabel = UILabel().then {
-        $0.text = "\(Date().month)월"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.textAlignment = .center
-        $0.numberOfLines = 1
-    }
-    
-    private var previousButton: UIButton = UIButton(type: .custom).then {
-        $0.setTitle("", for: .normal)
-        $0.setImage(HPCommonUIAsset.previousArrow.image, for: .normal)
-    }
-    
-    private var nextButton: UIButton = UIButton(type: .custom).then {
-        $0.setTitle("", for: .normal)
-        $0.setImage(HPCommonUIAsset.nextArrow.image, for: .normal)
 
-    }
+    private var calendarContentView: HPCalendarContentView
+    
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         switch sectionItem {
@@ -46,32 +57,42 @@ public final class HPCalendarView: UIView {
             calendarCell.reactor = cellReactor
             
             return calendarCell
+        case let .bubbleItem(cellReactor):
+            guard let bubbleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HPCalendarBubbleDayCell", for: indexPath) as? HPCalendarBubbleDayCell else { return UICollectionViewCell() }
+            bubbleCell.reactor = cellReactor
+            return bubbleCell
         }
-    } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-        
-        guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
-        
-        return weekDayReusableView
-        
     }
 
     
     private lazy var calendarCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
-    
+            
         return self.createCalendarLayout()
+    }
+    
+    private lazy var bubbleCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+        
+        return self.createBubbleCalendarLayout()
     }
     
     
     
-    private lazy var calendarCollectionView: UICollectionView = UICollectionView(frame: self.frame, collectionViewLayout: calendarCollectionViewLayout).then {
+    private lazy var calendarCollectionView: UICollectionView = UICollectionView(frame: self.frame, collectionViewLayout: isStyle == .default ? calendarCollectionViewLayout : bubbleCollectionViewLayout).then {
         $0.isScrollEnabled = false
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         $0.register(HPCalendarDayCell.self, forCellWithReuseIdentifier: "HPCalendarDayCell")
+        $0.register(HPCalendarBubbleDayCell.self, forCellWithReuseIdentifier: "HPCalendarBubbleDayCell")
         $0.register(HPCalendarWeekReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HPCalendarWeekReusableView")
     }
     
-    public init(reactor: HPCalendarViewReactor) {
+    public init(
+        reactor: HPCalendarViewReactor,
+        calendarContentView: HPCalendarContentView,
+        isStyle: CalendarStyle
+    ) {
+        self.isStyle = isStyle
+        self.calendarContentView = calendarContentView
         super.init(frame: .zero)
         self.reactor = reactor
         configure()
@@ -82,43 +103,34 @@ public final class HPCalendarView: UIView {
     }
     
     
+    
     //MARK: Configure
     private func configure() {
-        self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
-        
-        [calendarCollectionView, calendarMonthLabel, nextButton, previousButton].forEach {
-            self.addSubview($0)
-        }
-        
-        
-        
-        calendarMonthLabel.snp.makeConstraints {
-            $0.width.lessThanOrEqualTo(45)
-            $0.height.equalTo(14)
-            $0.top.equalToSuperview().offset(20)
-            $0.centerX.equalToSuperview()
-        }
-        
-        previousButton.snp.makeConstraints {
-            $0.width.equalTo(16)
-            $0.height.equalTo(17)
-            $0.right.equalTo(calendarMonthLabel.snp.left).offset(-20)
-            $0.centerY.equalTo(calendarMonthLabel)
-        }
+       
+        if isStatus {
+            self.addSubview(calendarCollectionView)
 
-        nextButton.snp.makeConstraints {
-            $0.width.equalTo(previousButton)
-            $0.height.equalTo(previousButton)
-            $0.left.equalTo(calendarMonthLabel.snp.right).offset(20)
-            $0.centerY.equalTo(previousButton)
+
+            calendarCollectionView.snp.remakeConstraints {
+                $0.top.left.right.bottom.equalToSuperview()
+            }
+        } else {
+            [calendarContentView, calendarCollectionView].forEach {
+                self.addSubview($0)
+            }
+            
+            calendarContentView.snp.makeConstraints {
+                $0.left.right.top.equalToSuperview()
+                $0.height.equalTo(40)
+            }
+            
+            calendarCollectionView.snp.remakeConstraints {
+                $0.top.equalTo(calendarContentView.snp.bottom)
+                $0.left.right.bottom.equalToSuperview()
+            }
         }
         
-        calendarCollectionView.snp.makeConstraints {
-            $0.top.equalTo(calendarMonthLabel.snp.bottom).offset(20)
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-20)
-        }
+                
     }
 
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
@@ -177,6 +189,38 @@ public final class HPCalendarView: UIView {
         
         return calendarLayoutSection
     }
+    
+    
+    private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
+        let bubbleCalendarItemSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(54),
+            heightDimension: .absolute(130)
+        )
+        
+        let bubbleCalendarGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(calendarCollectionView.frame.size.height)
+        )
+        
+        let bubbleCalendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: bubbleCalendarItemSize
+        )
+        
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 20, trailing: 7)
+        
+        let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: bubbleCalendarGroupSize,
+            subitem: bubbleCalendarLayoutItem,
+            count: 6
+        )
+        
+        let bubbleCalendarSection = NSCollectionLayoutSection(group: bubbleCalendarGroup)
+        bubbleCalendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        bubbleCalendarSection.orthogonalScrollingBehavior = .continuous
+        
+        
+        return bubbleCalendarSection
+    }
 
 }
 
@@ -187,56 +231,81 @@ extension HPCalendarView: ReactorKit.View {
     public func bind(reactor: Reactor) {
         
 
-        Observable
-            .just(())
-            .map { Reactor.Action.loadView}
-            .debug("Load View HP Calendar View")
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        
-        reactor.pulse(\.$section)
-            .asDriver(onErrorJustReturn: [])
-            .debug("test calendar Section")
-            .drive(calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
-            .disposed(by: disposeBag)
 
-        nextButton
-            .rx.tap
+        self.calendarContentView
+            .nextButton.rx.tap.debug("Tap Next Button Action")
             .map { Reactor.Action.didTapNextDateButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
-        previousButton
-            .rx.tap
+            
+        self.calendarContentView
+            .previousButton.rx.tap
             .map { Reactor.Action.didTapPreviousDateButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
-        
+            
+            
         reactor.state
             .map { "\($0.month)월" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(calendarMonthLabel.rx.text)
+            .bind(to:  calendarContentView.calendarMonthLabel.rx.text)
             .disposed(by: disposeBag)
+            
+
+            
+
+        Observable
+            .just(())
+            .map { Reactor.Action.changeCalendarStyle(self.isStyle)}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.style }
+            .take(1)
+            .distinctUntilChanged()
+            .bind(onNext: { style in
+                if style == .default {
+                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                        guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+                        return weekDayReusableView
+                    }
+                } else {
+                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                        return UICollectionReusableView()
+                    }
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        reactor.pulse(\.$section)
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.itemCount }
+            .withUnretained(self)
+            .subscribe(onNext: { owner, count in
+                NotificationCenter.default.post(name: .reloadCalendar, object: count)
+            }).disposed(by: disposeBag)
+        
         
         NotificationCenter.default
             .rx.notification(.NSCalendarDayChanged)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
-                print("notification changed date")
-                self?.reactor?.action.onNext(.loadView)
+                guard let style = self?.reactor?.currentState.style else { return }
+                self?.reactor?.action.onNext(.changeCalendarStyle(style))
+                self?.calendarCollectionView.collectionViewLayout.invalidateLayout()
             }).disposed(by: disposeBag)
         
-        
-        calendarCollectionView
-            .rx.itemSelected
-            .withUnretained(self)
-            .subscribe(onNext: { owner, indexPath in
+        reactor.state
+            .map { $0.nowDay }
+            .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.asyncInstance)
+            .bind { index in
+                self.calendarCollectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
+            }.disposed(by: disposeBag)
                 
-            }).disposed(by: disposeBag)
-        
     }
 }
-
-
-
