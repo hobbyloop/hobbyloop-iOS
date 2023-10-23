@@ -17,9 +17,7 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
-  lane :generate do
-
-    
+  lane :generate do |options|
 
     increment_build_number(
       build_number: latest_testflight_build_number() + 1,
@@ -45,6 +43,17 @@ platform :ios do
       webhook_url: "#{ENV['WEBHOOK_URL']}",
       title: "🚀 #{ENV['APP_NAME']} iOS 배포 성공",
       description: "#{ENV['APP_NAME']} iOS를 앱스토어에 성공적으로 배포하였습니다 !"
+    )
+  end
+
+  error do |lane, exception, options|
+    discord_notifier(
+      webhook_url: ENV['WEBHOOK_URL'],
+      title: "👾 #{ENV['APP_NAME']} iOS 배포 자동화 실패..",
+      thumbnail_url: "#{ENV['WEBHOOK_URL']}",
+      success: false,
+      color: "#BB3639",
+      description: "#{exception}"
     )
   end
 end
