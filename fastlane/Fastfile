@@ -31,8 +31,8 @@ platform :ios do
       export_options: {
 		  method: "app-store", 
 	    provisioningProfiles: {
-		  "com.sideproj.Hobbyloop" => "Hobbyloop.Release",
-      "com.sideproj.Hobbyloop" => "Hobbyloop.Debug"
+        "com.sideproj.Hobbyloop" => "Hobbyloop.Release",
+        "com.sideproj.Hobbyloop" => "Hobbyloop.Debug"
 		  }
 	  }
     )

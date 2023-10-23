@@ -17,6 +17,7 @@ extension InfoPlist {
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
+            "CFBundleIconName": .string("AppIcon"),
             "CFBundleDisplayName" : .string(name),
             "CFBundleIdentifier" : .string("com.sideproj.\(name)"),
             "CFBundleShortVersionString" : .string("1.0"),
