@@ -52,7 +52,7 @@ platform :ios do
       title: "👾 #{ENV['APP_NAME']} iOS 배포 자동화 실패..",
       thumbnail_url: "#{ENV['WEBHOOK_URL']}",
       success: false,
-      color: "#BB3639",
+      color: "#e32d31",
       description: "#{exception}"
     )
   end
