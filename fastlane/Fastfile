@@ -15,30 +15,34 @@
 
 default_platform(:ios)
 
-APP_NAME = "Hobbyloop"
-SCHEME = "Hobbyloop"
-WEBHOOK_URL = "https://discord.com/api/webhooks/1113104187350327336/u7TEPQ_ilgwnCwb3oy77IEmiuhgllqt_JDYJNNROrVZbJVGsRU_WqHyG7bxkABroxULB"
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
 
-	# app_store_connect_api_key(is_key_content_base64: true, in_house: false)
-
-
-    build_app(
-      workspace: "#{APP_NAME}.xcworkspace",
-      scheme: "#{SCHEME}",
-      export_method: "app-store"
+    increment_build_number(
+      build_number: latest_testflight_build_number() + 1,
+      xcodeproj: "./App/Hobbyloop.xcodeproj"
     )
-
-	increment_build_number({ build_number: latest_testflight_build_number() + 1 })
+    
+    build_app(
+      workspace: "#{ENV['APP_NAME']}.xcworkspace",
+      scheme: "#{ENV['SCHEME']}",
+      export_method: "app-store",
+      export_options: {
+		  method: "app-store", 
+	    provisioningProfiles: {
+		  "com.sideproj.Hobbyloop" => "Hobbyloop.Release",
+      "com.sideproj.Hobbyloop" => "Hobbyloop.Debug"
+		  }
+	  }
+    )
 
     upload_to_testflight(skip_waiting_for_build_processing: true)
 
 	discord_notifier(
-      webhook_url: "#{WEBHOOK_URL}",
-      title: "🚀 #{APP_NAME} iOS 배포 성공",
-      description: "#{APP_NAME} iOS를 앱스토어에 성공적으로 배포하였습니다 !"
+      webhook_url: "#{ENV['WEBHOOK_URL']}",
+      title: "🚀 #{ENV['APP_NAME']} iOS 배포 성공",
+      description: "#{ENV['APP_NAME']} iOS를 앱스토어에 성공적으로 배포하였습니다 !"
     )
   end
 end
