@@ -19,7 +19,7 @@ extension InfoPlist {
             "CFBundleName" : .string(name),
             "CFBundleIconName": .string("AppIcon"),
             "CFBundleDisplayName" : .string(name),
-            "CFBundleIdentifier" : .string("com.sideproj.\(name)"),
+            "CFBundleIdentifier" : .string("com.app.\(name.lowercased())"),
             "CFBundleShortVersionString" : .string("1.0"),
             "CFBundleVersion" : .string("1"),
             "CFBuildVersion" : .string("0"),

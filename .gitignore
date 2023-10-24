@@ -73,6 +73,8 @@ Tuist/Dependencies
 ### TestFlight ###
 *.ipa
 *.app.dSYM.zip
+*.p8
+fastlane/*.json
 
 
 
