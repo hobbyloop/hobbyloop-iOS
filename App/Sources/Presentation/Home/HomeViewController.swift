@@ -16,7 +16,20 @@ import RxGesture
 import RxDataSources
 
 
-final class HomeViewController: BaseViewController<HomeViewReactor> {
+private protocol HomeLayoutCreatable: AnyObject {
+    
+    func createUserInfoProvideLayout() -> NSCollectionLayoutSection
+    func createTicketLayout() -> NSCollectionLayoutSection
+    func createCalendarLayout() -> NSCollectionLayoutSection
+    func createSchedulClassLayout() -> NSCollectionLayoutSection
+    func createExplanationClassLayout() -> NSCollectionLayoutSection
+    func createExerciseClassLayout() -> NSCollectionLayoutSection
+    func createBenefitsLayout() -> NSCollectionLayoutSection
+    
+}
+
+
+public final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     // MARK: Property
     
@@ -76,29 +89,32 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         }
     }
     
-    private lazy var homeCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+    private lazy var homeCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { [weak self] section, env in
         
-        let section = self.homeDataSource.sectionModels[section]
+        let section = self?.homeDataSource.sectionModels[section]
         
         switch section {
         case .userInfoClass:
-            return self.userInfoProvideLayout()
+            return self?.createUserInfoProvideLayout()
         case .calendarClass:
-            return self.createCalendarLayout()
+            return self?.createCalendarLayout()
             
         case .ticketClass:
-            return self.createTicketLayout()
+            return self?.createTicketLayout()
         case .schedulClass:
-            return self.createSchedulClassLayout()
+            return self?.createSchedulClassLayout()
             
         case .explanationClass:
-            return self.createExplanationClassLayout()
+            return self?.createExplanationClassLayout()
             
         case .exerciseClass:
-            return self.createExerciseClassLayout()
+            return self?.createExerciseClassLayout()
             
         case .benefitsClass:
-            return self.createBenefitsLayout()
+            return self?.createBenefitsLayout()
+        case .none:
+            //TODO: Empty Layout 추가 예정
+            return nil
         }
         
     }
@@ -137,7 +153,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     
     // MARK: LifeCycle
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         configure()
     }
@@ -152,7 +168,40 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         }
     }
     
-    private func userInfoProvideLayout() -> NSCollectionLayoutSection {
+    public override func bind(reactor: HomeViewReactor) {
+        
+        
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
+            .disposed(by: disposeBag)
+        
+    }
+    
+}
+
+
+
+extension HomeViewController: ExplanationDelegate {
+    
+    public func showOnboardingView() {
+        let onboardingController = OnboardingDIContainer().makeViewController()
+        onboardingController.modalPresentationStyle = .fullScreen
+        self.present(onboardingController, animated: true)
+    }
+    
+}
+
+
+
+extension HomeViewController: HomeLayoutCreatable {
+    
+    fileprivate func createUserInfoProvideLayout() -> NSCollectionLayoutSection {
         let userInfoProvideLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
             heightDimension: .estimated(90)
@@ -174,10 +223,10 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         userInfoProvideSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return userInfoProvideSection
-        
     }
     
-    private func createTicketLayout() -> NSCollectionLayoutSection {
+    
+    fileprivate func createTicketLayout() -> NSCollectionLayoutSection {
         
         let ticketLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
@@ -199,10 +248,11 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         
         return ticketSection
+        
     }
     
     
-    private func createCalendarLayout() -> NSCollectionLayoutSection {
+    fileprivate func createCalendarLayout() -> NSCollectionLayoutSection {
         let calendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width - 32),
             heightDimension: .estimated(280)
@@ -234,9 +284,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         return calendarSection
     }
     
-    
-    private func createSchedulClassLayout() -> NSCollectionLayoutSection {
-        
+    fileprivate func createSchedulClassLayout() -> NSCollectionLayoutSection {
         
         let scheduleClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
@@ -255,9 +303,11 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         )
 
         return scheduleClassSection
+        
     }
     
-    private func createExplanationClassLayout() -> NSCollectionLayoutSection {
+    
+    fileprivate func createExplanationClassLayout() -> NSCollectionLayoutSection {
         
         let explanationClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
@@ -283,8 +333,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     //MARK: 오늘의 운동 섹션 레이아웃 구성 함수
     /// - Return : NSCollectionLayoutSize
-    private func createExerciseClassLayout() -> NSCollectionLayoutSection {
-        
+    fileprivate func createExerciseClassLayout() -> NSCollectionLayoutSection {
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(339)
@@ -316,7 +365,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         let exerciseSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
         
-        exerciseSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        exerciseSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
         exerciseSection.decorationItems = [exerciseSectionBackground]
         
         exerciseSection.orthogonalScrollingBehavior = .groupPagingCentered
@@ -333,10 +382,9 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         return exerciseSection
     }
     
-    
     //MARK: 오늘의 혜택 섹션 레이아웃 구성 함수
     /// - Return : NSCollectionLayoutSize
-    private func createBenefitsLayout() -> NSCollectionLayoutSection {
+    fileprivate func createBenefitsLayout() -> NSCollectionLayoutSection {
         
         let benefitsItemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -367,7 +415,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         )
         
         let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
-        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
         benefitsSection
             .orthogonalScrollingBehavior = .groupPagingCentered
         
@@ -388,32 +436,4 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
         
         return benefitsSection
     }
-    
-    
-    
-    override func bind(reactor: HomeViewReactor) {
-        
-        
-        Observable.just(())
-            .map { Reactor.Action.viewDidLoad }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        reactor.pulse(\.$section)
-            .asDriver(onErrorJustReturn: [])
-            .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
-            .disposed(by: disposeBag)
-        
-    }
-    
-}
-
-extension HomeViewController: ExplanationDelegate {
-    
-    func showOnboardingView() {
-        let onboardingController = OnboardingDIContainer().makeViewController()
-        onboardingController.modalPresentationStyle = .fullScreen
-        self.present(onboardingController, animated: true)
-    }
-    
 }

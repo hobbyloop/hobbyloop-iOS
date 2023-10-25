@@ -66,11 +66,11 @@ public final class HomeViewReactor: Reactor {
                 .explanationClass([
                     .explanationClassItem
                 ]),
-                .exerciseClass([
-                    .exerciseClassItem
-                ]),
                 .benefitsClass([
                     .benefitsClassItem
+                ]),
+                .exerciseClass([
+                    .exerciseClassItem
                 ])
             ]
         )
