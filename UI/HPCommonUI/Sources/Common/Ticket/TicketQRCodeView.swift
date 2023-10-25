@@ -6,11 +6,10 @@
 //
 
 import UIKit
+
 import Then
+import SnapKit
 
-
-
-//MARK: 오버라이드 가능 여부가 있기에 open 접근자로 선언
 open class TicketQRCodeView: UIView {
     
     public var qrfilter = CIFilter(name: "CIQRCodeGenerator")
@@ -19,9 +18,35 @@ open class TicketQRCodeView: UIView {
         
     }
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
-    func createQRCode(entity: String, size: String) {
+    private func configure() {
+        self.addSubview(qrView)
+        
+        qrView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
+    
+    open func createQRCode(entity: String, size: String) {
+        guard let filter = qrfilter, let data = entity.data(using: .ascii, allowLossyConversion: false) else { return }
+        
+        filter.setValue(data, forKey: "inputMessage")
+        filter.setValue(size, forKey: "inputCorrectionLevel")
+        
+        let transform = CGAffineTransform(scaleX: 1, y: 1)
+        
+        if let outputImage = filter.outputImage?.transformed(by: transform) {
+            qrView.image = UIImage(ciImage: outputImage).withRenderingMode(.alwaysTemplate)
+        }
         
     }
     
