@@ -20,6 +20,7 @@ open class TicketQRCodeView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        configure()
     }
     
     required public init?(coder: NSCoder) {
@@ -36,7 +37,7 @@ open class TicketQRCodeView: UIView {
     }
     
     
-    open func createQRCode(entity: String, size: String) {
+    open func createQRCode(entity: String, size: String, radius: CGFloat) {
         guard let filter = qrfilter, let data = entity.data(using: .ascii, allowLossyConversion: false) else { return }
         
         filter.setValue(data, forKey: "inputMessage")
@@ -44,10 +45,15 @@ open class TicketQRCodeView: UIView {
         
         let transform = CGAffineTransform(scaleX: 1, y: 1)
         
-        if let outputImage = filter.outputImage?.transformed(by: transform) {
-            qrView.image = UIImage(ciImage: outputImage).withRenderingMode(.alwaysTemplate)
-        }
+        let outputImage = filter.outputImage?.transformed(by: transform)
         
+        let blurFilter = CIFilter(name: "CIGaussianBlur")
+        blurFilter?.setValue(outputImage, forKey: kCIInputImageKey)
+        blurFilter?.setValue(radius, forKey: kCIInputRadiusKey)
+        
+        guard let originalImage = blurFilter?.outputImage else { return }
+        
+        qrView.image = UIImage(ciImage: originalImage).withRenderingMode(.alwaysTemplate)
     }
     
 }
