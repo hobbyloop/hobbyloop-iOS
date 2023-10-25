@@ -5,47 +5,37 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000425">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.0004">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: app_store_connect_api_key" time="0.009364">
+      <testcase classname="fastlane.lanes" name="1: app_store_connect_api_key" time="0.007121">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: get_version_number" time="0.147168">
+      <testcase classname="fastlane.lanes" name="2: latest_testflight_build_number" time="1.572348">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: latest_testflight_build_number" time="1.838253">
+      <testcase classname="fastlane.lanes" name="3: increment_build_number" time="2.412121">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: increment_build_number" time="1.62188">
+      <testcase classname="fastlane.lanes" name="4: build_app" time="197.617669">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: increment_version_number" time="1.353752">
+      <testcase classname="fastlane.lanes" name="5: upload_to_testflight" time="102.282589">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="6: build_app" time="138.944724">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="7: upload_to_testflight" time="73.77389">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="8: discord_notifier" time="0.575883">
+      <testcase classname="fastlane.lanes" name="6: discord_notifier" time="0.803657">
         
       </testcase>
     
