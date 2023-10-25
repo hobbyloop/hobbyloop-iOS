@@ -153,8 +153,6 @@ public final class TicketView: UIView {
         midLineLayer.lineWidth = 0.5
         midLineLayer.lineDashPattern = [10, 10]
         let cgPath = CGMutablePath()
-        let cgPoints = [CGPoint(x: frame.width - 136.42, y: 0), CGPoint(x: frame.width - 136.42, y: frame.height)]
-        cgPath.addLines(between: cgPoints)
         midLineLayer.path = cgPath
         
         return midLineLayer
