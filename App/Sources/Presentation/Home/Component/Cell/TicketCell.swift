@@ -18,7 +18,7 @@ final class TicketCell: UICollectionViewCell {
         instructor: "이민주 강사님",
         timeString: Date().convertToString(),
         textColor: HPCommonUIAsset.black.color,
-        fillColor: HPCommonUIAsset.systemBackground.color.cgColor
+        fillColor: HPCommonUIAsset.white.color.cgColor
     )
     
     

@@ -10,8 +10,14 @@ import UIKit
 import Then
 import SnapKit
 
+
+public enum QRCodeType {
+    case blur
+    case original
+}
+
 open class TicketQRCodeView: UIView {
-    
+        
     public var qrfilter = CIFilter(name: "CIQRCodeGenerator")
     public var qrView: UIImageView = UIImageView().then {
         $0.contentMode = .scaleToFill
@@ -37,7 +43,23 @@ open class TicketQRCodeView: UIView {
     }
     
     
-    open func createQRCode(entity: String, size: String, radius: CGFloat) {
+    public func createBlurImage(image: CIImage, transformed: CGAffineTransform) -> CGImage? {
+        guard let filter = CIFilter(name: "CIBlendWithAlphaMask") else { return nil }
+        let backgroundColor = CIColor(red: 255, green: 255, blue: 255, alpha: 0.2)
+        let backgroundImage = CIImage(color: backgroundColor).cropped(to: image.extent).transformed(by: transformed)
+        filter.setValue(image, forKey: kCIInputImageKey)
+        filter.setValue(backgroundImage, forKey: kCIInputBackgroundImageKey)
+        filter.setValue(backgroundImage, forKey: kCIInputMaskImageKey)
+        
+        let context = CIContext()
+        guard let outputImage = filter.outputImage,
+              let originalImage = context.createCGImage(outputImage, from: outputImage.extent) else { return nil }
+        
+        return originalImage
+    }
+    
+    open func createQRCode(entity: String, size: String, type: QRCodeType) {
+        
         guard let filter = qrfilter, let data = entity.data(using: .ascii, allowLossyConversion: false) else { return }
         
         filter.setValue(data, forKey: "inputMessage")
@@ -45,15 +67,17 @@ open class TicketQRCodeView: UIView {
         
         let transform = CGAffineTransform(scaleX: 1, y: 1)
         
-        let outputImage = filter.outputImage?.transformed(by: transform)
+        switch type {
+        case .blur:
+            guard let qrImage = filter.outputImage,
+                  let originalImage =  createBlurImage(image: qrImage, transformed: transform) else { return }
+            qrView.image = UIImage(cgImage: originalImage).withRenderingMode(.alwaysOriginal)
+        case .original:
+            guard let originalImage = filter.outputImage else { return }
+            qrView.image = UIImage(ciImage: originalImage).withRenderingMode(.alwaysOriginal)
+        }
         
-        let blurFilter = CIFilter(name: "CIGaussianBlur")
-        blurFilter?.setValue(outputImage, forKey: kCIInputImageKey)
-        blurFilter?.setValue(radius, forKey: kCIInputRadiusKey)
-        
-        guard let originalImage = blurFilter?.outputImage else { return }
-        
-        qrView.image = UIImage(ciImage: originalImage).withRenderingMode(.alwaysTemplate)
+
     }
     
 }
