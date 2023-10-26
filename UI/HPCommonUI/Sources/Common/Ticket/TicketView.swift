@@ -17,7 +17,7 @@ public enum TicketStatus {
 
 
 /// 수업 예약 내용을 나타내는 ticket view
-public final class TicketView: UIView {
+public final class TicketView: TicketQRCodeView {
     
     private let fillColor: CGColor
     private let textColor: UIColor
@@ -35,6 +35,7 @@ public final class TicketView: UIView {
             $0.height.equalTo(49)
         }
     }
+    
     
     private let titleLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
@@ -100,8 +101,9 @@ public final class TicketView: UIView {
     private func layout() {
         
         self.addSubview(containerView)
-        [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, logoView].forEach(self.addSubview(_:))
+        [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, qrView].forEach(self.addSubview(_:))
                 
+        createQRCode(entity: "", size: "L", type: .blur)
         
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -136,8 +138,9 @@ public final class TicketView: UIView {
             $0.leading.equalTo(self.snp.leading).offset(27)
         }
         
-        logoView.snp.makeConstraints {
+        qrView.snp.makeConstraints {
             $0.centerY.equalTo(self.snp.centerY)
+            $0.width.height.equalTo(68)
             $0.trailing.equalTo(self.snp.trailing).offset(-51.42)
         }
     }

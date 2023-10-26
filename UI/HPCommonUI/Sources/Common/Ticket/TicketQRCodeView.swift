@@ -26,7 +26,6 @@ open class TicketQRCodeView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
     }
     
     required public init?(coder: NSCoder) {
@@ -34,13 +33,6 @@ open class TicketQRCodeView: UIView {
     }
     
     
-    private func configure() {
-        self.addSubview(qrView)
-        
-        qrView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
     
     
     public func createBlurImage(image: CIImage, transformed: CGAffineTransform) -> CGImage? {
