@@ -102,8 +102,11 @@ public final class TicketView: TicketQRCodeView {
         
         self.addSubview(containerView)
         [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, qrView].forEach(self.addSubview(_:))
-                
+        
+        qrView.addSubview(qrTitleLabel)
+        //TODO: 추후에 Entity Parameter 추가
         createQRCode(entity: "", size: "L", type: .blur)
+        setTitleLabel(text: "출석\nQR", textColor: HPCommonUIAsset.black.color, font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16))
         
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -142,6 +145,11 @@ public final class TicketView: TicketQRCodeView {
             $0.centerY.equalTo(self.snp.centerY)
             $0.width.height.equalTo(68)
             $0.trailing.equalTo(self.snp.trailing).offset(-51.42)
+        }
+        
+        qrTitleLabel.snp.makeConstraints {
+            $0.width.height.equalTo(50)
+            $0.center.equalToSuperview()
         }
     }
     

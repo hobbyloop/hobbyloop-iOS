@@ -20,8 +20,13 @@ open class TicketQRCodeView: UIView {
         
     public var qrfilter = CIFilter(name: "CIQRCodeGenerator")
     public var qrView: UIImageView = UIImageView().then {
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFit
         
+    }
+    
+    public var qrTitleLabel: UILabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.textAlignment = .center
     }
     
     public override init(frame: CGRect) {
@@ -33,6 +38,19 @@ open class TicketQRCodeView: UIView {
     }
     
     
+    public func setTitleLabel(text: String, textColor: UIColor, font: UIFont) {
+        
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textColor,
+            .font: font
+        ]
+        
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        
+        qrTitleLabel.attributedText = attributedString
+        
+    }
     
     
     public func createBlurImage(image: CIImage, transformed: CGAffineTransform) -> CGImage? {
