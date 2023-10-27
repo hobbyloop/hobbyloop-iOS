@@ -387,21 +387,14 @@ extension HomeViewController: HomeLayoutCreatable {
     fileprivate func createBenefitsLayout() -> NSCollectionLayoutSection {
         
         let benefitsItemLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
+            widthDimension: .absolute(334),
             heightDimension: .absolute(200)
         )
         
         let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
         
-        benefitsLayoutItem.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: 0,
-            bottom: 0,
-            trailing: 12
-        )
-        
         let benefitsGroupLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.92),
+            widthDimension: .absolute(334),
             heightDimension: .absolute(200)
         )
         
@@ -414,6 +407,9 @@ extension HomeViewController: HomeLayoutCreatable {
             group: benefitsGroupLayout
         )
         
+        benefitsSection.interGroupSpacing = 12
+        benefitsSection.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+        
         let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
         benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
         benefitsSection
@@ -422,7 +418,7 @@ extension HomeViewController: HomeLayoutCreatable {
         benefitsSection.decorationItems = [benefitsSectionBackground]
         
         let benefitsHeaderLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(self.view.frame.size.width),
+            widthDimension: .absolute(self.view.frame.size.width - 32),
             heightDimension: .absolute(50)
         )
         
