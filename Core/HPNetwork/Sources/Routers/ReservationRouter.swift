@@ -14,7 +14,7 @@ import HPDomain
 
 
 public enum ReservationRouter {
-    case getReservationList
+    case getNearestReservationList
     case monthlyReservationList(parameter: ReservationParameters)
 }
 
@@ -28,8 +28,8 @@ extension ReservationRouter: Router {
     
     public var path: String {
         switch self {
-        case .getReservationList:
-            return "/api/v1/reservation"
+        case .getNearestReservationList:
+            return "/api/v1/reservation/nearest"
         case .monthlyReservationList:
             return "/api/v1/reservation/monthly/list"
         }
@@ -84,7 +84,7 @@ extension ReservationClient {
 
     public func requestToReservationList() -> Single<LatestReservation> {
         return Single.create { single -> Disposable in
-            AF.request(ReservationRouter.getReservationList)
+            AF.request(ReservationRouter.getNearestReservationList)
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: LatestReservation.self) { response in
                     switch response.result {
