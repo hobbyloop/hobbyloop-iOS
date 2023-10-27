@@ -42,14 +42,13 @@ public final class HPCalendarWeekReusableView: UICollectionReusableView, UIColle
     
     
     private func configure() {
-        weekCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
         [weekCollectionView, weekUnderLineView].forEach {
             self.addSubview($0)
         }
         weekCollectionView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.left.equalToSuperview().offset(16)
-            $0.right.equalToSuperview().offset(-16)
+            $0.left.equalToSuperview()
+            $0.right.equalToSuperview()
         }
         
         weekUnderLineView.snp.makeConstraints {

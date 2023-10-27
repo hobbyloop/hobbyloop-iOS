@@ -261,20 +261,20 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
             .bind { [weak self] _ in
                 guard let self = self else { return }
                 print("운영시간 ON")
-                workTimeView.isHidden.toggle()
+                self.workTimeView.isHidden.toggle()
             }.disposed(by: disposeBag)
         
         workTimeClickEvent.subscribe { [weak self] _ in
             guard let self = self else { return }
             print("운영시간 OFF")
-            workTimeView.isHidden = true
+            self.workTimeView.isHidden = true
         }.disposed(by: disposeBag)
         
         reviewView.rx.tapGesture()
             .when(.recognized)
             .bind { [weak self] _ in
                 guard let self = self else { return }
-                reviewClickEvent.onNext(Void())
+                self.reviewClickEvent.onNext(Void())
             }.disposed(by: disposeBag)
     }
 }

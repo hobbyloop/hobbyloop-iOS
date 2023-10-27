@@ -18,17 +18,18 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         scrollBarAppearance: UINavigationBarAppearance()
     )
     
-    private let ticketController = HPNavigationController(
-        rootViewController: TicketViewController(),
+    private let ticketReservationController = HPNavigationController(
+        rootViewController: TicketSelectDIContainer().makeViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )
     
-    private let dummyView2 = HPNavigationController(
-        rootViewController: HomeDIContainer().makeViewController(),
+    private let dummyView = HPNavigationController(
+        rootViewController: TicketDIContainer().makeViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )
+    
     
     private let dummyView3 = HPNavigationController(
         rootViewController: HomeDIContainer().makeViewController(),
@@ -60,12 +61,10 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         homeController.tabBarItem.title = "홈"
         homeController.tabBarItem.image = HPCommonUIAsset.homeOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        ticketController.tabBarItem.selectedImage = HPCommonUIAsset.ticketFilled.image.withRenderingMode(.alwaysOriginal)
-        ticketController.tabBarItem.title = "이용권"
-        ticketController.tabBarItem.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
+        dummyView.tabBarItem.selectedImage = HPCommonUIAsset.ticketFilled.image.withRenderingMode(.alwaysOriginal)
+        dummyView.tabBarItem.title = "이용권"
+        dummyView.tabBarItem.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        dummyView2.view.backgroundColor = .red
-        dummyView2.tabBarItem.title = "수업예약"
         
         dummyView3.view.backgroundColor = .blue
         dummyView3.tabBarItem.selectedImage = HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal)
@@ -77,7 +76,7 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         dummyView4.tabBarItem.title = "마이페이지"
         dummyView4.tabBarItem.image = HPCommonUIAsset.myOutlined.image.withRenderingMode(.alwaysOriginal)
         
-        viewControllers = [homeController, ticketController, dummyView2, dummyView3, dummyView4]
+        viewControllers = [homeController, dummyView, ticketReservationController ,dummyView3, dummyView4]
         
         object_setClass(self.tabBar, CustomTabBar.self)
         tabBarAddLine()

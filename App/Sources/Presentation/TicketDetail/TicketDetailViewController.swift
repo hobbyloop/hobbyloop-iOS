@@ -87,10 +87,6 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     }
     
     private func bindRx() {
-        NotificationCenter.default.rx.notification(.popToViewController)
-            .bind(onNext: { _ in
-                self.navigationController?.popViewController(animated: false)
-            }).disposed(by: disposeBag)
     }
 }
 
