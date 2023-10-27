@@ -8,7 +8,7 @@
 import Foundation
 
 
-public struct Token: Encodable {
+public struct Token: Decodable {
     
     /// Token Entity의 statusCode 값
     public let statusCode: Int
@@ -22,7 +22,7 @@ public struct Token: Encodable {
     }
 }
 
-public struct TokenInfo: Encodable {
+public struct TokenInfo: Decodable {
     
     /// 하비루프 사용자 accessToken 값
     public let accessToken: String

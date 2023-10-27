@@ -161,8 +161,8 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         Observable
             .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken }.distinctUntilChanged()
-            ).filter {!$0.1.isEmpty }
+                reactor.state.map { $0.authToken }
+            ).filter { $0.1 != nil }
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
                 owner.didShowSingUpController(accountType: state.0)

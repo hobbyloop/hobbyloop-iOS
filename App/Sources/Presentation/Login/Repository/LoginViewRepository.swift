@@ -18,12 +18,13 @@ import RxKakaoSDKAuth
 import KakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
+import HPDomain
 import AuthenticationServices
 
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     
-    var networkService: APIService { get }
+    var networkService: AccountClientService { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     var googleLoginInstance: GIDConfiguration { get }
     
@@ -45,7 +46,7 @@ public protocol LoginViewRepo {
 
 
 public final class LoginViewRepository: NSObject, LoginViewRepo {
-    public var networkService: HPNetwork.APIService = APIClient.shared
+    public var networkService: HPNetwork.AccountClientService = AccountClient.shared
     
     public var disposeBag: DisposeBag = DisposeBag()
     
@@ -76,16 +77,12 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                
-                let kakaoAuthMutation = Observable<LoginViewReactor.Mutation>
-                    .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
-                            observer.onNext(.setAccessToken(authToken))
-                            
-                        }
-                        return Disposables.create()
+                return self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) ->
+                        Observable<LoginViewReactor.Mutation> in
+                        return .just(.setAccessToken(data))
                     }
-                return kakaoAuthMutation
             }
     }
     
@@ -97,15 +94,12 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                let kakaoWebAuthMutation = Observable<LoginViewReactor.Mutation>
-                    .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
-                            observer.onNext(.setAccessToken(authToken))
-                            observer.onNext(.setLoading(false))
-                        }
-                        return Disposables.create()
+                return self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) ->
+                        Observable<LoginViewReactor.Mutation> in
+                        return .just(.setAccessToken(data))
                     }
-                return kakaoWebAuthMutation
             }
     }
     
@@ -122,9 +116,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             
             return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { [weak self] user, error in
                 if let user {
-                    self?.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .google, token: user.authentication.accessToken), completion: { authToken in
-                        LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
-                    })
+                    //TODO: Server Response 변경으로 인한 로직 변경 반영 예정
                 } else {
                     debugPrint(error?.localizedDescription)
                 }
@@ -167,10 +159,7 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
         if let accessToken = naverLoginInstance.accessToken {
             
-            // TODO: Naver Access Token 발급시 JWT 발급 요청 및 Mutation 방출
-            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .naver, token: accessToken)) { authToken in
-                LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
-            }
+            // TODO: Server Response 변경으로 인한 로직 변경 반영 예정
         }
     }
     
@@ -208,11 +197,8 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
             
-            //TODO: Apple Login Server API 구현시 Code 추가
+            //TODO: Server Response 변경으로 인한 로직 변경 반영 예정
             debugPrint("appleLogin identityToken: \(identityToken)")
-            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .apple, token: identityToken)) { authToken in
-                
-            }
             let resultName = "\(familyName)\(givenName)"
             SignUpViewStream.event.onNext(.requestAppleLogin(resultName))
         default:

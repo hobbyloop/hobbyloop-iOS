@@ -9,6 +9,7 @@ import Foundation
 
 import HPExtensions
 import HPCommon
+import HPDomain
 import ReactorKit
 import RxSwift
 import GoogleSignIn
@@ -16,7 +17,7 @@ import GoogleSignIn
 
 public enum LoginViewStream: HPStreamType {
     public enum Event {
-        case responseAccessToken(token: String)
+        case responseAccessToken(token: Token)
     }
 }
 
@@ -37,7 +38,7 @@ public final class LoginViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
-        case setAccessToken(String)
+        case setAccessToken(Token?)
         case setAccountType(AccountType)
         case setNaverLogin(Void)
         case setGoogleLogin(Void)
@@ -46,7 +47,7 @@ public final class LoginViewReactor: Reactor {
     //MARK: State
     public struct State {
         var isLoading: Bool
-        @Pulse var authToken: String
+        @Pulse var authToken: Token?
         var accountType: AccountType
         var isShowNaverLogin: Void?
         var isShowGoogleLogin: Void?
@@ -59,7 +60,7 @@ public final class LoginViewReactor: Reactor {
         self.loginRepository = loginRepository
         self.initialState = State(
             isLoading: false,
-            authToken: "",
+            authToken: nil,
             accountType: .none,
             isShowNaverLogin: nil,
             isShowGoogleLogin: nil
@@ -134,7 +135,7 @@ public final class LoginViewReactor: Reactor {
             
         case let .setAccessToken(accessToken):
             newState.authToken = accessToken
-            debugPrint("set Kakao Token accessToken: \(newState.authToken)")
+            debugPrint("set Kakao Token accessToken: \(newState.$authToken)")
             
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
