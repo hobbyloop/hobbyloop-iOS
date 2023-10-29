@@ -77,11 +77,11 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                return self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
                     .asObservable()
                     .flatMap { (data: HPDomain.Token) ->
                         Observable<LoginViewReactor.Mutation> in
-                        return .just(.setAccessToken(data))
+                        .just(.setAccessToken(data))
                     }
             }
     }
@@ -94,11 +94,11 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                return self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
                     .asObservable()
                     .flatMap { (data: HPDomain.Token) ->
                         Observable<LoginViewReactor.Mutation> in
-                        return .just(.setAccessToken(data))
+                        .just(.setAccessToken(data))
                     }
             }
     }

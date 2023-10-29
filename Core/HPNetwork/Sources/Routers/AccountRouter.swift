@@ -44,7 +44,7 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "/v1/nid/me"
         case let .getAccessToken(type, _):
-            return "/login/oauth2/\(type.rawValue)"
+            return "/native/login/oauth2/\(type.rawValue)"
         case .createUserInfo:
             return "/api/v1/profile/create"
         }
