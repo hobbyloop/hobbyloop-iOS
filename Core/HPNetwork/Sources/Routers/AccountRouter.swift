@@ -14,7 +14,7 @@ import HPCommon
 public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
-    case createUserInfo(birth: String, gender: String, name: String, nickname: String, phoneNumber: String)
+    case createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String)
 }
 
 
@@ -87,9 +87,9 @@ extension AccountRouter: Router {
         
         switch self {
             
-        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+        case let .createUserInfo(birthDay, gender, name, nickname, phoneNumber):
             return .body([
-                "birth": birth,
+                "birth": birthDay,
                 "gender": gender,
                 "name": name,
                 "nickname": nickname,

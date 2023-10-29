@@ -14,7 +14,8 @@ import RxSwift
 
 public protocol AccountClientService: AnyObject {
     func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token>
-    
+    func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
+    func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
 }
 
 
@@ -32,7 +33,7 @@ extension AccountClient {
     
     public func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token> {
         
-        return Single.create { single -> Disposable in
+        Single.create { single -> Disposable in
             AF.request(AccountRouter.getAccessToken(type: type, token: accessToken))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: Token.self) { response in
@@ -49,4 +50,41 @@ extension AccountClient {
         }
     }
     
+    
+    public func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount> {
+        Single.create { single -> Disposable in
+            AF.request(AccountRouter.getNaverUserInfo(type: type, accessToken: accessToken))
+                .validate(statusCode: 200..<300)
+                .responseDecodable(of: NaverAccount.self) { response in
+                    switch response.result {
+                    case let .success(data):
+                        single(.success(data))
+                    case let .failure(error):
+                        single(.failure(error))
+                    }
+                }
+            
+            return Disposables.create()
+        }
+
+    }
+    
+    public func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount> {
+        
+        Single.create { single in
+            AF.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
+                .validate(statusCode: 200..<300)
+                .responseDecodable(of: UserAccount.self) { response in
+                    switch response.result {
+                    case let.success(data):
+                        single(.success(data))
+                    case let .failure(error):
+                        single(.failure(error))
+                    }
+                }
+            
+            return Disposables.create()
+        }
+
+    }
 }

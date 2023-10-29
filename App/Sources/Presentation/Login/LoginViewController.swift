@@ -172,7 +172,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
 private extension LoginViewController {
     
     func didShowSingUpController(accountType: AccountType) {
-        let signUpContainer = SignUpDIContainer(signUpClient: APIClient.shared, signUpAccountType: accountType).makeViewController()
+        let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     

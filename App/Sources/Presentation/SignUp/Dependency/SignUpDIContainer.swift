@@ -20,11 +20,9 @@ final class SignUpDIContainer: DIContainer {
     public typealias Repository = SignUpViewRepo
     public typealias Reactor = SignUpViewReactor
     
-    public var signUpClient: APIService
     public var signUpAccountType: AccountType
     
-    public init(signUpClient: APIService, signUpAccountType: AccountType) {
-        self.signUpClient = signUpClient
+    public init(signUpAccountType: AccountType) {
         self.signUpAccountType = signUpAccountType
     }
     
