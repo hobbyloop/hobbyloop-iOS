@@ -15,12 +15,9 @@ import HPCommon
 import Then
 import SnapKit
 import ReactorKit
-import NaverThirdPartyLogin
 
 final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Property
-    
-    private var naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
     private lazy var loginStckView: UIStackView = UIStackView().then {
         $0.distribution = .equalSpacing
         $0.axis = .vertical
@@ -163,6 +160,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
                 reactor.state.map { $0.authToken }
             ).filter { $0.1 != nil }
+            .take(1)
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
                 owner.didShowSingUpController(accountType: state.0)

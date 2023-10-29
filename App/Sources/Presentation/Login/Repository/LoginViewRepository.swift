@@ -169,7 +169,10 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
         if let accessToken = naverLoginInstance.accessToken {
-            
+            self.networkService.requestUserToken(account: .naver, accessToken: accessToken)
+                .subscribe(onSuccess: { data in
+                    LoginViewStream.event.onNext(.responseAccessToken(token: data))
+                }).disposed(by: disposeBag)
             // TODO: Server Response 변경으로 인한 로직 변경 반영 예정
         }
     }

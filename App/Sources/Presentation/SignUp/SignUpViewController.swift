@@ -349,7 +349,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isSelected = false
                 HapticUtil.impact(.light).generate()
@@ -361,7 +362,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isSelected = false
                 HapticUtil.impact(.light).generate()
@@ -374,7 +376,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                 self.genderOfManButton.layer.borderColor = color
             }).disposed(by: disposeBag)
@@ -386,7 +389,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                 self.genderOfGirlButton.layer.borderColor = color
             }).disposed(by: disposeBag)
@@ -407,7 +411,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isEnabled = false
             }).disposed(by: disposeBag)
@@ -418,7 +423,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isEnabled = false
             }).disposed(by: disposeBag)
@@ -457,7 +463,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
@@ -468,7 +475,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
@@ -542,8 +550,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.notification(UIResponder.keyboardWillHideNotification)
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.containerView.frame.origin.y = 0
+            .subscribe(onNext: { owner, _ in
+                owner.containerView.frame.origin.y = 0
             }).disposed(by: disposeBag)
 
 
@@ -577,7 +585,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         birthDayView.textFieldView
             .rx.textChange
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.updateToBirthDay($0 ?? "")}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -664,11 +672,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         nameView
             .textFieldView.rx.textChange
+            .distinctUntilChanged()
             .compactMap { $0?.isEmpty ?? false || $0?.filter { $0.isNumber }.count ?? 0 >= 1 }
             .skip(1)
             .withUnretained(self)
             .bind(onNext: { owner, isError in
-                self.nameView.isError = isError
+                owner.nameView.isError = isError
                 if isError {
                     owner.nameView.snp.remakeConstraints {
                         $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)

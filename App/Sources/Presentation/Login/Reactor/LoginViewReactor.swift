@@ -128,18 +128,13 @@ public final class LoginViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-            
         case let .setAccountType(accountType):
             newState.accountType = accountType
-            debugPrint("set Account Type : \(newState.accountType)")
-            
         case let .setAccessToken(accessToken):
             newState.authToken = accessToken
             debugPrint("set Kakao Token accessToken: \(newState.$authToken)")
-            
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
-
         case let .setGoogleLogin(isShow):
             newState.isShowGoogleLogin = isShow
         }
