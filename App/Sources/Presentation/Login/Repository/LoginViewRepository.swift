@@ -37,6 +37,7 @@ public protocol LoginViewRepo {
     func responseNaverLogin() -> Observable<LoginViewReactor.Mutation>
     
     /// 구글 로그인을 위한 implementation
+    func responseGoogleUser(to viewController: AnyObject) -> Observable<GIDGoogleUser>
     func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation>
     
     /// 애플 로그인을 위한 implementation
@@ -109,21 +110,31 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
     }
     
+    public func responseGoogleUser(to viewController: AnyObject) -> Observable<GIDGoogleUser> {
+        return Observable.create { observer in
+            if let viewController = viewController as? LoginViewController {
+                GIDSignIn.sharedInstance.signIn(with: self.googleLoginInstance, presenting: viewController) { user, error in
+                    if let user = user {
+                        observer.onNext(user)
+                    }
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
     
     /// 구글 로그인창을 띄우기 위한 메서드
     public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
-        if let loginController = viewController as? LoginViewController {
-            
-            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { [weak self] user, error in
-                if let user {
-                    //TODO: Server Response 변경으로 인한 로직 변경 반영 예정
-                } else {
-                    debugPrint(error?.localizedDescription)
-                }
-            })))
-        }
-        
-        return .empty()
+        responseGoogleUser(to: viewController)
+            .flatMap { [weak self] user -> Observable<LoginViewReactor.Mutation> in
+                guard let self = `self` else { return .empty() }
+                return self.networkService.requestUserToken(account: .google, accessToken: user.authentication.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) -> Observable<LoginViewReactor.Mutation> in
+                        .just(.setAccessToken(data))
+                    }
+            }
     }
     
     
