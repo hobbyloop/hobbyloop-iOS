@@ -80,7 +80,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
             nickname: nickname,
             phoneNumber: phoneNumber
         ).asObservable().flatMap { (data: UserAccount) -> Observable<SignUpViewReactor.Mutation> in
-               return  .just(.setCreateUserInfo(data))
+            .just(.setCreateUserInfo(data))
         }
     }
     

@@ -119,7 +119,6 @@ public final class SignUpViewReactor: Reactor {
             let startLoading = Observable<Mutation>.just(.setLoading(true))
             let endLoading = Observable<Mutation>.just(.setLoading(false))
             var requestProfile = Observable<Mutation>.empty()
-            print("viewDidLoad SignUp Reactor: \(self.accountType)")
             if accountType == .kakao {
                 requestProfile = signUpRepository.responseKakaoProfile()
             } else if accountType == .naver {
@@ -132,7 +131,6 @@ public final class SignUpViewReactor: Reactor {
                 endLoading
             )
         case let .updateToName(userName):
-            print("update To Name : \(userName)")
             return .just(.setUserName(userName))
             
         case let .updateToNickName(userNickName):
@@ -224,7 +222,6 @@ public final class SignUpViewReactor: Reactor {
             print("set newstate gedner: \(newState.userGender)")
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
-            
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
             newState.isVaildationPhoneNumber = phoneNumber.isValidPhoneNumber()

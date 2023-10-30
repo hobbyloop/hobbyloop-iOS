@@ -71,7 +71,7 @@ extension AccountClient {
     
     public func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount> {
         
-        Single.create { single in
+        Single.create { single -> Disposable in
             AF.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: UserAccount.self) { response in
