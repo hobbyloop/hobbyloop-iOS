@@ -710,13 +710,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         confirmButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay ?? "", self.reactor?.currentState.phoneNumber ?? "")}
+            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", self.reactor?.currentState.phoneNumber ?? "")}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         
         reactor.state
-            .filter { $0.userAccountEntity?.status == 200}
+            .filter { $0.userAccountEntity?.statusCode == 201}
             .bind(onNext: { _ in
                 guard let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 scene.window?.rootViewController = CustomTabBarController()

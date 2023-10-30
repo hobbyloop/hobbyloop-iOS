@@ -8,7 +8,24 @@
 import Foundation
 
 
-public struct UserInfoParameters: Encodable {
+public struct UserAccount: Decodable {
+    
+    /// UserAccount Entity의 StatusCode 값
+    public let statusCode: Int
+    
+    /// 하비루프 사용자 정보를 담고 있는 객체
+    public let userInfo: UserAccountInfo
+    
+    
+    public enum CodingKeys: String, CodingKey {
+        case statusCode = "status"
+        case userInfo = "data"
+        
+    }
+}
+
+
+public struct UserAccountInfo: Decodable {
     
     /// 하비루프 사용자 이름
     public let name: String
@@ -25,12 +42,5 @@ public struct UserInfoParameters: Encodable {
     /// 하비루프 사용자 휴대폰 번호
     public let phoneNum: String
     
-}
-
-
-
-public struct UserAccount: Codable {
-    
-    public let status: Int
     
 }

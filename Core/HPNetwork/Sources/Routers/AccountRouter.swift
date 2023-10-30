@@ -67,17 +67,8 @@ extension AccountRouter: Router {
             ]
             
         case .createUserInfo:
-            
-            var token: String = ""
-            
-            do {
-                token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-            } catch {
-                print(error.localizedDescription)
-            }
-            
             return [
-                "Authorization":"\(token)",
+                "Authorization":"Bearer \(LoginManager.shared.accessToken)",
                 "Content-Type": "application/json"
             ]
         }

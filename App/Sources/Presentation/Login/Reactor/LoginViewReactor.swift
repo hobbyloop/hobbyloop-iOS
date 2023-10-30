@@ -13,6 +13,7 @@ import HPDomain
 import ReactorKit
 import RxSwift
 import GoogleSignIn
+import HPNetwork
 
 
 public enum LoginViewStream: HPStreamType {
@@ -130,9 +131,10 @@ public final class LoginViewReactor: Reactor {
             newState.isLoading = isLoading
         case let .setAccountType(accountType):
             newState.accountType = accountType
-        case let .setAccessToken(accessToken):
-            newState.authToken = accessToken
-            debugPrint("set Kakao Token accessToken: \(newState.$authToken)")
+        case let .setAccessToken(data):
+            guard let originalData = data else { return newState }
+            newState.authToken = data
+            LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken)
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
         case let .setGoogleLogin(isShow):
