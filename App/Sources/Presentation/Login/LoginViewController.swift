@@ -158,20 +158,19 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         Observable
             .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken }
+                reactor.pulse(\.$authToken)
             ).filter { $0.1 != nil }
-            .take(1)
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
-                owner.didShowSingUpController(accountType: state.0)
+                owner.didShowSignUpController(accountType: state.0)
             }).disposed(by: disposeBag)
     }
 }
 
 
-private extension LoginViewController {
+extension LoginViewController {
     
-    func didShowSingUpController(accountType: AccountType) {
+    private func didShowSignUpController(accountType: AccountType) {
         let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }

@@ -116,8 +116,6 @@ public final class SignUpViewReactor: Reactor {
         
         switch action {
         case .viewDidLoad:
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
             var requestProfile = Observable<Mutation>.empty()
             if accountType == .kakao {
                 requestProfile = signUpRepository.responseKakaoProfile()
@@ -126,9 +124,9 @@ public final class SignUpViewReactor: Reactor {
             }
             
             return .concat(
-                startLoading,
+                .just(.setLoading(true)),
                 requestProfile,
-                endLoading
+                .just(.setLoading(false))
             )
         case let .updateToName(userName):
             return .just(.setUserName(userName))
@@ -140,9 +138,8 @@ public final class SignUpViewReactor: Reactor {
             return .just(.setUserBirthDay(userBirthDay))
             
         case let .didTapGenderButton(gender):
-            let setUserInfoGender = Observable<Mutation>.just(.setUserGender(gender))
-            
-            return setUserInfoGender
+        
+            return .just(.setUserGender(gender))
             
         case .didTapAuthCodeButton:
             
@@ -154,13 +151,11 @@ public final class SignUpViewReactor: Reactor {
             return .just(.setCertificationState(self.currentState.ceritifcationState))
             
         case let .didTapCreateUserButton(name, nickName, gender, birthDay, phoneNumber):
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
             
             return .concat(
-                startLoading,
+                .just(.setLoading(true)),
                 signUpRepository.createUserInformation(name: name, nickname: nickName, gender: gender, birthDay: birthDay, phoneNumber: phoneNumber),
-                endLoading
+                .just(.setLoading(false))
             )
             
         case let .updateToPhoneNumber(phoneNumber):
@@ -176,11 +171,11 @@ public final class SignUpViewReactor: Reactor {
     
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         
-        let fromAppleFullNameMutation = SignUpViewStream.event.flatMap { [weak self] event in
+        let appleNickNameUpdate = SignUpViewStream.event.flatMap { [weak self] event in
             self?.requestAppleUserProfile(from: event) ?? .empty()
         }
         
-        return Observable.of(mutation, fromAppleFullNameMutation).merge()
+        return Observable.of(mutation, appleNickNameUpdate).merge()
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -235,8 +230,6 @@ public extension SignUpViewReactor {
         switch event {
         case let .requestAppleLogin(fullName):
             return .just(.setAppleUserFullName(fullName))
-        default:
-            return .empty()
         }
     }
     

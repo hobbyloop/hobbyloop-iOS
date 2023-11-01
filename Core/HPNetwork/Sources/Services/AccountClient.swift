@@ -20,11 +20,30 @@ public protocol AccountClientService: AnyObject {
 
 
 
-public final class AccountClient: BaseNetworkClient, AccountClientService {
+public final class AccountClient: BaseNetworkable, AccountClientService {
     
     public static let shared: AccountClient = AccountClient()
     
-    private override init () {}
+    public let AFManager: Session = {
+        var session = AF
+        let configuration = URLSessionConfiguration.af.default
+        let eventLogger = HPAPIEventLogger()
+        let authenticator = HPAuthenticator()
+        let credential = HPAuthenticationCredential(
+            accessToken: LoginManager.shared.accessToken,
+            refreshToken: LoginManager.shared.refreshToken,
+            expiredAt: Date(timeIntervalSinceNow: 60 * 120)
+        )
+        let interceptor = AuthenticationInterceptor(
+            authenticator: authenticator,
+            credential: credential
+        )
+        
+        session = Session(configuration: configuration, interceptor: interceptor, eventMonitors: [eventLogger])
+        return session
+    }()
+    
+    private init () {}
     
 }
 

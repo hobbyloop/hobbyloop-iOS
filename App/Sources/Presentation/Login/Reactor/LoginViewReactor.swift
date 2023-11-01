@@ -42,7 +42,6 @@ public final class LoginViewReactor: Reactor {
         case setAccessToken(Token?)
         case setAccountType(AccountType)
         case setNaverLogin(Void)
-        case setGoogleLogin(Void)
     }
     
     //MARK: State
@@ -51,7 +50,6 @@ public final class LoginViewReactor: Reactor {
         @Pulse var authToken: Token?
         var accountType: AccountType
         var isShowNaverLogin: Void?
-        var isShowGoogleLogin: Void?
     }
     
     
@@ -63,61 +61,57 @@ public final class LoginViewReactor: Reactor {
             isLoading: false,
             authToken: nil,
             accountType: .none,
-            isShowNaverLogin: nil,
-            isShowGoogleLogin: nil
+            isShowNaverLogin: nil
         )
     }
     
     
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        let fromGoogleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
+        let naverTokenUpdates = LoginViewStream.event.flatMap { [weak self] event in
             self?.requestNaverAccessToken(from: event) ?? .empty()
         }
         
-        return Observable.of(mutation, fromGoogleLoginMutation).merge()
+        return Observable.of(mutation, naverTokenUpdates).merge()
     }
     
     
     //MARK: SideEffect
     public func mutate(action: Action) -> Observable<Mutation> {
         
-        let startLoading = Observable<Mutation>.just(.setLoading(true))
-        
         switch action {
         case let .didTapKakaoLogin(type):
-            let kakaoTypeMutation = Observable<Mutation>.just(.setAccountType(type))
+
             return .concat([
-                startLoading,
-                kakaoTypeMutation,
-                loginRepository.resultKakaoLogin()
+                .just(.setLoading(true)),
+                .just(.setAccountType(type)),
+                loginRepository.resultKakaoLogin(),
+                .just(.setLoading(false))
             ])
             
         case let .didTapNaverLogin(type):
-            let naverTypeMutation = Observable<Mutation>.just(.setAccountType(type))
             
             return .concat([
-                startLoading,
-                naverTypeMutation,
+                .just(.setLoading(true)),
+                .just(.setAccountType(type)),
                 loginRepository.responseNaverLogin()
             ])
             
         case let .didTapGoogleLogin(viewController, type):
-            let googleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
-            
             
             return .concat([
-                startLoading,
-                googleTypeMutation,
-                loginRepository.responseGoogleLogin(to: viewController)
+                .just(.setLoading(true)),
+                .just(.setAccountType(type)),
+                loginRepository.responseGoogleLogin(to: viewController),
+                .just(.setLoading(false))
             ])
             
         case let .didTapAppleLogin(type):
-            let appleTypeMutation = Observable<Mutation>.just(.setAccountType(type))
             
             return .concat([
-                startLoading,
-                appleTypeMutation,
-                loginRepository.responseAppleLogin()
+                .just(.setLoading(true)),
+                .just(.setAccountType(type)),
+                loginRepository.responseAppleLogin(),
+                .just(.setLoading(false))
             ])
         }
         
@@ -137,8 +131,6 @@ public final class LoginViewReactor: Reactor {
             LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken, expiredAt: Date(), accountType: newState.accountType.rawValue)
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
-        case let .setGoogleLogin(isShow):
-            newState.isShowGoogleLogin = isShow
         }
         
         return newState

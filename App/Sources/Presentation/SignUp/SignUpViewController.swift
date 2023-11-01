@@ -653,7 +653,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .filter { $0.ceritifcationState == false }
-            .map { $0.ceritifcationState }.debug("certification Button Seelcted ")
+            .map { $0.ceritifcationState }
             .observe(on: MainScheduler.instance)
             .bind(to: certificationButton.rx.isSelected)
             .disposed(by: disposeBag)

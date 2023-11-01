@@ -12,9 +12,9 @@ import Alamofire
 import HPCommon
 
 public struct HPAuthenticationCredential: AuthenticationCredential {
-    fileprivate var accessToken: String
-    fileprivate var refreshToken: String
-    fileprivate let expiredAt: Date
+    public var accessToken: String
+    public var refreshToken: String
+    public let expiredAt: Date
     public var requiresRefresh: Bool { Date(timeIntervalSinceNow: 60 * 5 ) > expiredAt }
 }
 
@@ -22,12 +22,15 @@ public struct HPAuthenticationCredential: AuthenticationCredential {
 public final class HPAuthenticator: Authenticator {
     
     public func apply(_ credential: HPAuthenticationCredential, to urlRequest: inout URLRequest) {
+        guard !LoginManager.shared.isLogin() else { return }
         urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
         urlRequest.headers.add(name: "refresh-token", value: credential.refreshToken)
     }
     
     public func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool {
-        return response.statusCode == 401
+
+        //TODO: 현재 토큰 만료시 500 Error가 뜨기에 임시 코드 대체 추후 401로 변경 예정
+        return response.statusCode == 500
     }
     
     public func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: HPAuthenticationCredential) -> Bool {
@@ -49,17 +52,11 @@ final class HPRequestInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-        var accessToken = ""
-        var refreshToken = ""
+
+        guard LoginManager.shared.isLogin() else { return }
         
-        do {
-            accessToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-            refreshToken = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .refreshToken))
-        } catch {
-            completion(.failure(error))
-        }
-        urlRequest.headers.add(name: "Authorization-refresh", value: refreshToken)
-        urlRequest.headers.add(.authorization(bearerToken: accessToken))
+        urlRequest.headers.add(.authorization(bearerToken: LoginManager.shared.accessToken))
+        urlRequest.headers.add(name: "refresh-token", value: LoginManager.shared.refreshToken)
         
         completion(.success(urlRequest))
     }
