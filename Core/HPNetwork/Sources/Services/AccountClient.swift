@@ -20,11 +20,11 @@ public protocol AccountClientService: AnyObject {
 
 
 
-public final class AccountClient: AccountClientService {
+public final class AccountClient: BaseNetworkClient, AccountClientService {
     
     public static let shared: AccountClient = AccountClient()
     
-    private init () {}
+    private override init () {}
     
 }
 
@@ -33,8 +33,9 @@ extension AccountClient {
     
     public func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token> {
         
-        Single.create { single -> Disposable in
-            AF.request(AccountRouter.getAccessToken(type: type, token: accessToken))
+        Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(AccountRouter.getAccessToken(type: type, token: accessToken))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: Token.self) { response in
                     switch response.result {
@@ -52,8 +53,9 @@ extension AccountClient {
     
     
     public func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount> {
-        Single.create { single -> Disposable in
-            AF.request(AccountRouter.getNaverUserInfo(type: type, accessToken: accessToken))
+        Single.create {[weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(AccountRouter.getNaverUserInfo(type: type, accessToken: accessToken))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: NaverAccount.self) { response in
                     switch response.result {
@@ -71,8 +73,9 @@ extension AccountClient {
     
     public func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount> {
         
-        Single.create { single -> Disposable in
-            AF.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
+        Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: UserAccount.self) { response in
                     switch response.result {
