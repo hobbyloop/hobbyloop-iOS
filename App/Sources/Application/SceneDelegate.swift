@@ -12,6 +12,8 @@ import RxKakaoSDKAuth
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
+import AuthenticationServices
+import HPCommon
 import HPCommonUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -20,22 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
+        RxKakaoSDK.initSDK(appKey: "e8e2221cc437bed1a098ce95fee11f1d")
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
         
-        if UserDefaults().string(forKey: .accessToken).isEmpty {
-            let loginDIContainer = LoginDIContainer()
-            window?.rootViewController = HPNavigationController(
-                rootViewController: loginDIContainer.makeViewController(),
-                defaultBarAppearance: UINavigationBarAppearance(),
-                scrollBarAppearance: UINavigationBarAppearance()
-            )
-            window?.makeKeyAndVisible()
-        } else {
-            window?.rootViewController = CustomTabBarController()
-            window?.makeKeyAndVisible()
-        }
-        
+        makeRootViewController()
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -48,21 +39,60 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 
-private extension SceneDelegate {
+extension SceneDelegate {
     
-    func setOpenURLKakaoLoign(open url: URL) {
+    private func makeRootViewController() {
+        if !UserDefaults().string(forKey: .accessToken).isEmpty {
+            let loginDIContainer = LoginDIContainer()
+            window?.rootViewController = HPNavigationController(
+                rootViewController: loginDIContainer.makeViewController(),
+                defaultBarAppearance: UINavigationBarAppearance(),
+                scrollBarAppearance: UINavigationBarAppearance()
+            )
+            window?.makeKeyAndVisible()
+        } else {
+            window?.rootViewController = CustomTabBarController()
+            window?.makeKeyAndVisible()
+        }
+    }
+    
+    private func setOpenURLKakaoLoign(open url: URL) {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             _ = AuthController.rx.handleOpenUrl(url: url)
         }
     }
     
-    func setOpenURLNaverLogin(open url: URL) {
+    private func setOpenURLNaverLogin(open url: URL) {
         NaverThirdPartyLoginConnection
             .getSharedInstance()
             .receiveAccessToken(url)
     }
     
-    func setOpenURLGoogleLogin(open url: URL) {
+    private func setOpenURLGoogleLogin(open url: URL) {
         GIDSignIn.sharedInstance.handle(url)
+    }
+    
+    private func setAppleLoginRootViewController() {
+        
+        var decryptionAppId = ""
+        
+        do {
+            decryptionAppId = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessId))
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        let appleLoginProvider = ASAuthorizationAppleIDProvider()
+        appleLoginProvider.getCredentialState(forUserID: decryptionAppId) { credentialState, error in
+            
+            switch credentialState {
+            case .revoked:
+                self.makeRootViewController()
+            case .authorized: break
+                // TODO: 인증 성공 상태이므로 MainViewController 로 화면전환
+            default:
+                break
+            }
+        }
     }
 }

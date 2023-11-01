@@ -173,7 +173,6 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
                 .subscribe(onSuccess: { data in
                     LoginViewStream.event.onNext(.responseAccessToken(token: data))
                 }).disposed(by: disposeBag)
-            // TODO: Server Response 변경으로 인한 로직 변경 반영 예정
         }
     }
     

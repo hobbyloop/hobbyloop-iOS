@@ -13,7 +13,7 @@ import Alamofire
 
 public protocol Authenticationable {
     func isLogin() -> Bool
-    func updateToken(accessToken: String, refreshToken: String)
+    func updateToken(accessToken: String, refreshToken: String, expiredAt: Date, accountType: String)
     func removeToken()
     func updateUserInfo(userInfo: UserAccount)
 }
@@ -35,6 +35,12 @@ public final class LoginManager: Authenticationable {
         }
     }
     
+    public private(set) var expiredAt: Date? {
+        didSet {
+            UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
+        }
+    }
+    
     
     public private(set) var userInfo: UserAccount? = nil {
         didSet {
@@ -42,6 +48,12 @@ public final class LoginManager: Authenticationable {
         }
     }
     
+    
+    public private(set) var accountType: String = ""  {
+        didSet {
+            UserDefaults.standard.set(accountType, forKey: .accountType)
+        }
+    }
 
     private init() {}
     
@@ -60,9 +72,11 @@ extension LoginManager {
         }
     }
     
-    public func updateToken(accessToken: String, refreshToken: String) {
+    public func updateToken(accessToken: String, refreshToken: String, expiredAt: Date, accountType: String) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
+        self.expiredAt = expiredAt
+        self.accountType = accountType
     }
     
     public func updateUserInfo(userInfo: UserAccount) {
@@ -72,6 +86,7 @@ extension LoginManager {
     public func removeToken() {
         self.accessToken = ""
         self.refreshToken = ""
+        self.expiredAt = nil
     }
 }
 

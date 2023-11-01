@@ -71,7 +71,7 @@ public final class LoginViewReactor: Reactor {
     
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let fromGoogleLoginMutation = LoginViewStream.event.flatMap { [weak self] event in
-            self?.requestGoogleAccessToken(from: event) ?? .empty()
+            self?.requestNaverAccessToken(from: event) ?? .empty()
         }
         
         return Observable.of(mutation, fromGoogleLoginMutation).merge()
@@ -134,7 +134,7 @@ public final class LoginViewReactor: Reactor {
         case let .setAccessToken(data):
             guard let originalData = data else { return newState }
             newState.authToken = data
-            LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken)
+            LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken, expiredAt: Date(), accountType: newState.accountType.rawValue)
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
         case let .setGoogleLogin(isShow):
@@ -150,9 +150,9 @@ public final class LoginViewReactor: Reactor {
 
 
 
-private extension LoginViewReactor {
+extension LoginViewReactor {
     
-    func requestGoogleAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
+    private func requestNaverAccessToken(from event: LoginViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .responseAccessToken(token):
             return .concat([

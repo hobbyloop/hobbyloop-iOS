@@ -11,6 +11,40 @@ import Foundation
 import Alamofire
 import HPCommon
 
+public struct HPAuthenticationCredential: AuthenticationCredential {
+    public var accessToken: String
+    public var refreshToken: String
+    public let expiredAt: Date
+    public var requiresRefresh: Bool { Date(timeIntervalSinceNow: 60 * 5 ) > expiredAt }
+}
+
+
+final class HPAuthenticator: Authenticator {
+    
+    
+    func apply(_ credential: HPAuthenticationCredential, to urlRequest: inout URLRequest) {
+        urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
+        urlRequest.headers.add(name: "refresh-token", value: credential.refreshToken)
+    }
+    
+    func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool {
+        return response.statusCode == 401
+    }
+    
+    func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: HPAuthenticationCredential) -> Bool {
+        return urlRequest.headers["Authorization"] == HTTPHeader.authorization(bearerToken: credential.accessToken).value
+    }
+    
+    func refresh(_ credential: HPAuthenticationCredential, for session: Session, completion: @escaping (Result<HPAuthenticationCredential, Error>) -> Void) {
+        
+    }
+    
+    
+    
+    
+    
+}
+
 
 final class HPRequestInterceptor: RequestInterceptor {
     
