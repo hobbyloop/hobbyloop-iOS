@@ -192,36 +192,31 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserName(userName):
             newState.userName = userName
-            print("newState userName: \(newState.userName)")
             
         case let .setUserNickName(userNickName):
             newState.userNickName = userNickName
-            print("newState userNickName: \(newState.userNickName)")
             
         case let .setUserBirthDay(userBirthDay):
             newState.userBirthDay = userBirthDay
-            print("newState userBirtyday : \(newState.userBirthDay)")
             
         case let .setKakaoUserEntity(kakaoEntity):
             newState.kakaoUserEntity = kakaoEntity
-            debugPrint("newState Kakao Profile Entity: \(newState.kakaoUserEntity)")
             
         case let .setNaverUserEntity(naverEntity):
             newState.naverUserEntity = naverEntity
-            debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
             
         case let .setCertificationState(certificationState):
             newState.ceritifcationState = certificationState
-            debugPrint("newState  CertificationState: \(certificationState)")
             
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName
             
         case let .setUserGender(gender):
             newState.userGender = gender
-            print("set newstate gedner: \(newState.userGender)")
+            
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
+            
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
             newState.isVaildationPhoneNumber = phoneNumber.isValidPhoneNumber()
@@ -239,7 +234,6 @@ public extension SignUpViewReactor {
     func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .requestAppleLogin(fullName):
-            print("Apple Event: \(fullName)")
             return .just(.setAppleUserFullName(fullName))
         default:
             return .empty()

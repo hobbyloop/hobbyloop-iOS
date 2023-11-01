@@ -15,6 +15,7 @@ import GoogleSignIn
 import AuthenticationServices
 import HPCommon
 import HPCommonUI
+import HPNetwork
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -42,7 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate {
     
     private func makeRootViewController() {
-        if !UserDefaults().string(forKey: .accessToken).isEmpty {
+        if LoginManager.shared.isLogin() {
             let loginDIContainer = LoginDIContainer()
             window?.rootViewController = HPNavigationController(
                 rootViewController: loginDIContainer.makeViewController(),
