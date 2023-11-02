@@ -134,7 +134,6 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         termsAllView
             .checkBoxButton.rx
             .tap
-            .debug("Tap Gesture All")
             .map { _ in Reactor.Action.didTapAllSelectBox(.all) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -142,7 +141,6 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         termsReceiveView
             .checkBoxButton.rx
             .tap
-            .debug("Tap Gesture Receive")
             .map { _ in Reactor.Action.didTapReceiveSelectBox(.receive) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -150,7 +148,6 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         termsInfoView
             .checkBoxButton.rx
             .tap
-            .debug("Tap Gesture Info")
             .map { _ in Reactor.Action.didTapInfoSelectBox(.info) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
