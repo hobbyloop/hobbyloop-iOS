@@ -15,7 +15,7 @@ import KeychainAccess
 public protocol Authenticationable {
     var keychain: Keychain { get }
     func isLogin() -> Bool
-    func updateToken(accessToken: String, refreshToken: String)
+    func updatesToken(accessToken: String, refreshToken: String)
     func readToken(key: KeychainKeys) -> String
     func removeToken(key: KeychainKeys)
     func removeAll()
@@ -42,7 +42,7 @@ extension LoginManager {
         }
     }
     
-    public func updateToken(accessToken: String, refreshToken: String) {
+    public func updatesToken(accessToken: String, refreshToken: String) {
         do {
             try keychain.set(accessToken, key: .accessToken)
             try keychain.set(refreshToken, key: .refreshToken)
