@@ -22,6 +22,7 @@ let dependencies = Dependencies(
         Package.kakaoSDK,
         Package.googleSDK,
         Package.cryptoSwift,
+        Package.keychainAccess,
         Package.tabMan
     ]),
     platforms: [.iOS]

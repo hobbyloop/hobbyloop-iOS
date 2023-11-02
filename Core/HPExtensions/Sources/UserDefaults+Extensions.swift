@@ -10,12 +10,8 @@ import Foundation
 
 
 public enum UserDefaultsKeys: String {
-    case accessToken
-    case refreshToken
     case accessId
-    case accountType
     case userInfo
-    case expiredAt
 }
 
 

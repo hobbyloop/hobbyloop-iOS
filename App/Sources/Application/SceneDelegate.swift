@@ -44,15 +44,15 @@ extension SceneDelegate {
     
     private func makeRootViewController() {
         if LoginManager.shared.isLogin() {
+            window?.rootViewController = CustomTabBarController()
+            window?.makeKeyAndVisible()
+        } else {
             let loginDIContainer = LoginDIContainer()
             window?.rootViewController = HPNavigationController(
                 rootViewController: loginDIContainer.makeViewController(),
                 defaultBarAppearance: UINavigationBarAppearance(),
                 scrollBarAppearance: UINavigationBarAppearance()
             )
-            window?.makeKeyAndVisible()
-        } else {
-            window?.rootViewController = CustomTabBarController()
             window?.makeKeyAndVisible()
         }
     }

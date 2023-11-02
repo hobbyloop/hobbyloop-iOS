@@ -25,7 +25,16 @@ public protocol TicketSelectService: AnyObject {
 }
 
 
-public final class TicketSelectClient: TicketSelectService {
+public final class TicketSelectClient: BaseNetworkable, TicketSelectService {
+    public let AFManager: Session = {
+        var session = AF
+        let configuration = URLSessionConfiguration.af.default
+        let eventLogger = HPAPIEventLogger()
+        session = Session(configuration: configuration, eventMonitors: [eventLogger])
+        return session
+
+    }()
+    
     
     public static let shared: TicketSelectClient = TicketSelectClient()
     
@@ -37,8 +46,9 @@ extension TicketSelectClient {
     
     public func requestToInstructorList(id: Int) -> Single<Instructor> {
         
-        return Single.create { single -> Disposable in
-            AF.request(TicketSelectRouter.getInstructorList(id))
+        return Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(TicketSelectRouter.getInstructorList(id))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: Instructor.self) { response in
                     //MARK: Token 관련 로직 Single Tone Pattern 수정 후 사용
@@ -58,8 +68,9 @@ extension TicketSelectClient {
     
     
     public func requestToTicketInfoList() -> Single<TicketInfo> {
-        return Single.create { single -> Disposable in
-            AF.request(TicketSelectRouter.getUserTicketList)
+        return Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(TicketSelectRouter.getUserTicketList)
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: TicketInfo.self) { response in
                     switch response.result {

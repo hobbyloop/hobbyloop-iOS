@@ -30,8 +30,8 @@ public final class AccountClient: BaseNetworkable, AccountClientService {
         let eventLogger = HPAPIEventLogger()
         let authenticator = HPAuthenticator()
         let credential = HPAuthenticationCredential(
-            accessToken: LoginManager.shared.accessToken,
-            refreshToken: LoginManager.shared.refreshToken,
+            accessToken: LoginManager.shared.readToken(key: .accessToken),
+            refreshToken: LoginManager.shared.readToken(key: .refreshToken),
             expiredAt: Date(timeIntervalSinceNow: 60 * 120)
         )
         let interceptor = AuthenticationInterceptor(

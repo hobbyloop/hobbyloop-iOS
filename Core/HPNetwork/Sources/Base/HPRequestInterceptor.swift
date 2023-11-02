@@ -55,8 +55,8 @@ final class HPRequestInterceptor: RequestInterceptor {
 
         guard LoginManager.shared.isLogin() else { return }
         
-        urlRequest.headers.add(.authorization(bearerToken: LoginManager.shared.accessToken))
-        urlRequest.headers.add(name: "refresh-token", value: LoginManager.shared.refreshToken)
+        urlRequest.headers.add(.authorization(bearerToken: LoginManager.shared.readToken(key: .accessToken)))
+        urlRequest.headers.add(name: "refresh-token", value: LoginManager.shared.readToken(key: .refreshToken))
         
         completion(.success(urlRequest))
     }

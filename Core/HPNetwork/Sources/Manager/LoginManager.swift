@@ -10,51 +10,21 @@ import Foundation
 import HPExtensions
 import HPDomain
 import Alamofire
+import KeychainAccess
 
 public protocol Authenticationable {
+    var keychain: Keychain { get }
     func isLogin() -> Bool
-    func updateToken(accessToken: String, refreshToken: String, expiredAt: Date, accountType: String)
-    func removeToken()
-    func updateUserInfo(userInfo: UserAccount)
+    func updateToken(accessToken: String, refreshToken: String)
+    func readToken(key: KeychainKeys) -> String
+    func removeToken(key: KeychainKeys)
+    func removeAll()
 }
 
 public final class LoginManager: Authenticationable {
     public static let shared: LoginManager = LoginManager()
+    public let keychain: Keychain = Keychain()
     
-    
-    //MARK: Property
-    public private(set) var accessToken: String = "" {
-        didSet{
-            UserDefaults.standard.set(accessToken, forKey: .accessToken)
-        }
-    }
-    
-    public private(set) var refreshToken: String = "" {
-        didSet {
-            UserDefaults.standard.set(refreshToken, forKey: .refreshToken)
-        }
-    }
-    
-    public private(set) var expiredAt: Date? {
-        didSet {
-            UserDefaults.standard.set(expiredAt, forKey: .expiredAt)
-        }
-    }
-    
-    
-    public private(set) var userInfo: UserAccount? = nil {
-        didSet {
-            UserDefaults.standard.set(userInfo, forKey: .userInfo)
-        }
-    }
-    
-    
-    public private(set) var accountType: String = ""  {
-        didSet {
-            UserDefaults.standard.set(accountType, forKey: .accountType)
-        }
-    }
-
     private init() {}
     
     
@@ -65,28 +35,48 @@ extension LoginManager {
     
     
     public func isLogin() -> Bool {
-        if UserDefaults.standard.string(forKey: .accessToken).isEmpty {
+        if self.readToken(key: .accessToken).isEmpty {
             return false
         } else {
             return true
         }
     }
     
-    public func updateToken(accessToken: String, refreshToken: String, expiredAt: Date, accountType: String) {
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-        self.expiredAt = expiredAt
-        self.accountType = accountType
+    public func updateToken(accessToken: String, refreshToken: String) {
+        do {
+            try keychain.set(accessToken, key: .accessToken)
+            try keychain.set(refreshToken, key: .refreshToken)
+        } catch {
+            print("⛔️ HOBBY LOOP TOKEN SAVE ERROR \(error.localizedDescription)")
+        }
     }
     
-    public func updateUserInfo(userInfo: UserAccount) {
-        self.userInfo = userInfo
+    public func readToken(key: KeychainKeys) -> String {
+        do {
+            guard let tokenKey = try keychain.get(key.rawValue) else { return "" }
+            
+            return tokenKey
+        } catch {
+            print("😵‍💫 HOBBY LOOP TOKEN READ ERROR \(error.localizedDescription)")
+            return error.localizedDescription
+        }
     }
     
-    public func removeToken() {
-        self.accessToken = ""
-        self.refreshToken = ""
-        self.expiredAt = nil
+    public func removeToken(key: KeychainKeys) {
+        do {
+            try keychain.remove(key.rawValue)
+        } catch {
+            print("📌 HOBBY LOOP TOKEN REMOVE ERROR \(error.localizedDescription)")
+        }
+    }
+    
+    public func removeAll() {
+        do {
+            try keychain.removeAll()
+        } catch {
+            print("📝 HOBBY LOOP KEYCHAIN REMOVE ALL ERROR \(error.localizedDescription)")
+        }
+        
     }
 }
 

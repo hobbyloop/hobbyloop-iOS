@@ -68,7 +68,7 @@ extension AccountRouter: Router {
             
         case .createUserInfo:
             return [
-                "Authorization":"Bearer \(LoginManager.shared.accessToken)",
+                "Authorization":"Bearer \(LoginManager.shared.readToken(key: .accessToken))",
                 "Content-Type": "application/json"
             ]
         }

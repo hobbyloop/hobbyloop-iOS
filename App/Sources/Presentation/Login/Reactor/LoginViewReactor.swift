@@ -128,7 +128,7 @@ public final class LoginViewReactor: Reactor {
         case let .setAccessToken(data):
             guard let originalData = data else { return newState }
             newState.authToken = data
-            LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken, expiredAt: Date(), accountType: newState.accountType.rawValue)
+            LoginManager.shared.updateToken(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken)
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
         }
