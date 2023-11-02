@@ -75,22 +75,16 @@ extension SceneDelegate {
     
     private func setAppleLoginRootViewController() {
         
-        var decryptionAppId = ""
-        
-        do {
-            decryptionAppId = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessId))
-        } catch {
-            print(error.localizedDescription)
-        }
-        
         let appleLoginProvider = ASAuthorizationAppleIDProvider()
-        appleLoginProvider.getCredentialState(forUserID: decryptionAppId) { credentialState, error in
+        appleLoginProvider.getCredentialState(forUserID: UserDefaults.standard.string(forKey: .accessId)) { credentialState, error in
             
             switch credentialState {
-            case .revoked:
+            case .authorized:
                 self.makeRootViewController()
-            case .authorized: break
-                // TODO: 인증 성공 상태이므로 MainViewController 로 화면전환
+            case .revoked:
+                print("🙅‍♂️HOBBY LOOP 사용 권한이 없습니다.")
+            case .notFound:
+                print("😵‍💫HOBBY LOOP 사용자 계정을 찾지 못하였습니다.")
             default:
                 break
             }

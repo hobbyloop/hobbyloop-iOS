@@ -219,6 +219,7 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
             
             //TODO: Server Response 변경으로 인한 로직 변경 반영 예정
             debugPrint("appleLogin identityToken: \(identityToken)")
+            UserDefaults.standard.set(userIdentifier, forKey: .accessId)
             let resultName = "\(familyName)\(givenName)"
             SignUpViewStream.event.onNext(.requestAppleLogin(resultName))
         default:

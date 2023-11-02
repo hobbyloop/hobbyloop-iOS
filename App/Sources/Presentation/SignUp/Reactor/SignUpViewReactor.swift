@@ -175,7 +175,7 @@ public final class SignUpViewReactor: Reactor {
             self?.requestAppleUserProfile(from: event) ?? .empty()
         }
         
-        return Observable.of(mutation, appleNickNameUpdate).merge()
+        return Observable.merge(mutation, appleNickNameUpdate)
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
