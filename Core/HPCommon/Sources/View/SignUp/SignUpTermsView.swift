@@ -39,7 +39,6 @@ public enum SignUpTermsType: Equatable {
     
 }
 
-//TODO: SignUpTerms Type을 통해 Selected 처리 -> Reactor 추가
 
 public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
     
@@ -70,6 +69,10 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    deinit {
+        debugPrint(#function)
+    }
     
     //MARK: Configure
     
@@ -115,7 +118,6 @@ public final class SignUpTermsView: BaseView<SignUpTermsViewReactor> {
         
     }
     
-    // TODO: Figma Design대로 코드 리펙토링
     private func didTapCheckBox(type: SignUpTermsType) {
         if type == .all {
             termsAllView.didTapCheckBoxButton(isSelected: true)

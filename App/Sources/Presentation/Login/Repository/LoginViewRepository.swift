@@ -71,9 +71,9 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         }
     }
     
-    /// 카카오 로그인창 창을 띄우기 위한 메서드
-    ///  - note: 로그인이 필요한 경우 일때 호출 해야하는 메서드
-    ///  - parameters: none Parameters
+    /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드
+    ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    ///  - parameters: Observable<LoginViewReactor.Mutation>
     public func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
@@ -88,9 +88,9 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     }
     
     
-    /// 카카오 웹로그인 창을 띄우기 위한 메서드
-    /// - note: 로그인이 필요한 경우 및 사용자가 카카오톡이 깔려 있지 않는 경우 웹 브라우저를 띄운다.
-    /// - parameters: none Parameters
+    /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드, 웹(safariViewController) 로그인 시 호출
+    ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    ///  - parameters: Observable<LoginViewReactor.Mutation>
     public func responseKakaoWebLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
@@ -105,11 +105,16 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     }
     
     /// 네이버 로그인창을 띄우기 위한 메서드
+    /// - note: 사용자의 Action을 전달받아 네이버 로그인창을 띄운다.
+    /// - parameters: none Parameters
     public func responseNaverLogin() -> Observable<LoginViewReactor.Mutation> {
         naverLoginInstance.resetToken()
         return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
     }
     
+    /// 구글 GIDGoogleUser Entity 값을 관찰하기 위한 메서드
+    /// - note: GIDGoogleUser Entity 이벤트를 방출 시켜 Return 하도록 한다.
+    /// - parameters: Observable<GIDGoogleUser>
     public func responseGoogleUser(to viewController: AnyObject) -> Observable<GIDGoogleUser> {
         return Observable.create { observer in
             if let viewController = viewController as? LoginViewController {
@@ -124,7 +129,9 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     }
     
     
-    /// 구글 로그인창을 띄우기 위한 메서드
+    /// 구글 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드
+    /// - note: 구글 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    /// - parameters: Observable<LoginViewReactor.Mutation>
     public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
         responseGoogleUser(to: viewController)
             .flatMap { [weak self] user -> Observable<LoginViewReactor.Mutation> in
