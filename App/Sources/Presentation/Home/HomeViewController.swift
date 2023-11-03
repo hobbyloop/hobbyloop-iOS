@@ -9,7 +9,7 @@ import UIKit
 
 import HPCommonUI
 import HPCommon
-import HPExtensions
+import HPFoundation
 import RxSwift
 import RxCocoa
 import RxGesture
@@ -32,6 +32,15 @@ private protocol HomeLayoutCreatable: AnyObject {
 public final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     // MARK: Property
+    
+    
+    public var numberOfItems: Int = 0 {
+        didSet {
+            DispatchQueue.main.async {
+                self.homeCollectionView.collectionViewLayout.invalidateLayout()
+            }
+        }
+    }
     
     private lazy var homeDataSource: RxCollectionViewSectionedReloadDataSource<HomeSection> = .init { dataSource, collectionView, indexPath, sectionItem in
         
@@ -97,7 +106,7 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
         case .userInfoClass:
             return self?.createUserInfoProvideLayout()
         case .calendarClass:
-            return self?.createCalendarLayout()
+            return self.numberOfItems >= 36 ? self.adjustCalendarLayout() : self.createCalendarLayout()
             
         case .ticketClass:
             return self?.createTicketLayout()
@@ -253,6 +262,36 @@ extension HomeViewController: HomeLayoutCreatable {
         
     }
     
+    private func adjustCalendarLayout() -> NSCollectionLayoutSection {
+        let dynamicCalendarLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width - 32),
+            heightDimension: .estimated(310)
+        )
+        let dynamicCalendarGroupSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(self.view.frame.size.width),
+            heightDimension: .estimated(310)
+        )
+        
+        let calendarLayoutItem = NSCollectionLayoutItem(
+            layoutSize: dynamicCalendarLayoutSize
+        )
+        
+        let dynamicCalendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: dynamicCalendarGroupSize,
+            subitem: calendarLayoutItem,
+            count: 1
+        )
+        
+        let dynamicCalendarSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        
+        
+        let dynamicCalendarSection = NSCollectionLayoutSection(group: dynamicCalendarLayoutGroup)
+        
+        dynamicCalendarSection.decorationItems = [dynamicCalendarSectionBackground]
+                
+        
+        return dynamicCalendarSection
+    }
     
     fileprivate func createCalendarLayout() -> NSCollectionLayoutSection {
         let calendarLayoutSize = NSCollectionLayoutSize(
@@ -281,7 +320,6 @@ extension HomeViewController: HomeLayoutCreatable {
         
         calendarSection.decorationItems = [calendarSectionBackground]
                 
-        calendarSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         return calendarSection
     }
@@ -435,5 +473,38 @@ extension HomeViewController: HomeLayoutCreatable {
         benefitsSection.boundarySupplementaryItems = [benefitsHeader]
         
         return benefitsSection
+    }
+
+    override func bind(reactor: HomeViewReactor) {
+        
+        
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$section)
+            .asDriver(onErrorJustReturn: [])
+            .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
+            .disposed(by: disposeBag)
+        
+        
+        NotificationCenter.default
+            .rx.notification(.reloadCalendar)
+            .withUnretained(self)
+            .subscribe(onNext: { owner, noti in
+                guard let count = noti.object as? Int else { return }
+                owner.numberOfItems = count
+            }).disposed(by: disposeBag)
+    }
+    
+}
+
+extension HomeViewController: ExplanationDelegate {
+    
+    func showOnboardingView() {
+        let onboardingController = OnboardingDIContainer().makeViewController()
+        onboardingController.modalPresentationStyle = .fullScreen
+        self.present(onboardingController, animated: true)
     }
 }

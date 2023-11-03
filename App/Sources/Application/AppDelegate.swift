@@ -109,7 +109,6 @@ private extension AppDelegate {
                 self.window?.makeKeyAndVisible()
             }
         }
-
     }
     
 }

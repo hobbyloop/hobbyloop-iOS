@@ -7,7 +7,7 @@
 
 import UIKit
 
-
+import HPFoundation
 import RxDataSources
 import ReactorKit
 import Then
@@ -15,6 +15,14 @@ import SnapKit
 
 
 public final class HPCalendarView: UIView {
+    
+    public var color: UIColor = .white {
+        //TODO: BackgroundColor Setting 부분 수정
+        didSet {
+            self.calendarCollectionView.backgroundColor = color
+        }
+    }
+    
     
     public var isStyle: CalendarStyle  {
         didSet {
@@ -28,13 +36,20 @@ public final class HPCalendarView: UIView {
     }
     
     public var weekViewColor: UIColor
+    
+    public var isStatus: Bool = false {
+        didSet {
+            configure()
+        }
+    }
+    
 
     // MARK: Property
     
     public var disposeBag: DisposeBag = DisposeBag()
     public typealias Reactor = HPCalendarViewReactor
 
-    public weak var calendarContentView: HPCalendarContentView?
+    private var calendarContentView: HPCalendarContentView
     
     
     private lazy var calendarDataSource: RxCollectionViewSectionedReloadDataSource<CalendarSection> = .init { dataSource, collectionView, indexPath, sectionItem in
@@ -75,7 +90,7 @@ public final class HPCalendarView: UIView {
     
     public init(
         reactor: HPCalendarViewReactor,
-        calendarContentView: HPCalendarContentView? = nil,
+        calendarContentView: HPCalendarContentView,
         isStyle: CalendarStyle,
         weekViewColor: UIColor = HPCommonUIAsset.white.color
     ) {
@@ -94,9 +109,15 @@ public final class HPCalendarView: UIView {
     
     //MARK: Configure
     private func configure() {
-        self.calendarCollectionView.backgroundColor = HPCommonUIAsset.systemBackground.color
+       
+        if isStatus {
+            self.addSubview(calendarCollectionView)
 
-        if let calendarContentView = self.calendarContentView {
+
+            calendarCollectionView.snp.remakeConstraints {
+                $0.top.left.right.bottom.equalToSuperview()
+            }
+        } else {
             [calendarContentView, calendarCollectionView].forEach {
                 self.addSubview($0)
             }
@@ -105,45 +126,14 @@ public final class HPCalendarView: UIView {
                 $0.left.right.top.equalToSuperview()
                 $0.height.equalTo(40)
             }
-            calendarCollectionView.snp.makeConstraints {
+            
+            calendarCollectionView.snp.remakeConstraints {
                 $0.top.equalTo(calendarContentView.snp.bottom)
-                $0.left.equalToSuperview().offset(16)
-                $0.right.equalToSuperview().offset(-16)
-                $0.bottom.equalToSuperview()
-            }
-
-        } else {
-            self.addSubview(calendarCollectionView)
-
-
-            calendarCollectionView.snp.makeConstraints {
-                $0.top.left.right.equalToSuperview()
-                $0.bottom.equalToSuperview().offset(-20)
+                $0.left.right.bottom.equalToSuperview()
             }
         }
         
-        
-        guard let contentView = self.calendarContentView,
-              let reactor = self.reactor else { return }
-        
-        contentView
-            .nextButton.rx.tap.debug("Tap Next Button Action")
-            .map { Reactor.Action.didTapNextDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-            
-        contentView
-            .previousButton.rx.tap
-            .map { Reactor.Action.didTapPreviousDateButton }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-            
-            
-        reactor.state
-            .map { "\($0.month)월" }
-            .bind(to: contentView.calendarMonthLabel.rx.text)
-            .disposed(by: disposeBag)
-        
+                
     }
 
     // MARK: 예약된 수업 캘린더 레이아웃 구성 함수
@@ -207,7 +197,7 @@ public final class HPCalendarView: UIView {
     private func createBubbleCalendarLayout() -> NSCollectionLayoutSection {
         let bubbleCalendarItemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(54),
-            heightDimension: .fractionalHeight(1.0)
+            heightDimension: .absolute(130)
         )
         
         let bubbleCalendarGroupSize = NSCollectionLayoutSize(
@@ -219,7 +209,7 @@ public final class HPCalendarView: UIView {
             layoutSize: bubbleCalendarItemSize
         )
         
-        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7)
+        bubbleCalendarLayoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 7, bottom: 20, trailing: 7)
         
         let bubbleCalendarGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: bubbleCalendarGroupSize,
@@ -243,6 +233,28 @@ extension HPCalendarView: ReactorKit.View {
     
     public func bind(reactor: Reactor) {
         
+
+
+        self.calendarContentView
+            .nextButton.rx.tap.debug("Tap Next Button Action")
+            .map { Reactor.Action.didTapNextDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+        self.calendarContentView
+            .previousButton.rx.tap
+            .map { Reactor.Action.didTapPreviousDateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+            
+        reactor.state
+            .map { "\($0.month)월" }
+            .bind(to:  calendarContentView.calendarMonthLabel.rx.text)
+            .disposed(by: disposeBag)
+            
+
+            
 
         Observable
             .just(())
@@ -270,20 +282,27 @@ extension HPCalendarView: ReactorKit.View {
         
         
         reactor.pulse(\.$section)
-            .debug("test calendar Section")
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: calendarCollectionView.rx.items(dataSource: self.calendarDataSource))
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.itemCount }
+            .withUnretained(self)
+            .subscribe(onNext: { owner, count in
+                NotificationCenter.default.post(name: .reloadCalendar, object: count)
+            }).disposed(by: disposeBag)
         
         
         NotificationCenter.default
             .rx.notification(.NSCalendarDayChanged)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
-                print("notification changed date")
                 guard let style = self?.reactor?.currentState.style else { return }
                 self?.reactor?.action.onNext(.changeCalendarStyle(style))
+                self?.calendarCollectionView.collectionViewLayout.invalidateLayout()
             }).disposed(by: disposeBag)
-
+        
         reactor.state
             .map { $0.nowDay }
             .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
@@ -291,15 +310,6 @@ extension HPCalendarView: ReactorKit.View {
             .bind { index in
                 self.calendarCollectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
             }.disposed(by: disposeBag)
-        
-        
-        //TODO: 추가 Cell Action 있을시 로직 추가
-        calendarCollectionView
-            .rx.itemSelected
-            .withUnretained(self)
-            .subscribe(onNext: { owner, indexPath in
                 
-            }).disposed(by: disposeBag)
-        
     }
 }

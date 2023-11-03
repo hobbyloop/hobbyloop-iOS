@@ -7,15 +7,13 @@
 
 import UIKit
 
-import HPCommon
+import HPCommonUI
 import RxSwift
 import RxCocoa
 
-class AlarmViewController: MainBaseViewController<HomeViewReactor> {
+class AlarmViewController: BaseViewController<HomeViewReactor> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView = HeaderView(type: headerType)
-        configure()
     }
 }

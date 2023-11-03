@@ -12,6 +12,8 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
+            "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
+            "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
             "CFBundleDisplayName" : .string(name),
