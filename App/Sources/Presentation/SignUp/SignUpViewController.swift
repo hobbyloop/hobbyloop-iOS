@@ -732,7 +732,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 extension SignUpViewController: SignUpViewAnimatable {
     
     
-    func hideDropdownAnimation() {
+    fileprivate func hideDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
             self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
@@ -768,7 +768,7 @@ extension SignUpViewController: SignUpViewAnimatable {
         })
     }
     
-    func showDropdownAnimation() {
+    fileprivate func showDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
             self.authCodeView.snp.remakeConstraints {
@@ -803,7 +803,7 @@ extension SignUpViewController: SignUpViewAnimatable {
     }
     
     
-    func showBottomSheetView() {
+    fileprivate func showBottomSheetView() {
         let signUpBottomSheetView = SignUpBottomSheetView()
         signUpBottomSheetView.modalPresentationStyle = .overFullScreen
         signUpBottomSheetView.delegate = self
@@ -816,7 +816,7 @@ extension SignUpViewController: SignUpViewAnimatable {
 
 
 extension SignUpViewController: SignUpBottomSheetDelegate {
-    func updateToBirthDay(birthday: Date) {
+    public func updateToBirthDay(birthday: Date) {
         self.birthDayView.textFieldView.text = birthday.convertToString()
     }
 }
