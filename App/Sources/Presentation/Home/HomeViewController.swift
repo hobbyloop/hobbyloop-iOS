@@ -337,17 +337,16 @@ extension HomeViewController: HomeLayoutCreatable {
     /// - Return : NSCollectionLayoutSize
     fileprivate func createExerciseClassLayout() -> NSCollectionLayoutSection {
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(339)
+            widthDimension: .absolute(327),
+            heightDimension: .absolute(200)
         )
         
         let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
-        
-        exerciseClassItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+    
         
         let exerciseGroupLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.9),
-            heightDimension: .absolute(339)
+            widthDimension: .absolute(327),
+            heightDimension: .absolute(310)
         )
         
         let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
@@ -358,12 +357,15 @@ extension HomeViewController: HomeLayoutCreatable {
         
         let exerciseSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(50)
+            heightDimension: .absolute(65)
         )
         
         let exerciseSection = NSCollectionLayoutSection(
             group: exerciseClassGroup
         )
+        
+        exerciseSection.interGroupSpacing = 11
+        exerciseSection.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         let exerciseSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
         
