@@ -9,7 +9,7 @@ import UIKit
 
 import HPCommonUI
 
-final class TicketCell: UICollectionViewCell {
+public final class TicketCell: UICollectionViewCell {
     
     
     private let ticketInfoView: TicketView = TicketView(

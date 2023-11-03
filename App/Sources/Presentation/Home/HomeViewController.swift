@@ -148,7 +148,9 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+    deinit {
+        debugPrint(#function)
+    }
     
     
     

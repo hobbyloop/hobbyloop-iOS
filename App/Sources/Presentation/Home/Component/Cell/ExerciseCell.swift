@@ -11,7 +11,7 @@ import HPCommonUI
 import Then
 import SnapKit
 
-final class ExerciseCell: UICollectionViewCell {
+public final class ExerciseCell: UICollectionViewCell {
     
     //TODO: 추후 Data Bind Code 추가
     private let contentImageView: UIImageView = UIImageView().then {
@@ -29,7 +29,7 @@ final class ExerciseCell: UICollectionViewCell {
         $0.text = "필라피티 스튜디오"
     }
     
-    private let contentSubTitleLable: UILabel = UILabel().then {
+    private let contentLocationTitleLable: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.originSeparator.color
         $0.textAlignment = .left
@@ -40,6 +40,19 @@ final class ExerciseCell: UICollectionViewCell {
     private let contentBookMarkButton: UIButton = UIButton(type: .custom).then {
         $0.setImage(HPCommonUIAsset.archiveOutlined.image, for: .normal)
         $0.setImage(HPCommonUIAsset.archiveFilled.image, for: .selected)
+    }
+    
+    private let contentGradeImageView: UIImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = HPCommonUIAsset.starFilled.image
+    }
+    
+    private let contentGradeLabel: UILabel = UILabel().then {
+        $0.text = "0.0"
+        $0.textColor = HPCommonUIAsset.shadowgray.color
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textAlignment = .left
+        $0.numberOfLines = 1
     }
     
     
@@ -57,7 +70,7 @@ final class ExerciseCell: UICollectionViewCell {
     
     
     private func configure() {
-        [contentImageView, contentTitleLabel, contentSubTitleLable, contentBookMarkButton].forEach {
+        [contentImageView, contentTitleLabel, contentLocationTitleLable, contentGradeImageView ,contentGradeLabel,contentBookMarkButton].forEach {
             self.contentView.addSubview($0)
         }
         
@@ -75,11 +88,24 @@ final class ExerciseCell: UICollectionViewCell {
         
         contentBookMarkButton.snp.makeConstraints {
             $0.top.equalTo(contentTitleLabel)
-            $0.right.equalToSuperview()
+            $0.right.equalToSuperview().offset(-16)
             $0.width.height.equalTo(24)
         }
         
-        contentSubTitleLable.snp.makeConstraints {
+        contentGradeLabel.snp.makeConstraints {
+            $0.top.equalTo(contentBookMarkButton.snp.bottom).offset(9)
+            $0.right.equalToSuperview().offset(-21)
+            $0.width.equalTo(18)
+            $0.height.equalTo(14)
+        }
+        
+        contentGradeImageView.snp.makeConstraints {
+            $0.width.height.equalTo(13)
+            $0.right.equalTo(contentGradeLabel.snp.left).offset(-5)
+            $0.centerY.equalTo(contentGradeLabel)
+        }
+        
+        contentLocationTitleLable.snp.makeConstraints {
             $0.left.equalToSuperview()
             $0.top.equalTo(contentTitleLabel.snp.bottom).offset(8)
             $0.height.equalTo(15)
