@@ -106,7 +106,7 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
         case .userInfoClass:
             return self?.createUserInfoProvideLayout()
         case .calendarClass:
-            return self.numberOfItems >= 36 ? self.adjustCalendarLayout() : self.createCalendarLayout()
+            return self?.numberOfItems ?? 0 >= 36 ? self?.adjustCalendarLayout() : self?.createCalendarLayout()
             
         case .ticketClass:
             return self?.createTicketLayout()
@@ -192,6 +192,14 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
             .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
             .disposed(by: disposeBag)
         
+        NotificationCenter.default
+            .rx.notification(.reloadCalendar)
+            .withUnretained(self)
+            .subscribe(onNext: { owner, noti in
+                guard let count = noti.object as? Int else { return }
+                owner.numberOfItems = count
+            }).disposed(by: disposeBag)
+        
     }
     
 }
@@ -262,7 +270,7 @@ extension HomeViewController: HomeLayoutCreatable {
         
     }
     
-    private func adjustCalendarLayout() -> NSCollectionLayoutSection {
+    fileprivate func adjustCalendarLayout() -> NSCollectionLayoutSection {
         let dynamicCalendarLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width - 32),
             heightDimension: .estimated(310)
@@ -474,37 +482,5 @@ extension HomeViewController: HomeLayoutCreatable {
         
         return benefitsSection
     }
-
-    override func bind(reactor: HomeViewReactor) {
-        
-        
-        Observable.just(())
-            .map { Reactor.Action.viewDidLoad }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        reactor.pulse(\.$section)
-            .asDriver(onErrorJustReturn: [])
-            .drive(homeCollectionView.rx.items(dataSource: self.homeDataSource))
-            .disposed(by: disposeBag)
-        
-        
-        NotificationCenter.default
-            .rx.notification(.reloadCalendar)
-            .withUnretained(self)
-            .subscribe(onNext: { owner, noti in
-                guard let count = noti.object as? Int else { return }
-                owner.numberOfItems = count
-            }).disposed(by: disposeBag)
-    }
     
-}
-
-extension HomeViewController: ExplanationDelegate {
-    
-    func showOnboardingView() {
-        let onboardingController = OnboardingDIContainer().makeViewController()
-        onboardingController.modalPresentationStyle = .fullScreen
-        self.present(onboardingController, animated: true)
-    }
 }
