@@ -388,14 +388,14 @@ extension HomeViewController: HomeLayoutCreatable {
         
         let benefitsItemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(334),
-            heightDimension: .absolute(200)
+            heightDimension: .absolute(120)
         )
         
         let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
         
         let benefitsGroupLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(334),
-            heightDimension: .absolute(200)
+            heightDimension: .absolute(174)
         )
         
         let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
