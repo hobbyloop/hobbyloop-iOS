@@ -136,9 +136,9 @@ extension OnboardingCell: ReactorKit.View {
             .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .bind(onNext: { owner ,description in
-                if description.contains("시설 이용권 창") {
+                if description.contains("이용권·수업 정보") {
                     owner.onboardingDescriptionLabel.setSubScriptAttributed(
-                        targetString: "시설 이용권 창",
+                        targetString: "이용권·수업 정보",
                         font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
                         color: HPCommonUIAsset.black.color
                     )
