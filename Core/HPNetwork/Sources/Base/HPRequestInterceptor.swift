@@ -29,8 +29,7 @@ public final class HPAuthenticator: Authenticator {
     
     public func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool {
 
-        //TODO: 현재 토큰 만료시 500 Error가 뜨기에 임시 코드 대체 추후 401로 변경 예정
-        return response.statusCode == 500
+        return response.statusCode == 401
     }
     
     public func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: HPAuthenticationCredential) -> Bool {
