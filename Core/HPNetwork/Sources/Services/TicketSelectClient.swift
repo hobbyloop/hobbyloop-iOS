@@ -8,6 +8,7 @@
 import Foundation
 
 import HPCommon
+import HPExtensions
 import HPDomain
 import Alamofire
 import RxSwift
@@ -30,7 +31,19 @@ public final class TicketSelectClient: BaseNetworkable, TicketSelectService {
         var session = AF
         let configuration = URLSessionConfiguration.af.default
         let eventLogger = HPAPIEventLogger()
-        session = Session(configuration: configuration, eventMonitors: [eventLogger])
+        let authenticator = HPAuthenticator()
+        let credential = HPAuthenticationCredential(
+            accessToken: LoginManager.shared.readToken(key: .accessToken),
+            refreshToken: LoginManager.shared.readToken(key: .refreshToken),
+            expiredAt: UserDefaults.standard.date(forKey: .expiredAt) ?? Date(timeIntervalSinceNow: 60 * 5)
+        )
+        let interceptor = HPRequestInterceptor()
+        
+        session = Session(
+            configuration: configuration,
+            interceptor: interceptor,
+            eventMonitors: [eventLogger]
+        )
         return session
 
     }()
@@ -71,7 +84,6 @@ extension TicketSelectClient {
         return Single.create { [weak self] single -> Disposable in
             guard let self = `self` else { return Disposables.create() }
             self.AFManager.request(TicketSelectRouter.getUserTicketList)
-                .validate(statusCode: 200..<300)
                 .responseDecodable(of: TicketInfo.self) { response in
                     switch response.result {
                     case let .success(data):

@@ -12,6 +12,7 @@ import Foundation
 public enum UserDefaultsKeys: String {
     case accessId
     case userInfo
+    case expiredAt
 }
 
 
@@ -52,6 +53,11 @@ public extension UserDefaults {
     
     func double(forKey: UserDefaultsKeys) -> Double {
         return double(forKey: forKey.rawValue)
+    }
+    
+    
+    func date(forKey: UserDefaultsKeys) -> Date? {
+        return object(forKey: forKey.rawValue) as? Date
     }
     
     func bool(forKey: UserDefaultsKeys) -> Bool {

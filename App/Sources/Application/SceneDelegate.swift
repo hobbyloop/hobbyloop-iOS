@@ -44,6 +44,11 @@ extension SceneDelegate {
     
     private func makeRootViewController() {
         if LoginManager.shared.isLogin() {
+            
+            //TODO: AccessToken, RefreshToken 디버깅용 Print 구문 추후 삭제 예정
+            print("🤔 MY ACCESS TOKEN : \(LoginManager.shared.readToken(key: .accessToken))")
+            print("🥹 MY REFRESH TOKEN : \(LoginManager.shared.readToken(key: .refreshToken))")
+            print("😂 MY EXPIRED DATE : \(UserDefaults.standard.date(forKey: .expiredAt))")
             window?.rootViewController = CustomTabBarController()
             window?.makeKeyAndVisible()
         } else {

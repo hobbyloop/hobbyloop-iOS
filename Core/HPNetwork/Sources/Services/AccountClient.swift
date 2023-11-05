@@ -9,6 +9,7 @@ import Foundation
 
 import HPDomain
 import HPCommon
+import HPExtensions
 import Alamofire
 import RxSwift
 
@@ -32,7 +33,7 @@ public final class AccountClient: BaseNetworkable, AccountClientService {
         let credential = HPAuthenticationCredential(
             accessToken: LoginManager.shared.readToken(key: .accessToken),
             refreshToken: LoginManager.shared.readToken(key: .refreshToken),
-            expiredAt: Date(timeIntervalSinceNow: 60 * 120)
+            expiredAt: UserDefaults.standard.date(forKey: .expiredAt) ?? Date()
         )
         let interceptor = AuthenticationInterceptor(
             authenticator: authenticator,

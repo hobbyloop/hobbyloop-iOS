@@ -22,22 +22,26 @@ public struct HPAuthenticationCredential: AuthenticationCredential {
 public final class HPAuthenticator: Authenticator {
     
     public func apply(_ credential: HPAuthenticationCredential, to urlRequest: inout URLRequest) {
-        guard !LoginManager.shared.isLogin() else { return }
+        print("✅HPAUTHENTICATOR METHOD CALL✅")
         urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
-        urlRequest.headers.add(name: "refresh-token", value: credential.refreshToken)
+        urlRequest.headers.add(name: "Authorization-refresh", value: credential.refreshToken)
     }
     
     public func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool {
-
+        print("⛔️HPAUTHENTICATOR DIDREQUEST METHOD CALL⛔️")
         return response.statusCode == 401
     }
     
     public func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: HPAuthenticationCredential) -> Bool {
+        print("⛔️HPAUTHENTICATOR ISREQUEST METHOD CALL⛔️")
         return urlRequest.headers["Authorization"] == HTTPHeader.authorization(bearerToken: credential.accessToken).value
     }
     
     public func refresh(_ credential: HPAuthenticationCredential, for session: Session, completion: @escaping (Result<HPAuthenticationCredential, Error>) -> Void) {
         
+        print("⛔️HPAUTHENTICATOR REFRESH METHOD CALL⛔️")
+        print("📌USER CREDENTIAL EXPIREDAT: \(credential.expiredAt)📌")
+        print("🚀USER REQUIRES REFRESH \(credential.requiresRefresh)🚀")
     }
     
     
@@ -51,11 +55,14 @@ final class HPRequestInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-
-        guard LoginManager.shared.isLogin() else { return }
+        guard urlRequest.url?.absoluteString.hasPrefix("http://13.125.114.152:8080") == true else {
+            completion(.success(urlRequest))
+            return
+        }
         
+        print("😍 HPREQUSET INTERCEPTOR ADAPT METHOD CALL 😍")
         urlRequest.headers.add(.authorization(bearerToken: LoginManager.shared.readToken(key: .accessToken)))
-        urlRequest.headers.add(name: "refresh-token", value: LoginManager.shared.readToken(key: .refreshToken))
+        urlRequest.headers.add(name: "Authorization-refresh", value: "Bearer \(LoginManager.shared.readToken(key: .refreshToken))")
         
         completion(.success(urlRequest))
     }
@@ -68,6 +75,9 @@ final class HPRequestInterceptor: RequestInterceptor {
             return
         }
         
+        let refreshToken = request.response?.headers.value(for: "Authorization-refresh")
+        print("😆 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(statusCode)😆")
+        print("🔐 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(refreshToken)🔐")
         guard statusCode == 401 else {
             completion(.doNotRetryWithError(error))
             return
