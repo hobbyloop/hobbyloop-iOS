@@ -25,7 +25,7 @@ private protocol SignUpViewAnimatable {
 
 
 
-final class SignUpViewController: BaseViewController<SignUpViewReactor> {
+public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     // MARK: Property
     private lazy var scrollView: UIScrollView = UIScrollView().then {
@@ -178,11 +178,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     
     // MARK: LifeCycle
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         configure()
     }
     
-    override func viewDidLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
         self.authCodeButton.layer.cornerRadius = 10
     }
     
@@ -313,7 +313,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    override func bind(reactor: SignUpViewReactor) {
+    public override func bind(reactor: SignUpViewReactor) {
         
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
@@ -565,7 +565,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        //Textfeild
         nameView.textFieldView
             .rx.textChange
             .distinctUntilChanged()

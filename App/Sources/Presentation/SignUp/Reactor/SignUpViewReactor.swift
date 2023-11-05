@@ -223,10 +223,10 @@ public final class SignUpViewReactor: Reactor {
 
 
 
-public extension SignUpViewReactor {
+extension SignUpViewReactor {
     
     
-    func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
+    private func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .requestAppleLogin(fullName):
             return .just(.setAppleUserFullName(fullName))

@@ -16,7 +16,7 @@ import Then
 import SnapKit
 import ReactorKit
 
-final class LoginViewController: BaseViewController<LoginViewReactor> {
+public final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: Property
     private lazy var loginStckView: UIStackView = UIStackView().then {
         $0.distribution = .equalSpacing
@@ -75,7 +75,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     // MARK: LifeCycle
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         configure()

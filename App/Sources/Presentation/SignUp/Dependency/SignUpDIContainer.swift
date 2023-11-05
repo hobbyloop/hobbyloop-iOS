@@ -12,7 +12,7 @@ import HPCommon
 import HPNetwork
 
 
-final class SignUpDIContainer: DIContainer {
+public final class SignUpDIContainer: DIContainer {
     
     
     //MARK: Property
@@ -27,15 +27,15 @@ final class SignUpDIContainer: DIContainer {
     }
     
     
-    func makeViewController() -> SignUpViewController {
+    public func makeViewController() -> SignUpViewController {
         return SignUpViewController(reactor: makeReactor())
     }
     
-    func makeRepository() -> SignUpViewRepo {
+    public func makeRepository() -> SignUpViewRepo {
         return SignUpViewRepository()
     }
     
-    func makeReactor() -> SignUpViewReactor {
+    public func makeReactor() -> SignUpViewReactor {
         return SignUpViewReactor(signUpRepository: makeRepository(), accountType: signUpAccountType)
     }
     
