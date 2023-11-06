@@ -1,13 +1,6 @@
 import UIKit
 
-import HPCommon
-import KakaoSDKAuth
-import RxKakaoSDKAuth
-import RxKakaoSDKCommon
 import NaverThirdPartyLogin
-import GoogleSignIn
-import AuthenticationServices
-import HPCommonUI
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
