@@ -112,8 +112,8 @@ public final class SignUpViewReactor: Reactor {
     
     public func mutate(action: Action) -> Observable<Mutation> {
     
-        
         switch action {
+            
         case .viewDidLoad:
             var requestProfile = Observable<Mutation>.empty()
             if accountType == .kakao {
@@ -127,13 +127,17 @@ public final class SignUpViewReactor: Reactor {
                 requestProfile,
                 .just(.setLoading(false))
             )
+            
         case let .updateToName(userName):
+            
             return .just(.setUserName(userName))
             
         case let .updateToNickName(userNickName):
+            
             return .just(.setUserNickName(userNickName))
             
         case let .updateToBirthDay(userBirthDay):
+            
             return .just(.setUserBirthDay(userBirthDay))
             
         case let .didTapGenderButton(gender):
@@ -158,8 +162,8 @@ public final class SignUpViewReactor: Reactor {
             )
             
         case let .updateToPhoneNumber(phoneNumber):
-            return .just(.setUserPhoneNumber(phoneNumber))
             
+            return .just(.setUserPhoneNumber(phoneNumber))
             
         case .didChangePhoneNumber:
             
@@ -223,7 +227,6 @@ public final class SignUpViewReactor: Reactor {
 
 
 extension SignUpViewReactor {
-    
     
     private func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
         switch event {

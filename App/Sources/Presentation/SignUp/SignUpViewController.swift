@@ -176,7 +176,6 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         debugPrint(#function)
     }
     
-    
     // MARK: LifeCycle
     public override func viewDidLoad() {
         configure()
@@ -186,7 +185,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         self.authCodeButton.layer.cornerRadius = 10
     }
     
-    
+    // MARK: Configure
     private func configure() {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)

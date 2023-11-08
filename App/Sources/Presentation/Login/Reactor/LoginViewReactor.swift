@@ -12,7 +12,6 @@ import HPCommon
 import HPDomain
 import HPNetwork
 import ReactorKit
-import GoogleSignIn
 
 
 public enum LoginViewStream: HPStreamType {
@@ -51,8 +50,6 @@ public final class LoginViewReactor: Reactor {
         var isShowNaverLogin: Void?
     }
     
-    
-    //MARK: InitialState
     init(loginRepository: LoginViewRepo) {
         
         self.loginRepository = loginRepository
@@ -64,7 +61,6 @@ public final class LoginViewReactor: Reactor {
         )
     }
     
-    
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let naverTokenUpdates = LoginViewStream.event.flatMap { [weak self] event in
             self?.requestNaverAccessToken(from: event) ?? .empty()
@@ -73,8 +69,6 @@ public final class LoginViewReactor: Reactor {
         return Observable.merge(mutation, naverTokenUpdates)
     }
     
-    
-    //MARK: SideEffect
     public func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
@@ -138,8 +132,6 @@ public final class LoginViewReactor: Reactor {
     
     
 }
-
-
 
 
 extension LoginViewReactor {

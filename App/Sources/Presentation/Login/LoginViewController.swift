@@ -17,6 +17,7 @@ import SnapKit
 import ReactorKit
 
 public final class LoginViewController: BaseViewController<LoginViewReactor> {
+    
     // MARK: Property
     private lazy var loginStckView: UIStackView = UIStackView().then {
         $0.distribution = .equalSpacing
@@ -80,7 +81,6 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         self.view.backgroundColor = .white
         configure()
     }
-    
     
     // MARK: Configure
     private func configure() {

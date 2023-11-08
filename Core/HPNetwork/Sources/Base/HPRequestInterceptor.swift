@@ -51,9 +51,9 @@ public final class HPAuthenticator: Authenticator {
 }
 
 
-final class HPRequestInterceptor: RequestInterceptor {
+public final class HPRequestInterceptor: RequestInterceptor {
     
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
         guard urlRequest.url?.absoluteString.hasPrefix("http://13.125.114.152:8080") == true else {
             completion(.success(urlRequest))
@@ -66,9 +66,8 @@ final class HPRequestInterceptor: RequestInterceptor {
         
         completion(.success(urlRequest))
     }
-    
-    
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        
+    public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         guard let statusCode = request.response?.statusCode,
               !(200..<300).contains(statusCode) else {
             completion(.doNotRetry)
