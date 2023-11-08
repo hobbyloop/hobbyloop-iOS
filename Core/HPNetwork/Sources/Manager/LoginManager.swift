@@ -16,6 +16,7 @@ public protocol Authenticationable {
     var keychain: Keychain { get }
     func isLogin() -> Bool
     func updateTokens(accessToken: String, refreshToken: String)
+    func updateAccessToken(accessToken: String)
     func readToken(key: KeychainKeys) -> String
     func removeToken(key: KeychainKeys)
     func removeAll()
@@ -39,6 +40,14 @@ extension LoginManager {
             return false
         } else {
             return true
+        }
+    }
+    
+    public func updateAccessToken(accessToken: String) {
+        do {
+            try keychain.set(accessToken, key: .accessToken)
+        } catch {
+            print("😱 HOBBY LOOP ACCESS TOKEN SAVE ERROR \(error.localizedDescription)")
         }
     }
     

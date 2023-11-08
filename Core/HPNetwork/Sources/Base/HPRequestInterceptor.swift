@@ -68,21 +68,16 @@ public final class HPRequestInterceptor: RequestInterceptor {
     }
         
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        guard let statusCode = request.response?.statusCode,
-              !(200..<300).contains(statusCode) else {
-            completion(.doNotRetry)
-            return
-        }
         
-        let refreshToken = request.response?.headers.value(for: "Authorization-refresh")
-        print("😆 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(statusCode)😆")
-        print("🔐 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(refreshToken)🔐")
-        guard statusCode == 401 else {
+        guard let statusCode = request.response?.statusCode, statusCode == 401 else {
             completion(.doNotRetryWithError(error))
             return
         }
-        
-        completion(.retry)
+    
+        guard let accessToken = request.response?.headers.value(for: "Authorization") else { return }
+        print("😆 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(statusCode)😆")
+        print("🔐 HPREQUEST INTERCEPTOR RETRY METHOD CALL \(accessToken)🔐")
+        LoginManager.shared.updateAccessToken(accessToken: accessToken)
     }
     
 }

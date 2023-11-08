@@ -32,11 +32,6 @@ public final class TicketSelectClient: BaseNetworkable, TicketSelectService {
         let configuration = URLSessionConfiguration.af.default
         let eventLogger = HPAPIEventLogger()
         let authenticator = HPAuthenticator()
-        let credential = HPAuthenticationCredential(
-            accessToken: LoginManager.shared.readToken(key: .accessToken),
-            refreshToken: LoginManager.shared.readToken(key: .refreshToken),
-            expiredAt: UserDefaults.standard.date(forKey: .expiredAt) ?? Date(timeIntervalSinceNow: 60 * 5)
-        )
         let interceptor = HPRequestInterceptor()
         
         session = Session(
