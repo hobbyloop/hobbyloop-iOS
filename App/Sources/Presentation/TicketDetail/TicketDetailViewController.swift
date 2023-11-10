@@ -13,6 +13,11 @@ import Tabman
 import Pageboy
 import RxSwift
 
+enum TicketDetailViewType: Int {
+    case FacilityInfo
+    case ClassInfo
+}
+
 class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     private var view1 = FacilityInfoViewController()
     private var view2 = ClassInfoViewController()
@@ -51,9 +56,9 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     
     private var viewIndex: Int = 0
     
-    init(_ index: Int = 0) {
+    init(_ index: TicketDetailViewType = .ClassInfo) {
         super.init()
-        viewIndex = index
+        viewIndex = index.rawValue
     }
     
     required public init?(coder: NSCoder) {

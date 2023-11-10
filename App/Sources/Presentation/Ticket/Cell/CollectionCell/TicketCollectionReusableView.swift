@@ -7,34 +7,23 @@
 
 import UIKit
 
+import HPCommon
 import HPCommonUI
 import RxSwift
 
-public enum TicketHeaderType {
-    case lank
-    case location
-}
-
-public enum SortStandard {
-    case starScore
-    case recency
-    case sales
-    case reviews
-}
-
 class TicketCollectionReusableView: UICollectionReusableView {
-    public var publish = PublishSubject<TicketHeaderType>()
     public var location = PublishSubject<String>()
-    public var sortStandard = PublishSubject<SortStandard>()
+    public var sortStandard = PublishSubject<FacilitySortType>()
+    public var sortButtonTap = PublishSubject<Void>()
+    public var loopPassButtonFlag = false
     public var disposeBag = DisposeBag()
-    private var loopPassButtonFlag = false
     
     private lazy var labelStackView: UIStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 14
         $0.alignment = .leading
         $0.distribution = .fill
-        $0.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        $0.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         $0.isLayoutMarginsRelativeArrangement = true
     }
     
@@ -152,7 +141,13 @@ class TicketCollectionReusableView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        disposeBag = DisposeBag()
+        bindRx()
+    }
+    
     private func initLayout() {
+        backgroundColor = .white
         titleLabel.textColor = .black
         descriptionLabel.textColor = .black
         
@@ -202,16 +197,6 @@ class TicketCollectionReusableView: UICollectionReusableView {
     }
     
     private func bindRx() {
-        publish.subscribe { event in
-            guard let event = event.element else { return }
-            switch event {
-                
-            case .lank:
-                break
-            case .location:
-                break
-            }
-        }.disposed(by: disposeBag)
         
         location.subscribe { loc in
             guard let loc = loc.element else { return }
@@ -230,22 +215,28 @@ class TicketCollectionReusableView: UICollectionReusableView {
                 guard let element = $0.element else { return }
                 var title = ""
                 switch element {
-                    
-                case .starScore:
-                    title = "별점순"
-                case .recency:
-                    title = "최신순"
-                case .sales:
-                    title = "판매순"
-                case .reviews:
-                    title = "리뷰순"
+                case .recently:
+                    title = element.rawValue
+                case .amount:
+                    title = element.rawValue
+                case .score:
+                    title = element.rawValue
+                case .review:
+                    title = element.rawValue
                 }
+                
                 self.sortButton.setAttributedTitle(
                     title.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-                                             HPCommonUIAsset.horizontalDivider.color
+                                             HPCommonUIAsset.lightblack.color
                                             ),for: .normal
                 )
             }
+            .disposed(by: disposeBag)
+        
+        sortButton
+            .rx
+            .tap
+            .bind(to: sortButtonTap)
             .disposed(by: disposeBag)
     }
     
