@@ -12,12 +12,15 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
+            "NSAppTransportSecurity" : .dictionary([
+                "NSAllowsArbitraryLoads" : .boolean(true)
+            ]),
             "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
             "CFBundleDisplayName" : .string(name),
-            "CFBundleIdentifier" : .string("com.sideproj.\(name)"),
+            "CFBundleIdentifier" : .string("com.app.\(name)"),
             "CFBundleShortVersionString" : .string("1.0"),
             "CFBundleVersion" : .string("0"),
             "CFBuildVersion" : .string("0"),

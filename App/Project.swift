@@ -23,8 +23,8 @@ import ProjectDescriptionHelpers
 
 // Creates our project using a helper function defined in ProjectDescriptionHelpers
 let project = Project.makeModule(
-    name: "Hobbyloop",
-    bundleId: "com.sideproj.Hobbyloop",
+    name: "hobbyloop",
+    bundleId: "com.app.hobbyloop",
     products: [.app, .unitTests, .uiTests],
     infoExtensions: [:],
     dependencies: [
