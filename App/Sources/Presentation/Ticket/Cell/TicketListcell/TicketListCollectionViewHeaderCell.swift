@@ -9,15 +9,16 @@ import UIKit
 
 import SnapKit
 import HPCommonUI
+import HPCommon
 
-class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
-    private var stackView: UIStackView = UIStackView().then {
+class TicketListCollectionViewHeaderCell: UICollectionReusableView {
+    private lazy var stackView: UIStackView = UIStackView().then {
         $0.spacing = 10
         $0.axis = .horizontal
         $0.alignment = .center
     }
     
-    private var ticketImageView: UIImageView = UIImageView().then {
+    private lazy var ticketImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
         $0.snp.makeConstraints {
             $0.width.equalTo(24)
@@ -25,12 +26,14 @@ class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
         }
     }
     
-    private var titleLabel: UILabel = UILabel().then {
+    private lazy var titleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
     }
     
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
+    private lazy var separatorView: SeparatorView = SeparatorView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         initLayout()
     }
     
@@ -39,16 +42,21 @@ class TicketTableViewHeaderCell: UITableViewHeaderFooterView {
     }
     
     private func initLayout() {
-        addSubview(stackView)
+        [stackView, separatorView].forEach {
+            addSubview($0)
+        }
         
         [ticketImageView, titleLabel].forEach {
             stackView.addArrangedSubview($0)
         }
         
         stackView.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-10)
-            $0.leading.equalTo(6)
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        separatorView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(1)
         }
     }
     

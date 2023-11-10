@@ -7,10 +7,12 @@
 
 import UIKit
 
-import HPCommonUI
 import SnapKit
+import HPDomain
+import HPCommonUI
 
-class TicketViewFooterCell: UICollectionViewCell {
+
+class TicketListCell: UICollectionViewCell {
     private var stackView: UIStackView = UIStackView().then {
         $0.spacing = 14
         $0.axis = .horizontal
@@ -44,7 +46,6 @@ class TicketViewFooterCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        initLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -75,15 +76,16 @@ class TicketViewFooterCell: UICollectionViewCell {
         
     }
     
-    public func configure(_ title: String) {
-        let text = "400,000원"
+    public func configure(_ ticket: Tickets) {
+        initLayout()
+        let text = ticket.price.numberFormatter()
         let attributedString = NSMutableAttributedString(string: text)
         let allRange = (text as NSString).range(of: text)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: allRange)
         attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: allRange)
         
         descriptionLabel.attributedText = attributedString
-        titleLabel.text = title
+        titleLabel.text = ticket.ticketName
         backgroundColor = .clear
     }
 

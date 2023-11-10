@@ -9,6 +9,8 @@ import UIKit
 
 import RxSwift
 import HPCommonUI
+import HPDomain
+import HPCommon
 
 class TicketCollectionViewCell: UICollectionViewCell {
     private var imageView: UIImageView = UIImageView().then {
@@ -35,7 +37,7 @@ class TicketCollectionViewCell: UICollectionViewCell {
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
     }
     
-    private var archiveButton: UIButton = UIButton().then {
+    public var archiveButton: UIButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.archiveOutlined.image.withRenderingMode(.alwaysOriginal), for: .normal)
         $0.setImage(HPCommonUIAsset.archiveFilled.image.withRenderingMode(.alwaysOriginal), for: .selected)
     }
@@ -59,21 +61,128 @@ class TicketCollectionViewCell: UICollectionViewCell {
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
     }
     
-    public lazy var tableView: UITableView = UITableView().then {
+    public lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: TicketCollectionViewLayout).then{
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.register(TicketTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: "HeaderCell")
-        $0.register(TicketTableViewCell.self, forCellReuseIdentifier: "BodyCell")
-        $0.separatorInset = .zero
-        $0.separatorStyle = .singleLine
-        $0.separatorInsetReference = .fromCellEdges
-        $0.delegate = self
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+        $0.register(
+            TicketListCollectionViewHeaderCell.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "TicketTableViewHeaderCell"
+        )
+        $0.register(
+            SeparatorView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SeparatorView"
+        )
+        $0.register(TicketListCell.self, forCellWithReuseIdentifier: "BodyCell")
+        $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
+        $0.collectionViewLayout.register(SeparatorView.self, forDecorationViewOfKind: "SeparatorView")
         $0.dataSource = self
-        $0.backgroundColor = .clear
+        $0.delegate = self
     }
     
-    private var data: [Int]?
+    private lazy var TicketCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { section, _ in
+        if section == 0 {
+            return self.headerLayout()
+        }
+        
+        return self.separatorLayout()
+    }
+    
+    private func separatorLayout() -> NSCollectionLayoutSection {
+        let userInfoProvideLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(bounds.width),
+            heightDimension: .absolute(1)
+        )
+        
+        let userInfoProvideItem = NSCollectionLayoutItem(layoutSize: userInfoProvideLayoutSize)
+        
+        let userInfoProvideGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: userInfoProvideLayoutSize,
+            subitem: userInfoProvideItem,
+            count: 1
+        )
+        
+        userInfoProvideItem.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 16,
+            bottom: 0,
+            trailing: 16
+        )
+        
+        let userInfoProvideSection = NSCollectionLayoutSection(group: userInfoProvideGroup)
+        
+        let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SeparatorView.self)")
+        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        userInfoProvideSection.orthogonalScrollingBehavior = .paging
+        
+        userInfoProvideSection.decorationItems = [benefitsSectionBackground]
+        
+        return userInfoProvideSection
+    }
+    
+    private func headerLayout() -> NSCollectionLayoutSection {
+        
+        let benefitsItemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(249),
+            heightDimension: .absolute(67)
+        )
+        
+        let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
+        
+        benefitsLayoutItem.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 22,
+            bottom: 0,
+            trailing: 22
+        )
+        
+        let benefitsGroupLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(249),
+            heightDimension: .absolute(67)
+        )
+        
+        let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
+            layoutSize: benefitsGroupLayoutSize,
+            subitems: [benefitsLayoutItem]
+        )
+        
+        let benefitsSection = NSCollectionLayoutSection(
+            group: benefitsGroupLayout
+        )
+        
+        let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 0)
+        benefitsSection.orthogonalScrollingBehavior = .continuous
+        
+        benefitsSection.decorationItems = [benefitsSectionBackground]
+        
+        let benefitsHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(bounds.width),
+            heightDimension: .absolute(34)
+        )
+        
+        let benefitsHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: benefitsHeaderLayoutSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .topLeading
+        )
+        
+        benefitsHeader.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 22,
+            bottom: 0,
+            trailing: 22
+        )
+        
+        benefitsSection.boundarySupplementaryItems = [benefitsHeader]
+        return benefitsSection
+    }
+    
+    private var data: FacilityInfo?
     public let cellSelect: PublishSubject<Int> = PublishSubject<Int>()
-    private let disposeBag = DisposeBag()
+    public var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -84,10 +193,14 @@ class TicketCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        disposeBag = DisposeBag()
+    }
+    
     private func initLayout() {
         backgroundColor = .white
         
-        [imageView, storeStackView, tableView].forEach {
+        [imageView, storeStackView, collectionView].forEach {
             addSubview($0)
         }
         
@@ -108,13 +221,16 @@ class TicketCollectionViewCell: UICollectionViewCell {
         }
         
         imageView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview().offset(13)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(262)
         }
         
         storeStackView.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(14)
-            $0.leading.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(47)
         }
         
@@ -122,52 +238,101 @@ class TicketCollectionViewCell: UICollectionViewCell {
             $0.width.height.equalTo(13)
         }
         
-        tableView.snp.makeConstraints {
-            $0.top.equalTo(storeStackView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(storeStackView.snp.bottom).offset(7)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(110)
         }
     }
     
-    public func configure(_ data: [Int]? = nil) {
+    public func configure(_ data: FacilityInfo) {
         self.data = data
         imageView.image = UIImage(named: "TicketTestImage")?.withRenderingMode(.alwaysOriginal)
-        titleLabel.text = "필라피티 스튜디오"
-        descriptionLabel.text = "서울 강남구 압구정로50길 8 2층"
-        starLabel.text = "4.8"
+#warning("김진우 - TODO: KingFisher 추가되면 이미지 URL 세팅으로 변경")
+        //        imageView.image = data.repImageUrl
+        titleLabel.text = data.facilityName
+        descriptionLabel.text = data.address
+        starLabel.text = String(data.score)
         starImageView.image = UIImage(systemName: "star.fill")?.withRenderingMode(.alwaysTemplate)
+        archiveButton.isSelected = data.bookmarked
+        
     }
 }
 
-extension TicketCollectionViewCell: UITableViewDataSource {
+extension TicketCollectionViewCell: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if section == 0 {
+            return 5 /*data?.tickets.count ?? 0*/
+        }
         return 1
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "BodyCell", for: indexPath) as? TicketTableViewCell else { return UITableViewCell() }
-        cell.configure(data!)
-        cell.layoutMargins = .zero
-        cell.preservesSuperviewLayoutMargins = false
-        cell.cellSelect
-            .bind(to: cellSelect)
-            .disposed(by: disposeBag)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BodyCell", for: indexPath) as? TicketListCell else { return UICollectionViewCell() }
+        guard let data else { return cell }
+#warning("김진우 - TODO: API 변경 되어서 티켓 관련해서 생성되면 수정 진행")
+        switch indexPath.section {
+        case 0 :
+            cell.configure(data.tickets[0])
+        default :
+            break
+        }
         return cell
+        
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 69
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("클릭")
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch indexPath.section {
+        case 0 :
+            guard kind == UICollectionView.elementKindSectionHeader, // 헤더일때
+                  let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: "TicketTableViewHeaderCell",
+                    for: indexPath
+                  ) as? TicketListCollectionViewHeaderCell else {return UICollectionReusableView()}
+#warning("김진우 - TODO: API 변경 되어서 티켓 관련해서 생성되면 수정 진행")
+            header.configure(data?.tickets.count ?? 0)
+            return header
+        default :
+            guard kind == UICollectionView.elementKindSectionHeader, // 헤더일때
+                  let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: "SeparatorView",
+                    for: indexPath
+                  ) as? SeparatorView else {return UICollectionReusableView()}
+            return header
+        }
+        
     }
 }
 
-extension TicketCollectionViewCell: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderCell") as? TicketTableViewHeaderCell else { return UIView() }
-        header.configure(data!.count)
-        return header
+extension TicketCollectionViewCell: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        cellSelect.onNext(indexPath.row)
+    }
+}
+
+extension TicketCollectionViewCell: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        switch section {
+        case 0 :
+            return CGSize(width: bounds.width, height: 34)
+        default:
+            return CGSize(width: bounds.width, height: 2)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch indexPath.section {
+        case 0 :
+            return CGSize(width: bounds.width, height: 67)
+        default:
+            return CGSize(width: bounds.width, height: 2)
+        }
     }
 }
