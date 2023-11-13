@@ -16,7 +16,7 @@ import RxSwift
 
 class TicketViewController: BaseViewController<TicketViewReactor> {
 #warning("김진우 - TODO: API 연동 이후 변경할 것")
-    private var item: [FacilityInfo?] = []
+    private var item: [FacilityInfo] = []
     private lazy var itemObservable = Observable.of(item)
     private var location = PublishSubject<String>()
     private var sortStandard = PublishSubject<FacilitySortType>()
@@ -95,7 +95,7 @@ extension TicketViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketCollectionViewCell", for: indexPath) as? TicketCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure(item[indexPath.row]!)
+        cell.configure(item[indexPath.row])
         
         cell.archiveButton.rx
             .tap
@@ -103,8 +103,8 @@ extension TicketViewController: UICollectionViewDataSource {
             .bind { [weak self] cell, _ in
                 guard let self else { return }
                 cell.archiveButton.isSelected.toggle()
-                print("\(self.item[indexPath.row]!.facilityId)")
-                self.reactor?.action.onNext(.didTapFacilityArchive(self.item[indexPath.row]!.facilityId))
+                print("\(self.item[indexPath.row].facilityId)")
+                self.reactor?.action.onNext(.didTapFacilityArchive(self.item[indexPath.row].facilityId))
             }.disposed(by: cell.disposeBag)
         
         cell.cellSelect
@@ -190,7 +190,7 @@ extension TicketViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: self.view.bounds.width, height: 402 + CGFloat(68))
+        return CGSize(width: self.view.bounds.width, height: 402 + CGFloat(63))
     }
 }
 
@@ -236,31 +236,32 @@ extension TicketViewController: CLLocationManagerDelegate {
                 .withTintColor(HPCommonUIAsset.deepOrange.color),
                                  leftButton_St: "다음에 하기",
                                  rightButton_St: "설정으로 이동"
-            )
-            
-            view.addSubview(buttonView)
-            
-            buttonView.snp.makeConstraints {
-                $0.top.leading.trailing.bottom.equalToSuperview()
+            ) { [weak self] leftButton, rightButton in
+                guard let self else { return }
+                view.addSubview(buttonView)
+                
+                buttonView.snp.makeConstraints {
+                    $0.top.leading.trailing.bottom.equalToSuperview()
+                }
+                
+                leftButton.rx
+                    .tap
+                    .bind { _ in
+                        buttonView.removeFromSuperview()
+                        self.tabBarController?.tabBar.isHidden = false
+                    }.disposed(by: disposeBag)
+                
+                rightButton.rx
+                    .tap
+                    .bind { [weak self] _ in
+                        guard let `self` else { return }
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                        buttonView.removeFromSuperview()
+                        self.tabBarController?.tabBar.isHidden = false
+                    }.disposed(by: disposeBag)
             }
-            
-            buttonView.leftButton.rx
-                .tap
-                .bind { _ in
-                    buttonView.removeFromSuperview()
-                    self.tabBarController?.tabBar.isHidden = false
-                }.disposed(by: disposeBag)
-            
-            buttonView.rightButton.rx
-                .tap
-                .bind { [weak self] _ in
-                    guard let `self` else { return }
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                    buttonView.removeFromSuperview()
-                    self.tabBarController?.tabBar.isHidden = false
-                }.disposed(by: disposeBag)
             
         case .authorizedWhenInUse:
             // 앱을 사용중일 때, 위치 서비스를 이용할 수 있는 상태

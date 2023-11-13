@@ -49,7 +49,5 @@ public class WorkTimeView: UIView {
             dailyView.append(view)
             dailyStack.addArrangedSubview(view)
         }
-        
-        setNeedsLayout()
     }
 }

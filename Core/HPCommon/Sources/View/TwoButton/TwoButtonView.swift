@@ -51,37 +51,16 @@ public class TwoButtonView: UIView {
         $0.layer.cornerRadius = 8
     }
     
-    /// note: 백그라운드 뷰가 반투명의 검은색이고, 하단에 버튼이 두개가 있으며 사용자에게 의견을 묻는 뷰이다.
-    ///     각 버튼의 액션의 경우 leftButton, rightButton의 .rx.tap 을 Bind 하여 사용
-    /// Parameter:
-    ///             `title`:                     최 상단의 Bold 처리되어 있는 뷰의 텍스트
-    ///             `subscribe`:            TitleView의 하단에 있는 설명에 관련된 뷰의 텍스트
-    ///             `image`:                     최 상단의 이미지 뷰의 이미지
-    ///             `leftButton_St`:   왼쪽 버튼의 텍스트
-    ///             `rightButton_st`: 오른쪽 버튼의 텍스트
-    ///  
-    public func configure(title: String, subscribe: String, image: UIImage, leftButton_St: String, rightButton_St: String) {
-        imageView.image = image
-        titleLabel.text = title
-        subscribeLabel.text = subscribe
-//        HPCommonUIAsset.settingOutlind.image
-//            .withTintColor(HPCommonUIAsset.deepOrange.color)
-//            .imageWith(newSize: CGSize(width: 44, height: 44))
-        
-        let afterString = leftButton_St.stringToAttributed(
-            HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
-            HPCommonUIAsset.lightblack.color
-        )
-        leftButton.setAttributedTitle(afterString, for: .normal)
-        
-        let settingString = rightButton_St.stringToAttributed(
-            HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
-            .white
-        )
-        rightButton.setAttributedTitle(settingString, for: .normal)
-        
-        
-        
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        initLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func initLayout() {
         [imageView, titleLabel, subscribeLabel, buttonStackView].forEach {
             mainView.addSubview($0)
         }
@@ -122,11 +101,32 @@ public class TwoButtonView: UIView {
         }
     }
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    /// note: 백그라운드 뷰가 반투명의 검은색이고, 하단에 버튼이 두개가 있으며 사용자에게 의견을 묻는 뷰이다.
+    ///     각 버튼의 액션의 경우 leftButton, rightButton의 .rx.tap 을 Bind 하여 사용
+    /// Parameter:
+    ///             `title`:                     최 상단의 Bold 처리되어 있는 뷰의 텍스트
+    ///             `subscribe`:            TitleView의 하단에 있는 설명에 관련된 뷰의 텍스트
+    ///             `image`:                     최 상단의 이미지 뷰의 이미지
+    ///             `leftButton_St`:   왼쪽 버튼의 텍스트
+    ///             `rightButton_st`: 오른쪽 버튼의 텍스트
+    ///
+    public func configure(title: String, subscribe: String, image: UIImage, leftButton_St: String, rightButton_St: String, complete: @escaping (UIButton, UIButton) -> ()) {
+        imageView.image = image
+        titleLabel.text = title
+        subscribeLabel.text = subscribe
+        
+        let afterString = leftButton_St.stringToAttributed(
+            HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+            HPCommonUIAsset.lightblack.color
+        )
+        leftButton.setAttributedTitle(afterString, for: .normal)
+        
+        let settingString = rightButton_St.stringToAttributed(
+            HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+            .white
+        )
+        rightButton.setAttributedTitle(settingString, for: .normal)
+        
+        complete(leftButton, rightButton)
     }
 }
