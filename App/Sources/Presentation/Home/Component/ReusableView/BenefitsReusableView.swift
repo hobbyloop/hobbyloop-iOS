@@ -19,7 +19,7 @@ final class BenefitsReusableView: UICollectionReusableView {
         $0.setSubScriptAttributed(
             targetString: "혜택",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-            color: HPCommonUIAsset.deepOrange.color
+            color: HPCommonUIAsset.mainColor.color
         )
         $0.textAlignment = .left
         $0.numberOfLines = 1

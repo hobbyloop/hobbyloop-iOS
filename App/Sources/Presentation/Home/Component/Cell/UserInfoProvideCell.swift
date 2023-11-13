@@ -19,7 +19,7 @@ final class UserInfoProvideCell: UICollectionViewCell {
     
     private let nickNameLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.textAlignment = .justified
         $0.text = "지원님, 반가워요!"
         $0.numberOfLines = 1
@@ -28,11 +28,11 @@ final class UserInfoProvideCell: UICollectionViewCell {
     private let scheduleButton: UIButton = UIButton(configuration: .plain(), primaryAction: nil).then {
         $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: .normal)
         $0.setImage(HPCommonUIAsset.calendarFilled.image, for: .selected)
-        $0.configuration?.baseBackgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.configuration?.baseBackgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.configuration?.setDefaultContentInsets()
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "예약된 수업", attributes: [
-            .foregroundColor: HPCommonUIAsset.black.color,
+            .foregroundColor: HPCommonUIAsset.gray7.color,
             .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 18)
         ]))
     }
@@ -50,7 +50,7 @@ final class UserInfoProvideCell: UICollectionViewCell {
     
     
     private func configure() {
-        self.backgroundColor = HPCommonUIAsset.systemBackground.color
+        self.backgroundColor = HPCommonUIAsset.backgroundColor.color
         
         [nickNameLabel, scheduleButton].forEach {
             self.addSubview($0)

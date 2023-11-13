@@ -36,7 +36,7 @@ final class OnboardingCell: UICollectionViewCell {
     private let onboardingTitleLabel: UILabel = UILabel().then {
         $0.text = "간단한 예약 방법"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 24)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.textAlignment = .center
         $0.numberOfLines = 1
     }
@@ -52,7 +52,7 @@ final class OnboardingCell: UICollectionViewCell {
     private let onboardingDescriptionLabel: UILabel = UILabel().then {
         $0.numberOfLines = 2
         $0.sizeToFit()
-        $0.textColor = HPCommonUIAsset.gray.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.textAlignment = .center
     }
 
@@ -142,7 +142,7 @@ extension OnboardingCell: ReactorKit.View {
                     let targetTextRange = (description as NSString).range(of: "시설 이용권 창")
                     attributedString.addAttributes([
                         .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-                        .foregroundColor: HPCommonUIAsset.black.color
+                        .foregroundColor: HPCommonUIAsset.gray7.color
                     ], range: targetTextRange)
                     self.onboardingDescriptionLabel.attributedText = attributedString
                     
@@ -151,7 +151,7 @@ extension OnboardingCell: ReactorKit.View {
                     let targetTextRange = (description as NSString).range(of: "이용권 창")
                     attributedString.addAttributes([
                         .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-                        .foregroundColor: HPCommonUIAsset.black.color
+                        .foregroundColor: HPCommonUIAsset.gray7.color
                     ], range: targetTextRange)
                     self.onboardingDescriptionLabel.attributedText = attributedString
                 }

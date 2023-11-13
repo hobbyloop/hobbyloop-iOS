@@ -14,7 +14,7 @@ final class WhiteBackgroundDecorationView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = HPCommonUIAsset.white.color
+        self.backgroundColor = HPCommonUIAsset.whiteColor.color
     }
     
     required init?(coder: NSCoder) {

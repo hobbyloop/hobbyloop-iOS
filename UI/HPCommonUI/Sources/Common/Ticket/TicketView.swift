@@ -49,7 +49,7 @@ public final class TicketView: UIView {
     }
     
     private let dividerLine = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightSeparator.color
+        $0.backgroundColor = HPCommonUIAsset.gray2.color
         $0.snp.makeConstraints {
             $0.width.equalTo(192)
             $0.height.equalTo(1)
@@ -167,7 +167,7 @@ public final class TicketView: UIView {
         maskLayer.path = maskPath.cgPath
         
         maskLayer.fillColor = self.fillColor
-        maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
+        maskLayer.strokeColor = HPCommonUIAsset.gray5.color.cgColor
         maskLayer.lineWidth = 1
         
         

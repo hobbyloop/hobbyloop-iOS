@@ -25,7 +25,7 @@ final class ExplanationCell: UICollectionViewCell {
     public weak var delegate: ExplanationDelegate?
     
     private let explanationContainerView: UIView = UIView().then {
-        $0.backgroundColor = .systemBackground
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 15
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -34,7 +34,7 @@ final class ExplanationCell: UICollectionViewCell {
     
     private let explanationTitleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 24)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.text = "처음이세요?"
         $0.textAlignment = .center
         $0.numberOfLines = 1
@@ -42,7 +42,7 @@ final class ExplanationCell: UICollectionViewCell {
     
     private let explanationSubTitleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
-        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.text = "이용권을 구매해 수업을 예약해보세요!"
         $0.textAlignment = .center
         $0.numberOfLines = 1
@@ -54,9 +54,9 @@ final class ExplanationCell: UICollectionViewCell {
             string: "사용 설명 펼쳐보기 ",
             attributes: [
                 .underlineStyle: NSUnderlineStyle.single.rawValue,
-                .underlineColor: HPCommonUIAsset.black.color,
+                .underlineColor: HPCommonUIAsset.gray7.color,
                 .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
-                .foregroundColor: HPCommonUIAsset.black.color
+                .foregroundColor: HPCommonUIAsset.gray7.color
                 
             ]
         ), for: .normal)
@@ -69,8 +69,8 @@ final class ExplanationCell: UICollectionViewCell {
         studioName: "하비루프 스튜디오",
         instructor: "김하비 강사님",
         timeString: Date().convertToString(),
-        textColor: HPCommonUIAsset.white.color,
-        fillColor: HPCommonUIAsset.deepOrange.color.cgColor
+        textColor: HPCommonUIAsset.whiteColor.color,
+        fillColor: HPCommonUIAsset.mainColor.color.cgColor
     )
     
     
