@@ -46,7 +46,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.setAttributedText(
             targetString: "반가워요 회원님!",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 22),
-            color: HPCommonUIAsset.black.color,
+            color: HPCommonUIAsset.gray7.color,
             paragraphStyle: paragraphStyle,
             spacing: 10,
             aligment: .center
@@ -57,7 +57,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel.setSubScriptAttributed(
             targetString: "*",
             font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
+            color: HPCommonUIAsset.redColor.color,
             offset: 8
         )
     }
@@ -66,34 +66,34 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let genederDescriptionLabel: UILabel = UILabel().then {
         $0.text = "성별 *"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .justified
         $0.setSubScriptAttributed(
             targetString: "*",
             font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
+            color: HPCommonUIAsset.redColor.color,
             offset: 8
         )
     }
     
     private let genderOfManButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.separator.color.cgColor
+        borderColor: HPCommonUIAsset.gray2.color.cgColor
     ).then {
         $0.setTitle("남", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
+        $0.setTitleColor(HPCommonUIAsset.gray3.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
     private let genderOfGirlButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.separator.color.cgColor
+        borderColor: HPCommonUIAsset.gray2.color.cgColor
     ).then {
         $0.setTitle("여", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
+        $0.setTitleColor(HPCommonUIAsset.gray3.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -108,7 +108,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel.setSubScriptAttributed(
             targetString: "*",
             font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
+            color: HPCommonUIAsset.redColor.color,
             offset: 8
         )
     }
@@ -117,24 +117,24 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.titleLabel.setSubScriptAttributed(
             targetString: "*",
             font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 11),
-            color: HPCommonUIAsset.boldRed.color,
+            color: HPCommonUIAsset.redColor.color,
             offset: 8
         )
     }
     
     private let certificationButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.separator.color.cgColor
+        borderColor: HPCommonUIAsset.gray2.color.cgColor
     ).then {
         $0.setTitle("인증하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .selected)
+        $0.setTitleColor(HPCommonUIAsset.gray4.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .selected)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
     private let modifyDescriptionLabel: UILabel = UILabel().then {
         $0.text = "입력 하신 정보들은 마이페이지에서 언제든 수정 가능해요."
-        $0.textColor = HPCommonUIAsset.mediumSeparator.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 11)
         $0.textAlignment = .justified
         $0.numberOfLines = 1
@@ -143,9 +143,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
         $0.setTitle("시작하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.whiteColor.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
     }
     
     
@@ -153,10 +153,10 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let authCodeButton: HPButton = HPButton(
         cornerRadius: 0,
-        borderColor: HPCommonUIAsset.separator.color.cgColor
+        borderColor: HPCommonUIAsset.gray2.color.cgColor
     ).then {
         $0.setTitle("인증확인", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.gray4.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 15)
     }
     
@@ -346,9 +346,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.state
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter { $0.userGender == .male }
-            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .map { _ in HPCommonUIAsset.mainColor.color}
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isSelected = false
@@ -358,9 +358,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.state
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender == .female }
-            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .map { _ in HPCommonUIAsset.mainColor.color}
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isSelected = false
@@ -371,11 +371,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.state
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender != .male }
-            .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .map { _ in HPCommonUIAsset.gray2.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color.cgColor)
             .drive(onNext: { color in
-                self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                self.genderOfManButton.setTitleColor(HPCommonUIAsset.gray4.color, for: .normal)
                 self.genderOfManButton.layer.borderColor = color
             }).disposed(by: disposeBag)
         
@@ -383,11 +383,11 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.state
             .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
             .filter {  $0.userGender != .female }
-            .map { _ in HPCommonUIAsset.separator.color.cgColor }
+            .map { _ in HPCommonUIAsset.gray2.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color.cgColor)
             .drive(onNext: { color in
-                self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
+                self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.gray4.color, for: .normal)
                 self.genderOfGirlButton.layer.borderColor = color
             }).disposed(by: disposeBag)
 
@@ -404,9 +404,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "male" }
-            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .map { _ in HPCommonUIAsset.mainColor.color}
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isEnabled = false
@@ -415,9 +415,9 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         reactor.pulse(\.$kakaoUserEntity)
             .compactMap { $0?.kakaoAccount?.gender }
             .filter { $0.rawValue == "female" }
-            .map { _ in HPCommonUIAsset.deepOrange.color}
+            .map { _ in HPCommonUIAsset.mainColor.color}
             .observe(on: MainScheduler.asyncInstance)
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isEnabled = false
@@ -455,8 +455,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0?.response }
             .filter { $0.gender == "M" }
             .observe(on: MainScheduler.asyncInstance)
-            .map { _ in HPCommonUIAsset.deepOrange.color}
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .map { _ in HPCommonUIAsset.mainColor.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
@@ -466,8 +466,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0?.response }
             .filter { $0.gender == "F" }
             .observe(on: MainScheduler.asyncInstance)
-            .map { _ in HPCommonUIAsset.deepOrange.color}
-            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
+            .map { _ in HPCommonUIAsset.mainColor.color}
+            .asDriver(onErrorJustReturn: HPCommonUIAsset.gray2.color)
             .drive(onNext: { color in
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
@@ -601,7 +601,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
                 if isEnabled {
                     owner.certificationButton.isEnabled = isEnabled
                 } else {
-                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.gray2.color.cgColor
                     owner.certificationButton.isEnabled = isEnabled
                     owner.hideDropdownAnimation()
                 }
@@ -726,7 +726,7 @@ extension SignUpViewController: SignUpViewAnimatable {
     func hideDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
-            self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.mainColor.color.cgColor
             
             self.phoneView.snp.makeConstraints {
                 $0.left.equalTo(self.nameView)
