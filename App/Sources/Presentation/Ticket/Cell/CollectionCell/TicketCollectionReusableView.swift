@@ -41,11 +41,13 @@ class TicketCollectionReusableView: UICollectionReusableView {
     private lazy var titleLabel: UILabel = UILabel().then {
         $0.text = "시설 / 이용권 조회"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
+        $0.textColor = HPCommonUIAsset.gray6.color
     }
     
     private lazy var descriptionLabel: UILabel = UILabel().then {
         $0.text = "원하는 시설을 구경하고 이용권을 구매해보세요!"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray7.color
     }
     
     private lazy var buttonStackView: UIStackView = UIStackView().then {
@@ -61,13 +63,13 @@ class TicketCollectionReusableView: UICollectionReusableView {
         let attributedString = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: text)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
-        attributedString.addAttribute(.foregroundColor, value: loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
+        attributedString.addAttribute(.foregroundColor, value: loopPassButtonFlag ? HPCommonUIAsset.mainColor.color : HPCommonUIAsset.gray3.color, range: range)
         $0.setAttributedTitle(attributedString, for: .normal)
         
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 13
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+        $0.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.mainColor.color.cgColor : HPCommonUIAsset.gray3.color.cgColor
     }
     
     private lazy var loopPassButton: UIButton = UIButton().then {
@@ -75,13 +77,13 @@ class TicketCollectionReusableView: UICollectionReusableView {
         let attributedString = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: text)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12), range: range)
-        attributedString.addAttribute(.foregroundColor, value: !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color, range: range)
+        attributedString.addAttribute(.foregroundColor, value: !loopPassButtonFlag ? HPCommonUIAsset.mainColor.color : HPCommonUIAsset.gray3.color, range: range)
         $0.setAttributedTitle(attributedString, for: .normal)
         
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 13
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+        $0.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.mainColor.color.cgColor : HPCommonUIAsset.gray3.color.cgColor
     }
     
     private lazy var locationStackView: UIStackView = UIStackView().then {
@@ -91,12 +93,12 @@ class TicketCollectionReusableView: UICollectionReusableView {
     }
     
     private lazy var locationImageView: UIImageView = UIImageView().then {
-        $0.image = HPCommonUIAsset.locationFilled.image.withTintColor(HPCommonUIAsset.deepOrange.color)
+        $0.image = HPCommonUIAsset.locationFilled.image.withTintColor(HPCommonUIAsset.mainColor.color)
     }
     
     public lazy var locationButton: UIButton = UIButton().then {
         let mainText = "위치를 설정해주세요"
-        let attributedString = mainText.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), UIColor.black)
+        let attributedString = mainText.stringToAttributed(HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), HPCommonUIAsset.gray8.color)
         $0.setAttributedTitle(attributedString, for: .normal)
         
         var configure = UIButton.Configuration.plain()
@@ -117,6 +119,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
                                                                                width: 0,
                                                                                height: 0)).then {
         let subText = "설정"
+        #warning("색상 이야기 전해지면 수정")
         let subAttributedString = subText.stringToAttributed(HPCommonUIFontFamily.Pretendard.light.font(size: 12), UIColor(red: 77/255, green: 77/255, blue: 77/255, alpha: 1))
         let subRange = (subText as NSString).range(of: subText)
         subAttributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: subRange)
@@ -134,7 +137,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
             
             $0.setAttributedTitle(
                 text.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-                                        HPCommonUIAsset.lightblack.color
+                                        HPCommonUIAsset.gray7.color
                                        ),for: .normal)
             $0.tintColor = .white
             let size = CGSize(width: 14, height: 14)
@@ -242,7 +245,7 @@ class TicketCollectionReusableView: UICollectionReusableView {
                 }
                 self.sortButton.setAttributedTitle(
                     title.stringToAttributed(HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-                                             HPCommonUIAsset.horizontalDivider.color
+                                             HPCommonUIAsset.gray7.color
                                             ),for: .normal
                 )
             }
@@ -256,17 +259,17 @@ class TicketCollectionReusableView: UICollectionReusableView {
         
         loopPassButton.setAttributedTitle(loopText.stringToAttributed(
             HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12),
-            !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color
+            !loopPassButtonFlag ? HPCommonUIAsset.mainColor.color : HPCommonUIAsset.gray3.color
         ),for: .normal)
-        loopPassButton.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+        loopPassButton.layer.borderColor = !loopPassButtonFlag ? HPCommonUIAsset.mainColor.color.cgColor : HPCommonUIAsset.gray3.color.cgColor
         
         let text = "이용권"
         ticketButton.setAttributedTitle(text.stringToAttributed(
             HPCommonUIFontFamily.Pretendard.semiBold.font(size: 12),
-            loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.lightSeparator.color
+            loopPassButtonFlag ? HPCommonUIAsset.mainColor.color : HPCommonUIAsset.gray3.color
         ),for: .normal)
         
-        ticketButton.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.deepOrange.color.cgColor : HPCommonUIAsset.lightSeparator.color.cgColor
+        ticketButton.layer.borderColor = loopPassButtonFlag ? HPCommonUIAsset.mainColor.color.cgColor : HPCommonUIAsset.gray3.color.cgColor
     }
     
 }

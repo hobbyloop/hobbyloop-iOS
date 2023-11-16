@@ -29,10 +29,12 @@ class TicketCollectionViewCell: UICollectionViewCell {
     
     private var titleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 20)
+        $0.textColor = HPCommonUIAsset.gray7.color
     }
     
     private var descriptionLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+        $0.textColor = HPCommonUIAsset.gray5.color
     }
     
     private var archiveButton: UIButton = UIButton().then {
@@ -52,11 +54,12 @@ class TicketCollectionViewCell: UICollectionViewCell {
     }
     
     private var starImageView: UIImageView = UIImageView().then {
-        $0.tintColor = UIColor(red: 255/255, green: 194/255, blue: 0, alpha: 1)
+        $0.tintColor = HPCommonUIAsset.yellowColor.color
     }
     
     private var starLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     
     public lazy var tableView: UITableView = UITableView().then {

@@ -24,11 +24,12 @@ class FacilityInfoCollectionMapCell: UICollectionViewCell {
     
     private lazy var iconImageView: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.locationFilled.image.withRenderingMode(.alwaysOriginal)
+        $0.tintColor = HPCommonUIAsset.gray6.color
     }
     
     private lazy var textLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.gray6.color
         $0.text = "오시는 길"
         $0.lineBreakStrategy = .hangulWordPriority
         $0.numberOfLines = 0

@@ -26,13 +26,13 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
         bar.backgroundColor = .white
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 17.0, bottom: 0.0, right: 17.0)
         bar.buttons.customize { (button) in
-            button.tintColor = UIColor(red: 123/255, green: 123/255, blue: 123/255, alpha: 1) // 선택 안되어 있을 때
-            button.selectedTintColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1) // 선택 되어 있을 때
+            button.tintColor = HPCommonUIAsset.gray3.color// 선택 안되어 있을 때
+            button.selectedTintColor = HPCommonUIAsset.gray7.color // 선택 되어 있을 때
             button.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
         }
         // 인디케이터 조정
         bar.indicator.weight = .light
-        bar.indicator.tintColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(0.4)
+        bar.indicator.tintColor = HPCommonUIAsset.mainColor.color
         bar.indicator.overscrollBehavior = .bounce
         bar.layout.alignment = .leading
         bar.layout.contentMode = .fit
@@ -43,7 +43,7 @@ class TicketDetailViewController: BaseViewController<HomeViewReactor> {
     }
     
     private lazy var paymentButton: UIButton = UIButton().then {
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color.withAlphaComponent(1)
         $0.setTitle("결제하기", for: .normal)
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10

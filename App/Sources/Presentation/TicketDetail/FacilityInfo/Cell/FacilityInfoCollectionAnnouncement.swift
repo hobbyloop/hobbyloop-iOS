@@ -28,17 +28,18 @@ class FacilityInfoCollectionAnnouncement: UICollectionViewCell, FacilityInfoNavi
     private lazy var titleLabel: UILabel = UILabel().then {
         $0.text = "공지사항"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.gray6.color
     }
     
     private lazy var subscribeLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.numberOfLines = 0
     }
     
     public lazy var openButton: UIButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.downarrow.image, for: .normal)
-        $0.setImage(HPCommonUIAsset.uparrow.image, for: .application)
+        $0.setImage(HPCommonUIAsset.uparrow.image, for: .selected)
     }
     
     override init(frame: CGRect) {
@@ -98,6 +99,7 @@ class FacilityInfoCollectionAnnouncement: UICollectionViewCell, FacilityInfoNavi
         openButton.rx.tap.bind { [weak self] in
             guard let self = self else { return }
             self.announcementEvent.onNext(false)
+            openButton.isEnabled.toggle()
         }.disposed(by: disposeBag)
     }
     
