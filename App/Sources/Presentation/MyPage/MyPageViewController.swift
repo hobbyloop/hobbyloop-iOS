@@ -46,18 +46,18 @@ final class MyPageViewController: UIViewController {
     private let phoneNumberLabel = UILabel().then {
         $0.text = "010-1234-5678"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
-        $0.textColor = HPCommonUIAsset.userInfoLabel.color
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     
     private let userEmailLabel = UILabel().then {
         $0.text = "jiwon2@gmail.com"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
-        $0.textColor = HPCommonUIAsset.userInfoLabel.color
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     
     private let editButton = UIButton().then {
         $0.setTitle("수정하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.buttonTitle.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.gray4.color, for: .normal)
         $0.titleLabel?.font =  HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
     }
     
@@ -116,7 +116,7 @@ final class MyPageViewController: UIViewController {
     private let classCountLabel = UILabel().then {
         $0.text = "13"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        $0.textColor = HPCommonUIAsset.deepOrange.color
+        $0.textColor = HPCommonUIAsset.mainColor.color
     }
     
     private lazy var reservableClassButton = horizontalStackButton(
@@ -133,7 +133,7 @@ final class MyPageViewController: UIViewController {
     private let couponCountLabel = UILabel().then {
         $0.text = "8"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        $0.textColor = HPCommonUIAsset.deepOrange.color
+        $0.textColor = HPCommonUIAsset.mainColor.color
     }
     
     private lazy var remainingCouponButton = horizontalStackButton(
@@ -160,7 +160,7 @@ final class MyPageViewController: UIViewController {
     private let instructorNameLabel = UILabel().then {
         $0.text = "이민주 강사님"
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-        $0.textColor = HPCommonUIAsset.instructorNameLabel.color
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     private let classWeekdayLabel = UILabel().then {
         $0.text = "매주 화. 목. 토"
@@ -172,9 +172,9 @@ final class MyPageViewController: UIViewController {
     }
     
     private lazy var classInfoView = UIView().then { view in
-        view.backgroundColor = HPCommonUIAsset.classInfoBackground.color
+        view.backgroundColor = HPCommonUIAsset.backgroundColor.color
         let horizontalDivider = UIView()
-        horizontalDivider.backgroundColor = HPCommonUIAsset.horizontalDivider.color
+        horizontalDivider.backgroundColor = HPCommonUIAsset.gray6.color
         
         let verticalDivider = UIView()
         verticalDivider.backgroundColor = .black
@@ -186,7 +186,7 @@ final class MyPageViewController: UIViewController {
         let dotView = UIView()
         dotView.layer.cornerRadius = 3.5
         dotView.clipsToBounds = true
-        dotView.backgroundColor = HPCommonUIAsset.deepOrange.color
+        dotView.backgroundColor = HPCommonUIAsset.mainColor.color
         
         dotView.snp.makeConstraints {
             $0.width.equalTo(7)
@@ -280,7 +280,7 @@ final class MyPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        scrollView.backgroundColor = HPCommonUIAsset.lightBackground.color
+        scrollView.backgroundColor = HPCommonUIAsset.backgroundColor.color
         
         layoutCustomNavigationBar()
         layoutScrollView()
@@ -403,7 +403,7 @@ final class MyPageViewController: UIViewController {
         }
         
         let buttonDivider = UIView()
-        buttonDivider.backgroundColor = HPCommonUIAsset.separator.color
+        buttonDivider.backgroundColor = HPCommonUIAsset.gray3.color
         buttonDivider.snp.makeConstraints {
             $0.width.equalTo(1)
             $0.height.equalTo(23)

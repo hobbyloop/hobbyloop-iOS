@@ -49,7 +49,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
         $0.text = "루프패스"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
         $0.textColor = .white
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color.withAlphaComponent(1)
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color.withAlphaComponent(1)
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true
         $0.textAlignment = .center
@@ -62,9 +62,9 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
     private lazy var refundableCompanyLabel: UILabel = UILabel().then {
         $0.text = "중도환불 가능업체"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
-        $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.gray6.color
         $0.layer.cornerRadius = 10
-        $0.layer.borderColor = HPCommonUIAsset.separator.color.withAlphaComponent(1).cgColor
+        $0.layer.borderColor = HPCommonUIAsset.gray6.color.withAlphaComponent(1).cgColor
         $0.layer.borderWidth = 1
         $0.textAlignment = .center
         $0.snp.makeConstraints {
@@ -75,11 +75,12 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
     
     private lazy var titleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.gray7.color
     }
     
     private lazy var descriptionLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        $0.textColor = .black.withAlphaComponent(0.45)
+        $0.textColor = HPCommonUIAsset.gray8.color.withAlphaComponent(0.45)
     }
     
     private lazy var communicationStackView: UIStackView = UIStackView().then {
@@ -89,10 +90,12 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
     
     private lazy var callButton: UIButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.callFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        $0.tintColor = HPCommonUIAsset.gray7.color
     }
     
     private lazy var messageButton: UIButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.textFilled.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        $0.tintColor = HPCommonUIAsset.gray7.color
     }
     
     private lazy var workTimeButton: UIButton = UIButton().then {
@@ -110,7 +113,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
         let attributedString = NSMutableAttributedString(string: fullText)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 16), range: range)
         $0.setAttributedTitle(attributedString, for: .normal)
-        $0.tintColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.tintColor = HPCommonUIAsset.gray6.color
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -130,7 +133,7 @@ class FacilityInfoCollectionReusableView: UICollectionReusableView, FacilityInfo
         $0.configure(daily)
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 10
-        $0.layer.borderColor = HPCommonUIAsset.lightSeparator.color.cgColor
+        $0.layer.borderColor = HPCommonUIAsset.gray3.color.cgColor
         $0.layer.borderWidth = 1
         $0.isHidden = true
     }

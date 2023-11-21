@@ -51,14 +51,14 @@ public final class SignUpInfoView: UIView {
     public var isError: Bool = false {
         didSet {
             if isError {
-                self.textFieldView.layer.borderColor = HPCommonUIAsset.boldRed.color.cgColor
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.redColor.color.cgColor
                 self.descriptionLabel.text = "\(self.titleType.rawValue)을 다시 확인해주세요."
                 descriptionLabel.snp.remakeConstraints {
                     $0.left.right.equalToSuperview()
                     $0.bottom.equalToSuperview().offset(-11)
                 }
             } else {
-                self.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+                self.textFieldView.layer.borderColor = HPCommonUIAsset.gray2.color.cgColor
                 self.descriptionLabel.text = ""
                 descriptionLabel.snp.remakeConstraints {
                     $0.top.equalTo(textFieldView.snp.bottom)
@@ -70,7 +70,7 @@ public final class SignUpInfoView: UIView {
     }
     
     public let titleLabel: UILabel = UILabel().then {
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .justified
     }
@@ -83,10 +83,10 @@ public final class SignUpInfoView: UIView {
     
     public lazy var textFieldView: UITextField = UITextField().then {
         if filled {
-            $0.backgroundColor = HPCommonUIAsset.lightBackground.color
-            $0.textColor = UIColor(red: 0x6C / 255, green: 0x6C / 255, blue: 0x6C / 255, alpha: 1)
+            $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
+            $0.textColor = HPCommonUIAsset.gray5.color
         } else {
-            $0.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            $0.layer.borderColor = HPCommonUIAsset.gray3.color.cgColor
             $0.layer.borderWidth = 1
         }
         $0.layer.masksToBounds = true
@@ -99,7 +99,7 @@ public final class SignUpInfoView: UIView {
     
     
     public lazy var descriptionLabel: UILabel = UILabel().then {
-        $0.textColor = HPCommonUIAsset.boldRed.color
+        $0.textColor = HPCommonUIAsset.redColor.color
         $0.numberOfLines = 1
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textAlignment = .left

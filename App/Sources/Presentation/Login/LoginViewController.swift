@@ -61,7 +61,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     private let underLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.defaultSeparator.color
+        $0.backgroundColor = HPCommonUIAsset.gray3.color
     }
     
     override init(reactor: LoginViewReactor?) {
@@ -80,7 +80,7 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = HPCommonUIAsset.whiteColor.color
         configure()
     }
     

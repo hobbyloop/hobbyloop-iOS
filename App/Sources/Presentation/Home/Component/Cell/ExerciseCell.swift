@@ -23,7 +23,7 @@ final class ExerciseCell: UICollectionViewCell {
     
     private let contentTitleLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 20)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.textAlignment = .left
         $0.numberOfLines = 0
         $0.text = "필라피티 스튜디오"
@@ -31,7 +31,7 @@ final class ExerciseCell: UICollectionViewCell {
     
     private let contentSubTitleLable: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.textAlignment = .left
         $0.numberOfLines = 0
         $0.text = "서울 강남구 압구정로50길 8 2층"

@@ -65,7 +65,7 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
     
     
     private func configure() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = HPCommonUIAsset.whiteColor.color
         self.view.addSubview(onboardingCollectionView)
         
         onboardingCollectionView.snp.makeConstraints {

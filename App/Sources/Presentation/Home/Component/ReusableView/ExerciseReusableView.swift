@@ -19,7 +19,7 @@ final class ExerciseReusableView: UICollectionReusableView {
         $0.configuration?.image = HPCommonUIAsset.rightArrow.image
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "오늘은 이 운동 어때요?", attributes: [
-            .foregroundColor: HPCommonUIAsset.black.color,
+            .foregroundColor: HPCommonUIAsset.gray7.color,
             .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         ]))
     }
@@ -38,7 +38,7 @@ final class ExerciseReusableView: UICollectionReusableView {
     
     private func configure() {
         self.addSubview(exerciseButton)
-        self.backgroundColor = HPCommonUIAsset.white.color
+        self.backgroundColor = HPCommonUIAsset.whiteColor.color
         
         exerciseButton.snp.makeConstraints {
             $0.right.equalToSuperview()

@@ -114,7 +114,7 @@ final class HomeViewController: BaseViewController<HomeViewReactor> {
     
     
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
-        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.register(UserInfoProvideCell.self, forCellWithReuseIdentifier: "UserInfoProvideCell")
         $0.register(TicketCell.self, forCellWithReuseIdentifier: "TicketCell")
         $0.register(CalendarCell.self, forCellWithReuseIdentifier: "CalendarCell")

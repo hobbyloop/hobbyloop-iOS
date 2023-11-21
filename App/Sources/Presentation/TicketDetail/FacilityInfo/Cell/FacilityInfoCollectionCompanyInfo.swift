@@ -26,6 +26,7 @@ class FacilityInfoCollectionCompanyInfo: UICollectionViewCell {
     
     private lazy var textLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray6.color
         $0.lineBreakStrategy = .hangulWordPriority
         $0.numberOfLines = 0
     }
