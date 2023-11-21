@@ -14,7 +14,7 @@ public final class HPHistoryCell: UITableViewCell {
     private let dateLabel = UILabel().then {
         $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.historyDateLabel.color
+        $0.textColor = HPCommonUIAsset.gray3.color
     }
     
     public var dateText: String {
@@ -60,7 +60,7 @@ public final class HPHistoryCell: UITableViewCell {
     private let remainingAmountLabel = UILabel().then {
         $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.historyDateLabel.color
+        $0.textColor = HPCommonUIAsset.gray3.color
     }
     
     public var remainingAmountText: String {

@@ -28,7 +28,7 @@ public final class CouponPurchaseHistoryCell: UITableViewCell {
     public let classNameLabel = UILabel().then {
         $0.text = "6:1 그룹레슨 30회"
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
-        $0.textColor = HPCommonUIAsset.instructorNameLabel.color
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
