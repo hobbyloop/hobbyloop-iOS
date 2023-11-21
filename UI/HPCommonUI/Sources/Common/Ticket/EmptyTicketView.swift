@@ -47,7 +47,7 @@ public final class EmptyTicketView: UIView {
         maskLayer.path = maskPath.cgPath
         
         maskLayer.fillColor = UIColor.clear.cgColor
-        maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
+        maskLayer.strokeColor = HPCommonUIAsset.gray3.color.cgColor
         maskLayer.lineWidth = 0.5
         maskLayer.lineDashPattern = [10, 10]
         
@@ -56,7 +56,7 @@ public final class EmptyTicketView: UIView {
         // 테두리가 점선인 ticket template view는 투명한 색으로 처리할 것이므로 문제 X
         
         let midLineLayer = CAShapeLayer()
-        midLineLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
+        midLineLayer.strokeColor = HPCommonUIAsset.gray3.color.cgColor
         midLineLayer.lineWidth = 0.5
         midLineLayer.lineDashPattern = [10, 10]
         let cgPath = CGMutablePath()
