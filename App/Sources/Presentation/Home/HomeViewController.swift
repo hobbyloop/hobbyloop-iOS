@@ -354,7 +354,6 @@ extension HomeViewController: HomeLayoutCreatable {
         
     }
     
-    
     fileprivate func createExplanationClassLayout() -> NSCollectionLayoutSection {
         
         let explanationClassLayoutSize = NSCollectionLayoutSize(
@@ -377,10 +376,6 @@ extension HomeViewController: HomeLayoutCreatable {
         return explanationClassSection
     }
     
-    
-    
-    //MARK: 오늘의 운동 섹션 레이아웃 구성 함수
-    /// - Return : NSCollectionLayoutSize
     fileprivate func createExerciseClassLayout() -> NSCollectionLayoutSection {
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(327),
@@ -432,8 +427,6 @@ extension HomeViewController: HomeLayoutCreatable {
         return exerciseSection
     }
     
-    //MARK: 오늘의 혜택 섹션 레이아웃 구성 함수
-    /// - Return : NSCollectionLayoutSize
     fileprivate func createBenefitsLayout() -> NSCollectionLayoutSection {
         
         let benefitsItemLayoutSize = NSCollectionLayoutSize(
