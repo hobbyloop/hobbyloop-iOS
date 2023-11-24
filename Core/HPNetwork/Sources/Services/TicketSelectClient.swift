@@ -17,7 +17,6 @@ import RxSwift
 
 /**
   TicketSelectClient 에게 행위(Behavier)를 정의하기 위한 interface
- 
  */
 public protocol TicketSelectService: AnyObject {
     func requestToInstructorList(id: Int) -> Single<Instructor>
@@ -31,7 +30,6 @@ public final class TicketSelectClient: BaseNetworkable, TicketSelectService {
         var session = AF
         let configuration = URLSessionConfiguration.af.default
         let eventLogger = HPAPIEventLogger()
-        let authenticator = HPAuthenticator()
         let interceptor = HPRequestInterceptor()
         
         session = Session(
@@ -59,7 +57,7 @@ extension TicketSelectClient {
             self.AFManager.request(TicketSelectRouter.getInstructorList(id))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: Instructor.self) { response in
-                    //MARK: Token 관련 로직 Single Tone Pattern 수정 후 사용
+                    //TODO: Token 관련 로직 Single Tone Pattern 수정 후 사용
                     switch response.result {
                     case let .success(data):
                         single(.success(data))
