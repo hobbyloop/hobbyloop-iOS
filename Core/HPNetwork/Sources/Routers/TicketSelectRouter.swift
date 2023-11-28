@@ -53,14 +53,8 @@ extension TicketSelectRouter: Router {
     }
     
     public var headers: HTTPHeaders {
-        var token: String = ""
-        do {
-            token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-        } catch {
-            print(error.localizedDescription)
-        }
         return [
-            "Authorization": "Bearer \(token)",
+            "Authorization": "Bearer \(LoginManager.shared.readToken(key: .accessToken))",
             "Accept": "*/*"
          ]
     }

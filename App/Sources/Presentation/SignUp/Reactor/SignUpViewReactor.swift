@@ -11,7 +11,6 @@ import HPDomain
 import HPCommon
 import HPExtensions
 import ReactorKit
-import RxSwift
 import KakaoSDKUser
 import GoogleSignIn
 
@@ -113,13 +112,10 @@ public final class SignUpViewReactor: Reactor {
     
     public func mutate(action: Action) -> Observable<Mutation> {
     
-        
         switch action {
+            
         case .viewDidLoad:
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
             var requestProfile = Observable<Mutation>.empty()
-            print("viewDidLoad SignUp Reactor: \(self.accountType)")
             if accountType == .kakao {
                 requestProfile = signUpRepository.responseKakaoProfile()
             } else if accountType == .naver {
@@ -127,24 +123,26 @@ public final class SignUpViewReactor: Reactor {
             }
             
             return .concat(
-                startLoading,
+                .just(.setLoading(true)),
                 requestProfile,
-                endLoading
+                .just(.setLoading(false))
             )
+            
         case let .updateToName(userName):
-            print("update To Name : \(userName)")
+            
             return .just(.setUserName(userName))
             
         case let .updateToNickName(userNickName):
+            
             return .just(.setUserNickName(userNickName))
             
         case let .updateToBirthDay(userBirthDay):
+            
             return .just(.setUserBirthDay(userBirthDay))
             
         case let .didTapGenderButton(gender):
-            let setUserInfoGender = Observable<Mutation>.just(.setUserGender(gender))
-            
-            return setUserInfoGender
+        
+            return .just(.setUserGender(gender))
             
         case .didTapAuthCodeButton:
             
@@ -155,19 +153,17 @@ public final class SignUpViewReactor: Reactor {
             guard self.currentState.ceritifcationState else { return .empty() }
             return .just(.setCertificationState(self.currentState.ceritifcationState))
             
-        case let .didTapCreateUserButton(name, nickName, gender, birth, phoneNumber):
-            let startLoading = Observable<Mutation>.just(.setLoading(true))
-            let endLoading = Observable<Mutation>.just(.setLoading(false))
+        case let .didTapCreateUserButton(name, nickName, gender, birthDay, phoneNumber):
             
             return .concat(
-                startLoading,
-                signUpRepository.createUserInformation(name: name, nickName: nickName, gender: gender, birth: birth, phoneNumber: phoneNumber),
-                endLoading
+                .just(.setLoading(true)),
+                signUpRepository.createUserInformation(name: name, nickname: nickName, gender: gender, birthDay: birthDay, phoneNumber: phoneNumber),
+                .just(.setLoading(false))
             )
             
         case let .updateToPhoneNumber(phoneNumber):
-            return .just(.setUserPhoneNumber(phoneNumber))
             
+            return .just(.setUserPhoneNumber(phoneNumber))
             
         case .didChangePhoneNumber:
             
@@ -178,11 +174,11 @@ public final class SignUpViewReactor: Reactor {
     
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         
-        let fromAppleFullNameMutation = SignUpViewStream.event.flatMap { [weak self] event in
+        let appleNickNameUpdate = SignUpViewStream.event.flatMap { [weak self] event in
             self?.requestAppleUserProfile(from: event) ?? .empty()
         }
         
-        return Observable.of(mutation, fromAppleFullNameMutation).merge()
+        return Observable.merge(mutation, appleNickNameUpdate)
     }
     
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -194,34 +190,28 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserName(userName):
             newState.userName = userName
-            print("newState userName: \(newState.userName)")
             
         case let .setUserNickName(userNickName):
             newState.userNickName = userNickName
-            print("newState userNickName: \(newState.userNickName)")
             
         case let .setUserBirthDay(userBirthDay):
             newState.userBirthDay = userBirthDay
-            print("newState userBirtyday : \(newState.userBirthDay)")
             
         case let .setKakaoUserEntity(kakaoEntity):
             newState.kakaoUserEntity = kakaoEntity
-            debugPrint("newState Kakao Profile Entity: \(newState.kakaoUserEntity)")
             
         case let .setNaverUserEntity(naverEntity):
             newState.naverUserEntity = naverEntity
-            debugPrint("newState Naver Profile Entity: \(newState.naverUserEntity)")
             
         case let .setCertificationState(certificationState):
             newState.ceritifcationState = certificationState
-            debugPrint("newState  CertificationState: \(certificationState)")
             
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName
             
         case let .setUserGender(gender):
             newState.userGender = gender
-            print("set newstate gedner: \(newState.userGender)")
+            
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
             
@@ -236,16 +226,12 @@ public final class SignUpViewReactor: Reactor {
 
 
 
-public extension SignUpViewReactor {
+extension SignUpViewReactor {
     
-    
-    func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
+    private func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .requestAppleLogin(fullName):
-            print("Apple Event: \(fullName)")
             return .just(.setAppleUserFullName(fullName))
-        default:
-            return .empty()
         }
     }
     

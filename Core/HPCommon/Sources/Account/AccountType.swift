@@ -7,7 +7,7 @@
 
 import Foundation
 
-
+@frozen
 public enum AccountType: String, Equatable {
     case kakao
     case naver

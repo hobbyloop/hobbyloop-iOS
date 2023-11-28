@@ -1,0 +1,71 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :generate do |options|
+
+    app_store_connect_api_key(
+      key_id: ENV['FASTLANE_API_KEY_ID'],
+      issuer_id: ENV['FASTLANE_API_KEY_ISSUER_ID'],
+      key_content: ENV['FASTLANE_API_KEY_CONTENT'],
+      is_key_content_base64: false,
+      in_house: false
+    )
+
+    increment_build_number(
+      build_number: latest_testflight_build_number() + 1,
+      xcodeproj: "./App/Hobbyloop.xcodeproj"
+    )
+    
+    build_app(
+      workspace: "#{ENV['APP_NAME']}.xcworkspace",
+      scheme: "#{ENV['SCHEME']}",
+      export_method: "app-store",
+      export_options: {
+		  method: "app-store", 
+	    provisioningProfiles: {
+        "com.app.hobbyloop" => "Hobbyloop.Release",
+        "com.app.hobbyloop" => "Hobbyloop.Debug"
+		  }
+	  }
+    )
+
+    upload_to_testflight(
+      app_identifier: "#{ENV['BUNDLE_IDENTIFIER']}",
+      apple_id: "#{ENV['ITC_TEAM_ID']}",
+      skip_waiting_for_build_processing: true
+      )
+  
+	  discord_notifier(
+      webhook_url: "#{ENV['WEBHOOK_URL']}",
+      title: "🚀 #{ENV['APP_NAME']} iOS 배포 성공",
+      description: "#{ENV['APP_NAME']} iOS를 앱스토어에 성공적으로 배포하였습니다 !"
+    )
+  end
+
+  error do |lane, exception, options|
+    discord_notifier(
+      webhook_url: ENV['WEBHOOK_URL'],
+      title: "👾 #{ENV['APP_NAME']} iOS 배포 자동화 실패..",
+      thumbnail_url: "#{ENV['WEBHOOK_URL']}",
+      success: false,
+      color: "#e32d31",
+      description: "#{exception}"
+    )
+  end
+end

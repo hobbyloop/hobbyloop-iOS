@@ -25,7 +25,7 @@ private protocol SignUpViewAnimatable {
 
 
 
-final class SignUpViewController: BaseViewController<SignUpViewReactor> {
+public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     // MARK: Property
     private lazy var scrollView: UIScrollView = UIScrollView().then {
@@ -176,17 +176,16 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         debugPrint(#function)
     }
     
-    
     // MARK: LifeCycle
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         configure()
     }
     
-    override func viewDidLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
         self.authCodeButton.layer.cornerRadius = 10
     }
     
-    
+    // MARK: Configure
     private func configure() {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)
@@ -313,7 +312,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     
-    override func bind(reactor: SignUpViewReactor) {
+    public override func bind(reactor: SignUpViewReactor) {
         
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
@@ -349,7 +348,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isSelected = false
                 HapticUtil.impact(.light).generate()
@@ -361,7 +361,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isSelected = false
                 HapticUtil.impact(.light).generate()
@@ -374,7 +375,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                 self.genderOfManButton.layer.borderColor = color
             }).disposed(by: disposeBag)
@@ -386,7 +388,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.separator.color.cgColor }
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
                 self.genderOfGirlButton.layer.borderColor = color
             }).disposed(by: disposeBag)
@@ -407,7 +410,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
                 self.genderOfGirlButton.isEnabled = false
             }).disposed(by: disposeBag)
@@ -418,7 +422,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .observe(on: MainScheduler.asyncInstance)
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfGirlButton.isSelected = true
                 self.genderOfManButton.isEnabled = false
             }).disposed(by: disposeBag)
@@ -457,7 +462,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
@@ -468,7 +474,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .observe(on: MainScheduler.asyncInstance)
             .map { _ in HPCommonUIAsset.deepOrange.color}
             .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-            .drive(onNext: { color in
+            .drive(onNext: { [weak self] color in
+                guard let `self` = self else { return }
                 self.genderOfManButton.isSelected = true
             }).disposed(by: disposeBag)
         
@@ -542,8 +549,8 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .rx.notification(UIResponder.keyboardWillHideNotification)
             .observe(on: MainScheduler.instance)
             .withUnretained(self)
-            .subscribe(onNext: { vc, _ in
-                vc.containerView.frame.origin.y = 0
+            .subscribe(onNext: { owner, _ in
+                owner.containerView.frame.origin.y = 0
             }).disposed(by: disposeBag)
 
 
@@ -557,7 +564,6 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .disposed(by: disposeBag)
         
         
-        //Textfeild
         nameView.textFieldView
             .rx.textChange
             .distinctUntilChanged()
@@ -577,7 +583,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         birthDayView.textFieldView
             .rx.textChange
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.updateToBirthDay($0 ?? "")}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -645,7 +651,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .filter { $0.ceritifcationState == false }
-            .map { $0.ceritifcationState }.debug("certification Button Seelcted ")
+            .map { $0.ceritifcationState }
             .observe(on: MainScheduler.instance)
             .bind(to: certificationButton.rx.isSelected)
             .disposed(by: disposeBag)
@@ -664,11 +670,12 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         nameView
             .textFieldView.rx.textChange
+            .distinctUntilChanged()
             .compactMap { $0?.isEmpty ?? false || $0?.filter { $0.isNumber }.count ?? 0 >= 1 }
             .skip(1)
             .withUnretained(self)
             .bind(onNext: { owner, isError in
-                self.nameView.isError = isError
+                owner.nameView.isError = isError
                 if isError {
                     owner.nameView.snp.remakeConstraints {
                         $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
@@ -701,13 +708,13 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         confirmButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapCreateUserButton(self.reactor?.currentState.userName ?? "", self.reactor?.currentState.userNickName ?? "", self.reactor?.currentState.userGender.getGenderType() ?? "", self.reactor?.currentState.userBirthDay ?? "", self.reactor?.currentState.phoneNumber ?? "")}
+            .map { [weak self] in Reactor.Action.didTapCreateUserButton(self?.reactor?.currentState.userName ?? "", self?.reactor?.currentState.userNickName ?? "", self?.reactor?.currentState.userGender.getGenderType() ?? "", self?.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", self?.reactor?.currentState.phoneNumber ?? "")}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         
         reactor.state
-            .filter { $0.userAccountEntity?.status == 200}
+            .filter { $0.userAccountEntity?.statusCode == 201 }
             .bind(onNext: { _ in
                 guard let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 scene.window?.rootViewController = CustomTabBarController()
@@ -723,7 +730,7 @@ final class SignUpViewController: BaseViewController<SignUpViewReactor> {
 extension SignUpViewController: SignUpViewAnimatable {
     
     
-    func hideDropdownAnimation() {
+    fileprivate func hideDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
             self.phoneView.textFieldView.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
@@ -759,7 +766,7 @@ extension SignUpViewController: SignUpViewAnimatable {
         })
     }
     
-    func showDropdownAnimation() {
+    fileprivate func showDropdownAnimation() {
         UIView.animate(withDuration: 0.1, delay: 0.2, options: .curveEaseInOut, animations: { [weak self] in
             guard let self = `self` else { return }
             self.authCodeView.snp.remakeConstraints {
@@ -794,7 +801,7 @@ extension SignUpViewController: SignUpViewAnimatable {
     }
     
     
-    func showBottomSheetView() {
+    fileprivate func showBottomSheetView() {
         let signUpBottomSheetView = SignUpBottomSheetView()
         signUpBottomSheetView.modalPresentationStyle = .overFullScreen
         signUpBottomSheetView.delegate = self
@@ -807,7 +814,7 @@ extension SignUpViewController: SignUpViewAnimatable {
 
 
 extension SignUpViewController: SignUpBottomSheetDelegate {
-    func updateToBirthDay(birthday: Date) {
+    public func updateToBirthDay(birthday: Date) {
         self.birthDayView.textFieldView.text = birthday.convertToString()
     }
 }

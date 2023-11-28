@@ -15,12 +15,10 @@ import HPCommon
 import Then
 import SnapKit
 import ReactorKit
-import NaverThirdPartyLogin
 
-final class LoginViewController: BaseViewController<LoginViewReactor> {
-    // MARK: Property
+public final class LoginViewController: BaseViewController<LoginViewReactor> {
     
-    private var naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
+    // MARK: Property
     private lazy var loginStckView: UIStackView = UIStackView().then {
         $0.distribution = .equalSpacing
         $0.axis = .vertical
@@ -78,12 +76,11 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     // MARK: LifeCycle
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         configure()
     }
-    
     
     // MARK: Configure
     private func configure() {
@@ -161,20 +158,20 @@ final class LoginViewController: BaseViewController<LoginViewReactor> {
         Observable
             .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.state.map { $0.authToken }.distinctUntilChanged()
-            ).filter {!$0.1.isEmpty }
+                reactor.pulse(\.$authToken)
+            ).filter { $0.1 != nil }
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
-                owner.didShowSingUpController(accountType: state.0)
+                owner.didShowSignUpController(accountType: state.0)
             }).disposed(by: disposeBag)
     }
 }
 
 
-private extension LoginViewController {
+extension LoginViewController {
     
-    func didShowSingUpController(accountType: AccountType) {
-        let signUpContainer = SignUpDIContainer(signUpClient: APIClient.shared, signUpAccountType: accountType).makeViewController()
+    private func didShowSignUpController(accountType: AccountType) {
+        let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     

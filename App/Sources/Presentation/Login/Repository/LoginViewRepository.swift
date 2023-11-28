@@ -10,12 +10,12 @@ import Foundation
 import HPCommon
 import HPExtensions
 import HPNetwork
+import HPDomain
 import ReactorKit
 import KakaoSDKUser
 import KakaoSDKAuth
 import RxKakaoSDKUser
 import RxKakaoSDKAuth
-import KakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
 import AuthenticationServices
@@ -23,7 +23,7 @@ import AuthenticationServices
 public protocol LoginViewRepo {
     var disposeBag: DisposeBag { get }
     
-    var networkService: APIService { get }
+    var networkService: AccountClientService { get }
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     var googleLoginInstance: GIDConfiguration { get }
     
@@ -36,6 +36,7 @@ public protocol LoginViewRepo {
     func responseNaverLogin() -> Observable<LoginViewReactor.Mutation>
     
     /// 구글 로그인을 위한 implementation
+    func responseGoogleUser(to viewController: AnyObject) -> Observable<GIDGoogleUser>
     func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation>
     
     /// 애플 로그인을 위한 implementation
@@ -45,7 +46,7 @@ public protocol LoginViewRepo {
 
 
 public final class LoginViewRepository: NSObject, LoginViewRepo {
-    public var networkService: HPNetwork.APIService = APIClient.shared
+    public var networkService: HPNetwork.AccountClientService = AccountClient.shared
     
     public var disposeBag: DisposeBag = DisposeBag()
     
@@ -69,69 +70,77 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         }
     }
     
-    /// 카카오 로그인창 창을 띄우기 위한 메서드
-    ///  - note: 로그인이 필요한 경우 일때 호출 해야하는 메서드
-    ///  - parameters: none Parameters
+    /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드
+    ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    ///  - parameters: Observable<LoginViewReactor.Mutation>
     public func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                
-                let kakaoAuthMutation = Observable<LoginViewReactor.Mutation>
-                    .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
-                            observer.onNext(.setAccessToken(authToken))
-                            
-                        }
-                        return Disposables.create()
+                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) ->
+                        Observable<LoginViewReactor.Mutation> in
+                        .just(.setAccessToken(data))
                     }
-                return kakaoAuthMutation
             }
     }
     
     
-    /// 카카오 웹로그인 창을 띄우기 위한 메서드
-    /// - note: 로그인이 필요한 경우 및 사용자가 카카오톡이 깔려 있지 않는 경우 웹 브라우저를 띄운다.
-    /// - parameters: none Parameters
+    /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드, 웹(safariViewController) 로그인 시 호출
+    ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    ///  - parameters: Observable<LoginViewReactor.Mutation>
     public func responseKakaoWebLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                let kakaoWebAuthMutation = Observable<LoginViewReactor.Mutation>
-                    .create { observer in
-                        self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: AccountType.kakao, token: accessToken.accessToken)) { authToken in
-                            observer.onNext(.setAccessToken(authToken))
-                            observer.onNext(.setLoading(false))
-                        }
-                        return Disposables.create()
+                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) ->
+                        Observable<LoginViewReactor.Mutation> in
+                        .just(.setAccessToken(data))
                     }
-                return kakaoWebAuthMutation
             }
     }
     
     /// 네이버 로그인창을 띄우기 위한 메서드
+    /// - note: 사용자의 Action을 전달받아 네이버 로그인창을 띄운다.
+    /// - parameters: none Parameters
     public func responseNaverLogin() -> Observable<LoginViewReactor.Mutation> {
         naverLoginInstance.resetToken()
         return .just(.setNaverLogin(naverLoginInstance.requestThirdPartyLogin()))
     }
     
-    
-    /// 구글 로그인창을 띄우기 위한 메서드
-    public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
-        if let loginController = viewController as? LoginViewController {
-            
-            return .just(.setGoogleLogin(GIDSignIn.sharedInstance.signIn(with: googleLoginInstance, presenting: loginController, callback: { [weak self] user, error in
-                if let user {
-                    self?.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .google, token: user.authentication.accessToken), completion: { authToken in
-                        LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
-                    })
-                } else {
-                    debugPrint(error?.localizedDescription)
+    /// 구글 GIDGoogleUser Entity 값을 관찰하기 위한 메서드
+    /// - note: GIDGoogleUser Entity 이벤트를 방출 시켜 Return 하도록 한다.
+    /// - parameters: Observable<GIDGoogleUser>
+    public func responseGoogleUser(to viewController: AnyObject) -> Observable<GIDGoogleUser> {
+        return Observable.create { observer in
+            if let viewController = viewController as? LoginViewController {
+                GIDSignIn.sharedInstance.signIn(with: self.googleLoginInstance, presenting: viewController) { user, error in
+                    if let user = user {
+                        observer.onNext(user)
+                    }
                 }
-            })))
+            }
+            return Disposables.create()
         }
-        
-        return .empty()
+    }
+    
+    
+    /// 구글 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드
+    /// - note: 구글 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
+    /// - parameters: Observable<LoginViewReactor.Mutation>
+    public func responseGoogleLogin(to viewController: AnyObject) -> Observable<LoginViewReactor.Mutation> {
+        responseGoogleUser(to: viewController)
+            .flatMap { [weak self] user -> Observable<LoginViewReactor.Mutation> in
+                guard let self = `self` else { return .empty() }
+                return self.networkService.requestUserToken(account: .google, accessToken: user.authentication.accessToken)
+                    .asObservable()
+                    .flatMap { (data: HPDomain.Token) -> Observable<LoginViewReactor.Mutation> in
+                        .just(.setAccessToken(data))
+                    }
+            }
     }
     
     
@@ -166,11 +175,10 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     /// 네이버 로그인 성공 시 호출되는 메서드
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
         if let accessToken = naverLoginInstance.accessToken {
-            
-            // TODO: Naver Access Token 발급시 JWT 발급 요청 및 Mutation 방출
-            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .naver, token: accessToken)) { authToken in
-                LoginViewStream.event.onNext(.responseAccessToken(token: authToken))
-            }
+            self.networkService.requestUserToken(account: .naver, accessToken: accessToken)
+                .subscribe(onSuccess: { data in
+                    LoginViewStream.event.onNext(.responseAccessToken(token: data))
+                }).disposed(by: disposeBag)
         }
     }
     
@@ -208,11 +216,9 @@ extension LoginViewRepository: ASAuthorizationControllerDelegate, ASAuthorizatio
                   let identityToken = String(bytes: token, encoding: .utf8) else { return }
             let userIdentifier = appleIDCredential.user
             
-            //TODO: Apple Login Server API 구현시 Code 추가
+            //TODO: Server Response 변경으로 인한 로직 변경 반영 예정
             debugPrint("appleLogin identityToken: \(identityToken)")
-            self.networkService.requestToAuthentication(AccountRouter.getAccessToken(type: .apple, token: identityToken)) { authToken in
-                
-            }
+            UserDefaults.standard.set(userIdentifier, forKey: .accessId)
             let resultName = "\(familyName)\(givenName)"
             SignUpViewStream.event.onNext(.requestAppleLogin(resultName))
         default:
