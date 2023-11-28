@@ -28,12 +28,14 @@ final class OnboardingViewController: BaseViewController<OnboardingViewReactor> 
     }
     
     
-    private lazy var onboardingCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout(sectionProvider: { section, _ -> NSCollectionLayoutSection? in
-        let section = self.onboardingDataSource.sectionModels[section]
+    private lazy var onboardingCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] section, _ -> NSCollectionLayoutSection? in
+        let section = self?.onboardingDataSource.sectionModels[section]
         
         switch section {
         case .Onboarding:
-            return self.createOnboardingLayout()
+            return self?.createOnboardingLayout()
+        default:
+            return nil
         }
     })
     

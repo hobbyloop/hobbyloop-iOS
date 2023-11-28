@@ -10,7 +10,7 @@ import Foundation
 import HPExtensions
 import ReactorKit
 import RxSwift
-
+import HPDomain
 
 enum HomeViewStream: HPStreamType {
     enum Event {
@@ -19,7 +19,7 @@ enum HomeViewStream: HPStreamType {
     
 }
 
-final class HomeViewReactor: Reactor {
+public final class HomeViewReactor: Reactor {
     
     //MARK: Property
     public var initialState: State
@@ -34,18 +34,21 @@ final class HomeViewReactor: Reactor {
         case setLoading(Bool)
         case setEmptyClassItem
         case reloadClassItem
+        case setLatestReservationItem(LatestReservation)
     }
     
     //MARK: State
     public struct State {
         var isLoading: Bool
+        var reservationItem: LatestReservation?
         @Pulse var section: [HomeSection]
     }
     
-    init(homeRepository: HomeViewRepo) {
+    public init(homeRepository: HomeViewRepo) {
         self.homeRepository = homeRepository
         self.initialState = State(
             isLoading: false,
+            reservationItem: nil,
             section: [
                 .userInfoClass([
                     .userInfoClassItem
@@ -63,11 +66,11 @@ final class HomeViewReactor: Reactor {
                 .explanationClass([
                     .explanationClassItem
                 ]),
-                .exerciseClass([
-                    .exerciseClassItem
-                ]),
                 .benefitsClass([
                     .benefitsClassItem
+                ]),
+                .exerciseClass([
+                    .exerciseClassItem
                 ])
             ]
         )
@@ -92,6 +95,7 @@ final class HomeViewReactor: Reactor {
             return .concat(
                 startLoading,
                 .just(.setEmptyClassItem),
+                self.homeRepository.fetchLatestReservationInfo(),
                 endLoading
             )
             
@@ -106,6 +110,9 @@ final class HomeViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+            
+        case let .setLatestReservationItem(item):
+            newState.reservationItem = item
             
         case .setEmptyClassItem:
             let userIndex = self.getIndex(section: .userInfoClass([]))

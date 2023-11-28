@@ -21,6 +21,7 @@ public final class HPCalendarWeekReusableView: UICollectionReusableView, UIColle
     
     private lazy var weekCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewFlowLayout).then {
         $0.register(HPCalendarWeekCell.self, forCellWithReuseIdentifier: "HPCalendarWeekCell")
+        $0.backgroundColor = .clear
         $0.delegate = self
         $0.dataSource = self
     }

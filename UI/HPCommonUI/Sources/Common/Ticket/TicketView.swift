@@ -17,7 +17,7 @@ public enum TicketStatus {
 
 
 /// 수업 예약 내용을 나타내는 ticket view
-public final class TicketView: UIView {
+public final class TicketView: TicketQRCodeView {
     
     private let fillColor: CGColor
     private let textColor: UIColor
@@ -35,6 +35,7 @@ public final class TicketView: UIView {
             $0.height.equalTo(49)
         }
     }
+    
     
     private let titleLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
@@ -100,8 +101,12 @@ public final class TicketView: UIView {
     private func layout() {
         
         self.addSubview(containerView)
-        [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, logoView].forEach(self.addSubview(_:))
-                
+        [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, qrView].forEach(self.addSubview(_:))
+        
+        qrView.addSubview(qrTitleLabel)
+        //TODO: 추후에 Entity Parameter 추가
+        createQRCode(entity: "", size: "L", type: .blur)
+        setTitleLabel(text: "출석\nQR", textColor: HPCommonUIAsset.black.color, font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16))
         
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -136,9 +141,15 @@ public final class TicketView: UIView {
             $0.leading.equalTo(self.snp.leading).offset(27)
         }
         
-        logoView.snp.makeConstraints {
+        qrView.snp.makeConstraints {
             $0.centerY.equalTo(self.snp.centerY)
+            $0.width.height.equalTo(68)
             $0.trailing.equalTo(self.snp.trailing).offset(-51.42)
+        }
+        
+        qrTitleLabel.snp.makeConstraints {
+            $0.width.height.equalTo(50)
+            $0.center.equalToSuperview()
         }
     }
     
@@ -153,8 +164,6 @@ public final class TicketView: UIView {
         midLineLayer.lineWidth = 0.5
         midLineLayer.lineDashPattern = [10, 10]
         let cgPath = CGMutablePath()
-        let cgPoints = [CGPoint(x: frame.width - 136.42, y: 0), CGPoint(x: frame.width - 136.42, y: frame.height)]
-        cgPath.addLines(between: cgPoints)
         midLineLayer.path = cgPath
         
         return midLineLayer

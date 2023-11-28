@@ -28,7 +28,7 @@ public final class OnboardingCellReactor: Reactor {
             onboardingTitle: onboardingTitle,
             onboardingIndex: onboardingIndex
         )
-        print("CellReactor: \(onboardingImage), onboardTtitle: \(onboardingTitle), onboardingIndex: \(onboardingIndex)")
+        
     }
     
     

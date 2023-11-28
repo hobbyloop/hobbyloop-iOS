@@ -11,7 +11,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-
 private var streams: [String: Any] = [:]
 
 public protocol HPStreamType {
