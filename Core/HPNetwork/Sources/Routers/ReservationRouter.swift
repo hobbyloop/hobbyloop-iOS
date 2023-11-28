@@ -8,7 +8,6 @@
 import Foundation
 
 import Alamofire
-import HPCommon
 import RxSwift
 import HPDomain
 
@@ -36,15 +35,8 @@ extension ReservationRouter: Router {
     }
     
     public var headers: HTTPHeaders {
-        var token: String = ""
-        
-        do {
-            token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-        } catch {
-            print(error.localizedDescription)
-        }
         return [
-            "Authorization": "\(token)",
+            "Authorization": "Bearer \(LoginManager.shared.readToken(key: .accessToken))",
             "Accept": "application/json"
         ]
     }
