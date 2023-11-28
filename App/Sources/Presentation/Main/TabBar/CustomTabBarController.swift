@@ -32,13 +32,13 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     
     
     private let dummyView3 = HPNavigationController(
-        rootViewController: HomeDIContainer().makeViewController(),
+        rootViewController: UIViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )
     
     private let dummyView4 = HPNavigationController(
-        rootViewController: HomeDIContainer().makeViewController(),
+        rootViewController: UIViewController(),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )

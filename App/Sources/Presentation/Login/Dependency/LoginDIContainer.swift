@@ -7,26 +7,25 @@
 
 import Foundation
 
-
 import HPCommon
 
 
-final class LoginDIContainer: DIContainer {
+public final class LoginDIContainer: DIContainer {
 
     //MARK: Property
     public typealias ViewController = LoginViewController
     public typealias Repository = LoginViewRepo
     public typealias Reactor = LoginViewReactor
     
-    func makeViewController() -> LoginViewController {
+    public func makeViewController() -> LoginViewController {
         return LoginViewController(reactor: makeReactor())
     }
     
-    func makeRepository() -> LoginViewRepo {
+    public func makeRepository() -> LoginViewRepo {
         return LoginViewRepository()
     }
     
-    func makeReactor() -> LoginViewReactor {
+    public func makeReactor() -> LoginViewReactor {
         return LoginViewReactor(loginRepository: makeRepository())
     }
     

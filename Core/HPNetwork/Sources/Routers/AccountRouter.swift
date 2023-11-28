@@ -14,7 +14,7 @@ import HPCommon
 public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
-    case createUserInfo(birth: String, gender: String, name: String, nickname: String, phoneNumber: String)
+    case createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String)
 }
 
 
@@ -44,7 +44,7 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "/v1/nid/me"
         case let .getAccessToken(type, _):
-            return "/login/oauth2/\(type.rawValue)"
+            return "/native/login/oauth2/\(type.rawValue)"
         case .createUserInfo:
             return "/api/v1/profile/create"
         }
@@ -67,17 +67,8 @@ extension AccountRouter: Router {
             ]
             
         case .createUserInfo:
-            
-            var token: String = ""
-            
-            do {
-                token = try CryptoUtil.makeDecryption(UserDefaults.standard.string(forKey: .accessToken))
-            } catch {
-                print(error.localizedDescription)
-            }
-            
             return [
-                "Authorization":"\(token)",
+                "Authorization":"Bearer \(LoginManager.shared.readToken(key: .accessToken))",
                 "Content-Type": "application/json"
             ]
         }
@@ -87,9 +78,9 @@ extension AccountRouter: Router {
         
         switch self {
             
-        case let .createUserInfo(birth, gender, name, nickname, phoneNumber):
+        case let .createUserInfo(birthDay, gender, name, nickname, phoneNumber):
             return .body([
-                "birth": birth,
+                "birth": birthDay,
                 "gender": gender,
                 "name": name,
                 "nickname": nickname,
