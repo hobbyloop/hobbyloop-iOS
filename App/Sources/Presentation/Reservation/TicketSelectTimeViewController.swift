@@ -94,7 +94,7 @@ public final class TicketSelectTimeViewController: BaseViewController<TicketSele
     }
     
     private lazy var profileCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: profileCollectionViewLayout).then {
-        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.register(TicketInstructorProfileCell.self, forCellWithReuseIdentifier: "TicketInstructorProfileCell")
         $0.register(TicketCalendarCell.self, forCellWithReuseIdentifier: "TicketCalendarCell")
         $0.register(TicketInstructorIntroduceCell.self, forCellWithReuseIdentifier: "TicketInstructorIntroduceCell")

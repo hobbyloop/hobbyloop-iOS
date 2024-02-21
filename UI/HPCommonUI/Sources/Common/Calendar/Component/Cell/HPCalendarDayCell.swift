@@ -22,7 +22,7 @@ public final class HPCalendarDayCell: UICollectionViewCell {
     
     private let dayLabel: UILabel = UILabel().then {
         $0.text = "일"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .center
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
     }
@@ -63,14 +63,14 @@ extension HPCalendarDayCell: ReactorKit.View {
         
         reactor.state
             .filter { $0.isCompare  == false}
-            .map { _ in HPCommonUIAsset.lineSeparator.color }
+            .map { _ in HPCommonUIAsset.gray4.color }
             .asDriver(onErrorJustReturn: .separator)
             .drive(dayLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         reactor.state
             .filter { $0.isCompare == true }
-            .map { _ in HPCommonUIAsset.black.color }
+            .map { _ in HPCommonUIAsset.gray8.color }
             .asDriver(onErrorJustReturn: .separator)
             .drive(dayLabel.rx.textColor)
             .disposed(by: disposeBag)
