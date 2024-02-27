@@ -22,7 +22,7 @@ public final class HPCalendarWeekCell: UICollectionViewCell {
     
     public let weekDayLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        $0.textColor = HPCommonUIAsset.lightGray.color
+        $0.textColor = HPCommonUIAsset.gray4.color
         $0.textAlignment = .center
     }
     

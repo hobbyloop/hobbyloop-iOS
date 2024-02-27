@@ -28,14 +28,14 @@ public final class TicketInfoView: UIView {
     
     private let lessonNameLabel: UILabel = UILabel().then {
         $0.text = "6:1 그룹레슨 30회"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
         $0.textAlignment = .left
     }
     
     private let lessonDateLabel: UILabel = UILabel().then {
         $0.text = "2023.04.20 - 2023.06.20"
-        $0.textColor = HPCommonUIAsset.onyx.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textAlignment = .left
     }

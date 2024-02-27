@@ -26,7 +26,7 @@ public final class HPCalendarWeekReusableView: UICollectionReusableView, UIColle
     }
     
     private let weekUnderLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lineSeparator.color
+        $0.backgroundColor = HPCommonUIAsset.gray2.color
         
     }
     
