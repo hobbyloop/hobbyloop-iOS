@@ -10,12 +10,12 @@ import UIKit
 public class DailyView: UIView {
     private var dayLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.textColor = HPCommonUIAsset.gray4.color
     }
     
     private var timeLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        $0.textColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        $0.textColor = HPCommonUIAsset.gray6.color
     }
     
     override init(frame: CGRect) {
