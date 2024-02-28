@@ -22,7 +22,7 @@ public final class TicketInstructorIntroduceCell: UICollectionViewCell {
     
     private let nameLabel: UILabel = UILabel().then {
         $0.text = "윤지연 강사님"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.textAlignment = .left
     }
@@ -33,7 +33,7 @@ public final class TicketInstructorIntroduceCell: UICollectionViewCell {
         $0.configuration?.imagePlacement = .trailing
         $0.configuration?.imagePadding = 3
         $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "강사 프로필", attributes: [
-            .foregroundColor: HPCommonUIAsset.black.color,
+            .foregroundColor: HPCommonUIAsset.gray8.color,
             .font : HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         ]))
         

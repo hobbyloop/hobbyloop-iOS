@@ -23,21 +23,21 @@ public final class HPCalendarBubbleDayCell: UICollectionViewCell {
     public typealias Reactor = HPCalendarBubbleDayCellReactor
     
     private let bubbleView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
     }
     
     private let weekDayLabel: UILabel = UILabel().then {
         $0.text = "월"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .center
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 16)
     }
     
     private let dayLabel: UILabel = UILabel().then {
         $0.text = "1"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .center
         $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 16)
     }
@@ -110,7 +110,7 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.isCompare == true ? HPCommonUIAsset.deepOrange.color : HPCommonUIAsset.horizontalDivider.color   }
+            .map { $0.isCompare == true ? HPCommonUIAsset.mainColor.color : HPCommonUIAsset.gray3.color   }
             .bind(to: bubbleView.rx.backgroundColor)
             .disposed(by: disposeBag)
         
@@ -120,12 +120,12 @@ extension HPCalendarBubbleDayCell: ReactorKit.View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.nowDay == $0.day ? HPCommonUIAsset.white.color : HPCommonUIAsset.black.color }
+            .map { $0.nowDay == $0.day ? HPCommonUIAsset.gray1.color : HPCommonUIAsset.gray8.color }
             .bind(to: dayLabel.rx.textColor)
             .disposed(by: disposeBag)
 
         reactor.state
-            .map { $0.nowDay == $0.day ? HPCommonUIAsset.white.color : HPCommonUIAsset.black.color }
+            .map { $0.nowDay == $0.day ? HPCommonUIAsset.gray1.color : HPCommonUIAsset.gray8.color }
             .bind(to: weekDayLabel.rx.textColor)
             .disposed(by: disposeBag)
         

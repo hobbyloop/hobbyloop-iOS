@@ -105,7 +105,7 @@ final class UserCouponHistoryViewController: UIViewController {
     
     private let nextMonthButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.rightPolygon.image, for: .normal)
-        $0.tintColor = HPCommonUIAsset.deepSeparator.color
+        $0.tintColor = HPCommonUIAsset.gray2.color
         $0.snp.makeConstraints {
             $0.width.equalTo(15)
             $0.height.equalTo(10)

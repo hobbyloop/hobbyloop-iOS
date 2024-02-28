@@ -80,7 +80,7 @@ class TicketViewFooterCell: UICollectionViewCell {
         let attributedString = NSMutableAttributedString(string: text)
         let allRange = (text as NSString).range(of: text)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: allRange)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: allRange)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.mainColor.color, range: allRange)
         
         descriptionLabel.attributedText = attributedString
         titleLabel.text = title

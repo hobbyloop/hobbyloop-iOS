@@ -30,10 +30,10 @@ public final class SignUpBottomSheetView: UIViewController {
     
     private let containerView: UIView = UIView().then {
         $0.layer.cornerRadius = 20
-        $0.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+        $0.layer.borderColor = HPCommonUIAsset.gray3.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.masksToBounds = true
-        $0.backgroundColor = HPCommonUIAsset.white.color
+        $0.backgroundColor = HPCommonUIAsset.gray1.color
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
     
@@ -50,7 +50,7 @@ public final class SignUpBottomSheetView: UIViewController {
     private let doneButton: UIButton = UIButton(type: .system).then {
         $0.setAttributedTitle(NSAttributedString(string: "완료", attributes: [
             .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
-            .foregroundColor: HPCommonUIAsset.black.color
+            .foregroundColor: HPCommonUIAsset.gray8.color
         ]), for: .normal)
     }
     

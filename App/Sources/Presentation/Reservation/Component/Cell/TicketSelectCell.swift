@@ -55,7 +55,7 @@ public final class TicketSelectCell: UITableViewCell {
     
     private lazy var ticketView: TicketInfoView = TicketInfoView(
         ticketSize: CGSize(width: 70, height: 40),
-        ticketColor: HPCommonUIAsset.black.color,
+        ticketColor: HPCommonUIAsset.gray8.color,
         ticketImage: HPCommonUIAsset.ticketlogoFilled.image
     )
     

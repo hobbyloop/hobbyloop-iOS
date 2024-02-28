@@ -73,7 +73,7 @@ extension MyPageViewController {
         let attributedString = NSMutableAttributedString(string: newString)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: reviewRange)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: countRange)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: countRange)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.mainColor.color, range: countRange)
         
         return attributedString
     }

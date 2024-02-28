@@ -14,7 +14,7 @@ public final class TicketSelectReusableView: UITableViewHeaderFooterView {
     
     public override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = HPCommonUIAsset.systemBackground.color
+        self.backgroundColor = HPCommonUIAsset.backgroundColor.color
     }
     
     

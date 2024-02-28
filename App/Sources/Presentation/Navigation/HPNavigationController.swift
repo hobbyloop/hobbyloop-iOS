@@ -111,7 +111,7 @@ extension HPNavigationController {
     
     public func setHomeNavigationBarButtonItem() {
         
-        defaultBarAppearance.backgroundColor = HPCommonUIAsset.systemBackground.color
+        defaultBarAppearance.backgroundColor = HPCommonUIAsset.backgroundColor.color
         
         let notificationButton = UIButton(type: .system)
         notificationButton.setImage(HPCommonUIAsset.notification.image.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -262,7 +262,7 @@ extension HPNavigationController {
         let titleLabel: UILabel = UILabel()
         titleLabel.text = "수업예약"
         titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        titleLabel.textColor = HPCommonUIAsset.black.color
+        titleLabel.textColor = HPCommonUIAsset.gray8.color
         
         backButtonItem.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
         

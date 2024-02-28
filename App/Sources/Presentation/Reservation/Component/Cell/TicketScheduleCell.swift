@@ -25,13 +25,13 @@ public final class TicketScheduleCell: UICollectionViewCell {
     public weak var delegate: TicketScheduleDelegate?
     
     private let circleView: UIImageView = UIImageView.circularImageView(radius: 4).then {
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
     }
     
     private let dateLabel: UILabel = UILabel().then {
         $0.text = "10:00 - 10:50"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .left
         $0.numberOfLines = 1
     }
@@ -106,7 +106,7 @@ public final class ScheduleView: UIView {
     
     private let difficultyLabel: UILabel = UILabel().then {
         $0.text = "하"
-        $0.textColor = HPCommonUIAsset.deepOrange.color
+        $0.textColor = HPCommonUIAsset.mainColor.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textAlignment = .center
         $0.numberOfLines = 1
@@ -123,7 +123,7 @@ public final class ScheduleView: UIView {
     
     private let reservationLabel: UILabel = UILabel().then {
         $0.text = "예약 2/6명"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .left
         $0.font = HPCommonUIFontFamily.Pretendard.semiBold.font(size: 14)
         $0.numberOfLines = 1
@@ -132,7 +132,7 @@ public final class ScheduleView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        createNoneImageTicketView(frame, backgroundColor: HPCommonUIAsset.systemBackground.color)
+        createNoneImageTicketView(frame, backgroundColor: HPCommonUIAsset.backgroundColor.color)
         configure()
 
        

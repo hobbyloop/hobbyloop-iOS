@@ -19,8 +19,8 @@ public final class TicketReservationCell: UICollectionViewCell {
         studioName: "필파피티 스튜디오",
         instructor: "이민주 강사님",
         timeString: Date().convertToString(),
-        textColor: HPCommonUIAsset.black.color,
-        fillColor: HPCommonUIAsset.systemBackground.color.cgColor
+        textColor: HPCommonUIAsset.gray8.color,
+        fillColor: HPCommonUIAsset.backgroundColor.color.cgColor
     )
     
     override public init(frame: CGRect) {

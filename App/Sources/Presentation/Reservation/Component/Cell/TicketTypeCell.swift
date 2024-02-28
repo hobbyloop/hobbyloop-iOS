@@ -15,10 +15,10 @@ public final class TicketTypeCell: UICollectionViewCell {
     
     private let ticketButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+        borderColor: HPCommonUIAsset.mainColor.color.cgColor
     ).then {
         $0.setTitle("이용권", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
     }
     

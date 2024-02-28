@@ -21,7 +21,7 @@ public final class TicketNoticeReusableView: UICollectionReusableView {
     private let contentTitleLabel: UILabel = UILabel().then {
         $0.text = "공지사항"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .justified
     }
     

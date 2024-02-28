@@ -21,7 +21,7 @@ public final class TicketScheduleReusableView: UICollectionReusableView {
     
     private let scheduleTimeLabel: UILabel = UILabel().then {
         $0.text = "가능수업"
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.textAlignment = .left
         $0.numberOfLines = 1

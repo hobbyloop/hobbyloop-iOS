@@ -24,14 +24,14 @@ public final class TicketUserInfoReusableView: UICollectionReusableView {
     private let userInfoTitleLabel: UILabel = UILabel().then {
         $0.text = "예약자 정보"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray8.color
         $0.textAlignment = .justified
     }
     
     private let userInfoNoticeLabel: UILabel = UILabel().then {
         $0.text = "정보는 마이페이지에서 수정 가능해요"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.gray.color
+        $0.textColor = HPCommonUIAsset.gray5.color
         $0.textAlignment = .left
     }
     

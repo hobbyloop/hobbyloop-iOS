@@ -77,7 +77,7 @@ public final class TicketReservationViewController: BaseViewController<TicketRes
     
     
     private lazy var reservationCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: reservationCollectionViewLayout).then {
-        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.register(TicketReservationCell.self, forCellWithReuseIdentifier: "TicketReservationCell")
         $0.register(TicketNoticeCell.self, forCellWithReuseIdentifier: "TicketNoticeCell")
         $0.register(TicketTypeCell.self, forCellWithReuseIdentifier: "TicketTypeCell")

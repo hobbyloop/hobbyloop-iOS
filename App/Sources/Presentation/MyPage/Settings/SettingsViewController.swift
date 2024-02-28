@@ -95,7 +95,7 @@ class SettingsViewController: UIViewController {
     
     private let logoutCloseButton = HPButton(cornerRadius: 8).then {
         $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.gray8.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
     }
@@ -104,7 +104,7 @@ class SettingsViewController: UIViewController {
         $0.setTitle("로그아웃 하기", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
     }
     
     private var logoutBottomSheetTopConstraint: Constraint?
@@ -119,7 +119,7 @@ class SettingsViewController: UIViewController {
     
     private let secessionCloseButton = HPButton(cornerRadius: 8).then {
         $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.gray8.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
     }
@@ -128,7 +128,7 @@ class SettingsViewController: UIViewController {
         $0.setTitle("탈퇴하기", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
     }
     
     private var secessionBottomSheetTopConstraint: Constraint?

@@ -30,7 +30,7 @@ public final class SignUpDatePickerView: UIDatePicker {
         self.datePickerMode = .date
         self.locale = Locale(identifier: "ko-KR")
         self.timeZone = .autoupdatingCurrent
-        self.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+        self.layer.borderColor = HPCommonUIAsset.gray2.color.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true

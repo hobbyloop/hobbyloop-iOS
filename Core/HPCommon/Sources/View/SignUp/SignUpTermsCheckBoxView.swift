@@ -21,30 +21,30 @@ public final class SignUpTermsCheckBoxView: UIView {
     
     public let checkBoxButton: HPButton = HPButton(
         cornerRadius: 4,
-        borderColor: HPCommonUIAsset.deepSeparator.color.cgColor
+        borderColor: HPCommonUIAsset.gray2.color.cgColor
     ).then {
         $0.setImage(UIImage(), for: .normal)
         $0.setImage(HPCommonUIAsset.selectBox.image, for: .selected)
-        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
     }
     
     private let termsDescriptionLabel: UILabel = UILabel().then {
-        $0.textColor = HPCommonUIAsset.black.color
+        $0.textColor = HPCommonUIAsset.gray7.color
         $0.textAlignment = .left
         $0.numberOfLines = 1
     }
     
     public let termsDetailLabel: UILabel = UILabel().then {
         $0.text = "자세히"
-        $0.textColor = HPCommonUIAsset.originSeparator.color
+        $0.textColor = HPCommonUIAsset.gray3.color
         $0.textAlignment = .justified
         $0.numberOfLines = 1
         $0.setUnderLineAttributed(
             targetString: "자세히",
             font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-            underlineColor: HPCommonUIAsset.originSeparator.color,
+            underlineColor: HPCommonUIAsset.gray3.color,
             underlineStyle: .single,
-            textColor: HPCommonUIAsset.originSeparator.color
+            textColor: HPCommonUIAsset.gray3.color
         )
     }
     
@@ -131,10 +131,10 @@ public final class SignUpTermsCheckBoxView: UIView {
     
     public func didTapCheckBoxButton(isSelected: Bool) {
         if isSelected {
-            checkBoxButton.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+            checkBoxButton.layer.borderColor = HPCommonUIAsset.mainColor.color.cgColor
             checkBoxButton.isSelected = isSelected
         } else {
-            checkBoxButton.layer.borderColor = HPCommonUIAsset.deepSeparator.color.cgColor
+            checkBoxButton.layer.borderColor = HPCommonUIAsset.gray2.color.cgColor
             checkBoxButton.isSelected = isSelected
         }
         

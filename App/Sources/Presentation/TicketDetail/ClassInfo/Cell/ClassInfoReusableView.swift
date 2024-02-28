@@ -65,7 +65,7 @@ class ClassInfoReusableView: UICollectionReusableView {
         let fullRange = (fullText as NSString).range(of: fullText)
         let attributedString = NSMutableAttributedString(string: fullText)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 16), range: fullRange)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: range)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.mainColor.color, range: range)
         $0.attributedText = attributedString
     }
     
@@ -82,7 +82,7 @@ class ClassInfoReusableView: UICollectionReusableView {
     
     private lazy var saleAfterLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        $0.textColor = HPCommonUIAsset.deepOrange.color
+        $0.textColor = HPCommonUIAsset.mainColor.color
     }
     
     override init(frame: CGRect) {
@@ -159,7 +159,7 @@ class ClassInfoReusableView: UICollectionReusableView {
         let fullRange = (fullText as NSString).range(of: fullText)
         let attributedString = NSMutableAttributedString(string: fullText)
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.bold.font(size: 14), range: fullRange)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.deepOrange.color, range: range)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.mainColor.color, range: range)
         discountLabel.attributedText = attributedString
         
         saleBeforeLabel.text = "200,000원"

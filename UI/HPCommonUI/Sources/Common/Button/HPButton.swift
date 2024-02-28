@@ -18,10 +18,10 @@ public final class HPButton: UIButton {
     public var isConfirm: Bool = false {
         didSet {
             if isConfirm {
-                self.backgroundColor = HPCommonUIAsset.deepOrange.color
+                self.backgroundColor = HPCommonUIAsset.mainColor.color
                 self.isEnabled = true
             } else {
-                self.backgroundColor = HPCommonUIAsset.santaGray.color
+                self.backgroundColor = HPCommonUIAsset.gray3.color
                 self.isEnabled = false
             }
         }
@@ -31,9 +31,9 @@ public final class HPButton: UIButton {
         
         didSet {
             if isSelected {
-                self.layer.borderColor = HPCommonUIAsset.deepOrange.color.cgColor
+                self.layer.borderColor = HPCommonUIAsset.mainColor.color.cgColor
             } else {
-                self.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
+                self.layer.borderColor = HPCommonUIAsset.gray1.color.cgColor
             }
         }
     }

@@ -44,20 +44,20 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     
     private let ticketButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+        borderColor: HPCommonUIAsset.mainColor.color.cgColor
     ).then {
         $0.setTitle("이용권", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
     }
     
     private let loofPassButton: HPButton = HPButton(
         cornerRadius: 10,
-        borderColor: HPCommonUIAsset.deepOrange.color.cgColor
+        borderColor: HPCommonUIAsset.mainColor.color.cgColor
     ).then {
         
         $0.setTitle("루프패스", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.deepOrange.color, for: .normal)
+        $0.setTitleColor(HPCommonUIAsset.mainColor.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 12)
     }
     
@@ -73,7 +73,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
         
     private lazy var ticketSelectTableView: UITableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.separatorStyle = .none
-        $0.backgroundColor = HPCommonUIAsset.systemBackground.color
+        $0.backgroundColor = HPCommonUIAsset.backgroundColor.color
         $0.rowHeight = UITableView.automaticDimension
         $0.register(TicketSelectCell.self, forCellReuseIdentifier: "TicketSelectCell")
         $0.register(TicketSelectReusableView.self, forHeaderFooterViewReuseIdentifier: "TicketSelectReusableView")
@@ -99,7 +99,7 @@ public final class TicketSelectViewController: BaseViewController<TicketSelectVi
     //MARK: Configure
     
     private func configure() {
-        self.view.backgroundColor = HPCommonUIAsset.systemBackground.color
+        self.view.backgroundColor = HPCommonUIAsset.backgroundColor.color
         self.containerView.layer.cornerRadius = 15
         self.containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         self.containerView.clipsToBounds = true

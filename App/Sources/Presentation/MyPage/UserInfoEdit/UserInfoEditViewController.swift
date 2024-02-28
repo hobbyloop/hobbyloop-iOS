@@ -90,7 +90,7 @@ final class UserInfoEditViewController: UIViewController {
         $0.setTitle("수정 완료", for: .normal)
         $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+        $0.backgroundColor = HPCommonUIAsset.mainColor.color
     }
     
     // MARK: - life cycle
