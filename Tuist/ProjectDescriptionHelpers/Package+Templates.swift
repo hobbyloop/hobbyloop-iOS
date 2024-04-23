@@ -21,7 +21,7 @@ public extension Package {
     static let rxDataSources = Self.remote(repo: "RxSwiftCommunity/RxDataSources", version: "5.0.0")
     static let snapKit = Self.remote(repo: "SnapKit/SnapKit", version: "5.6.0")
     static let then = Self.remote(repo: "devxoul/Then", version: "3.0.0")
-    static let tabMan = Self.remote(repo: "uias/Tabman", version: "3.0")
+    static let tabMan = Self.remote(repo: "uias/Tabman", version: "2.13.0")
     static let alamofire = Self.remote(repo: "Alamofire/Alamofire", version: "5.6.1")
     static let kakaoSDK = Self.remote(repo: "kakao/kakao-ios-sdk-rx", version: "2.15.0")
     static let googleSDK = Self.remote(repo: "google/GoogleSignIn-iOS", version: "6.1.0")
