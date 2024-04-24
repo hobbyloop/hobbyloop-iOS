@@ -9,7 +9,7 @@ import UIKit
 
 /// 새로운 버전의 공통 컴포넌트 버튼
 /// 4가지 style 중 하나 사용
-/// 남, 여 버튼과 같이 여러 옵션들 중 선택하는 버튼의 경우 HPNewSelectButton 사용할 것.
+/// isEnabled, isSelected 값만 변경하면 되도록 구현
 public final class HPNewButton: UIButton {
     public enum Style {
         /// 배경색이 보라색인 버튼 스타일
@@ -88,6 +88,18 @@ public final class HPNewButton: UIButton {
                     self.layer.borderColor = HPCommonUIAsset.gray60.color.cgColor
                     self.tintColor = HPCommonUIAsset.gray60.color
                 }
+            }
+        }
+    }
+    
+    /// bordered 스타일의 버튼에서만 사용 가능,
+    /// 프로퍼티 값 변경 시 제목과 경계선 색이 변경됨
+    public override var isSelected: Bool {
+        didSet {
+            if style == .bordered {
+                let color = isSelected ? HPCommonUIAsset.primary.color : HPCommonUIAsset.gray60.color
+                self.layer.borderColor = color.cgColor
+                self.setTitleColor(color, for: [])
             }
         }
     }
