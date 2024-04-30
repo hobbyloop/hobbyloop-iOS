@@ -24,7 +24,7 @@ public extension Package {
     static let tabMan = Self.remote(repo: "uias/Tabman", version: "2.13.0")
     static let alamofire = Self.remote(repo: "Alamofire/Alamofire", version: "5.6.1")
     static let kakaoSDK = Self.remote(repo: "kakao/kakao-ios-sdk-rx", version: "2.15.0")
-    static let googleSDK = Self.remote(repo: "google/GoogleSignIn-iOS", version: "6.1.0")
+    static let googleSDK = Self.remote(repo: "google/GoogleSignIn-iOS", version: "6.0.2")
     static let cryptoSwift = Self.remote(repo: "krzyzanowskim/CryptoSwift", version: "1.7.1")
     static let keychainAccess = Self.remote(repo: "kishikawakatsumi/KeychainAccess", version: "4.2.2")
 }

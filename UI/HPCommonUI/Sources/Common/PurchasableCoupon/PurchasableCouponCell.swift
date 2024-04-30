@@ -52,8 +52,10 @@ public final class PurchasableCouponCell: UIView {
     
     public var isBookmarked = false {
         didSet {
-            let image = isBookmarked ? HPCommonUIAsset.archiveFilled.image : HPCommonUIAsset.archiveOutlined.image
-            bookmarkButton.setImage(image.withRenderingMode(.alwaysTemplate), for: [])
+            let image = (isBookmarked ? HPCommonUIAsset.archiveFilled.image : HPCommonUIAsset.archiveOutlined.image)
+                .withRenderingMode(.alwaysTemplate)
+            bookmarkButton.tintColor = isBookmarked ? HPCommonUIAsset.primary.color : .white
+            bookmarkButton.setImage(image, for: [])
         }
     }
     
