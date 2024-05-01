@@ -57,35 +57,22 @@ public final class ReservedClassTicketView: UIView {
     
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
-        addGradientBorder()
+        addGradientBorder(
+            startColor: HPCommonUIAsset.gradientStart.color,
+            endColor: HPCommonUIAsset.gradientEnd.color,
+            startPoint: CGPoint(x: 0, y: 0),
+            endPoint: CGPoint(x: 1, y: 1),
+            lineWidth: 2,
+            topLeftRadius: 40,
+            topRightRadius: 10,
+            bottomLeftRadius: 40,
+            bottomRightRadius: 10
+        )
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func addGradientBorder() {
-        let gradient = CAGradientLayer()
-        gradient.frame =  CGRect(origin: CGPoint.zero, size: self.bounds.size)
-        let startColor = HPCommonUIAsset.gradientStart.color
-        let endColor = HPCommonUIAsset.gradientEnd.color
-        
-        gradient.colors = [startColor.cgColor, endColor.cgColor]
-        gradient.startPoint = CGPoint(x: 0, y: 0)
-        gradient.endPoint = CGPoint(x: 1, y: 1)
-        
-        let shape = CAShapeLayer()
-        shape.lineWidth = 2
-        shape.path = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10, width: 2).cgPath
-
-        shape.strokeColor = UIColor.black.cgColor
-        shape.fillColor = UIColor.clear.cgColor
-        gradient.mask = shape
-        
-        self.layer.addSublayer(gradient)
-    }
-    
-    
     
     private func layout() {
         self.largeContentImage = HPCommonUIAsset.reservedTicket.image
