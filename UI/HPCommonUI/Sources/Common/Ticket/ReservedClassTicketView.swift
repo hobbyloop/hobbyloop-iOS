@@ -44,7 +44,7 @@ public final class ReservedClassTicketView: UIView {
         $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private let dashedLineView = UIView()
+    private let dashedLineView = DashedLineView(axis: .vertical, dashLength: 6, dashGap: 6, color: HPCommonUIAsset.gray40.color)
     
     private let qrCodeView = UIImageView().then {
         $0.image = HPCommonUIAsset.qrCode.image
@@ -57,7 +57,6 @@ public final class ReservedClassTicketView: UIView {
     
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
-        addDashedBorder()
         addGradientBorder()
     }
     
@@ -86,19 +85,7 @@ public final class ReservedClassTicketView: UIView {
         self.layer.addSublayer(gradient)
     }
     
-    func addDashedBorder() {
-        //Create a CAShapeLayer
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.strokeColor = HPCommonUIAsset.gray40.color.cgColor
-        shapeLayer.lineWidth = 1
-        shapeLayer.lineDashPattern = [6, 6]
-        
-        let path = CGMutablePath()
-        path.addLines(between: [CGPoint(x: self.frame.width - 98, y: 0),
-                                CGPoint(x: self.frame.width - 98, y: self.frame.height)])
-        shapeLayer.path = path
-        layer.addSublayer(shapeLayer)
-    }
+    
     
     private func layout() {
         self.largeContentImage = HPCommonUIAsset.reservedTicket.image
@@ -158,6 +145,7 @@ public final class ReservedClassTicketView: UIView {
         dashedLineView.snp.makeConstraints {
             $0.width.equalTo(1)
             $0.top.bottom.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-98)
         }
         
         qrCodeView.snp.makeConstraints {

@@ -7,87 +7,43 @@
 
 import UIKit
 
-public class DashedView: UIView {
-    
-    public struct Configuration {
-        public var color: UIColor
-        public var dashLength: CGFloat
-        public var dashGap: CGFloat
-        
-        public init(
-            color: UIColor,
-            dashLength: CGFloat,
-            dashGap: CGFloat) {
-                self.color = color
-                self.dashLength = dashLength
-                self.dashGap = dashGap
-            }
-        
-        static let `default`: Self = .init(
-            color: .lightGray,
-            dashLength: 7,
-            dashGap: 3)
+/// 점선을 그려주는 view
+public final class DashedLineView: UIView {
+    public enum Axis {
+        case horizontal
+        case vertical
     }
     
-    // MARK: - Properties
+    let axis: Axis
+    let dashLength: NSNumber
+    let dashGap: NSNumber
+    let color: UIColor
     
-    /// Override to customize height
-    public class var lineHeight: CGFloat { 1.0 }
-    
-    override public var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: Self.lineHeight)
+    public init(axis: Axis, dashLength: NSNumber, dashGap: NSNumber, color: UIColor) {
+        self.axis = axis
+        self.dashLength = dashLength
+        self.dashGap = dashGap
+        self.color = color
+        super.init(frame: .zero)
     }
     
-    public final var config: Configuration = .default {
-        didSet {
-            drawDottedLine()
-        }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private var dashedLayer: CAShapeLayer?
-    
-    // MARK: - Life Cycle
-    
-    override public func layoutSubviews() {
-        super.layoutSubviews()
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.strokeColor = color.cgColor
+        shapeLayer.lineWidth = axis == .horizontal ? rect.size.height : rect.size.width
+        shapeLayer.lineDashPattern = [dashLength, dashGap]
         
-        // We only redraw the dashes if the width has changed.
-        guard bounds.width != dashedLayer?.frame.width else { return }
+        let path = CGMutablePath()
+        let startPoint = axis == .horizontal ? CGPoint(x: 0, y: rect.height / 2) : CGPoint(x: rect.width / 2, y: 0)
+        let endPoint = axis == .horizontal ? CGPoint(x: rect.width, y: rect.height / 2) : CGPoint(x: rect.width / 2, y: rect.height)
         
-        drawDottedLine()
+        path.addLines(between: [startPoint, endPoint])
+        shapeLayer.path = path
+        layer.addSublayer(shapeLayer)
     }
-    
-    // MARK: - Drawing
-    
-    private func drawDottedLine() {
-        if dashedLayer != nil {
-            dashedLayer?.removeFromSuperlayer()
-        }
-        
-        dashedLayer = drawDottedLine(
-            start: bounds.origin,
-            end: CGPoint(x: bounds.width, y: bounds.origin.y),
-            config: config)
-    }
-    
-}
-
-// Thanks to: https://stackoverflow.com/a/49305154/4802021
-private extension DashedView {
-    func drawDottedLine(
-        start: CGPoint,
-        end: CGPoint,
-        config: Configuration) -> CAShapeLayer {
-            let shapeLayer = CAShapeLayer()
-            shapeLayer.strokeColor = config.color.cgColor
-            shapeLayer.lineWidth = Self.lineHeight
-            shapeLayer.lineDashPattern = [config.dashLength as NSNumber, config.dashGap as NSNumber]
-            
-            let path = CGMutablePath()
-            path.addLines(between: [start, end])
-            shapeLayer.path = path
-            layer.addSublayer(shapeLayer)
-            
-            return shapeLayer
-        }
 }
