@@ -15,11 +15,19 @@ public final class ReservedClassTicketView: UIView {
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 25
     }
+    public var logoImage: UIImage? {
+        get { logoImageView.image }
+        set { logoImageView.image = newValue }
+    }
     
     private let classNameLabel = UILabel().then {
         $0.text = "6:1 체형교정 필라테스"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    public var className: String? {
+        get { classNameLabel.text }
+        set { classNameLabel.text = newValue }
     }
     
     private let studioNameLabel = UILabel().then {
@@ -27,11 +35,20 @@ public final class ReservedClassTicketView: UIView {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.gray60.color
     }
+    public var studioName: String? {
+        get { studioNameLabel.text }
+        set { studioNameLabel.text = newValue }
+    }
     
     private let instructorNameLabel = UILabel().then {
         $0.text = "이민주 강사님"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.gray60.color
+    }
+    public var instructorName: String? {
+        didSet {
+            instructorNameLabel.text = "\(instructorName) 강사님"
+        }
     }
     
     private let horizontalLineView = UIView().then {
@@ -42,6 +59,10 @@ public final class ReservedClassTicketView: UIView {
         $0.text = "2023.5.12 금 09:00 - 09:50"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    public var dateTimeString: String? {
+        get { dateTimeLabel.text }
+        set { dateTimeLabel.text = newValue }
     }
     
     private let dashedLineView = DashedLineView(axis: .vertical, dashLength: 6, dashGap: 6, color: HPCommonUIAsset.gray40.color)
