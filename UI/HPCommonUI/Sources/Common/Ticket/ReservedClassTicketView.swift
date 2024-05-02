@@ -69,6 +69,18 @@ public final class ReservedClassTicketView: UIView {
     
     private let qrCodeView = UIImageView().then {
         $0.image = HPCommonUIAsset.qrCode.image
+        $0.isHidden = true
+    }
+    private let hpImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.shortLogo.image
+    }
+    
+    private var showsQRCode: Bool {
+        get { !qrCodeView.isHidden }
+        set {
+            qrCodeView.isHidden = !newValue
+            hpImageView.isHidden = newValue
+        }
     }
     
     public override init(frame: CGRect) {
@@ -109,7 +121,8 @@ public final class ReservedClassTicketView: UIView {
             horizontalLineView,
             dateTimeLabel,
             dashedLineView,
-            qrCodeView
+            qrCodeView,
+            hpImageView
         ].forEach(self.addSubview(_:))
         
         logoImageView.snp.makeConstraints {
@@ -160,6 +173,13 @@ public final class ReservedClassTicketView: UIView {
             $0.width.height.equalTo(68)
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-15)
+        }
+        
+        hpImageView.snp.makeConstraints {
+            $0.width.equalTo(38)
+            $0.height.equalTo(32)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-28)
         }
     }
 }
