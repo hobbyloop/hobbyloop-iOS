@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 /// 구매 가능한 이용권을 보여주는 cell
-public final class PurchasableCouponCell: UIView {
+public final class HPPurchasableCouponCell: UIView {
     private let bag = DisposeBag()
     
     private let photoImageView = UIImageView().then {
