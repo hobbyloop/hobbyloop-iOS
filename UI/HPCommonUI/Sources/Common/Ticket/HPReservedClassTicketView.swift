@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 /// 예약한 수업 정보를 보여주는 ticket view
-public final class ReservedClassTicketView: UIView {
+public final class HPReservedClassTicketView: UIView {
     private let logoImageView = UIImageView().then {
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 25
