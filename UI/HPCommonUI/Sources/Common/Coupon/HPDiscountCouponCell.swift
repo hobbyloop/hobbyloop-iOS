@@ -10,14 +10,26 @@ import Then
 import SnapKit
 
 public final class HPDiscountCouponCell: UICollectionViewCell {
+    public enum DiscountType {
+        case percentage
+        case fixed
+    }
+    
     private let discountPercentageLabel = UILabel().then {
         $0.text = "10%"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
         $0.textColor = HPCommonUIAsset.primary.color
     }
-    public var discountPercentage: Int = 0 {
+    
+    public var discountAmount: Int = 0 {
         didSet {
-            discountPercentageLabel.text = "\(discountPercentage)%"
+            discountPercentageLabel.text = "\(discountAmount)\(discountType == .percentage ? "%" : "원")"
+        }
+    }
+    
+    public var discountType: DiscountType = .percentage {
+        didSet {
+            discountPercentageLabel.text = "\(discountAmount)\(discountType == .percentage ? "%" : "원")"
         }
     }
     
