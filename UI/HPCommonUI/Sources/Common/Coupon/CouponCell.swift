@@ -50,12 +50,12 @@ public final class CouponCell: UICollectionViewCell {
     private let countLabel = UILabel()
     public var count: Int = 0 {
         didSet {
-            updateCountLabel(to: count, maxCount: maxCount)
+            updateCountLabel(to: count, maxCount: maxCount, duration: duration)
         }
     }
     public var maxCount: Int = 0 {
         didSet {
-            updateCountLabel(to: count, maxCount: maxCount)
+            updateCountLabel(to: count, maxCount: maxCount, duration: duration)
         }
     }
     
@@ -114,22 +114,24 @@ public final class CouponCell: UICollectionViewCell {
         }
     }
     
-    private func updateCountLabel(to count: Int, maxCount: Int) {
+    private func updateCountLabel(to count: Int, maxCount: Int, duration: Int?) {
         let newString = "잔여 횟수 \(count)/\(maxCount)회"
         let range1 = (newString as NSString).range(of: "잔여 횟수 ")
         let range2 = (newString as NSString).range(of: "\(count)")
         let range3 = (newString as NSString).range(of: "/\(maxCount)회")
         
+        let normalColor = 91...180 ~= duration ?? 0 ? .white : HPCommonUIAsset.gray100.color
+        
         let attributedString = NSMutableAttributedString(string: newString)
         
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range1)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.gray100.color, range: range1)
+        attributedString.addAttribute(.foregroundColor, value: normalColor, range: range1)
         
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range2)
         attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.sub.color, range: range2)
         
         attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range3)
-        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.gray100.color, range: range3)
+        attributedString.addAttribute(.foregroundColor, value: normalColor, range: range3)
         
         countLabel.attributedText = attributedString
     }
@@ -154,5 +156,10 @@ public final class CouponCell: UICollectionViewCell {
         default:
             break
         }
+        
+        let textColor: UIColor = 91...180 ~= duration ? .white : HPCommonUIAsset.gray100.color
+        studioNameLabel.textColor = textColor
+        couponNameLabel.textColor = textColor
+        updateCountLabel(to: count, maxCount: maxCount, duration: duration)
     }
 }
