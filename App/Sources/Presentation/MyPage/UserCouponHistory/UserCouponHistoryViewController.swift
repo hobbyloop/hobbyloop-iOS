@@ -44,7 +44,7 @@ final class UserCouponHistoryViewController: UIViewController {
         DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
         DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
         DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date())
-    ], withPageControl: false)
+    ])
     
     // MARK: - 이용권 시작일 설정 버튼
     private let setCouponStartDateButton = UIButton().then {

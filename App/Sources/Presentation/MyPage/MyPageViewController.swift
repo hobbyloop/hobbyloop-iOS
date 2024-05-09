@@ -111,7 +111,7 @@ final class MyPageViewController: UIViewController {
     private let couponListView = CouponListView(coupons: [
         .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
         .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-    ], withPageControl: false)
+    ])
     
     private let classCountLabel = UILabel().then {
         $0.text = "13"
