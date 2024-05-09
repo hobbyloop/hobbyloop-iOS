@@ -5,6 +5,7 @@
 //  Created by 김남건 on 2023/06/05.
 //
 
+import Foundation
 import UIKit
 import SnapKit
 
@@ -18,11 +19,22 @@ public final class CouponListView: UIView {
     /// coupons 값만 바꾸면 collection view도 자동으로 reload
     public var coupons: [DummyCoupon] {
         didSet {
-            reloadData()
+            collectionView.reloadData()
+        }
+    }
+    
+    public var index: Int {
+        get {
+            Int(round(Double(collectionView.contentOffset.x / (270 + 16))))
+        }
+        
+        set {
+            collectionView.contentOffset.x = CGFloat(newValue * 286)
+            print(collectionView.contentOffset.x)
         }
     }
         
-    public init(coupons: [DummyCoupon], withPageControl: Bool = true) {
+    public init(coupons: [DummyCoupon]) {
         self.coupons = coupons
         super.init(frame: .zero)
         collectionView.register(CouponCell.self, forCellWithReuseIdentifier: CouponCell.identifier)
@@ -32,14 +44,12 @@ public final class CouponListView: UIView {
             $0.top.bottom.leading.trailing.equalToSuperview()
             $0.height.equalTo(146)
         }
+        
+        collectionView.delegate = self
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func reloadData() {
-        collectionView.reloadData()
     }
 }
 
@@ -50,7 +60,12 @@ extension CouponListView: UICollectionViewDataSource, UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let couponCell = collectionView.dequeueReusableCell(withReuseIdentifier: CouponCell.identifier, for: indexPath) as! CouponCell
-        
+        // TODO: 데이터 반영하기
+        couponCell.studioName = "발란스 스튜디오"
+        couponCell.couponName = "6:1 그룹레슨 10회 이용권"
+        couponCell.count = 4
+        couponCell.maxCount = 10
+        couponCell.duration = 60
         return couponCell
     }
 }
