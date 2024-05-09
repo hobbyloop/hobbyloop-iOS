@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-public final class DiscountCouponCell: UICollectionViewCell {
+public final class HPDiscountCouponCell: UICollectionViewCell {
     private let discountPercentageLabel = UILabel().then {
         $0.text = "10%"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
