@@ -19,27 +19,53 @@ public final class CouponCell: UICollectionViewCell {
     
     private let logoImageView = UIImageView().then {
         $0.sizeToFit()
-        $0.snp.makeConstraints { make in
-            make.width.equalTo(79)
-            make.height.equalTo(62)
+        $0.snp.makeConstraints {
+            $0.width.equalTo(52)
+            $0.height.equalTo(52)
         }
     }
+    public var logoImage: UIImage? {
+        get { logoImageView.image }
+        set { logoImageView.image = newValue }
+    }
     
-    private let companyNameLabel = UILabel().then {
-        $0.font = HPCommonUIFontFamily.Pretendard.light.font(size: 10)
-        $0.textColor = .white
+    private let studioNameLabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    public var studioName: String? {
+        get { studioNameLabel.text }
+        set { studioNameLabel.text = newValue }
+    }
+    
+    private let couponNameLabel = UILabel().then {
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    public var couponName: String? {
+        get { couponNameLabel.text }
+        set { couponNameLabel.text = newValue }
     }
     
     private let countLabel = UILabel()
+    public var count: Int = 0 {
+        didSet {
+            updateCountLabel(to: count, maxCount: maxCount)
+        }
+    }
+    public var maxCount: Int = 0 {
+        didSet {
+            updateCountLabel(to: count, maxCount: maxCount)
+        }
+    }
     
-    private let periodLabel = UILabel().then {
+    private let durationLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.light.font(size: 9)
         $0.textColor = .white
     }
-    
-    var count: Int = 0 {
+    public var duration: Int? {
         didSet {
-            updateCountLabel(to: count)
+            updateBackgroundImageView(duration: duration)
         }
     }
     
@@ -60,39 +86,73 @@ public final class CouponCell: UICollectionViewCell {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
         
-        let labelsStack = UIStackView()
-        labelsStack.axis = .vertical
-        labelsStack.alignment = .leading
-        labelsStack.spacing = 9
+        [
+            logoImageView,
+            studioNameLabel,
+            couponNameLabel,
+            countLabel
+        ].forEach(backgroundImageView.addSubview(_:))
         
-        [companyNameLabel, countLabel, periodLabel].forEach(labelsStack.addArrangedSubview(_:))
-        
-        let contentStack = UIStackView()
-        contentStack.axis = .horizontal
-        contentStack.alignment = .center
-        contentStack.spacing = 46
-        
-        [logoImageView, labelsStack].forEach(contentStack.addArrangedSubview(_:))
-        
-        backgroundImageView.addSubview(contentStack)
-        
-        contentStack.snp.makeConstraints { make in
-            make.centerX.equalTo(backgroundImageView.snp.centerX).offset(10)
-            make.centerY.equalTo(backgroundImageView.snp.centerY)
+        logoImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(32)
         }
         
+        studioNameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(44)
+            $0.leading.equalTo(logoImageView.snp.trailing).offset(12)
+        }
+        
+        couponNameLabel.snp.makeConstraints {
+            $0.top.equalTo(studioNameLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(studioNameLabel.snp.leading)
+        }
+        
+        countLabel.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-44)
+            $0.leading.equalTo(studioNameLabel.snp.leading)
+        }
     }
     
-    private func updateCountLabel(to count: Int) {
-        let newString = "\(count) 회"
-        let countLabelRange = (newString as NSString).range(of: "\(count)")
-        let countUnitLabelRange = (newString as NSString).range(of: "회")
+    private func updateCountLabel(to count: Int, maxCount: Int) {
+        let newString = "잔여 횟수 \(count)/\(maxCount)회"
+        let range1 = (newString as NSString).range(of: "잔여 횟수 ")
+        let range2 = (newString as NSString).range(of: "\(count)")
+        let range3 = (newString as NSString).range(of: "/\(maxCount)회")
         
         let attributedString = NSMutableAttributedString(string: newString)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16), range: countLabelRange)
-        attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: countUnitLabelRange)
-        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.regular.font(size: 12), range: countUnitLabelRange)
+        
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range1)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.gray100.color, range: range1)
+        
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range2)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.sub.color, range: range2)
+        
+        attributedString.addAttribute(.font, value: HPCommonUIFontFamily.Pretendard.medium.font(size: 12), range: range3)
+        attributedString.addAttribute(.foregroundColor, value: HPCommonUIAsset.gray100.color, range: range3)
         
         countLabel.attributedText = attributedString
+    }
+    
+    private func updateBackgroundImageView(duration: Int?) {
+        guard let duration else {
+            backgroundImageView.image = HPCommonUIAsset.seasonCoupon.image
+            return
+        }
+        
+        switch duration {
+        case 1...31:
+            backgroundImageView.image = HPCommonUIAsset.oneMonthCoupon.image
+        case 32...90:
+            backgroundImageView.image = HPCommonUIAsset.threeMonthCoupon.image
+        case 91...180:
+            backgroundImageView.image = HPCommonUIAsset.sixMonthCoupon.image
+        case 181...270:
+            backgroundImageView.image = HPCommonUIAsset.nineMonthCoupon.image
+        case 271...366:
+            backgroundImageView.image = HPCommonUIAsset.twelveMonthCoupon.image
+        default:
+            break
+        }
     }
 }
