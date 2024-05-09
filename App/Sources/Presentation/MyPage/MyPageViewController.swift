@@ -108,10 +108,7 @@ final class MyPageViewController: UIViewController {
     }
     private lazy var couponPartHeaderButton = partHeaderButton(text: "내 이용권")
     
-    private let couponListView = CouponListView(coupons: [
-        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-    ])
+    private let couponListView = CouponListView()
     
     private let classCountLabel = UILabel().then {
         $0.text = "13"

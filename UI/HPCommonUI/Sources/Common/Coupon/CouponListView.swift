@@ -34,7 +34,11 @@ public final class CouponListView: UIView {
         }
     }
         
-    public init(coupons: [DummyCoupon]) {
+    public init(coupons: [DummyCoupon] = [
+        DummyCoupon(studioName: "발란스 스튜디오", couponName: "6:1 그룹레슨 10회 이용권", count: 4, maxCount: 10, duration: 30),
+        DummyCoupon(studioName: "발란스 스튜디오", couponName: "6:1 그룹레슨 9회 이용권", count: 9, maxCount: 10, duration: nil),
+        DummyCoupon(studioName: "발란스 스튜디오", couponName: "6:1 그룹레슨 8회 이용권", count: 8, maxCount: 10, duration: 93)
+    ]) {
         self.coupons = coupons
         super.init(frame: .zero)
         collectionView.register(CouponCell.self, forCellWithReuseIdentifier: CouponCell.identifier)
@@ -61,11 +65,12 @@ extension CouponListView: UICollectionViewDataSource, UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let couponCell = collectionView.dequeueReusableCell(withReuseIdentifier: CouponCell.identifier, for: indexPath) as! CouponCell
         // TODO: 데이터 반영하기
-        couponCell.studioName = "발란스 스튜디오"
-        couponCell.couponName = "6:1 그룹레슨 10회 이용권"
-        couponCell.count = 4
-        couponCell.maxCount = 10
-        couponCell.duration = 60
+        let coupon = coupons[indexPath.item]
+        couponCell.studioName = coupon.studioName
+        couponCell.couponName = coupon.couponName
+        couponCell.count = coupon.count
+        couponCell.maxCount = coupon.maxCount
+        couponCell.duration = coupon.duration
         return couponCell
     }
 }
