@@ -399,7 +399,6 @@ final class MyPageViewController: UIViewController {
             $0.top.equalTo(couponPartHeaderButton.snp.bottom).offset(25)
             $0.leading.equalTo(couponPartView.snp.leading)
             $0.trailing.equalTo(couponPartView.snp.trailing)
-            $0.height.equalTo(170)
         }
         
         let buttonDivider = UIView()

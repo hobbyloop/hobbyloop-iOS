@@ -161,7 +161,6 @@ final class UserCouponHistoryViewController: UIViewController {
         couponListView.snp.makeConstraints {
             $0.top.equalTo(categoryButtonsStack.snp.bottom).offset(21)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(170)
         }
     }
     
