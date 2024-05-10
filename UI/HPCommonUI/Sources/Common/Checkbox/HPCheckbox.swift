@@ -11,8 +11,8 @@ import SnapKit
 public final class HPCheckbox: UIButton {
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setImage(HPCommonUIAsset.checkboxUnfilled.image, for: .normal)
-        setImage(HPCommonUIAsset.checkboxFilled.image, for: .selected)
+        self.setImage(HPCommonUIAsset.checkboxUnfilled.image, for: .normal)
+        self.setImage(HPCommonUIAsset.checkboxFilled.image, for: .selected)
         self.addTarget(self, action: #selector(checkboxTapped), for: .primaryActionTriggered)
         self.snp.makeConstraints {
             $0.width.height.equalTo(26)
