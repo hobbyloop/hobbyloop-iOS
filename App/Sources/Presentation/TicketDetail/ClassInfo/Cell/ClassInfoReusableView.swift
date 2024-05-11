@@ -17,10 +17,7 @@ class ClassInfoReusableView: UICollectionReusableView {
         $0.alignment = .fill
     }
     
-    private lazy var couponListView: CouponListView = CouponListView(coupons: [DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-                                                                               DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-                                                                               DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-                                                                               DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date())])
+    private lazy var couponListView: CouponListView = CouponListView()
     
     private lazy var titleStackView: UIStackView = UIStackView().then {
         $0.axis = .vertical

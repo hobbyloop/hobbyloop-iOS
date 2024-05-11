@@ -8,16 +8,17 @@
 import UIKit
 
 public extension UIBezierPath {
-    convenience init(shouldRoundRect rect: CGRect, topLeftRadius: CGFloat, topRightRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat) {
+    convenience init(shouldRoundRect rect: CGRect, topLeftRadius: CGFloat, topRightRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat, width: CGFloat = 1) {
         
         self.init()
         
+        self.lineWidth = width
         let path = CGMutablePath()
         
-        let topLeft = CGPoint(x: rect.minX, y: rect.minY)
-        let topRight = CGPoint(x: rect.maxX, y: rect.minY)
-        let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
-        let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
+        let topLeft = CGPoint(x: rect.minX + width / 2, y: rect.minY + width / 2)
+        let topRight = CGPoint(x: rect.maxX - width / 2, y: rect.minY + width / 2)
+        let bottomRight = CGPoint(x: rect.maxX - width / 2, y: rect.maxY - width / 2)
+        let bottomLeft = CGPoint(x: rect.minX + width / 2, y: rect.maxY - width / 2)
         
         if topLeftRadius != .zero{
             path.move(to: CGPoint(x: topLeft.x + abs(topLeftRadius), y: topLeft.y))

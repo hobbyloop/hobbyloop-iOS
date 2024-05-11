@@ -40,11 +40,7 @@ final class UserCouponHistoryViewController: UIViewController {
     }
     
     // MARK: - coupon list
-    private let couponListView = CouponListView(coupons: [
-        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-        DummyCoupon(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date())
-    ], withPageControl: false)
+    private let couponListView = CouponListView()
     
     // MARK: - 이용권 시작일 설정 버튼
     private let setCouponStartDateButton = UIButton().then {
@@ -161,7 +157,6 @@ final class UserCouponHistoryViewController: UIViewController {
         couponListView.snp.makeConstraints {
             $0.top.equalTo(categoryButtonsStack.snp.bottom).offset(21)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(170)
         }
     }
     

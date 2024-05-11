@@ -12,7 +12,8 @@ import Then
 import RxSwift
 import RxCocoa
 
-
+/// deprecated 처리되었으므로 HPNewButton이나 HPNewSelectButton을 사용하시기 바랍니다.
+@available(*, deprecated)
 public final class HPButton: UIButton {
     
     public var isConfirm: Bool = false {

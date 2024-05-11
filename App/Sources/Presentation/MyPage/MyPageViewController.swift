@@ -108,10 +108,7 @@ final class MyPageViewController: UIViewController {
     }
     private lazy var couponPartHeaderButton = partHeaderButton(text: "내 이용권")
     
-    private let couponListView = CouponListView(coupons: [
-        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-        .init(companyName: "발란스 스튜디오", count: 10, start: Date(), end: Date()),
-    ], withPageControl: false)
+    private let couponListView = CouponListView()
     
     private let classCountLabel = UILabel().then {
         $0.text = "13"
@@ -399,7 +396,6 @@ final class MyPageViewController: UIViewController {
             $0.top.equalTo(couponPartHeaderButton.snp.bottom).offset(25)
             $0.leading.equalTo(couponPartView.snp.leading)
             $0.trailing.equalTo(couponPartView.snp.trailing)
-            $0.height.equalTo(170)
         }
         
         let buttonDivider = UIView()
