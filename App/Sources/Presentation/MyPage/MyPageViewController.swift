@@ -11,7 +11,7 @@ import HPCommonUI
 import Then
 
 final class MyPageViewController: UIViewController {
-    // MARK: - navigation bar button
+    // MARK: - 네비게이션 버튼
     private let settingsButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.settingOutlind.image, for: [])
         $0.tintColor = HPCommonUIAsset.gray100.color
@@ -19,7 +19,7 @@ final class MyPageViewController: UIViewController {
     
     private lazy var settingsButtonItem = UIBarButtonItem(customView: settingsButton)
     
-    // MARK: - profile part
+    // MARK: - 프로필 파트 UI
     private let profileImageView = UIImageView.circularImageView(radius: 42.5).then {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
@@ -63,6 +63,25 @@ final class MyPageViewController: UIViewController {
         $0.spacing = 4
     }
     
+    // MARK: - 포인트, 이용권, 쿠폰 파트 UI
+    private lazy var pointButton = VerticalButton(title: "포인트", subtitle: "50,000P")
+    private lazy var ticketButton = VerticalButton(title: "이용권", subtitle: "3개")
+    private lazy var discountCouponButton = VerticalButton(title: "쿠폰", subtitle: "2개")
+    
+    private let verticalButtonsDivider1 = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray40.color
+    }
+    
+    private let verticalButtonsDivider2 = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray40.color
+    }
+    
+    private let verticalButtonsStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 8
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,11 +111,32 @@ final class MyPageViewController: UIViewController {
             $0.height.equalTo(10)
         }
         [nicknameLabel, nicknamePhoneNumberDivider, phoneNumberLabel].forEach(nicknamePhoneNumberStack.addArrangedSubview(_:))
+        [verticalButtonsDivider1, verticalButtonsDivider2].forEach {
+            $0.snp.makeConstraints {
+                $0.width.equalTo(1)
+                $0.height.equalTo(10)
+            }
+        }
+        
+        [ pointButton, ticketButton, discountCouponButton].forEach {
+            $0.snp.makeConstraints {
+                $0.width.equalTo(100)
+            }
+        }
+        
+        [
+            pointButton,
+            verticalButtonsDivider1,
+            ticketButton,
+            verticalButtonsDivider2,
+            discountCouponButton
+        ].forEach(verticalButtonsStack.addArrangedSubview(_:))
         
         [
             profileImageView,
             nameEditStack,
-            nicknamePhoneNumberStack
+            nicknamePhoneNumberStack,
+            verticalButtonsStack
         ].forEach(view.addSubview(_:))
         
         profileImageView.snp.makeConstraints {
@@ -112,6 +152,29 @@ final class MyPageViewController: UIViewController {
         nicknamePhoneNumberStack.snp.makeConstraints {
             $0.top.equalTo(nameEditStack.snp.bottom).offset(6)
             $0.centerX.equalToSuperview()
+        }
+        
+        verticalButtonsStack.snp.makeConstraints {
+            $0.top.equalTo(nicknamePhoneNumberStack.snp.bottom).offset(28)
+            $0.leading.trailing.equalToSuperview().inset(28)
+        }
+    }
+    
+    private func VerticalButton(title: String, subtitle: String) -> UIButton {
+        return UIButton(configuration: .plain()).then {
+            $0.configuration?.attributedTitle = AttributedString.init(title, attributes: .init([
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .foregroundColor: HPCommonUIAsset.gray80.color
+            ]))
+            
+            $0.configuration?.attributedSubtitle = AttributedString.init(subtitle, attributes: .init([
+                .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+                .foregroundColor: HPCommonUIAsset.gray100.color
+            ]))
+            
+            $0.configuration?.titleAlignment = .center
+            $0.configuration?.titlePadding = 10
+            $0.configuration?.contentInsets = .zero
         }
     }
 }
