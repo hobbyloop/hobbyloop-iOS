@@ -64,9 +64,9 @@ final class MyPageViewController: UIViewController {
     }
     
     // MARK: - 포인트, 이용권, 쿠폰 파트 UI
-    private lazy var pointButton = VerticalButton(title: "포인트", subtitle: "50,000P")
-    private lazy var ticketButton = VerticalButton(title: "이용권", subtitle: "3개")
-    private lazy var discountCouponButton = VerticalButton(title: "쿠폰", subtitle: "2개")
+    private lazy var pointButton = KeyValueButton(title: "포인트", subtitle: "50,000P")
+    private lazy var ticketButton = KeyValueButton(title: "이용권", subtitle: "3개")
+    private lazy var discountCouponButton = KeyValueButton(title: "쿠폰", subtitle: "2개")
     
     private let verticalButtonsDivider1 = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.gray40.color
@@ -76,10 +76,26 @@ final class MyPageViewController: UIViewController {
         $0.backgroundColor = HPCommonUIAsset.gray40.color
     }
     
-    private let verticalButtonsStack = UIStackView().then {
+    private let keyValueButtonsStack = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.spacing = 8
+    }
+    
+    private let bottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
+    
+    // MARK: - 보관함, 리뷰, 수업내역 버튼
+    private lazy var bookmarkButton = ArrowedButton(title: "보관함")
+    private lazy var reviewButton = ArrowedButton(title: "리뷰", textColor: HPCommonUIAsset.gray40.color).then {
+        $0.isEnabled = false
+    }
+    private lazy var classHistoryButton = ArrowedButton(title: "수업 내역")
+    private let arrowedButtonsStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 0
+        $0.alignment = .fill
     }
     
     // MARK: - life cycle
@@ -118,7 +134,7 @@ final class MyPageViewController: UIViewController {
             }
         }
         
-        [ pointButton, ticketButton, discountCouponButton].forEach {
+        [pointButton, ticketButton, discountCouponButton].forEach {
             $0.snp.makeConstraints {
                 $0.width.equalTo(100)
             }
@@ -130,13 +146,17 @@ final class MyPageViewController: UIViewController {
             ticketButton,
             verticalButtonsDivider2,
             discountCouponButton
-        ].forEach(verticalButtonsStack.addArrangedSubview(_:))
+        ].forEach(keyValueButtonsStack.addArrangedSubview(_:))
+        
+        [bookmarkButton, reviewButton, classHistoryButton].forEach(arrowedButtonsStack.addArrangedSubview(_:))
         
         [
             profileImageView,
             nameEditStack,
             nicknamePhoneNumberStack,
-            verticalButtonsStack
+            keyValueButtonsStack,
+            bottomMarginView,
+            arrowedButtonsStack
         ].forEach(view.addSubview(_:))
         
         profileImageView.snp.makeConstraints {
@@ -154,13 +174,24 @@ final class MyPageViewController: UIViewController {
             $0.centerX.equalToSuperview()
         }
         
-        verticalButtonsStack.snp.makeConstraints {
+        keyValueButtonsStack.snp.makeConstraints {
             $0.top.equalTo(nicknamePhoneNumberStack.snp.bottom).offset(28)
-            $0.leading.trailing.equalToSuperview().inset(28)
+            $0.centerX.equalToSuperview()
+        }
+        
+        bottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(keyValueButtonsStack.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(16)
+        }
+        
+        arrowedButtonsStack.snp.makeConstraints {
+            $0.top.equalTo(bottomMarginView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
         }
     }
     
-    private func VerticalButton(title: String, subtitle: String) -> UIButton {
+    private func KeyValueButton(title: String, subtitle: String) -> UIButton {
         return UIButton(configuration: .plain()).then {
             $0.configuration?.attributedTitle = AttributedString.init(title, attributes: .init([
                 .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
@@ -176,5 +207,34 @@ final class MyPageViewController: UIViewController {
             $0.configuration?.titlePadding = 10
             $0.configuration?.contentInsets = .zero
         }
+    }
+    
+    private func ArrowedButton(title: String, textColor: UIColor = HPCommonUIAsset.gray100.color) -> UIButton {
+        let button = UIButton(configuration: .plain()).then {
+            $0.configuration?.attributedTitle = AttributedString.init(title, attributes: .init([
+                .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+                .foregroundColor: textColor
+            ]))
+            
+            
+            $0.configuration?.imagePlacement = .trailing
+            $0.configuration?.contentInsets = .init(top: 21, leading: 16, bottom: 22, trailing: 26)
+            
+            $0.configuration?.imagePadding = view.bounds.width - ($0.titleLabel?.intrinsicContentSize.width ?? 0) - 50
+            $0.setImage(HPCommonUIAsset.rightarrow.image.withRenderingMode(.alwaysTemplate).imageWith(newSize: .init(width: 8, height: 14)), for: [])
+            $0.tintColor = textColor
+        }
+        
+        let bottomEdgeView = UIView()
+        bottomEdgeView.backgroundColor = HPCommonUIAsset.gray20.color
+        button.addSubview(bottomEdgeView)
+        
+        bottomEdgeView.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(1)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        return button
     }
 }
