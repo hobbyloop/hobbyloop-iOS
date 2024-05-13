@@ -21,26 +21,8 @@ class SettingsViewController: UIViewController {
         }
     }
     
-    private let navigationTitleLabel = UILabel().then {
-        $0.text = "설정"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-    }
-    
-    private lazy var customNavigationBar = UIView().then {
-        [backButton, navigationTitleLabel].forEach($0.addSubview(_:))
-        
-        navigationTitleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        
-        backButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
-        }
-    }
-    
     // MARK: - background view
-    private let backgroundView = UIView().then {
+    private let scrollView = UIScrollView().then {
         $0.backgroundColor = HPCommonUIAsset.lightBackground.color
     }
     
@@ -120,7 +102,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layoutNavigationBar()
+        configureNavigationBar()
         layoutBackgroundView()
         layoutAppSection()
         layoutCustomerSupportSection()
@@ -141,32 +123,35 @@ class SettingsViewController: UIViewController {
         }
     }
     
-    // MARK: - layout
-    private func layoutNavigationBar() {
-        view.addSubview(customNavigationBar)
+    private func configureNavigationBar() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.titleTextAttributes = [
+            .foregroundColor: HPCommonUIAsset.gray100.color,
+            .font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
+        ]
         
-        customNavigationBar.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(44)
-            $0.height.equalTo(56)
-        }
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.compactAppearance = navBarAppearance
+        navigationItem.title = "설정"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
     private func layoutBackgroundView() {
-        view.addSubview(backgroundView)
-        backgroundView.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom)
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
     
     private func layoutAppSection() {
         [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, bottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
-        backgroundView.addSubview(appSectionStack)
+        scrollView.addSubview(appSectionStack)
         
         appSectionStack.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
     }
     
@@ -179,22 +164,26 @@ class SettingsViewController: UIViewController {
         
         [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu].forEach(customerSupportSectionStack.addArrangedSubview(_:))
         
-        backgroundView.addSubview(customerSupportSectionStack)
+        scrollView.addSubview(customerSupportSectionStack)
         customerSupportSectionStack.snp.makeConstraints {
             $0.top.equalTo(appSectionStack.snp.bottom).offset(14)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
         
-        [logoutMenu, secessionMenu].forEach(backgroundView.addSubview(_:))
+        [logoutMenu, secessionMenu].forEach(scrollView.addSubview(_:))
         
         logoutMenu.snp.makeConstraints {
             $0.top.equalTo(customerSupportSectionStack.snp.bottom).offset(17)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
         
         secessionMenu.snp.makeConstraints {
             $0.top.equalTo(logoutMenu.snp.bottom).offset(14)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+            $0.bottom.equalToSuperview()
         }
     }
     
