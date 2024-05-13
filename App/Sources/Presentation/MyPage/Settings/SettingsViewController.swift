@@ -13,7 +13,7 @@ import HPCommonUI
 class SettingsViewController: UIViewController {
     // MARK: - custom navigation bar
     private let backButton = UIButton(configuration: .plain()).then {
-        $0.configuration?.image = HPCommonUIAsset.leftarrow.image
+        $0.configuration?.image = HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14))
         
         $0.snp.makeConstraints {
             $0.width.equalTo(21)
@@ -300,23 +300,24 @@ class SettingsViewController: UIViewController {
     private func menuWithSwitch(name: String, switchView: HPSwitch) -> UIView {
         let view = UIView()
         view.snp.makeConstraints {
-            $0.height.equalTo(60)
+            $0.height.equalTo(57)
         }
         
         let nameLabel = UILabel()
         nameLabel.text = name
         nameLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        nameLabel.textColor = HPCommonUIAsset.gray100.color
         
         [nameLabel, switchView].forEach(view.addSubview(_:))
         
         nameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(16)
         }
         
         switchView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-23)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         return view
@@ -325,27 +326,28 @@ class SettingsViewController: UIViewController {
     private func menuWithArrow(name: String) -> UIButton {
         let view = UIButton()
         view.snp.makeConstraints {
-            $0.height.equalTo(60)
+            $0.height.equalTo(62)
         }
         
         let nameLabel = UILabel()
         nameLabel.text = name
         nameLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        nameLabel.textColor = HPCommonUIAsset.gray100.color
         
-        let arrowView = UIImageView(image: HPCommonUIAsset.rightarrow.image.withTintColor(HPCommonUIAsset.buttonTitle.color))
+        let arrowView = UIImageView(image: HPCommonUIAsset.rightarrow.image.withTintColor(HPCommonUIAsset.gray100.color))
         
         [nameLabel, arrowView].forEach(view.addSubview(_:))
         
         nameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(16)
         }
         
         arrowView.snp.makeConstraints {
-            $0.width.equalTo(7.23)
-            $0.height.equalTo(12.63)
+            $0.width.equalTo(8)
+            $0.height.equalTo(14)
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-23.28)
+            $0.trailing.equalToSuperview().offset(-26)
         }
         
         return view
