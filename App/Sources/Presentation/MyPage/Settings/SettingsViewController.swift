@@ -22,9 +22,7 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - background view
-    private let scrollView = UIScrollView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
-    }
+    private let scrollView = UIScrollView()
     
     // MARK: - 앱 설정 섹션 UI
     private let appSectionStack = UIStackView().then {
@@ -47,10 +45,8 @@ class SettingsViewController: UIViewController {
     private lazy var homeViewMenu = menuWithArrow(name: "홈 화면 설정")
     private lazy var versionMenu = menuWithArrow(name: "버전정보")
     
-    private let bottomMarginView = UIView().then {
-        $0.snp.makeConstraints {
-            $0.height.equalTo(12)
-        }
+    private let appSectionBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
     // MARK: - 고객지원 센터 섹션 UI
@@ -58,11 +54,18 @@ class SettingsViewController: UIViewController {
     private lazy var faqMenu = menuWithArrow(name: "자주 묻는 질문")
     private lazy var kakaoTalkQnaMenu = menuWithArrow(name: "카카오톡 1:1 문의")
     private lazy var serviceTermsMenu = menuWithArrow(name: "서비스 약관")
+    private let customSupportSectionBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
     
     // MARK: - 로그아웃, 탈퇴하기 메뉴
     private lazy var logoutMenu = menuWithArrow(name: "로그아웃").then {
         $0.backgroundColor = .systemBackground
     }
+    private let logoutMenuBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
+    
     private lazy var secessionMenu = menuWithArrow(name: "탈퇴하기").then {
         $0.backgroundColor = .systemBackground
     }
@@ -145,7 +148,10 @@ class SettingsViewController: UIViewController {
     }
     
     private func layoutAppSection() {
-        [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, bottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
+        appSectionBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+        }
+        [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, appSectionBottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
         scrollView.addSubview(appSectionStack)
         
         appSectionStack.snp.makeConstraints {
@@ -162,7 +168,10 @@ class SettingsViewController: UIViewController {
         customerSupportSectionStack.alignment = .fill
         customerSupportSectionStack.spacing = 0
         
-        [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu].forEach(customerSupportSectionStack.addArrangedSubview(_:))
+        customSupportSectionBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+        }
+        [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu, customSupportSectionBottomMarginView].forEach(customerSupportSectionStack.addArrangedSubview(_:))
         
         scrollView.addSubview(customerSupportSectionStack)
         customerSupportSectionStack.snp.makeConstraints {
@@ -171,7 +180,7 @@ class SettingsViewController: UIViewController {
             $0.trailing.equalTo(view.snp.trailing)
         }
         
-        [logoutMenu, secessionMenu].forEach(scrollView.addSubview(_:))
+        [logoutMenu, logoutMenuBottomMarginView, secessionMenu].forEach(scrollView.addSubview(_:))
         
         logoutMenu.snp.makeConstraints {
             $0.top.equalTo(customerSupportSectionStack.snp.bottom).offset(17)
@@ -179,8 +188,15 @@ class SettingsViewController: UIViewController {
             $0.trailing.equalTo(view.snp.trailing)
         }
         
+        logoutMenuBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+            $0.top.equalTo(logoutMenu.snp.bottom)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+        }
+        
         secessionMenu.snp.makeConstraints {
-            $0.top.equalTo(logoutMenu.snp.bottom).offset(14)
+            $0.top.equalTo(logoutMenuBottomMarginView.snp.bottom)
             $0.leading.equalTo(view.snp.leading)
             $0.trailing.equalTo(view.snp.trailing)
             $0.bottom.equalToSuperview()
