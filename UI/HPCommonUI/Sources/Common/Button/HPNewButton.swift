@@ -23,9 +23,11 @@ public final class HPNewButton: UIButton {
     }
     
     let style: Style
+    let unselectedTitleColor: UIColor
     
-    public init(title: String, style: Style) {
+    public init(title: String, style: Style, unselectedTitleColor: UIColor = HPCommonUIAsset.gray60.color) {
         self.style = style
+        self.unselectedTitleColor = unselectedTitleColor
         super.init(frame: .zero)
         self.layer.cornerRadius = 8
         self.setTitle(title, for: [])
@@ -97,9 +99,10 @@ public final class HPNewButton: UIButton {
     public override var isSelected: Bool {
         didSet {
             if style == .bordered {
-                let color = isSelected ? HPCommonUIAsset.primary.color : HPCommonUIAsset.gray60.color
-                self.layer.borderColor = color.cgColor
-                self.setTitleColor(color, for: [])
+                let titleColor = isSelected ? HPCommonUIAsset.primary.color : unselectedTitleColor
+                let borderColor = isSelected ? HPCommonUIAsset.primary.color : HPCommonUIAsset.gray40.color
+                self.layer.borderColor = borderColor.cgColor
+                self.setTitleColor(titleColor, for: [])
             }
         }
     }
