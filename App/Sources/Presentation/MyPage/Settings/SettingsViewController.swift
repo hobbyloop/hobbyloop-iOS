@@ -51,7 +51,7 @@ class SettingsViewController: UIViewController {
         $0.alignment = .fill
         $0.spacing = 0
     }
-    private lazy var appSectionHeader = sectionHeader(title: "앱 설정", bottomMargin: 11)
+    private lazy var appSectionHeader = sectionHeader(title: "앱 설정", image: HPCommonUIAsset.settingOutlind.image)
     
     private let appAlarmSwitch = HPSwitch().then {
         $0.transform = CGAffineTransform(scaleX: 35 / 51, y: 21 / 31)
@@ -72,7 +72,7 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - 고객지원 센터 섹션 UI
-    private lazy var customerSupportSectionHeader = sectionHeader(title: "고객지원 센터", bottomMargin: 14)
+    private lazy var customerSupportSectionHeader = sectionHeader(title: "고객지원 센터", image: HPCommonUIAsset.callChat.image)
     private lazy var faqMenu = menuWithArrow(name: "자주 묻는 질문")
     private lazy var kakaoTalkQnaMenu = menuWithArrow(name: "카카오톡 1:1 문의")
     private lazy var serviceTermsMenu = menuWithArrow(name: "서비스 약관")
@@ -269,18 +269,29 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - view generating methods
-    private func sectionHeader(title: String, bottomMargin: CGFloat) -> UIView {
+    private func sectionHeader(title: String, image: UIImage) -> UIView {
         let view = UIView()
+        view.snp.makeConstraints {
+            $0.height.equalTo(62)
+        }
         let titleLabel = UILabel()
+        let imageView = UIImageView(image: image)
         titleLabel.text = title
         titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        titleLabel.textColor = HPCommonUIAsset.gray100.color
         
+        view.addSubview(imageView)
         view.addSubview(titleLabel)
         
+        imageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(26)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(21)
-            $0.leading.equalToSuperview().offset(27)
-            $0.bottom.equalToSuperview().offset(-bottomMargin)
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(imageView.snp.trailing).offset(6)
         }
         
         return view
