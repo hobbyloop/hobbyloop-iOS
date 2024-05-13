@@ -212,7 +212,7 @@ class SettingsViewController: UIViewController {
         
         logoutBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(326)
+            $0.height.equalTo(285)
             self.logoutBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
     }
@@ -222,7 +222,7 @@ class SettingsViewController: UIViewController {
         
         secessionBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(326)
+            $0.height.equalTo(285)
             self.secessionBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
     }
@@ -370,13 +370,13 @@ class SettingsViewController: UIViewController {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(40)
             $0.height.equalTo(48)
             $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalTo(view.snp.centerX).offset(-6)
+            $0.trailing.equalTo(view.snp.centerX).offset(-4.5)
         }
         
         confirmButton.snp.makeConstraints {
             $0.top.equalTo(closeButton.snp.top)
             $0.height.equalTo(closeButton.snp.height)
-            $0.leading.equalTo(view.snp.centerX).offset(6)
+            $0.leading.equalTo(view.snp.centerX).offset(4.5)
             $0.trailing.equalToSuperview().offset(-16)
         }
         
@@ -387,7 +387,7 @@ class SettingsViewController: UIViewController {
     @objc private func showLogoutSheet() {
         sheetBackgroundView.isHidden = false
         
-        logoutBottomSheetTopConstraint?.update(offset: -326)
+        logoutBottomSheetTopConstraint?.update(offset: -285)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
@@ -396,7 +396,7 @@ class SettingsViewController: UIViewController {
     @objc private func showSecessionSheet() {
         sheetBackgroundView.isHidden = false
         
-        secessionBottomSheetTopConstraint?.update(offset: -326)
+        secessionBottomSheetTopConstraint?.update(offset: -285)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
