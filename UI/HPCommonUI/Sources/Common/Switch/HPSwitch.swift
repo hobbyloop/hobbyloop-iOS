@@ -10,7 +10,7 @@ import UIKit
 final public class HPSwitch: UISwitch {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.onTintColor = HPCommonUIAsset.deepOrange.color
+        self.onTintColor = HPCommonUIAsset.primary.color
         self.backgroundColor = HPCommonUIAsset.switchBackground.color
         self.layer.cornerRadius = self.bounds.size.height / 2
         self.clipsToBounds = true
