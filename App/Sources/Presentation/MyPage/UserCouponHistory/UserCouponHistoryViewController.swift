@@ -36,11 +36,22 @@ final class UserCouponHistoryViewController: UIViewController {
     // MARK: - coupon list
     private let couponListView = CouponListView()
     
-    private lazy var historyTableView = UITableView().then {
+    private let bottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
+    
+    // MARK: - table view
+    private lazy var historyTableView = UITableView(frame: .zero, style: .grouped).then {
         $0.separatorStyle = .none
-        $0.dataSource = self
-        $0.rowHeight = HPHistoryCell.height
-        $0.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
+        $0.sectionFooterHeight = 0
+        $0.tableFooterView = UIView(
+            frame: CGRect(origin: .zero,
+                          size: CGSize(
+                            width:CGFloat.leastNormalMagnitude,
+                            height: CGFloat.leastNormalMagnitude
+                          )
+                         )
+        )
     }
     
     // MARK: - life cycle
@@ -49,6 +60,7 @@ final class UserCouponHistoryViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureNavigationBar()
         layout()
+        configureHistoryTableView()
     }
     
     // MARK: - layout methods
@@ -71,7 +83,9 @@ final class UserCouponHistoryViewController: UIViewController {
         
         [
             categoryButtonsStack,
-            couponListView
+            couponListView,
+            bottomMarginView,
+            historyTableView
         ].forEach(view.addSubview(_:))
         
         categoryButtonsStack.snp.makeConstraints {
@@ -83,13 +97,44 @@ final class UserCouponHistoryViewController: UIViewController {
             $0.top.equalTo(categoryButtonsStack.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
         }
+        
+        bottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(couponListView.snp.bottom).offset(24)
+            $0.height.equalTo(16)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        historyTableView.snp.makeConstraints {
+            $0.top.equalTo(bottomMarginView.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+    
+    private func configureHistoryTableView() {
+        historyTableView.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
+        historyTableView.register(HPHistoryTableViewHeader.self, forHeaderFooterViewReuseIdentifier: HPHistoryTableViewHeader.identifier)
+        historyTableView.dataSource = self
+        historyTableView.delegate = self
     }
 }
 
 // MARK: - table view data source
-extension UserCouponHistoryViewController: UITableViewDataSource {
+extension UserCouponHistoryViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        // TODO: 데이터 반영
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // TODO: 데이터 반영
         return 6
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HPHistoryTableViewHeader.identifier) as! HPHistoryTableViewHeader
+        
+        header.title = "2023년 5월"
+        return header
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -100,5 +145,17 @@ extension UserCouponHistoryViewController: UITableViewDataSource {
         cell.remainingAmountText = "5회"
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return HPHistoryTableViewHeader.height
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return HPHistoryCell.height
     }
 }
