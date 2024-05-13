@@ -93,19 +93,8 @@ class SettingsViewController: UIViewController {
         confirmButton: logoutConfirmButton
     )
     
-    private let logoutCloseButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
-    }
-    
-    private let logoutConfirmButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("로그아웃 하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
-    }
+    private let logoutCloseButton = HPNewButton(title: "닫기", style: .secondary)
+    private let logoutConfirmButton = HPNewButton(title: "로그아웃 하기", style: .primary)
     
     private var logoutBottomSheetTopConstraint: Constraint?
     
@@ -117,19 +106,8 @@ class SettingsViewController: UIViewController {
         confirmButton: secessionConfirmButton
     )
     
-    private let secessionCloseButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
-    }
-    
-    private let secessionConfirmButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("탈퇴하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
-    }
+    private let secessionCloseButton = HPNewButton(title: "닫기", style: .secondary)
+    private let secessionConfirmButton = HPNewButton(title: "탈퇴하기", style: .primary)
     
     private var secessionBottomSheetTopConstraint: Constraint?
     
@@ -353,7 +331,7 @@ class SettingsViewController: UIViewController {
         return view
     }
     
-    private func bottomSheet(title: String, description: String, closeButton: HPButton, confirmButton: HPButton) -> UIView {
+    private func bottomSheet(title: String, description: String, closeButton: UIButton, confirmButton: UIButton) -> UIView {
         let view = UIView()
         view.backgroundColor = .systemBackground
         
@@ -390,8 +368,8 @@ class SettingsViewController: UIViewController {
         
         closeButton.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(40)
-            $0.height.equalTo(59)
-            $0.leading.equalToSuperview().offset(34)
+            $0.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalTo(view.snp.centerX).offset(-6)
         }
         
@@ -399,7 +377,7 @@ class SettingsViewController: UIViewController {
             $0.top.equalTo(closeButton.snp.top)
             $0.height.equalTo(closeButton.snp.height)
             $0.leading.equalTo(view.snp.centerX).offset(6)
-            $0.trailing.equalToSuperview().offset(-34)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         return view
