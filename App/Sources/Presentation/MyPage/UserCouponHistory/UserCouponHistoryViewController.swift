@@ -105,7 +105,7 @@ final class UserCouponHistoryViewController: UIViewController {
         }
         
         historyTableView.snp.makeConstraints {
-            $0.top.equalTo(bottomMarginView.snp.bottom)
+            $0.top.equalTo(bottomMarginView.snp.bottom).offset(24)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }

@@ -10,7 +10,7 @@ import SnapKit
 
 public final class HPHistoryTableViewHeader: UITableViewHeaderFooterView {
     public static let identifier = "HPHistoryTableViewHeader"
-    public static let height: CGFloat = 60
+    public static let height: CGFloat = 36
     
     private let titleLabel = UILabel().then {
         $0.text = "2024년 5월"
@@ -35,7 +35,7 @@ public final class HPHistoryTableViewHeader: UITableViewHeaderFooterView {
     private func layout() {
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
