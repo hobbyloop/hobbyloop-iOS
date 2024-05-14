@@ -47,11 +47,15 @@ final class ClassHistoryViewController: UIViewController {
         $0.spacing = 14
     }
     
+    // MARK: - collection view
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureNavigationBar()
         layout()
+        configureCollectionView()
     }
     
     private func configureNavigationBar() {
@@ -70,12 +74,64 @@ final class ClassHistoryViewController: UIViewController {
     private func layout() {
         [prevMonthButton, yearMonthLabel, nextMonthButton].forEach(yearMonthStack.addArrangedSubview(_:))
         [
-            yearMonthStack
+            yearMonthStack,
+            collectionView
         ].forEach(view.addSubview(_:))
         
         yearMonthStack.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
             $0.centerX.equalToSuperview()
         }
+        
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(yearMonthStack.snp.bottom).offset(20)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+    
+    private func configureCollectionView() {
+        collectionView.register(ClassHistoryCell.self, forCellWithReuseIdentifier: ClassHistoryCell.identifier)
+        collectionView.dataSource = self
+    }
+    
+    private func createLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+            let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(ClassHistoryCell.height)), subitems: [item])
+            
+            group.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+            
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 16
+            section.boundarySupplementaryItems = [self.headerItem()]
+            section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+            
+            return section
+        }
+    }
+    
+    private func headerItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(34)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
+}
+
+extension ClassHistoryViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        // TODO: 데이터 반영
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // TODO: 데이터 반영
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO: 데이터 반영
+        return collectionView.dequeueReusableCell(withReuseIdentifier: ClassHistoryCell.identifier, for: indexPath)
     }
 }

@@ -10,6 +10,9 @@ import SnapKit
 import HPCommonUI
 
 final class ClassHistoryCell: UICollectionViewCell {
+    static let identifier = "ClassHistoryCell"
+    static let height: CGFloat = 148
+    
     private let classTitleLabel = UILabel().then {
         $0.text = "6:1 체형교정 필라테스"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
