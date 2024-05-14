@@ -95,7 +95,10 @@ final class ClassHistoryViewController: UIViewController {
         collectionView.register(ClassHistoryFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: ClassHistoryFooterView.identifier)
         collectionView.dataSource = self
     }
-    
+}
+
+// MARK: - collection view layout
+extension ClassHistoryViewController {
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
             let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
@@ -132,6 +135,7 @@ final class ClassHistoryViewController: UIViewController {
     }
 }
 
+// MARK: - collection view data source
 extension ClassHistoryViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         // TODO: 데이터 반영
