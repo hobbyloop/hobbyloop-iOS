@@ -19,6 +19,11 @@ final class ClassHistoryCell: UICollectionViewCell {
         $0.textColor = HPCommonUIAsset.gray100.color
     }
     
+    var classTitle: String? {
+        get { classTitleLabel.text }
+        set { classTitleLabel.text = newValue }
+    }
+    
     private let cancelButton = UIButton().then {
         $0.layer.cornerRadius = 14
         $0.clipsToBounds = true
@@ -30,16 +35,31 @@ final class ClassHistoryCell: UICollectionViewCell {
         $0.setTitleColor(HPCommonUIAsset.gray60.color, for: .disabled)
     }
     
+    var isCancellable = true {
+        didSet {
+            cancelButton.backgroundColor = isCancellable ? HPCommonUIAsset.primary.color : HPCommonUIAsset.gray40.color
+        }
+    }
+    
     private let studioNameLabel = UILabel().then {
         $0.text = "필라피티 스튜디오"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    var studioName: String? {
+        get { studioNameLabel.text }
+        set { studioNameLabel.text = newValue }
     }
     
     private let instructorNameLabel = UILabel().then {
         $0.text = "이민주 강사님"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    var instuctorName = "" {
+        didSet {
+            instructorNameLabel.text = "\(instuctorName) 강사님"
+        }
     }
     
     private let horizontalLineView = UIView().then {
@@ -55,6 +75,10 @@ final class ClassHistoryCell: UICollectionViewCell {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
+    var dateText: String? {
+        get { dateLabel.text }
+        set { dateLabel.text = newValue }
+    }
     
     private let verticalLineView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.gray100.color
@@ -66,6 +90,10 @@ final class ClassHistoryCell: UICollectionViewCell {
         $0.text = "20:00 - 20:50"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    var timeText: String? {
+        get { timeLabel.text }
+        set { timeLabel.text = newValue }
     }
     
     private let dateTimeStack = UIStackView().then {

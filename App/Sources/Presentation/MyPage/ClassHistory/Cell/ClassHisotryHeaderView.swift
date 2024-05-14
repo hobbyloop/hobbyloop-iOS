@@ -18,6 +18,10 @@ final class ClassHisotryHeaderView: UICollectionReusableView {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
+    var title: String? {
+        get { titleLabel.text }
+        set { titleLabel.text = newValue }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
