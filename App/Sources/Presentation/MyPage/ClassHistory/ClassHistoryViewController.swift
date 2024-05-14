@@ -91,6 +91,7 @@ final class ClassHistoryViewController: UIViewController {
     
     private func configureCollectionView() {
         collectionView.register(ClassHistoryCell.self, forCellWithReuseIdentifier: ClassHistoryCell.identifier)
+        collectionView.register(ClassHisotryHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ClassHisotryHeaderView.identifier)
         collectionView.dataSource = self
     }
     
@@ -112,7 +113,7 @@ final class ClassHistoryViewController: UIViewController {
     
     private func headerItem() -> NSCollectionLayoutBoundarySupplementaryItem {
         NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(34)),
+            layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(ClassHisotryHeaderView.height)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
@@ -133,5 +134,13 @@ extension ClassHistoryViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // TODO: 데이터 반영
         return collectionView.dequeueReusableCell(withReuseIdentifier: ClassHistoryCell.identifier, for: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ClassHisotryHeaderView.identifier, for: indexPath)
+        }
+        
+        return UICollectionReusableView()
     }
 }
