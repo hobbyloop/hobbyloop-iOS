@@ -49,13 +49,16 @@ final class PointViewController: UIViewController {
         $0.isHidden = true
     }
     
-    private let dividerView1 = UIView().then {
+    private let pointPartBottomMarginView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
     private let blackPointImageView = UIImageView().then {
-        $0.image = HPCommonUIAsset.point.image.withRenderingMode(.alwaysTemplate).withTintColor(HPCommonUIAsset.gray100.color)
+        $0.image = HPCommonUIAsset.point.image.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = HPCommonUIAsset.gray100.color
     }
+    
+    private let pointHistoryContainerView = UIView()
     
     private let pointHistoryTitleLabel = UILabel().then {
         $0.text = "포인트 사용내역"
@@ -64,6 +67,9 @@ final class PointViewController: UIViewController {
     }
     
     private let pointHistoryTableView = UITableView()
+    private let pointHistoryPartBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
     
     // MARK: - life cycle
     override func viewDidLoad() {
@@ -88,7 +94,8 @@ final class PointViewController: UIViewController {
             pointTitleLabel,
             pointLabel,
             expiredDateLabel,
-            dividerView1
+            pointPartBottomMarginView,
+            pointHistoryContainerView
         ].forEach(view.addSubview(_:))
         
         ownedPointButton.snp.makeConstraints {
@@ -126,10 +133,46 @@ final class PointViewController: UIViewController {
             $0.leading.equalToSuperview().offset(20)
         }
         
-        dividerView1.snp.makeConstraints {
+        pointPartBottomMarginView.snp.makeConstraints {
             $0.top.equalTo(pointLabel.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(16)
+        }
+        
+        pointHistoryContainerView.snp.makeConstraints {
+            $0.top.equalTo(pointPartBottomMarginView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(288)
+        }
+        
+        [
+            blackPointImageView,
+            pointHistoryTitleLabel,
+            pointHistoryTableView,
+            pointHistoryPartBottomMarginView
+        ].forEach(pointHistoryContainerView.addSubview(_:))
+        
+        blackPointImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(26)
+        }
+        
+        pointHistoryTitleLabel.snp.makeConstraints {
+            $0.centerY.equalTo(blackPointImageView.snp.centerY)
+            $0.leading.equalTo(blackPointImageView.snp.trailing).offset(4)
+        }
+        
+        pointHistoryTableView.snp.makeConstraints {
+            $0.top.equalTo(blackPointImageView.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        pointHistoryPartBottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(pointHistoryTableView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(16)
+            $0.bottom.equalToSuperview()
         }
     }
 }
