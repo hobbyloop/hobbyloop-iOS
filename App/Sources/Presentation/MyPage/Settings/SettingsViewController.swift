@@ -130,7 +130,7 @@ class SettingsViewController: UIViewController {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.titleTextAttributes = [
             .foregroundColor: HPCommonUIAsset.gray100.color,
-            .font: HPCommonUIFontFamily.Pretendard.semiBold.font(size: 16)
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         ]
         
         navigationController?.navigationBar.standardAppearance = navBarAppearance
