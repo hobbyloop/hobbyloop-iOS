@@ -92,6 +92,7 @@ final class ClassHistoryViewController: UIViewController {
     private func configureCollectionView() {
         collectionView.register(ClassHistoryCell.self, forCellWithReuseIdentifier: ClassHistoryCell.identifier)
         collectionView.register(ClassHisotryHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ClassHisotryHeaderView.identifier)
+        collectionView.register(ClassHistoryFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: ClassHistoryFooterView.identifier)
         collectionView.dataSource = self
     }
     
@@ -105,6 +106,9 @@ final class ClassHistoryViewController: UIViewController {
             let section = NSCollectionLayoutSection(group: group)
             section.interGroupSpacing = 16
             section.boundarySupplementaryItems = [self.headerItem()]
+            if sectionIndex < self.collectionView.numberOfSections - 1 {
+                section.boundarySupplementaryItems = [self.headerItem(), self.footerItem()]
+            }
             section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
             
             return section
@@ -116,6 +120,14 @@ final class ClassHistoryViewController: UIViewController {
             layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(ClassHisotryHeaderView.height)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
+        )
+    }
+    
+    private func footerItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(ClassHistoryFooterView.height)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
         )
     }
 }
@@ -137,10 +149,11 @@ extension ClassHistoryViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        // TODO: 데이터 반영
         if kind == UICollectionView.elementKindSectionHeader {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ClassHisotryHeaderView.identifier, for: indexPath)
         }
         
-        return UICollectionReusableView()
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ClassHistoryFooterView.identifier, for: indexPath)
     }
 }
