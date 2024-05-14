@@ -9,12 +9,13 @@ import UIKit
 import HPCommonUI
 
 final class PointViewController: UIViewController {
-    // MARK: - navigation bar back button
+    // MARK: - 네비게이션 바
     private let backButton = UIButton(configuration: .plain()).then {
         $0.setImage(HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14)), for: [])
         $0.configuration?.contentInsets = .init(top: 6, leading: 9, bottom: 6, trailing: 9)
     }
     
+    // MARK: - 보유 및 소멸예정 포인트 파트
     private let ownedPointButton = HPNewButton(title: "사용", style: .bordered, unselectedTitleColor: HPCommonUIAsset.gray100.color).then {
         $0.layer.cornerRadius = 17
         $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
@@ -53,6 +54,7 @@ final class PointViewController: UIViewController {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
+    // MARK: - 포인트 사용내역 파트
     private let blackPointImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.point.image.withRenderingMode(.alwaysTemplate)
         $0.tintColor = HPCommonUIAsset.gray100.color
@@ -84,6 +86,32 @@ final class PointViewController: UIViewController {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
+    // MARK: - 유의사항 파트
+    private let noticeTitleLabel = UILabel().then {
+        $0.text = "포인트 사용 시 유의사항"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    
+    private let noticeDescriptionLabel = UILabel().then {
+        let text = "Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다. 필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다."
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .justified
+        paragraphStyle.minimumLineHeight = 17
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: HPCommonUIFontFamily.Pretendard.regular.font(size: 12),
+            .foregroundColor: HPCommonUIAsset.gray60.color,
+            .paragraphStyle: paragraphStyle,
+            .baselineOffset: NSNumber(floatLiteral: 0)
+        ]
+        
+        $0.attributedText = NSAttributedString(string: text, attributes: attributes)
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,7 +137,9 @@ final class PointViewController: UIViewController {
             pointLabel,
             expiredDateLabel,
             pointPartBottomMarginView,
-            pointHistoryContainerView
+            pointHistoryContainerView,
+            noticeTitleLabel,
+            noticeDescriptionLabel
         ].forEach(view.addSubview(_:))
         
         ownedPointButton.snp.makeConstraints {
@@ -187,6 +217,16 @@ final class PointViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(16)
             $0.bottom.equalToSuperview()
+        }
+        
+        noticeTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.bottom.equalTo(noticeDescriptionLabel.snp.top).offset(-16)
+        }
+        
+        noticeDescriptionLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-65)
         }
     }
     
