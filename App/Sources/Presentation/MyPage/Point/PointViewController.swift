@@ -66,7 +66,20 @@ final class PointViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private let pointHistoryTableView = UITableView()
+    private let pointHistoryTableView = UITableView(frame: .zero, style: .grouped).then {
+        $0.rowHeight = HPHistoryCell.height
+        $0.backgroundColor = .white
+        $0.separatorStyle = .none
+        $0.sectionFooterHeight = 0
+        $0.tableFooterView = UIView(
+            frame: CGRect(origin: .zero,
+                          size: CGSize(
+                            width:CGFloat.leastNormalMagnitude,
+                            height: CGFloat.leastNormalMagnitude
+                          )
+                         )
+        )
+    }
     private let pointHistoryPartBottomMarginView = UIView().then {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
@@ -77,6 +90,7 @@ final class PointViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureNavigationBar()
         layout()
+        configureTableView()
     }
     
     private func configureNavigationBar() {
@@ -175,10 +189,21 @@ final class PointViewController: UIViewController {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    private func configureTableView() {
+        pointHistoryTableView.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
+        pointHistoryTableView.register(HPHistoryTableViewHeader.self, forHeaderFooterViewReuseIdentifier: HPHistoryTableViewHeader.identifier)
+        pointHistoryTableView.dataSource = self
+        pointHistoryTableView.delegate = self
+    }
 }
 
 // MARK: - table view data source
-extension PointViewController: UITableViewDataSource {
+extension PointViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
     }
@@ -191,5 +216,17 @@ extension PointViewController: UITableViewDataSource {
         cell.remainingAmountText = "70,000P"
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return HPHistoryTableViewHeader.height
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return tableView.dequeueReusableHeaderFooterView(withIdentifier: HPHistoryTableViewHeader.identifier)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
     }
 }
