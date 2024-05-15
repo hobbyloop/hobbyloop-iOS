@@ -48,7 +48,9 @@ final class ClassHistoryViewController: UIViewController {
     }
     
     // MARK: - collection view
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout()).then {
+        $0.contentInset = .init(top: 0, left: 0, bottom: 30, right: 0)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
