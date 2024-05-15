@@ -21,6 +21,10 @@ final class UserInfoEditViewController: UIViewController {
     
     private lazy var backButtonItem = UIBarButtonItem(customView: backButton)
     
+    // MARK: - scroll view & container
+    private let scrollView = UIScrollView()
+    private let scrolledContainerView = UIView()
+    
     // MARK: - 사진 UI 및 사진 수정 버튼
     private let profileImageView = UIImageView.circularImageView(radius: 42.5).then {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
@@ -39,9 +43,9 @@ final class UserInfoEditViewController: UIViewController {
         }
     }
     
-    private let nameView: SignUpInfoView = SignUpInfoView(titleType: .name)
-    private let nickNameView: SignUpInfoView = SignUpInfoView(titleType: .nickname)
-    private let birthDayView: SignUpInfoView = SignUpInfoView(titleType: .birthDay)
+    private let nameView = SignUpInfoView(titleType: .name)
+    private let nickNameView = SignUpInfoView(titleType: .nickname)
+    private let birthDayView = SignUpInfoView(titleType: .birthDay)
     // TODO: picker view를 SignUpInfoView 안에 포함시키기
     private let birthDayPickerView = UIDatePicker().then {
         $0.datePickerMode = .date
@@ -115,6 +119,19 @@ final class UserInfoEditViewController: UIViewController {
     }
     
     private func layout() {
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        scrollView.addSubview(scrolledContainerView)
+        scrolledContainerView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+        }
+        
         [phoneView, certificateButton].forEach(phoneHStack.addArrangedSubview(_:))
         
         authCodeButton.snp.makeConstraints {
@@ -147,11 +164,10 @@ final class UserInfoEditViewController: UIViewController {
             photoEditButton,
             inputFieldsVStack,
             birthDayPickerView,
-            editButton
-        ].forEach(view.addSubview(_:))
+        ].forEach(scrolledContainerView.addSubview(_:))
         
         profileImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
+            $0.top.equalToSuperview().offset(5)
             $0.centerX.equalToSuperview()
         }
         
@@ -168,12 +184,15 @@ final class UserInfoEditViewController: UIViewController {
         inputFieldsVStack.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(28)
             $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-189)
         }
         
         birthDayPickerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalTo(birthDayView.snp.bottom).offset(4)
         }
+        
+        view.addSubview(editButton)
         
         editButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
