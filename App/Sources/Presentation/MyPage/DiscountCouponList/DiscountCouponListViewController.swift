@@ -85,11 +85,38 @@ final class DiscountCouponListViewController: UIViewController {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
+    // MARK: - 유의사항 파트
+    private let noticeTitleLabel = UILabel().then {
+        $0.text = "쿠폰 사용 시 유의사항"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    
+    private let noticeDescriptionLabel = UILabel().then {
+        let text = "Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다. 필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다."
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .justified
+        paragraphStyle.minimumLineHeight = 17
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: HPCommonUIFontFamily.Pretendard.regular.font(size: 12),
+            .foregroundColor: HPCommonUIAsset.gray60.color,
+            .paragraphStyle: paragraphStyle,
+            .baselineOffset: NSNumber(floatLiteral: 0)
+        ]
+        
+        $0.attributedText = NSAttributedString(string: text, attributes: attributes)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureNavigationBar()
         layout()
+        configureCollectionView()
     }
     
     private func configureNavigationBar() {
@@ -116,7 +143,9 @@ final class DiscountCouponListViewController: UIViewController {
             ownedCouponImageView,
             ownedCouponLabel,
             ownedCouponCollectionView,
-            ownedCouponPartBottomMarginView
+            ownedCouponPartBottomMarginView,
+            noticeTitleLabel,
+            noticeDescriptionLabel
         ].forEach(view.addSubview(_:))
         
         registerCouponImageView.snp.makeConstraints {
@@ -166,16 +195,32 @@ final class DiscountCouponListViewController: UIViewController {
         }
         
         ownedCouponCollectionView.snp.makeConstraints {
-            $0.top.equalTo(ownedCouponImageView.snp.bottom)
+            $0.top.equalTo(ownedCouponImageView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(356)
+            $0.height.equalTo(324)
         }
         
         ownedCouponPartBottomMarginView.snp.makeConstraints {
-            $0.top.equalTo(ownedCouponCollectionView.snp.bottom).offset(8)
+            $0.top.equalTo(ownedCouponCollectionView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(16)
         }
+        
+        // TODO: 유의사항 파트 + 보유 쿠폰 목록 파트 레이아웃 수정
+        noticeDescriptionLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-20)
+        }
+        
+        noticeTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.bottom.equalTo(noticeDescriptionLabel.snp.top).offset(-16)
+        }
+    }
+    
+    private func configureCollectionView() {
+        ownedCouponCollectionView.register(HPDiscountCouponCell.self, forCellWithReuseIdentifier: HPDiscountCouponCell.identifier)
+        ownedCouponCollectionView.dataSource = self
     }
 }
 
@@ -185,13 +230,25 @@ extension DiscountCouponListViewController {
             let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
             let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(HPDiscountCouponCell.height)), subitems: [item])
             
-            group.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+            group.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
             
             let section = NSCollectionLayoutSection(group: group)
             section.interGroupSpacing = 16
-            section.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+            section.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
             
             return section
         }
+    }
+}
+
+extension DiscountCouponListViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // TODO: 데이터 연동
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO: 데이터 연동
+        return collectionView.dequeueReusableCell(withReuseIdentifier: HPDiscountCouponCell.identifier, for: indexPath)
     }
 }
