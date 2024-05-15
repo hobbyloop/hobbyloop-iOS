@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Coupon.png",
+      "filename" : "icon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Coupon@2x.png",
+      "filename" : "icon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Coupon@3x.png",
+      "filename" : "icon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
