@@ -42,6 +42,7 @@ final class UserCouponHistoryViewController: UIViewController {
     
     // MARK: - table view
     private lazy var historyTableView = UITableView(frame: .zero, style: .grouped).then {
+        $0.backgroundColor = .white
         $0.separatorStyle = .none
         $0.sectionFooterHeight = 0
         $0.tableFooterView = UIView(
