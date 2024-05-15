@@ -69,6 +69,22 @@ final class DiscountCouponListViewController: UIViewController {
         $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
+    // MARK: - 보유 쿠폰 파트
+    private let ownedCouponImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.coupon.image
+    }
+    
+    private let ownedCouponLabel = UILabel().then {
+        $0.text = "쿠폰 등록"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    
+    private lazy var ownedCouponCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    private let ownedCouponPartBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -96,7 +112,11 @@ final class DiscountCouponListViewController: UIViewController {
             couponCodeTextField,
             registerCouponButton,
             errorMessageLabel,
-            registerCouponPartBottomMarginView
+            registerCouponPartBottomMarginView,
+            ownedCouponImageView,
+            ownedCouponLabel,
+            ownedCouponCollectionView,
+            ownedCouponPartBottomMarginView
         ].forEach(view.addSubview(_:))
         
         registerCouponImageView.snp.makeConstraints {
@@ -133,6 +153,45 @@ final class DiscountCouponListViewController: UIViewController {
             $0.top.equalTo(couponCodeTextField.snp.bottom).offset(46)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(16)
+        }
+        
+        ownedCouponImageView.snp.makeConstraints {
+            $0.top.equalTo(registerCouponPartBottomMarginView.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        ownedCouponLabel.snp.makeConstraints {
+            $0.centerY.equalTo(ownedCouponImageView.snp.centerY)
+            $0.leading.equalTo(ownedCouponImageView.snp.trailing).offset(4)
+        }
+        
+        ownedCouponCollectionView.snp.makeConstraints {
+            $0.top.equalTo(ownedCouponImageView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(356)
+        }
+        
+        ownedCouponPartBottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(ownedCouponCollectionView.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(16)
+        }
+    }
+}
+
+extension DiscountCouponListViewController {
+    private func createLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { _, _ in
+            let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(HPDiscountCouponCell.height)), subitems: [item])
+            
+            group.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+            
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 16
+            section.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+            
+            return section
         }
     }
 }
