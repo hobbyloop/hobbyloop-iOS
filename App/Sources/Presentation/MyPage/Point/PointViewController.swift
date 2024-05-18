@@ -9,217 +9,241 @@ import UIKit
 import HPCommonUI
 
 final class PointViewController: UIViewController {
-    // MARK: - navigation bar back button
-    private let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 33, height: 22)).then {
-        $0.setImage(HPCommonUIAsset.leftarrow.image, for: .normal)
+    // MARK: - 네비게이션 바
+    private let backButton = UIButton(configuration: .plain()).then {
+        $0.setImage(HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14)), for: [])
+        $0.configuration?.contentInsets = .init(top: 6, leading: 9, bottom: 6, trailing: 9)
     }
     
-    // MARK: - background view
-    private let backgroundView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
+    // MARK: - 보유 및 소멸예정 포인트 파트
+    private let ownedPointButton = HPNewButton(title: "사용", style: .bordered, unselectedTitleColor: HPCommonUIAsset.gray100.color).then {
+        $0.layer.cornerRadius = 17
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.isSelected = true
+    }
+    private let expiredPointButton = HPNewButton(title: "소멸예정", style: .bordered, unselectedTitleColor: HPCommonUIAsset.gray100.color).then {
+        $0.layer.cornerRadius = 17
+        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.isSelected = false
     }
     
-    // MARK: - 총 포인트 및 소멸 예정 포인트 UI
+    private let pointImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.point.image
+    }
+    
     private let pointTitleLabel = UILabel().then {
-        $0.text = "내 포인트"
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        $0.textColor = HPCommonUIAsset.pointTitleLabel.color
+        $0.text = "보유 포인트"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray60.color
     }
     
     private let pointLabel = UILabel().then {
         $0.text = "50,000 P"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private let verticalDivider = UIView().then {
-        $0.backgroundColor = .black.withAlphaComponent(0.07)
-        $0.snp.makeConstraints {
-            $0.width.equalTo(2)
-            $0.height.equalTo(98)
-        }
+    private let expiredDateLabel = UILabel().then {
+        $0.text = "2024.06.20"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textColor = HPCommonUIAsset.gray60.color
+        $0.isHidden = true
     }
     
-    private let disappearingPointTitleLabel = UILabel().then {
-        $0.text = "소멸 예정"
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        $0.textColor = HPCommonUIAsset.pointTitleLabel.color
+    private let pointPartBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
-    private let disappearingPointLabel = UILabel().then {
-        $0.text = "1,000 P"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+    // MARK: - 포인트 사용내역 파트
+    private let blackPointImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.point.image.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = HPCommonUIAsset.gray100.color
     }
     
-    private let disappearingDateLabel = UILabel().then {
-        $0.text = "23.06.06"
-        $0.font = HPCommonUIFontFamily.Pretendard.regular.font(size: 12)
-        $0.textColor = HPCommonUIAsset.disappearDate.color
-    }
+    private let pointHistoryContainerView = UIView()
     
-    private let pointInfoView = UIView().then {
-        $0.backgroundColor = .systemBackground
-    }
-    
-    // MARK: - 포인트 사용내역 UI
     private let pointHistoryTitleLabel = UILabel().then {
         $0.text = "포인트 사용내역"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private lazy var pointHistoryTableView = UITableView().then {
-        $0.separatorStyle = .none
-        $0.dataSource = self
+    private let pointHistoryTableView = UITableView(frame: .zero, style: .grouped).then {
         $0.rowHeight = HPHistoryCell.height
-        $0.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
+        $0.backgroundColor = .white
+        $0.separatorStyle = .none
+        $0.sectionFooterHeight = 0
+        $0.tableFooterView = UIView(
+            frame: CGRect(origin: .zero,
+                          size: CGSize(
+                            width:CGFloat.leastNormalMagnitude,
+                            height: CGFloat.leastNormalMagnitude
+                          )
+                         )
+        )
     }
-    private let pointHistoryView = UIView().then {
-        $0.backgroundColor = .systemBackground
+    private let pointHistoryPartBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
-    // MARK: - 포인트 사용 시 주의사항 파트 UI
-    private let pointNoticeTitleLabel = UILabel().then {
+    // MARK: - 유의사항 파트
+    private let noticeTitleLabel = UILabel().then {
         $0.text = "포인트 사용 시 유의사항"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private let pointNoticeContentLabel = UILabel().then {
-        // TODO: 문구 수정
-        $0.text = "외국인은 국제법과 조약이 정하는 바에 의하여 그 지위가 보장된다. 국가는 법률이 정하는 바에 의하여 재외국민을 보호할 의무를 진다. 국무회의는 대통령·국무총리와 15인 이상 30인 이하의 국무위원으로 구성한다. 군사재판 관할하기 위하여 특별법원으로서 군사법원을 둘 수 있다. 국회는 정부의 동의없이 정부가 제출한 지출예산 각항의 금액을 증가하거나 새 비목을 설치할 수 없다."
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.userInfoLabel.color
+    private let noticeDescriptionLabel = UILabel().then {
+        let text = "Kid, Adult, Senior 연령에 따라, 면밀한 움직임 분석을 통한 체계적인 레슨 및 지속적인 컨디션 캐치를 통한 운동 능력 맞춤 향상, 외부 환경으로 인한 불균형 움직임을 고려한 문적인 Pilates & Wegiht Program을 제공하고 있습니다. 필라테스 강사와 웨이트 트레이너가 함께, 회원님들의 몸을 더 건강하고 빛나는 라인으로 만들어 드리겠습니다."
         $0.numberOfLines = 0
-        $0.textAlignment = .justified
-    }
-    
-    private let pointNoticeView = UIStackView().then {
-        $0.axis = .vertical
-        $0.alignment = .leading
-        $0.spacing = 12
+        $0.lineBreakMode = .byWordWrapping
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .justified
+        paragraphStyle.minimumLineHeight = 17
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: HPCommonUIFontFamily.Pretendard.regular.font(size: 12),
+            .foregroundColor: HPCommonUIAsset.gray60.color,
+            .paragraphStyle: paragraphStyle,
+            .baselineOffset: NSNumber(floatLiteral: 0)
+        ]
+        
+        $0.attributedText = NSAttributedString(string: text, attributes: attributes)
     }
     
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layoutBackgroundView()
-        configNavigationBar()
-        layoutPointInfoView()
-        layoutPointHistoryView()
-        layoutPointNoticeView()
-        addActions()
+        configureNavigationBar()
+        layout()
+        configureTableView()
     }
     
-    // MARK: - layout
-    private func layoutBackgroundView() {
-        view.addSubview(backgroundView)
-        
-        backgroundView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-        }
-    }
-    
-    private func configNavigationBar() {
+    private func configureNavigationBar() {
         navigationController?.navigationBar.backgroundColor = .systemBackground
         navigationItem.title = "포인트"
         navigationItem.setHidesBackButton(true, animated: false)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
-    private func layoutPointInfoView() {
+    private func layout() {
         [
+            ownedPointButton,
+            expiredPointButton,
+            pointImageView,
             pointTitleLabel,
             pointLabel,
-            verticalDivider,
-            disappearingPointTitleLabel,
-            disappearingPointLabel,
-            disappearingDateLabel
-        ].forEach(pointInfoView.addSubview(_:))
+            expiredDateLabel,
+            pointPartBottomMarginView,
+            pointHistoryContainerView,
+            noticeTitleLabel,
+            noticeDescriptionLabel
+        ].forEach(view.addSubview(_:))
+        
+        ownedPointButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.equalTo(54)
+            $0.height.equalTo(34)
+        }
+        
+        expiredPointButton.snp.makeConstraints {
+            $0.top.equalTo(ownedPointButton.snp.top)
+            $0.bottom.equalTo(ownedPointButton.snp.bottom)
+            $0.leading.equalTo(ownedPointButton.snp.trailing).offset(8)
+            $0.width.equalTo(78)
+        }
+        
+        pointImageView.snp.makeConstraints {
+            $0.top.equalTo(ownedPointButton.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(26)
+        }
         
         pointTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(26)
-            $0.leading.equalToSuperview().offset(35)
+            $0.centerY.equalTo(pointImageView.snp.centerY)
+            $0.leading.equalTo(pointImageView.snp.trailing).offset(6)
         }
         
         pointLabel.snp.makeConstraints {
-            $0.top.equalTo(pointTitleLabel.snp.bottom).offset(7)
-            $0.leading.equalTo(pointTitleLabel.snp.leading)
+            $0.top.equalTo(pointImageView.snp.bottom).offset(14)
+            $0.leading.equalToSuperview().offset(20)
         }
         
-        verticalDivider.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(11)
-            $0.leading.equalTo(pointLabel.snp.trailing).offset(29)
+        expiredDateLabel.snp.makeConstraints {
+            $0.top.equalTo(pointLabel.snp.bottom).offset(8)
+            $0.leading.equalToSuperview().offset(20)
         }
         
-        disappearingPointTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(pointTitleLabel.snp.top)
-            $0.leading.equalTo(verticalDivider.snp.trailing).offset(29)
+        pointPartBottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(pointLabel.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(16)
         }
         
-        disappearingPointLabel.snp.makeConstraints {
-            $0.top.equalTo(pointLabel.snp.top)
-            $0.leading.equalTo(disappearingPointTitleLabel.snp.leading)
+        pointHistoryContainerView.snp.makeConstraints {
+            $0.top.equalTo(pointPartBottomMarginView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(288)
         }
         
-        disappearingDateLabel.snp.makeConstraints {
-            $0.top.equalTo(disappearingPointLabel.snp.bottom).offset(12)
-            $0.leading.equalTo(disappearingPointTitleLabel.snp.leading)
-        }
+        [
+            blackPointImageView,
+            pointHistoryTitleLabel,
+            pointHistoryTableView,
+            pointHistoryPartBottomMarginView
+        ].forEach(pointHistoryContainerView.addSubview(_:))
         
-        backgroundView.addSubview(pointInfoView)
-        pointInfoView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(145)
+        blackPointImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(26)
         }
-    }
-    
-    private func layoutPointHistoryView() {
-        [pointHistoryTitleLabel, pointHistoryTableView].forEach(pointHistoryView.addSubview(_:))
         
         pointHistoryTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(26)
-            $0.leading.equalToSuperview().offset(19)
+            $0.centerY.equalTo(blackPointImageView.snp.centerY)
+            $0.leading.equalTo(blackPointImageView.snp.trailing).offset(4)
         }
         
         pointHistoryTableView.snp.makeConstraints {
-            $0.top.equalTo(pointHistoryTitleLabel.snp.bottom).offset(15)
+            $0.top.equalTo(blackPointImageView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-19)
         }
         
-        backgroundView.addSubview(pointHistoryView)
-        
-        pointHistoryView.snp.makeConstraints {
-            $0.top.equalTo(pointInfoView.snp.bottom).offset(14)
+        pointHistoryPartBottomMarginView.snp.makeConstraints {
+            $0.top.equalTo(pointHistoryTableView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(243)
+            $0.height.equalTo(16)
+            $0.bottom.equalToSuperview()
         }
-    }
-    
-    private func layoutPointNoticeView() {
-        [pointNoticeTitleLabel, pointNoticeContentLabel].forEach(pointNoticeView.addArrangedSubview(_:))
         
-        backgroundView.addSubview(pointNoticeView)
-        pointNoticeView.snp.makeConstraints {
+        noticeTitleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-47)
+            $0.bottom.equalTo(noticeDescriptionLabel.snp.top).offset(-16)
+        }
+        
+        noticeDescriptionLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-65)
         }
     }
     
-    // MARK: - add button actions
-    private func addActions() {
-        backButton.addTarget(self, action: #selector(popVC), for: .touchUpInside)
-    }
-    
-    // MARK: - button actions
-    @objc private func popVC() {
-        navigationController?.popViewController(animated: true)
+    private func configureTableView() {
+        pointHistoryTableView.register(HPHistoryCell.self, forCellReuseIdentifier: HPHistoryCell.identifier)
+        pointHistoryTableView.register(HPHistoryTableViewHeader.self, forHeaderFooterViewReuseIdentifier: HPHistoryTableViewHeader.identifier)
+        pointHistoryTableView.dataSource = self
+        pointHistoryTableView.delegate = self
     }
 }
 
 // MARK: - table view data source
-extension PointViewController: UITableViewDataSource {
+extension PointViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
     }
@@ -232,5 +256,17 @@ extension PointViewController: UITableViewDataSource {
         cell.remainingAmountText = "70,000P"
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return HPHistoryTableViewHeader.height
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return tableView.dequeueReusableHeaderFooterView(withIdentifier: HPHistoryTableViewHeader.identifier)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
     }
 }

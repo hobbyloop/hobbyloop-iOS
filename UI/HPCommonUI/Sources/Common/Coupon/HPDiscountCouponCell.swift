@@ -15,6 +15,9 @@ public final class HPDiscountCouponCell: UICollectionViewCell {
         case fixed
     }
     
+    public static let identifier = "HPDiscountCouponCell"
+    public static let height: CGFloat = 154
+    
     private let discountPercentageLabel = UILabel().then {
         $0.text = "10%"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)

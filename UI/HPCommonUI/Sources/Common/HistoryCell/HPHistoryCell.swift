@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 public final class HPHistoryCell: UITableViewCell {
     public static let identifier = "HistoryCell"
@@ -13,8 +14,8 @@ public final class HPHistoryCell: UITableViewCell {
     
     private let dateLabel = UILabel().then {
         $0.text = ""
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.historyDateLabel.color
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
+        $0.textColor = HPCommonUIAsset.gray40.color
     }
     
     public var dateText: String {
@@ -30,6 +31,7 @@ public final class HPHistoryCell: UITableViewCell {
     private let titleLabel = UILabel().then {
         $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
     }
     
     public var title: String {
@@ -45,6 +47,7 @@ public final class HPHistoryCell: UITableViewCell {
     private let historyContentLabel = UILabel().then {
         $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
+        $0.textColor = HPCommonUIAsset.gray100.color
     }
     
     public var historyContent: String {
@@ -60,7 +63,7 @@ public final class HPHistoryCell: UITableViewCell {
     private let remainingAmountLabel = UILabel().then {
         $0.text = ""
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
-        $0.textColor = HPCommonUIAsset.historyDateLabel.color
+        $0.textColor = HPCommonUIAsset.gray60.color
     }
     
     public var remainingAmountText: String {
@@ -87,23 +90,23 @@ public final class HPHistoryCell: UITableViewCell {
         [dateLabel, titleLabel, historyContentLabel, remainingAmountLabel].forEach(contentView.addSubview(_:))
         
         dateLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(11)
-            $0.leading.equalToSuperview().offset(41)
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().offset(16)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.top)
-            $0.leading.equalTo(dateLabel.snp.trailing).offset(17)
+            $0.top.equalToSuperview()
+            $0.leading.equalTo(dateLabel.snp.trailing).offset(8)
         }
         
         historyContentLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-42)
-            $0.top.equalTo(dateLabel.snp.top)
+            $0.top.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         remainingAmountLabel.snp.makeConstraints {
-            $0.trailing.equalTo(historyContentLabel.snp.trailing)
-            $0.top.equalTo(historyContentLabel.snp.bottom).offset(4)
+            $0.top.equalTo(historyContentLabel.snp.bottom).offset(5)
+            $0.trailing.equalToSuperview().offset(-16)
         }
     }
 }
