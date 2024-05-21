@@ -4,31 +4,20 @@
 name: Hobbyloop
 
 on:
+  pull_request:
+    branches:
+      - develop
   push:
     branches:
       - develop
-      - feature/*
-  pull_request:
-    branches: [ "develop" ]
-
 jobs:
-  build:
+  lint:
     runs-on: macos-latest
-
     steps:
-    - uses: actions/checkout@v1     # Tuist Fetch 1️⃣
-    - uses: tuist/tuist-action@0.13.0
-      with:
-        command: 'fetch'
-        arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Tuist generate 3️⃣
-      with:
-        command: 'generate'
-        arguments: ''
-    - uses: tuist/tuist-action@0.13.0 # Tuist Build 📲
-      with:
-        command: 'build'
-        arguments: ''
-    - name: xcode build 🛠️
-      run: |
-        xcodebuild clean build -workspace "Hobbyloop.xcworkspace" -scheme "Hobbyloop" -destination "platform=iOS Simulator,name=iPhone 13 mini,OS=latest"
+      - uses: actions/checkout@v3
+      - uses: jdx/mise-action@v2
+      - run: mise install tuist@3.18.0
+      - run: mise use tuist@3.18.0
+      - run: mise exec -- tuist fetch
+      - run: mise exec -- tuist generate
+      - run: xcodebuild clean build -workspace "Hobbyloop.xcworkspace" -scheme "Hobbyloop" -destination "platform=iOS Simulator,name=iPhone 13 mini,OS=latest"
