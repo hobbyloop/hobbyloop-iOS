@@ -94,6 +94,21 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.gray40.color
     }
     
+    private let findAccountButton = UIButton(configuration: .plain()).then {
+        $0.setAttributedTitle(
+            NSAttributedString(
+                string: "연동된 계정을 잊어버리셨나요?",
+                attributes: [
+                    .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 14),
+                    .foregroundColor: HPCommonUIAsset.gray100.color,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                ]
+            ),
+            for: []
+        )
+        $0.configuration?.contentInsets = .zero
+    }
+    
     override init(reactor: LoginViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -116,7 +131,7 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     // MARK: Configure
     private func configure() {
-        [logoImageView, loginStackView, underLineView, indicatorView].forEach {
+        [logoImageView, loginStackView, underLineView, indicatorView, findAccountButton].forEach {
             view.addSubview($0)
         }
         
@@ -145,11 +160,15 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         }
         
         underLineView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().offset(-113)
+            $0.top.equalTo(loginStackView.snp.bottom).offset(60)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
-                
+        
+        findAccountButton.snp.makeConstraints {
+            $0.top.equalTo(underLineView.snp.bottom).offset(54)
+            $0.centerX.equalToSuperview()
+        }
     }
     
     public override func bind(reactor: LoginViewReactor) {
