@@ -20,4 +20,4 @@ jobs:
       - run: mise use tuist@3.18.0
       - run: mise exec -- tuist fetch
       - run: mise exec -- tuist generate
-      - run: xcodebuild clean build -workspace "Hobbyloop.xcworkspace" -scheme "Hobbyloop" -destination "platform=iOS Simulator,name=iPhone 13 mini,OS=latest"
+      - run: mise exec -- tuist build
