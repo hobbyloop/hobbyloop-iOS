@@ -10,14 +10,20 @@ on:
   push:
     branches:
       - develop
+      - feature/*
+
 jobs:
-  lint:
+  build:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - uses: jdx/mise-action@v2
-      - run: mise install tuist@3.18.0
-      - run: mise use tuist@3.18.0
-      - run: mise exec -- tuist fetch
-      - run: mise exec -- tuist generate
-      - run: mise exec -- tuist build
+      - name: install tuist
+        run: |
+          mise install tuist@3.18.0
+          mise use tuist@3.18.0
+      - name: generate & build project
+        run: |
+          mise exec -- tuist fetch
+          mise exec -- tuist generate
+          mise exec -- tuist build
