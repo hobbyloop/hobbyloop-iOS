@@ -16,15 +16,6 @@ import RxSwift
 import RxCocoa
 import ReactorKit
 
-
-private protocol SignUpViewAnimatable {
-    @MainActor func showDropdownAnimation()
-    @MainActor func hideDropdownAnimation()
-    @MainActor func showBottomSheetView()
-}
-
-
-
 public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     // MARK: - 네비게이션 바
     private let backButton = UIButton(configuration: .plain()).then {
@@ -139,7 +130,39 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     private let authCodeButton = HPNewButton(title: "인증확인", style: .bordered)
     
     // MARK: - 약관
-    private let termsView: SignUpTermsView = SignUpTermsView(reactor: SignUpTermsViewReactor())
+    private let termTitleLabel = UILabel().then {
+        $0.text = "약관 동의"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    
+    private let allTermsCheckbox = HPCheckbox()
+    private let allTermsLabel = UILabel().then {
+        $0.text = "전체 동의"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    
+    private let termDividerView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray40.color
+    }
+    
+    private let receiveInfoCheckbox = HPCheckbox()
+    private let receiveInfoLabel = UILabel().then {
+        $0.text = "마케팅 수신 정보 동의 [선택]"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    private lazy var receiveInfoDetailButton = TermDetailButton()
+    
+    private let collectInfoCheckbox = HPCheckbox()
+    private let collectInfoLabel = UILabel().then {
+        $0.text = "마케팅 정보 수집 동의 [선택]"
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        $0.textColor = HPCommonUIAsset.gray100.color
+    }
+    private lazy var collectInfoDetailButton = TermDetailButton()
+    
     
     // MARK: - 설명 + 입력 완료 버튼
     private let modifyDescriptionLabel: UILabel = UILabel().then {
@@ -199,7 +222,11 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         [greetingLabel, descriptionLabel, nameView, nickNameView,
          genederDescriptionLabel, horizontalGenderStackView,
-         phoneAuthVStack, confirmButton, termsView, modifyDescriptionLabel, birthDayView].forEach {
+         phoneAuthVStack, confirmButton, modifyDescriptionLabel, birthDayView,
+         termTitleLabel, allTermsCheckbox, allTermsLabel, termDividerView,
+         receiveInfoCheckbox, receiveInfoLabel, receiveInfoDetailButton,
+         collectInfoCheckbox, collectInfoLabel, collectInfoDetailButton
+        ].forEach {
             containerView.addSubview($0)
         }
         
@@ -261,14 +288,59 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.width.height.equalTo(certificationButton)
         }
         
-        termsView.snp.makeConstraints {
+        termTitleLabel.snp.makeConstraints {
             $0.top.equalTo(phoneAuthVStack.snp.bottom).offset(24)
+            $0.leading.equalTo(nameView)
+        }
+        
+        allTermsCheckbox.snp.makeConstraints {
+            $0.top.equalTo(termTitleLabel.snp.bottom).offset(12)
+            $0.left.equalTo(nameView)
+        }
+        
+        allTermsLabel.snp.makeConstraints {
+            $0.leading.equalTo(allTermsCheckbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(allTermsCheckbox)
+        }
+        
+        termDividerView.snp.makeConstraints {
+            $0.top.equalTo(allTermsCheckbox.snp.bottom).offset(12)
+            $0.height.equalTo(1)
             $0.leading.trailing.equalTo(nameView)
-            $0.height.equalTo(160)
+        }
+        
+        receiveInfoCheckbox.snp.makeConstraints {
+            $0.top.equalTo(termDividerView.snp.bottom).offset(12)
+            $0.leading.equalTo(nameView)
+        }
+        
+        receiveInfoLabel.snp.makeConstraints {
+            $0.leading.equalTo(receiveInfoCheckbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(receiveInfoCheckbox)
+        }
+        
+        receiveInfoDetailButton.snp.makeConstraints {
+            $0.trailing.equalTo(nameView)
+            $0.centerY.equalTo(receiveInfoCheckbox)
+        }
+        
+        collectInfoCheckbox.snp.makeConstraints {
+            $0.top.equalTo(receiveInfoCheckbox.snp.bottom).offset(6)
+            $0.leading.equalTo(nameView)
+        }
+        
+        collectInfoLabel.snp.makeConstraints {
+            $0.leading.equalTo(collectInfoCheckbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(collectInfoCheckbox)
+        }
+        
+        collectInfoDetailButton.snp.makeConstraints {
+            $0.trailing.equalTo(nameView)
+            $0.centerY.equalTo(collectInfoCheckbox)
         }
         
         modifyDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(termsView.snp.bottom).offset(56)
+            $0.top.equalTo(collectInfoCheckbox.snp.bottom).offset(50)
             $0.centerX.equalToSuperview()
         }
         
@@ -280,6 +352,22 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         self.makeDismissKeyboardGesture()
+    }
+    
+    private func TermDetailButton() -> UIButton {
+        return UIButton().then {
+            $0.setAttributedTitle(
+                NSAttributedString(
+                    string: "자세히",
+                    attributes: [
+                        .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                        .foregroundColor: HPCommonUIAsset.gray60.color,
+                        .underlineStyle: NSUnderlineStyle.single.rawValue
+                    ]
+                ),
+                for: []
+            )
+        }
     }
     
     
