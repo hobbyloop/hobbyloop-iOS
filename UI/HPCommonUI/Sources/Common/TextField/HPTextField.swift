@@ -26,7 +26,7 @@ public final class HPTextField: UITextField {
         get { self.attributedPlaceholder?.string }
         set {
             self.attributedPlaceholder = NSAttributedString(string: newValue ?? "", attributes: [
-                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 16),
                 .foregroundColor: HPCommonUIAsset.gray60.color
             ])
         }
