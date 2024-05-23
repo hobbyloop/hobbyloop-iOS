@@ -11,7 +11,7 @@ import UIKit
 public final class HPTextField: UITextField {
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        self.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
+        self.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
         self.textColor = HPCommonUIAsset.gray100.color
         self.leftView = UIView(frame: .init(x: 0, y: 0, width: 12, height: 10))
         self.leftViewMode = .always
