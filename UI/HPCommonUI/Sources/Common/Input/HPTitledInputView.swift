@@ -7,8 +7,12 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 public final class HPTitledInputView: UIView {
+    private let bag = DisposeBag()
+    
     public enum InputType {
         case text
         case number
@@ -77,6 +81,17 @@ public final class HPTitledInputView: UIView {
         layout()
         
         showDatePickerButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .primaryActionTriggered)
+        
+        datePickerView.rx.date
+            .skip(1)
+            .map {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy.MM.dd"
+                
+                return dateFormatter.string(from: $0)
+            }
+            .bind(to: textfield.rx.text)
+            .disposed(by: bag)
     }
     
     required init?(coder: NSCoder) {
