@@ -32,22 +32,8 @@ final class DiscountCouponListViewController: UIViewController {
         $0.textColor = HPCommonUIAsset.gray100.color
     }
     
-    private let couponCodeTextField = UITextField().then {
-        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
-        $0.textColor = HPCommonUIAsset.gray100.color
-        $0.attributedPlaceholder = NSAttributedString(string: "쿠폰 코드를 입력하세요.", attributes: [
-            .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
-            .foregroundColor: HPCommonUIAsset.gray60.color
-        ])
-        
-        $0.leftView = UIView(frame: .init(x: 0, y: 0, width: 12, height: 10))
-        $0.leftViewMode = .always
-        $0.rightView = UIView(frame: .init(x: 0, y: 0, width: 12, height: 10))
-        $0.rightViewMode = .always
-        
-        $0.layer.cornerRadius = 8
-        $0.layer.borderColor = HPCommonUIAsset.gray40.color.cgColor
-        $0.layer.borderWidth = 1
+    private let couponCodeTextField = HPTextField().then {
+        $0.placeholderText = "쿠폰 번호를 입력하세요."
     }
     
     private let registerCouponButton = UIButton().then {
