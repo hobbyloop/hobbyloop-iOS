@@ -55,6 +55,8 @@ public final class HPTitledInputView: UIView {
         set {
             errorMessageLabel.text = newValue
             errorMessageLabel.isHidden = newValue == nil
+            textfield.layer.borderColor = errorMessage == nil ? HPCommonUIAsset.gray40.color
+                .cgColor: HPCommonUIAsset.error.color.cgColor
         }
     }
     
