@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Group 4125.png",
+      "filename" : "naver.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Group 4126.png",
+      "filename" : "naver@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Group 4127.png",
+      "filename" : "naver@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

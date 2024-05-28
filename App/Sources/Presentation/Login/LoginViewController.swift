@@ -19,10 +19,11 @@ import ReactorKit
 public final class LoginViewController: BaseViewController<LoginViewReactor> {
     
     // MARK: Property
-    private lazy var loginStckView: UIStackView = UIStackView().then {
+    private lazy var loginStackView: UIStackView = UIStackView().then {
         $0.distribution = .equalSpacing
+        $0.alignment = .fill
         $0.axis = .vertical
-        $0.spacing = 15
+        $0.spacing = 16
     }
     
     private lazy var indicatorView: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium).then {
@@ -41,25 +42,71 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         $0.contentMode = .scaleToFill
     }
     
-    private let kakaoLoginButton: UIButton = UIButton(type: .custom).then {
-        $0.setImage(HPCommonUIAsset.kakao.image.withRenderingMode(.alwaysOriginal), for: .normal)
-    }
+    private lazy var kakaoLoginButton = LoginButton(
+        image: HPCommonUIAsset.kakao.image.imageWith(newSize: .init(width: 20, height: 20)).withRenderingMode(.alwaysOriginal),
+        attributedTitle: NSAttributedString(
+            string: "카카오톡으로 로그인",
+            attributes: [
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .foregroundColor: HPCommonUIAsset.gray100.color
+            ]
+        ),
+        backgroundColor: HPCommonUIAsset.kakaoBackground.color
+    )
     
-    private let googleLoginButton: UIButton = UIButton(type: .custom).then {
-        $0.setImage(HPCommonUIAsset.google.image.withRenderingMode(.alwaysOriginal), for: .normal)
-    }
+    private lazy var googleLoginButton = LoginButton(
+        image: HPCommonUIAsset.google.image.imageWith(newSize: .init(width: 18, height: 18)).withRenderingMode(.alwaysOriginal),
+        attributedTitle: NSAttributedString(
+            string: "구글로 로그인",
+            attributes: [
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .foregroundColor: HPCommonUIAsset.gray100.color
+            ]
+        ),
+        backgroundColor: .white
+    )
     
-    private let naverLoginButton: UIButton = UIButton(type: .custom).then {
-        $0.setImage(HPCommonUIAsset.naver.image.withRenderingMode(.alwaysOriginal), for: .normal)
-        
-    }
+    private lazy var naverLoginButton = LoginButton(
+        image: HPCommonUIAsset.naver.image.imageWith(newSize: .init(width: 20, height: 20)).withRenderingMode(.alwaysOriginal),
+        attributedTitle: NSAttributedString(
+            string: "네이버로 로그인",
+            attributes: [
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .foregroundColor: UIColor.white
+            ]
+        ),
+        backgroundColor: HPCommonUIAsset.naverBackground.color
+    )
     
-    private let appleLoginButton: UIButton = UIButton(type: .custom).then {
-        $0.setImage(HPCommonUIAsset.apple.image.withRenderingMode(.alwaysOriginal), for: .normal)
-    }
+    private lazy var appleLoginButton = LoginButton(
+        image: UIImage(systemName: "applelogo")?.imageWith(newSize: .init(width: 16.3, height: 20)).withTintColor(.white),
+        attributedTitle: NSAttributedString(
+            string: "애플로 로그인",
+            attributes: [
+                .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 14),
+                .foregroundColor: UIColor.white
+            ]
+        ),
+        backgroundColor: .black
+    )
     
     private let underLineView: UIView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.defaultSeparator.color
+        $0.backgroundColor = HPCommonUIAsset.gray40.color
+    }
+    
+    private let findAccountButton = UIButton(configuration: .plain()).then {
+        $0.setAttributedTitle(
+            NSAttributedString(
+                string: "연동된 계정을 잊어버리셨나요?",
+                attributes: [
+                    .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 14),
+                    .foregroundColor: HPCommonUIAsset.gray100.color,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                ]
+            ),
+            for: []
+        )
+        $0.configuration?.contentInsets = .zero
     }
     
     override init(reactor: LoginViewReactor?) {
@@ -78,18 +125,21 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
     // MARK: LifeCycle
     public override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = HPCommonUIAsset.gray20.color
         configure()
     }
     
     // MARK: Configure
     private func configure() {
-        [logoImageView, loginStckView, underLineView, indicatorView].forEach {
+        [logoImageView, loginStackView, underLineView, indicatorView, findAccountButton].forEach {
             view.addSubview($0)
         }
         
         [kakaoLoginButton, googleLoginButton, naverLoginButton, appleLoginButton].forEach {
-            loginStckView.addArrangedSubview($0)
+            $0.snp.makeConstraints {
+                $0.height.equalTo(50)
+            }
+            loginStackView.addArrangedSubview($0)
         }
         
         indicatorView.snp.makeConstraints {
@@ -97,25 +147,28 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         }
         
         logoImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(80)
+            $0.top.equalToSuperview().offset(126.05)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(80)
-            $0.height.equalTo(65)
+            $0.width.equalTo(94)
+            $0.height.equalTo(67.89)
         }
         
-        loginStckView.snp.makeConstraints {
+        loginStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(100)
-            $0.height.equalTo(245)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-174)
+            $0.width.equalToSuperview().offset(-32)
         }
         
         underLineView.snp.makeConstraints {
-            $0.top.equalTo(loginStckView.snp.bottom).offset(80)
-            $0.left.equalToSuperview().offset(20)
-            $0.right.equalToSuperview().offset(-20)
+            $0.top.equalTo(loginStackView.snp.bottom).offset(60)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
-                
+        
+        findAccountButton.snp.makeConstraints {
+            $0.top.equalTo(underLineView.snp.bottom).offset(54)
+            $0.centerX.equalToSuperview()
+        }
     }
     
     public override func bind(reactor: LoginViewReactor) {
@@ -169,6 +222,17 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
 
 
 extension LoginViewController {
+    private func LoginButton(image: UIImage?, attributedTitle: NSAttributedString, backgroundColor: UIColor) -> UIButton {
+        let button = UIButton(configuration: .filled())
+        button.configuration?.image = image
+        button.setAttributedTitle(attributedTitle, for: [])
+        button.configuration?.imagePadding = 10
+        button.tintColor = backgroundColor
+        button.layer.cornerRadius = 10
+        button.clipsToBounds = true
+        
+        return button
+    }
     
     private func didShowSignUpController(accountType: AccountType) {
         let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
