@@ -13,7 +13,7 @@ import HPCommonUI
 class SettingsViewController: UIViewController {
     // MARK: - custom navigation bar
     private let backButton = UIButton(configuration: .plain()).then {
-        $0.configuration?.image = HPCommonUIAsset.leftarrow.image
+        $0.configuration?.image = HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14))
         
         $0.snp.makeConstraints {
             $0.width.equalTo(21)
@@ -21,28 +21,8 @@ class SettingsViewController: UIViewController {
         }
     }
     
-    private let navigationTitleLabel = UILabel().then {
-        $0.text = "설정"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-    }
-    
-    private lazy var customNavigationBar = UIView().then {
-        [backButton, navigationTitleLabel].forEach($0.addSubview(_:))
-        
-        navigationTitleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        
-        backButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
-        }
-    }
-    
     // MARK: - background view
-    private let backgroundView = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightBackground.color
-    }
+    private let scrollView = UIScrollView()
     
     // MARK: - 앱 설정 섹션 UI
     private let appSectionStack = UIStackView().then {
@@ -51,7 +31,7 @@ class SettingsViewController: UIViewController {
         $0.alignment = .fill
         $0.spacing = 0
     }
-    private lazy var appSectionHeader = sectionHeader(title: "앱 설정", bottomMargin: 11)
+    private lazy var appSectionHeader = sectionHeader(title: "앱 설정", image: HPCommonUIAsset.settingOutlind.image)
     
     private let appAlarmSwitch = HPSwitch().then {
         $0.transform = CGAffineTransform(scaleX: 35 / 51, y: 21 / 31)
@@ -65,22 +45,27 @@ class SettingsViewController: UIViewController {
     private lazy var homeViewMenu = menuWithArrow(name: "홈 화면 설정")
     private lazy var versionMenu = menuWithArrow(name: "버전정보")
     
-    private let bottomMarginView = UIView().then {
-        $0.snp.makeConstraints {
-            $0.height.equalTo(12)
-        }
+    private let appSectionBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
     }
     
     // MARK: - 고객지원 센터 섹션 UI
-    private lazy var customerSupportSectionHeader = sectionHeader(title: "고객지원 센터", bottomMargin: 14)
+    private lazy var customerSupportSectionHeader = sectionHeader(title: "고객지원 센터", image: HPCommonUIAsset.callChat.image)
     private lazy var faqMenu = menuWithArrow(name: "자주 묻는 질문")
     private lazy var kakaoTalkQnaMenu = menuWithArrow(name: "카카오톡 1:1 문의")
     private lazy var serviceTermsMenu = menuWithArrow(name: "서비스 약관")
+    private let customSupportSectionBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
     
     // MARK: - 로그아웃, 탈퇴하기 메뉴
     private lazy var logoutMenu = menuWithArrow(name: "로그아웃").then {
         $0.backgroundColor = .systemBackground
     }
+    private let logoutMenuBottomMarginView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
+    
     private lazy var secessionMenu = menuWithArrow(name: "탈퇴하기").then {
         $0.backgroundColor = .systemBackground
     }
@@ -93,19 +78,8 @@ class SettingsViewController: UIViewController {
         confirmButton: logoutConfirmButton
     )
     
-    private let logoutCloseButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
-    }
-    
-    private let logoutConfirmButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("로그아웃 하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
-    }
+    private let logoutCloseButton = HPNewButton(title: "닫기", style: .secondary)
+    private let logoutConfirmButton = HPNewButton(title: "로그아웃 하기", style: .primary)
     
     private var logoutBottomSheetTopConstraint: Constraint?
     
@@ -117,19 +91,8 @@ class SettingsViewController: UIViewController {
         confirmButton: secessionConfirmButton
     )
     
-    private let secessionCloseButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("닫기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.black.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.lightButtonBackground.color
-    }
-    
-    private let secessionConfirmButton = HPButton(cornerRadius: 8).then {
-        $0.setTitle("탈퇴하기", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
-    }
+    private let secessionCloseButton = HPNewButton(title: "닫기", style: .secondary)
+    private let secessionConfirmButton = HPNewButton(title: "탈퇴하기", style: .primary)
     
     private var secessionBottomSheetTopConstraint: Constraint?
     
@@ -142,7 +105,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        layoutNavigationBar()
+        configureNavigationBar()
         layoutBackgroundView()
         layoutAppSection()
         layoutCustomerSupportSection()
@@ -163,32 +126,38 @@ class SettingsViewController: UIViewController {
         }
     }
     
-    // MARK: - layout
-    private func layoutNavigationBar() {
-        view.addSubview(customNavigationBar)
+    private func configureNavigationBar() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.titleTextAttributes = [
+            .foregroundColor: HPCommonUIAsset.gray100.color,
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        ]
         
-        customNavigationBar.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(44)
-            $0.height.equalTo(56)
-        }
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.compactAppearance = navBarAppearance
+        navigationItem.title = "설정"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
     
     private func layoutBackgroundView() {
-        view.addSubview(backgroundView)
-        backgroundView.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom)
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
     
     private func layoutAppSection() {
-        [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, bottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
-        backgroundView.addSubview(appSectionStack)
+        appSectionBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+        }
+        [appSectionHeader, appAlarmMenu, adAlarmMenu, homeViewMenu, versionMenu, appSectionBottomMarginView].forEach(appSectionStack.addArrangedSubview(_:))
+        scrollView.addSubview(appSectionStack)
         
         appSectionStack.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
     }
     
@@ -199,24 +168,38 @@ class SettingsViewController: UIViewController {
         customerSupportSectionStack.alignment = .fill
         customerSupportSectionStack.spacing = 0
         
-        [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu].forEach(customerSupportSectionStack.addArrangedSubview(_:))
+        customSupportSectionBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+        }
+        [customerSupportSectionHeader, faqMenu, kakaoTalkQnaMenu, serviceTermsMenu, customSupportSectionBottomMarginView].forEach(customerSupportSectionStack.addArrangedSubview(_:))
         
-        backgroundView.addSubview(customerSupportSectionStack)
+        scrollView.addSubview(customerSupportSectionStack)
         customerSupportSectionStack.snp.makeConstraints {
             $0.top.equalTo(appSectionStack.snp.bottom).offset(14)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
         
-        [logoutMenu, secessionMenu].forEach(backgroundView.addSubview(_:))
+        [logoutMenu, logoutMenuBottomMarginView, secessionMenu].forEach(scrollView.addSubview(_:))
         
         logoutMenu.snp.makeConstraints {
             $0.top.equalTo(customerSupportSectionStack.snp.bottom).offset(17)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+        }
+        
+        logoutMenuBottomMarginView.snp.makeConstraints {
+            $0.height.equalTo(16)
+            $0.top.equalTo(logoutMenu.snp.bottom)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
         }
         
         secessionMenu.snp.makeConstraints {
-            $0.top.equalTo(logoutMenu.snp.bottom).offset(14)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(logoutMenuBottomMarginView.snp.bottom)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -234,7 +217,7 @@ class SettingsViewController: UIViewController {
         
         logoutBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(326)
+            $0.height.equalTo(285)
             self.logoutBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
     }
@@ -244,7 +227,7 @@ class SettingsViewController: UIViewController {
         
         secessionBottomSheet.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(326)
+            $0.height.equalTo(285)
             self.secessionBottomSheetTopConstraint = $0.top.equalTo(view.snp.bottom).constraint
         }
     }
@@ -269,18 +252,29 @@ class SettingsViewController: UIViewController {
     }
     
     // MARK: - view generating methods
-    private func sectionHeader(title: String, bottomMargin: CGFloat) -> UIView {
+    private func sectionHeader(title: String, image: UIImage) -> UIView {
         let view = UIView()
+        view.snp.makeConstraints {
+            $0.height.equalTo(62)
+        }
         let titleLabel = UILabel()
+        let imageView = UIImageView(image: image)
         titleLabel.text = title
         titleLabel.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        titleLabel.textColor = HPCommonUIAsset.gray100.color
         
+        view.addSubview(imageView)
         view.addSubview(titleLabel)
         
+        imageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(26)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(21)
-            $0.leading.equalToSuperview().offset(27)
-            $0.bottom.equalToSuperview().offset(-bottomMargin)
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(imageView.snp.trailing).offset(6)
         }
         
         return view
@@ -289,23 +283,24 @@ class SettingsViewController: UIViewController {
     private func menuWithSwitch(name: String, switchView: HPSwitch) -> UIView {
         let view = UIView()
         view.snp.makeConstraints {
-            $0.height.equalTo(60)
+            $0.height.equalTo(57)
         }
         
         let nameLabel = UILabel()
         nameLabel.text = name
         nameLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        nameLabel.textColor = HPCommonUIAsset.gray100.color
         
         [nameLabel, switchView].forEach(view.addSubview(_:))
         
         nameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(16)
         }
         
         switchView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-23)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         return view
@@ -314,33 +309,34 @@ class SettingsViewController: UIViewController {
     private func menuWithArrow(name: String) -> UIButton {
         let view = UIButton()
         view.snp.makeConstraints {
-            $0.height.equalTo(60)
+            $0.height.equalTo(62)
         }
         
         let nameLabel = UILabel()
         nameLabel.text = name
         nameLabel.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 16)
+        nameLabel.textColor = HPCommonUIAsset.gray100.color
         
-        let arrowView = UIImageView(image: HPCommonUIAsset.rightarrow.image.withTintColor(HPCommonUIAsset.buttonTitle.color))
+        let arrowView = UIImageView(image: HPCommonUIAsset.rightarrow.image.withTintColor(HPCommonUIAsset.gray100.color))
         
         [nameLabel, arrowView].forEach(view.addSubview(_:))
         
         nameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(16)
         }
         
         arrowView.snp.makeConstraints {
-            $0.width.equalTo(7.23)
-            $0.height.equalTo(12.63)
+            $0.width.equalTo(8)
+            $0.height.equalTo(14)
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-23.28)
+            $0.trailing.equalToSuperview().offset(-26)
         }
         
         return view
     }
     
-    private func bottomSheet(title: String, description: String, closeButton: HPButton, confirmButton: HPButton) -> UIView {
+    private func bottomSheet(title: String, description: String, closeButton: UIButton, confirmButton: UIButton) -> UIView {
         let view = UIView()
         view.backgroundColor = .systemBackground
         
@@ -377,16 +373,16 @@ class SettingsViewController: UIViewController {
         
         closeButton.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(40)
-            $0.height.equalTo(59)
-            $0.leading.equalToSuperview().offset(34)
-            $0.trailing.equalTo(view.snp.centerX).offset(-6)
+            $0.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalTo(view.snp.centerX).offset(-4.5)
         }
         
         confirmButton.snp.makeConstraints {
             $0.top.equalTo(closeButton.snp.top)
             $0.height.equalTo(closeButton.snp.height)
-            $0.leading.equalTo(view.snp.centerX).offset(6)
-            $0.trailing.equalToSuperview().offset(-34)
+            $0.leading.equalTo(view.snp.centerX).offset(4.5)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         return view
@@ -396,7 +392,7 @@ class SettingsViewController: UIViewController {
     @objc private func showLogoutSheet() {
         sheetBackgroundView.isHidden = false
         
-        logoutBottomSheetTopConstraint?.update(offset: -326)
+        logoutBottomSheetTopConstraint?.update(offset: -285)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }
@@ -405,7 +401,7 @@ class SettingsViewController: UIViewController {
     @objc private func showSecessionSheet() {
         sheetBackgroundView.isHidden = false
         
-        secessionBottomSheetTopConstraint?.update(offset: -326)
+        secessionBottomSheetTopConstraint?.update(offset: -285)
         UIView.animate(withDuration: 0.5) {
             self.view.layoutIfNeeded()
         }

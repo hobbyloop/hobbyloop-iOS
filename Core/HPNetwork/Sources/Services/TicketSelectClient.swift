@@ -8,6 +8,7 @@
 import Foundation
 
 import HPCommon
+import HPExtensions
 import HPDomain
 import Alamofire
 import RxSwift
@@ -16,7 +17,6 @@ import RxSwift
 
 /**
   TicketSelectClient 에게 행위(Behavier)를 정의하기 위한 interface
- 
  */
 public protocol TicketSelectService: AnyObject {
     func requestToInstructorList(id: Int) -> Single<Instructor>
@@ -25,7 +25,22 @@ public protocol TicketSelectService: AnyObject {
 }
 
 
-public final class TicketSelectClient: TicketSelectService {
+public final class TicketSelectClient: BaseNetworkable, TicketSelectService {
+    public let AFManager: Session = {
+        var session = AF
+        let configuration = URLSessionConfiguration.af.default
+        let eventLogger = HPAPIEventLogger()
+        let interceptor = HPRequestInterceptor()
+        
+        session = Session(
+            configuration: configuration,
+            interceptor: interceptor,
+            eventMonitors: [eventLogger]
+        )
+        return session
+
+    }()
+    
     
     public static let shared: TicketSelectClient = TicketSelectClient()
     
@@ -37,11 +52,12 @@ extension TicketSelectClient {
     
     public func requestToInstructorList(id: Int) -> Single<Instructor> {
         
-        return Single.create { single -> Disposable in
-            AF.request(TicketSelectRouter.getInstructorList(id))
+        return Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(TicketSelectRouter.getInstructorList(id))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: Instructor.self) { response in
-                    //MARK: Token 관련 로직 Single Tone Pattern 수정 후 사용
+                    //TODO: Token 관련 로직 Single Tone Pattern 수정 후 사용
                     switch response.result {
                     case let .success(data):
                         single(.success(data))
@@ -58,9 +74,9 @@ extension TicketSelectClient {
     
     
     public func requestToTicketInfoList() -> Single<TicketInfo> {
-        return Single.create { single -> Disposable in
-            AF.request(TicketSelectRouter.getUserTicketList)
-                .validate(statusCode: 200..<300)
+        return Single.create { [weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(TicketSelectRouter.getUserTicketList)
                 .responseDecodable(of: TicketInfo.self) { response in
                     switch response.result {
                     case let .success(data):

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "season_coupon.png",
+      "filename" : "season.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "season_coupon 1.png",
+      "filename" : "season@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "season_coupon 2.png",
+      "filename" : "season@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

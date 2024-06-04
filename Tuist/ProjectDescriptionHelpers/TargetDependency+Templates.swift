@@ -92,5 +92,6 @@ extension TargetDependency.ThirdParty.SDK {
 
 
 extension TargetDependency.ThirdParty.Util {
+    public static let keychainAccess: TargetDependency = .external(name: "KeychainAccess")
     public static let cryptoSwift: TargetDependency = .external(name: "CryptoSwift")
 }

@@ -13,42 +13,28 @@ import RxSwift
 final class UserInfoEditViewController: UIViewController {
     let disposeBag = DisposeBag()
     
-    // MARK: - custom navigation bar
+    // MARK: - 네비게이션 바
     private let backButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.leftarrow.image
-        
-        $0.snp.makeConstraints {
-            $0.width.equalTo(21)
-            $0.height.equalTo(22)
-        }
+        $0.configuration?.contentInsets = .init(top: 7, leading: 10, bottom: 7, trailing: 10)
     }
     
-    private let navigationTitleLabel = UILabel().then {
-        $0.text = "내 정보 수정"
-        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-    }
+    private lazy var backButtonItem = UIBarButtonItem(customView: backButton)
     
-    private lazy var customNavigationBar = UIView().then {
-        [backButton, navigationTitleLabel].forEach($0.addSubview(_:))
-        
-        navigationTitleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        
-        backButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
-        }
-    }
+    // MARK: - scroll view & container
+    private let scrollView = UIScrollView()
+    private let scrolledContainerView = UIView()
     
     // MARK: - 사진 UI 및 사진 수정 버튼
-    private let photoView = UIImageView.circularImageView(radius: 38)
+    private let profileImageView = UIImageView.circularImageView(radius: 42.5).then {
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+    }
     private let photoEditButton = UIButton().then {
         $0.layer.borderWidth = 2
         $0.layer.borderColor = HPCommonUIAsset.white.color.cgColor
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor(red: 0xE7 / 255, green: 0xE7 / 255, blue: 0xE7 / 255, alpha: 1)
+        $0.backgroundColor = HPCommonUIAsset.gray40.color
         $0.setImage(HPCommonUIAsset.plus.image, for: .normal)
         
         $0.snp.makeConstraints {
@@ -57,40 +43,57 @@ final class UserInfoEditViewController: UIViewController {
         }
     }
     
-    
-    // MARK: - input view
-    private let nameInputView = SignUpInfoView(titleType: .name, filled: true).then {
-        $0.titleLabel.text = "이름"
-        $0.textFieldView.text = "김지원"
-    }
-    
-    private let nickNameInputView = SignUpInfoView(titleType: .nickname, filled: true).then {
-        $0.titleLabel.text = "닉네임"
-        $0.textFieldView.text = "지원"
-    }
-    
-    private let birthDayInputView = SignUpInfoView(titleType: .birthDay, filled: true).then {
-        $0.titleLabel.text = "출생년도"
-        $0.textFieldView.text = "1996년 12월 10일"
-    }
-    
-    private let phoneNumberInputView = SignUpInfoView(titleType: .phone, filled: true).then {
-        $0.titleLabel.text = "전화번호"
-        $0.textFieldView.text = "010-1234-5678"
-    }
-    
-    // MARK: - calendar
-    private let birthDayPickerView = SignUpDatePickerView().then {
+    private let nameView = SignUpInfoView(titleType: .name)
+    private let nickNameView = SignUpInfoView(titleType: .nickname)
+    private let birthDayView = SignUpInfoView(titleType: .birthDay)
+    // TODO: picker view를 SignUpInfoView 안에 포함시키기
+    private let birthDayPickerView = UIDatePicker().then {
+        $0.datePickerMode = .date
+        $0.preferredDatePickerStyle = .wheels
+        $0.backgroundColor = .clear
+        $0.locale = .init(identifier: "ko-KR")
+        $0.timeZone = .autoupdatingCurrent
+        $0.backgroundColor = HPCommonUIAsset.gray20.color
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
         $0.isHidden = true
-        $0.backgroundColor = .white
     }
     
-    // MARK: - 수정완료 버튼
-    private let confirmButton: HPButton = HPButton(cornerRadius: 10).then {
-        $0.setTitle("수정 완료", for: .normal)
-        $0.setTitleColor(HPCommonUIAsset.white.color, for: .normal)
-        $0.titleLabel?.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
-        $0.backgroundColor = HPCommonUIAsset.deepOrange.color
+    private let phoneView: SignUpInfoView = SignUpInfoView(titleType: .phone)
+    private let certificateButton = HPNewButton(title: "인증번호 발송", style: .bordered)
+    private let phoneHStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .bottom
+        $0.distribution = .fill
+    }
+    
+    private let authCodeView: SignUpInfoView = SignUpInfoView(titleType: .authcode)
+    private let authCodeButton = HPNewButton(title: "인증번호 확인", style: .bordered).then {
+        $0.isEnabled = false
+    }
+    
+    private let authHStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .fill
+        $0.distribution = .fill
+    }
+    
+    private let phoneAuthVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+        $0.alignment = .fill
+    }
+    
+    private let inputFieldsVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 24
+        $0.alignment = .fill
+    }
+    
+    private let editButton = HPNewButton(title: "수정완료", style: .primary).then {
+        $0.isEnabled = false
     }
     
     // MARK: - life cycle
@@ -98,66 +101,103 @@ final class UserInfoEditViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        let inputStack = UIStackView()
-        inputStack.axis = .vertical
-        inputStack.alignment = .fill
-        inputStack.spacing = 36.14
+        configureNavigationBar()
+        layout()
+    }
+    
+    private func configureNavigationBar() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.titleTextAttributes = [
+            .foregroundColor: HPCommonUIAsset.gray100.color,
+            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
+        ]
         
-        [nameInputView, nickNameInputView, birthDayInputView, phoneNumberInputView].forEach(inputStack.addArrangedSubview(_:))
-        
-        [customNavigationBar, photoView, photoEditButton, inputStack, confirmButton, birthDayPickerView].forEach(view.addSubview(_:))
-        
-        customNavigationBar.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().offset(44)
-            $0.height.equalTo(56)
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.compactAppearance = navBarAppearance
+        navigationItem.title = "내 정보 수정"
+        navigationItem.leftBarButtonItem = backButtonItem
+    }
+    
+    private func layout() {
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        photoView.snp.makeConstraints {
-            $0.top.equalTo(customNavigationBar.snp.bottom).offset(15)
+        scrollView.addSubview(scrolledContainerView)
+        scrolledContainerView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+        }
+        
+        [phoneView, certificateButton].forEach(phoneHStack.addArrangedSubview(_:))
+        
+        authCodeButton.snp.makeConstraints {
+            $0.width.equalTo(120)
+        }
+        
+        [authCodeView, authCodeButton].forEach(authHStack.addArrangedSubview(_:))
+        [phoneHStack, authHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
+        
+        [
+            nameView,
+            nickNameView,
+            birthDayView,
+            phoneView,
+        ].forEach {
+            $0.snp.makeConstraints {
+                $0.height.equalTo(76)
+            }
+        }
+        
+        [
+            nameView,
+            nickNameView,
+            birthDayView,
+            phoneAuthVStack
+        ].forEach(inputFieldsVStack.addArrangedSubview(_:))
+        
+        [
+            profileImageView,
+            photoEditButton,
+            inputFieldsVStack,
+            birthDayPickerView,
+        ].forEach(scrolledContainerView.addSubview(_:))
+        
+        profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(5)
             $0.centerX.equalToSuperview()
         }
         
         photoEditButton.snp.makeConstraints {
-            $0.trailing.equalTo(photoView.snp.trailing).offset(8)
-            $0.bottom.equalTo(photoView.snp.bottom).offset(-7)
+            $0.bottom.equalTo(profileImageView.snp.bottom).offset(-7)
+            $0.trailing.equalTo(profileImageView.snp.trailing).offset(7)
         }
         
-        inputStack.snp.makeConstraints {
-            $0.top.equalTo(photoView.snp.bottom).offset(31)
-            $0.centerX.equalToSuperview()
-            $0.width.equalToSuperview().offset(-32)
+        certificateButton.snp.makeConstraints {
+            $0.width.equalTo(120)
+            $0.height.equalTo(48)
         }
         
-        confirmButton.snp.makeConstraints {
-            $0.height.equalTo(56)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalToSuperview().offset(-36)
+        inputFieldsVStack.snp.makeConstraints {
+            $0.top.equalTo(profileImageView.snp.bottom).offset(28)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-189)
         }
         
         birthDayPickerView.snp.makeConstraints {
-            $0.top.equalTo(birthDayInputView.snp.bottom)
-            $0.left.right.equalTo(birthDayInputView)
-            $0.height.equalTo(0)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(birthDayView.snp.bottom).offset(4)
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleBirthDayPickerView))
-        birthDayInputView.addGestureRecognizer(tapGesture)
+        view.addSubview(editButton)
         
-        // TODO: text binding code를 delegate 패턴으로 수정
-        birthDayPickerView.rx
-            .value
-            .skip(1)
-            .asDriver(onErrorJustReturn: Date())
-            .drive(onNext: { [weak self] date in
-                guard let `self` = self else { return }
-                self.birthDayInputView.textFieldView.text = date.convertToString()
-            }).disposed(by: disposeBag)
-    }
-    
-    @objc private func toggleBirthDayPickerView() {
-        birthDayPickerView.isHidden.toggle()
-        birthDayPickerView.didTapAnimation(constraints: birthDayPickerView.isHidden ? 0 : 138)
+        editButton.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-32)
+            $0.height.equalTo(48)
+        }
     }
 }

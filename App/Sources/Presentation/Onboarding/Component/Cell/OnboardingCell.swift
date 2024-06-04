@@ -19,10 +19,10 @@ public protocol OnboardingDelegate: AnyObject {
 }
 
 
-final class OnboardingCell: UICollectionViewCell {
+public final class OnboardingCell: UICollectionViewCell {
     
     // MARK: Property
-    typealias Reactor = OnboardingCellReactor
+    public typealias Reactor = OnboardingCellReactor
     
     public weak var delegate: OnboardingDelegate?
     
@@ -120,40 +120,34 @@ final class OnboardingCell: UICollectionViewCell {
 extension OnboardingCell: ReactorKit.View {
     
     
-    func bind(reactor: Reactor) {
+    public func bind(reactor: Reactor) {
         
         
     
         reactor.state
             .map { $0.onboardingImage }
             .map { HPCommonUIImages.Image(named: $0, in: HPCommonUIResources.bundle, with: nil)}
-            .debug("image Set")
             .asDriver(onErrorJustReturn: UIImage())
             .drive(onboardingImage.rx.image)
             .disposed(by: disposeBag)
         
-        // TODO: Method로 특정 Target String 문자열 Font, foregroundColor 변환 하도록 구현
         reactor.state
             .map { $0.onboardingTitle }
             .observe(on: MainScheduler.asyncInstance)
-            .bind(onNext: { description in
-                if description.contains("시설 이용권 창") {
-                    let attributedString = NSMutableAttributedString(string: description)
-                    let targetTextRange = (description as NSString).range(of: "시설 이용권 창")
-                    attributedString.addAttributes([
-                        .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-                        .foregroundColor: HPCommonUIAsset.black.color
-                    ], range: targetTextRange)
-                    self.onboardingDescriptionLabel.attributedText = attributedString
-                    
-                } else if description.contains("이용권 창") {
-                    let attributedString = NSMutableAttributedString(string: description)
-                    let targetTextRange = (description as NSString).range(of: "이용권 창")
-                    attributedString.addAttributes([
-                        .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-                        .foregroundColor: HPCommonUIAsset.black.color
-                    ], range: targetTextRange)
-                    self.onboardingDescriptionLabel.attributedText = attributedString
+            .withUnretained(self)
+            .bind(onNext: { owner ,description in
+                if description.contains("이용권·수업 정보") {
+                    owner.onboardingDescriptionLabel.setSubScriptAttributed(
+                        targetString: "이용권·수업 정보",
+                        font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
+                        color: HPCommonUIAsset.black.color
+                    )
+                } else {
+                    owner.onboardingDescriptionLabel.setSubScriptAttributed(
+                        targetString: "이용권 창",
+                        font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
+                        color: HPCommonUIAsset.black.color
+                    )
                 }
             }).disposed(by: disposeBag)
         
@@ -168,8 +162,9 @@ extension OnboardingCell: ReactorKit.View {
         onboardingDeleteButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: {
-                self.delegate?.onboardingViewDismiss()
+            .withUnretained(self)
+            .subscribe(onNext: { owner, _ in
+                owner.delegate?.onboardingViewDismiss()
             }).disposed(by: disposeBag)
         
         reactor.pulse(\.$onboardingIndex)

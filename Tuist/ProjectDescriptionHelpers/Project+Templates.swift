@@ -27,7 +27,10 @@ extension Project {
         let targetSettings: Settings = .settings(
             base: [
                 "OTHER_LDFLAGS": "-ObjC",
-                "HEADER_SEARCH_PATHS": ["$(inherited) $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/Public $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuth $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuthCore $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Source/SwiftPackage $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/../../ $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth"]
+                "HEADER_SEARCH_PATHS": ["$(inherited) $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/Public $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuth $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/AppAuth-iOS/Source/AppAuthCore $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Source/SwiftPackage $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GoogleSignIn/Sources/../../ $(SRCROOT)/Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth"],
+                "MARKETING_VERSION": "1.0",
+                "CURRENT_PROJECT_VERSION": "1",
+                "VERSIONING_SYSTEM": "apple-generic"
             ]
         )
         
@@ -36,12 +39,12 @@ extension Project {
                 name: name,
                 platform: .iOS,
                 product: .app,
-                bundleId: bundleId.isEmpty ? "com.sideproj.\(name)" : bundleId,
+                bundleId: bundleId.isEmpty ? "com.app.\(name.lowercased())" : bundleId,
                 deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                entitlements: .relativeToRoot("App/Hobbyloop.entitlements"),
+                entitlements: .relativeToRoot("Hobbyloop.entitlements"),
                 scripts: [],
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: targetSettings
@@ -67,7 +70,7 @@ extension Project {
             name: "\(name)Tests",
             platform: .iOS,
             product: .unitTests,
-            bundleId: "com.sideproj.\(name)Tests",
+            bundleId: "com.app.\(name.lowercased())Tests",
             infoPlist: .default,
             sources: ["\(name)Tests/**"],
             resources: ["\(name)Tests/**"],
@@ -81,7 +84,7 @@ extension Project {
             name: "\(name)UITests",
             platform: .iOS,
             product: .uiTests,
-            bundleId: "com.sideproj.\(name)UITests",
+            bundleId: "com.app.\(name.lowercased())UITests",
             sources: "\(name)UITests/**",
             dependencies: [.target(name: name)]
           )
@@ -94,7 +97,7 @@ extension Project {
                 name: name,
                 platform: .iOS,
                 product: products.contains(.library(.static)) ? .staticLibrary : .dynamicLibrary,
-                bundleId: "com.sideproj.\(name)",
+                bundleId: "com.app.\(name)",
                 deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
@@ -111,7 +114,7 @@ extension Project {
                 name: name,
                 platform: .iOS,
                 product: products.contains(.framework(.static)) ? .staticFramework : .framework,
-                bundleId: "com.sideproj.\(name)",
+                bundleId: "com.app.\(name)",
                 deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],

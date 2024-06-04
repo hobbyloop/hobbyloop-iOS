@@ -35,6 +35,8 @@ public final class HPCalendarView: UIView {
         }
     }
     
+    public var weekViewColor: UIColor
+    
     public var isStatus: Bool = false {
         didSet {
             configure()
@@ -89,9 +91,11 @@ public final class HPCalendarView: UIView {
     public init(
         reactor: HPCalendarViewReactor,
         calendarContentView: HPCalendarContentView,
-        isStyle: CalendarStyle
+        isStyle: CalendarStyle,
+        weekViewColor: UIColor = HPCommonUIAsset.white.color
     ) {
         self.isStyle = isStyle
+        self.weekViewColor = weekViewColor
         self.calendarContentView = calendarContentView
         super.init(frame: .zero)
         self.reactor = reactor
@@ -101,7 +105,6 @@ public final class HPCalendarView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     
     //MARK: Configure
@@ -263,14 +266,16 @@ extension HPCalendarView: ReactorKit.View {
             .map { $0.style }
             .take(1)
             .distinctUntilChanged()
-            .bind(onNext: { style in
+            .withUnretained(self)
+            .bind(onNext: { owner, style in
                 if style == .default {
-                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                    owner.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
                         guard let weekDayReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HPCalendarWeekReusableView", for: indexPath) as? HPCalendarWeekReusableView else { return UICollectionReusableView() }
+                        weekDayReusableView.backgroundColor = owner.weekViewColor
                         return weekDayReusableView
                     }
                 } else {
-                    self.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
+                    owner.calendarDataSource.configureSupplementaryView = { dataSource, collectionView, kind, indexPath in
                         return UICollectionReusableView()
                     }
                 }

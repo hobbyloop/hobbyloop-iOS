@@ -13,7 +13,7 @@ import SnapKit
 
 
 
-final class BenefitsCell: UICollectionViewCell {
+public final class BenefitsCell: UICollectionViewCell {
     
     
     private let benefitsCotentImageView: UIImageView = UIImageView().then {
@@ -23,9 +23,19 @@ final class BenefitsCell: UICollectionViewCell {
         $0.backgroundColor = .brown
     }
     
-    private let benefitsPageViewControl: HPPageControl = HPPageControl().then {
-        $0.numberOfPages = 4
+    private let benefitsPageCountView: UIView = UIView().then {
+        $0.backgroundColor = HPCommonUIAsset.white.color.withAlphaComponent(0.2)
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 8
     }
+    
+    private let benefitsPageCountLable: UILabel = UILabel().then {
+        $0.text = "0/0"
+        $0.textColor = HPCommonUIAsset.white.color
+        $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 10)
+        $0.textAlignment = .center
+    }
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,20 +49,29 @@ final class BenefitsCell: UICollectionViewCell {
     
     
     private func configure() {
-        [benefitsCotentImageView, benefitsPageViewControl].forEach {
+        benefitsPageCountView.addSubview(benefitsPageCountLable)
+        
+        [benefitsCotentImageView, benefitsPageCountView].forEach {
             self.contentView.addSubview($0)
         }
         
         benefitsCotentImageView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-            $0.height.equalTo(120)
+            $0.edges.equalToSuperview()
         }
         
-        benefitsPageViewControl.snp.makeConstraints {
-            $0.top.equalTo(benefitsCotentImageView.snp.bottom).offset(20)
-            $0.height.equalTo(8)
-            $0.centerX.equalToSuperview()
+        benefitsPageCountView.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(27)
+            $0.bottom.equalToSuperview().offset(-20)
+            $0.width.equalTo(36)
+            $0.height.equalTo(16)
         }
+        
+        benefitsPageCountLable.snp.makeConstraints {
+            $0.width.equalTo(21)
+            $0.height.equalTo(10)
+            $0.center.equalToSuperview()
+        }
+
         
     }
     

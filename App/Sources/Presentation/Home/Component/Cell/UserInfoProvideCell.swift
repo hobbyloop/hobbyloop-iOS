@@ -11,7 +11,7 @@ import HPCommonUI
 import RxSwift
 import RxCocoa
 
-final class UserInfoProvideCell: UICollectionViewCell {
+public final class UserInfoProvideCell: UICollectionViewCell {
     
     //MARK: Property
     

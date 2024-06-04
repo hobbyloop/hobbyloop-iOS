@@ -22,6 +22,7 @@ let thirdParty = Project.makeModule(
         .ThirdParty.Network.alamofire,
         .ThirdParty.SDK.kakao,
         .ThirdParty.SDK.google,
+        .ThirdParty.Util.keychainAccess,
         .ThirdParty.Util.cryptoSwift
     ]
 )

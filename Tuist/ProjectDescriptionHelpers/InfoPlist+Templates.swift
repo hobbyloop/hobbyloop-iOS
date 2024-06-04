@@ -12,17 +12,16 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
-            "NSAppTransportSecurity" : .dictionary([
-                "NSAllowsArbitraryLoads" : .boolean(true)
-            ]),
+            "ITSAppUsesNonExemptEncryption": .boolean(false),
             "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
+            "CFBundleIconName": .string("AppIcon"),
             "CFBundleDisplayName" : .string(name),
-            "CFBundleIdentifier" : .string("com.app.\(name)"),
+            "CFBundleIdentifier" : .string("com.app.\(name.lowercased())"),
             "CFBundleShortVersionString" : .string("1.0"),
-            "CFBundleVersion" : .string("0"),
+            "CFBundleVersion" : .string("1"),
             "CFBuildVersion" : .string("0"),
             "UILaunchStoryboardName" : .string("Launch Screen"),
             "UISupportedInterfaceOrientations" : .array([.string("UIInterfaceOrientationPortrait")]),
