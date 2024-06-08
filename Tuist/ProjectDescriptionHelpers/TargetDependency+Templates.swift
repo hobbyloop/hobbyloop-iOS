@@ -6,7 +6,6 @@
 //
 
 import ProjectDescription
-import ProjectDescriptionHelpers
 
 
 extension TargetDependency {

@@ -6,7 +6,6 @@
 //
 
 import ProjectDescription
-import ProjectDescriptionHelpers
 
 
 public extension Path {
