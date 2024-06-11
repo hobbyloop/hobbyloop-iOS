@@ -207,9 +207,9 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         
         Observable
-            .combineLatest(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.pulse(\.$authToken)
+            .zip(
+                reactor.state.map { $0.accountType }.skip(2).do(onNext: { print("account type: \($0)") }),
+                reactor.pulse(\.$authToken).skip(1).do(onNext: { print("auth token: \($0)") })
             ).filter({ _, tokenResponseBody in
                 tokenResponseBody?.data.accessToken == nil
             })

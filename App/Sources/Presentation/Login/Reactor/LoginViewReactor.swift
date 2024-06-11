@@ -37,8 +37,7 @@ public final class LoginViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
-        case setAccessToken(TokenResponseBody?)
-        case setAccountType(AccountType)
+        case setAccessToken(AccountType, TokenResponseBody?)
         case setNaverLogin(Void)
     }
     
@@ -83,7 +82,6 @@ public final class LoginViewReactor: Reactor {
             
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseNaverLogin()
             ])
             
@@ -91,7 +89,6 @@ public final class LoginViewReactor: Reactor {
             
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseGoogleLogin(to: viewController),
                 .just(.setLoading(false))
             ])
@@ -100,7 +97,6 @@ public final class LoginViewReactor: Reactor {
             
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseAppleLogin(),
                 .just(.setLoading(false))
             ])
@@ -114,13 +110,13 @@ public final class LoginViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-        case let .setAccountType(accountType):
+        case let .setAccessToken(accountType, tokenResponseBody):
+            newState.authToken = tokenResponseBody
             newState.accountType = accountType
-        case let .setAccessToken(tokenResponseBody):
+            
             if let accessToken = tokenResponseBody?.data.accessToken,
                let refreshToken = tokenResponseBody?.data.refreshToken {
                 LoginManager.shared.updateTokens(accessToken: accessToken, refreshToken: refreshToken)
-                newState.authToken = tokenResponseBody
                 UserDefaults.standard.set(Date(), forKey: .expiredAt)
             }
         case let .setNaverLogin(isShow):
@@ -140,7 +136,7 @@ extension LoginViewReactor {
         switch event {
         case let .responseAccessToken(token):
             return .concat([
-                .just(.setAccessToken(token)),
+                .just(.setAccessToken(.naver, token)),
                 .just(.setLoading(false))
             ])
         }

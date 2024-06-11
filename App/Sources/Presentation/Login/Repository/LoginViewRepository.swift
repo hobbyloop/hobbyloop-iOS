@@ -71,10 +71,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                     .flatMap { (data: TokenResponseBody) ->
                         Observable<LoginViewReactor.Mutation> in
                         
-                        return Observable.of(
-                            .setAccountType(.kakao),
-                            .setAccessToken(data)
-                        )
+                        .just(.setAccessToken(.kakao, data))
                     }
             }
     }
@@ -129,10 +126,11 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         responseGoogleUser(to: viewController)
             .flatMap { [weak self] user -> Observable<LoginViewReactor.Mutation> in
                 guard let self = `self` else { return .empty() }
+                print("google token: \(user.authentication.accessToken)")
                 return self.networkService.requestUserToken(account: .google, accessToken: user.authentication.accessToken)
                     .asObservable()
-                    .flatMap { (data: HPDomain.TokenResponseBody) -> Observable<LoginViewReactor.Mutation> in
-                        .just(.setAccessToken(data))
+                    .flatMap { (data: TokenResponseBody) -> Observable<LoginViewReactor.Mutation> in
+                            .just(.setAccessToken(.google, data))
                     }
             }
     }
