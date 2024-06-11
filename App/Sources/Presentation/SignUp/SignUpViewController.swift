@@ -352,6 +352,11 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
         
         self.makeDismissKeyboardGesture()
+        
+        backButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
     }
     
     private func TermDetailButton() -> UIButton {
