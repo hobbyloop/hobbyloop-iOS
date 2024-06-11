@@ -25,7 +25,6 @@ public enum SignUpViewStream: HPStreamType {
 public enum HPGender: String, Equatable {
     case male
     case female
-    case none
     
     func getGenderType() -> String {
         switch self {
@@ -33,8 +32,6 @@ public enum HPGender: String, Equatable {
             return "남자"
         case .female:
             return "여자"
-        case .none:
-            return ""
         }
     }
 }
@@ -47,6 +44,23 @@ public final class SignUpViewReactor: Reactor {
     public var initialState: State
     private var signUpRepository: SignUpViewRepo
     public var accountType: AccountType
+    
+    public struct State {
+        var isLoading: Bool
+        @Pulse var kakaoUserEntity: User?
+        @Pulse var naverUserEntity: NaverAccount?
+        var userAccountEntity: UserAccount?
+        var userName: String
+        var userNickName: String
+        var userGender: HPGender
+        var userBirthDay: String
+        var applefullName: String
+        var phoneNumber: String
+        var showsAuthCodeView: Bool
+        var isVaildPhoneNumber: Bool
+        var agreement1IsSelected: Bool
+        var agreement2IsSelected: Bool
+    }
     
     public enum Action {
         case viewDidLoad
@@ -75,21 +89,6 @@ public final class SignUpViewReactor: Reactor {
         case setCreateUserInfo(UserAccount)
     }
     
-    public struct State {
-        var isLoading: Bool
-        @Pulse var kakaoUserEntity: User?
-        @Pulse var naverUserEntity: NaverAccount?
-        var userAccountEntity: UserAccount?
-        var userGender: HPGender
-        var ceritifcationState: Bool
-        var userName: String
-        var userNickName: String
-        var userBirthDay: String
-        var applefullName: String
-        var isVaildationPhoneNumber: Bool
-        var phoneNumber: String
-    }
-    
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
         self.signUpRepository = signUpRepository
         self.accountType = accountType
@@ -98,14 +97,16 @@ public final class SignUpViewReactor: Reactor {
             kakaoUserEntity: nil,
             naverUserEntity: nil,
             userAccountEntity: nil,
-            userGender: .none,
-            ceritifcationState: false,
             userName: "",
             userNickName: "",
+            userGender: .male,
             userBirthDay: "",
             applefullName: "",
-            isVaildationPhoneNumber: false,
-            phoneNumber: ""
+            phoneNumber: "",
+            showsAuthCodeView: false,
+            isVaildPhoneNumber: false,
+            agreement1IsSelected: false,
+            agreement2IsSelected: false
         )
     }
     
@@ -150,8 +151,8 @@ public final class SignUpViewReactor: Reactor {
             
         case .didTapCertificationButton:
             
-            guard self.currentState.ceritifcationState else { return .empty() }
-            return .just(.setCertificationState(self.currentState.ceritifcationState))
+            guard self.currentState.showsAuthCodeView else { return .empty() }
+            return .just(.setCertificationState(self.currentState.showsAuthCodeView))
             
         case let .didTapCreateUserButton(name, nickName, gender, birthDay, phoneNumber):
             
@@ -167,7 +168,7 @@ public final class SignUpViewReactor: Reactor {
             
         case .didChangePhoneNumber:
             
-            return .just(.setCertificationState(!self.currentState.ceritifcationState))
+            return .just(.setCertificationState(!self.currentState.showsAuthCodeView))
         }
     }
     
@@ -204,7 +205,7 @@ public final class SignUpViewReactor: Reactor {
             newState.naverUserEntity = naverEntity
             
         case let .setCertificationState(certificationState):
-            newState.ceritifcationState = certificationState
+            newState.showsAuthCodeView = certificationState
             
         case let .setAppleUserFullName(fullName):
             newState.applefullName = fullName
@@ -217,7 +218,7 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
-            newState.isVaildationPhoneNumber = phoneNumber.isValidPhoneNumber()
+            newState.isVaildPhoneNumber = phoneNumber.isValidPhoneNumber()
         }
         
         return newState

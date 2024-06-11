@@ -13,7 +13,6 @@ public final class HPCheckbox: UIButton {
         super.init(frame: frame)
         self.setImage(HPCommonUIAsset.checkboxUnfilled.image, for: .normal)
         self.setImage(HPCommonUIAsset.checkboxFilled.image, for: .selected)
-        self.addTarget(self, action: #selector(checkboxTapped), for: .primaryActionTriggered)
         self.snp.makeConstraints {
             $0.width.height.equalTo(26)
         }
@@ -21,9 +20,5 @@ public final class HPCheckbox: UIButton {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    @objc private func checkboxTapped() {
-        isSelected.toggle()
     }
 }

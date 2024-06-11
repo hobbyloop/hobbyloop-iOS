@@ -24,7 +24,7 @@ public final class HPTitledInputView: UIView {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private let textfield = HPTextField()
+    public let textfield = HPTextField()
     private let errorMessageLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.error.color
