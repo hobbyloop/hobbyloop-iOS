@@ -16,7 +16,7 @@ import ReactorKit
 
 public enum LoginViewStream: HPStreamType {
     public enum Event {
-        case responseAccessToken(token: Token)
+        case responseAccessToken(token: TokenResponseBody)
     }
 }
 
@@ -37,7 +37,7 @@ public final class LoginViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
-        case setAccessToken(Token?)
+        case setAccessToken(TokenResponseBody?)
         case setAccountType(AccountType)
         case setNaverLogin(Void)
     }
@@ -45,7 +45,7 @@ public final class LoginViewReactor: Reactor {
     //MARK: State
     public struct State {
         var isLoading: Bool
-        @Pulse var authToken: Token?
+        @Pulse var authToken: TokenResponseBody?
         var accountType: AccountType
         var isShowNaverLogin: Void?
     }
@@ -72,11 +72,9 @@ public final class LoginViewReactor: Reactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
-        case let .didTapKakaoLogin(type):
-
+        case .didTapKakaoLogin:
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.resultKakaoLogin(),
                 .just(.setLoading(false))
             ])
@@ -118,11 +116,13 @@ public final class LoginViewReactor: Reactor {
             newState.isLoading = isLoading
         case let .setAccountType(accountType):
             newState.accountType = accountType
-        case let .setAccessToken(data):
-            guard let originalData = data else { return newState }
-            newState.authToken = data
-            LoginManager.shared.updateTokens(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken)
-            UserDefaults.standard.set(Date(), forKey: .expiredAt)
+        case let .setAccessToken(tokenResponseBody):
+            if let accessToken = tokenResponseBody?.data.accessToken,
+               let refreshToken = tokenResponseBody?.data.refreshToken {
+                LoginManager.shared.updateTokens(accessToken: accessToken, refreshToken: refreshToken)
+                newState.authToken = tokenResponseBody
+                UserDefaults.standard.set(Date(), forKey: .expiredAt)
+            }
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
         }

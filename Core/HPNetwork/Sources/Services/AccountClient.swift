@@ -14,7 +14,7 @@ import Alamofire
 import RxSwift
 
 public protocol AccountClientService: AnyObject {
-    func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token>
+    func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody>
     func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
     func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
 }
@@ -40,12 +40,12 @@ public final class AccountClient: BaseNetworkable, AccountClientService {
 
 extension AccountClient {
     
-    public func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token> {
+    public func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody> {
         return Single.create { [weak self] single -> Disposable in
             guard let self = `self` else { return Disposables.create() }
             self.AFManager.request(AccountRouter.getAccessToken(type: type, token: accessToken))
                 .validate(statusCode: 200..<300)
-                .responseDecodable(of: Token.self) { response in
+                .responseDecodable(of: TokenResponseBody.self) { response in
                     switch response.result {
                     case let .success(data):
                         single(.success(data))

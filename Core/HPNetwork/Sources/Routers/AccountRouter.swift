@@ -26,16 +26,18 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "https://openapi.naver.com"
         default:
-            return "http://13.125.114.152:8080"
+            return "http://ec2-52-78-56-136.ap-northeast-2.compute.amazonaws.com:8000"
         }
     }
     
     public var method: Alamofire.HTTPMethod {
         switch self {
+        case .getNaverUserInfo:
+            return .get
+        case .getAccessToken:
+            return .post
         case .createUserInfo:
             return .post
-        default:
-            return .get
         }
     }
     
@@ -43,8 +45,8 @@ extension AccountRouter: Router {
         switch self {
         case .getNaverUserInfo:
             return "/v1/nid/me"
-        case let .getAccessToken(type, _):
-            return "/native/login/oauth2/\(type.rawValue)"
+        case .getAccessToken:
+            return "/company-service/api/v1/login/members"
         case .createUserInfo:
             return "/api/v1/profile/create"
         }
@@ -60,10 +62,9 @@ extension AccountRouter: Router {
                 "Content-Type": "application/json"
             ]
             
-        case let .getAccessToken(_, accessToken):
+        case .getAccessToken:
             return [
-                "Authorization":"\(accessToken)",
-                "Accept": "*/*"
+                "Content-Type": "application/json"
             ]
             
         case .createUserInfo:
@@ -77,7 +78,13 @@ extension AccountRouter: Router {
     public var parameters: HPParameterType {
         
         switch self {
-            
+        case .getNaverUserInfo:
+            return .none
+        case let .getAccessToken(type, token):
+            return .body([
+                "accessToken": token,
+                "provider": type.rawValue.capitalized
+            ])
         case let .createUserInfo(birthDay, gender, name, nickname, phoneNumber):
             return .body([
                 "birth": birthDay,
@@ -86,8 +93,6 @@ extension AccountRouter: Router {
                 "nickname": nickname,
                 "phoneNum": phoneNumber
             ])
-        default:
-            return .none
         }
     }
     

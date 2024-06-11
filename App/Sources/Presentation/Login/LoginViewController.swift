@@ -172,8 +172,6 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     public override func bind(reactor: LoginViewReactor) {
-        
-        
         reactor.state
             .map { $0.isLoading }
             .bind(to: indicatorView.rx.isAnimating)
@@ -212,7 +210,9 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
             .combineLatest(
                 reactor.state.map { $0.accountType }.distinctUntilChanged(),
                 reactor.pulse(\.$authToken)
-            ).filter { $0.1 != nil }
+            ).filter({ _, tokenResponseBody in
+                tokenResponseBody?.data.accessToken == nil
+            })
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
                 owner.didShowSignUpController(accountType: state.0)
