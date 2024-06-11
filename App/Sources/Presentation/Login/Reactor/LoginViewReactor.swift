@@ -17,6 +17,7 @@ import ReactorKit
 public enum LoginViewStream: HPStreamType {
     public enum Event {
         case responseAccessToken(token: TokenResponseBody)
+        case fail
     }
 }
 
@@ -139,6 +140,8 @@ extension LoginViewReactor {
                 .just(.setAccessToken(.naver, token)),
                 .just(.setLoading(false))
             ])
+        case .fail:
+            return .just(.setLoading(false))
         }
     }
     

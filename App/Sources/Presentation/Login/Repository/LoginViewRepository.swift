@@ -115,7 +115,6 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             if let viewController = viewController as? LoginViewController {
                 GIDSignIn.sharedInstance.signIn(with: self.googleLoginInstance, presenting: viewController) { user, error in
                     if let user = user {
-                        print("google user: \(user)")
                         observer.onNext(user)
                     }
                     observer.onCompleted()
@@ -192,6 +191,7 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     /// 네이버 로그인 실패 시 호출되는 메서드
     public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
         print("Naver Login Error: \(error)")
+        LoginViewStream.event.onNext(.fail)
     }
 }
 
