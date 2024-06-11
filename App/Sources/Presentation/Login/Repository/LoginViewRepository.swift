@@ -65,6 +65,11 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     public func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
         let loginObservable = UserApi.isKakaoTalkLoginAvailable() ? responseKakaoLogin() : responseKakaoWebLogin()
         return loginObservable
+            .take(1)
+            .catch { error in
+                print("kakao error: \(error)")
+                return Observable.empty()
+            }
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                 self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
                     .asObservable()
@@ -110,8 +115,10 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             if let viewController = viewController as? LoginViewController {
                 GIDSignIn.sharedInstance.signIn(with: self.googleLoginInstance, presenting: viewController) { user, error in
                     if let user = user {
+                        print("google user: \(user)")
                         observer.onNext(user)
                     }
+                    observer.onCompleted()
                 }
             }
             return Disposables.create()
