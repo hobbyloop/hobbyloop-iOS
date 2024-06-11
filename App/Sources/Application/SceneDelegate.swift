@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        RxKakaoSDK.initSDK(appKey: "e8e2221cc437bed1a098ce95fee11f1d")
+        RxKakaoSDK.initSDK(appKey: "952e63b33ea5dd5fc5fbd0cf7b388dbb")
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
         
