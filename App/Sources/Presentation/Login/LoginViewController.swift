@@ -206,12 +206,10 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
             .disposed(by: disposeBag)
         
         
-        Observable
-            .zip(
-                reactor.state.map { $0.accountType }.skip(2).do(onNext: { print("account type: \($0)") }),
-                reactor.pulse(\.$authToken).skip(1).do(onNext: { print("auth token: \($0)") })
-            ).filter({ _, tokenResponseBody in
-                tokenResponseBody?.data.accessToken == nil
+        reactor.pulse(\.$authToken)
+            .map { (reactor.currentState.accountType, $0) }
+            .filter({ accountType, tokenResponseBody in
+                return accountType != .none && tokenResponseBody != nil && tokenResponseBody?.data.accessToken == nil
             })
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
