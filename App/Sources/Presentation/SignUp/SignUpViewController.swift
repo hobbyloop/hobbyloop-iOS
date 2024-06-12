@@ -119,9 +119,9 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         placeholder: "-를 제외한 번호를 입력해주세요"
     )
     
-    private let certificationButton = HPNewButton(title: "인증번호 발송", style: .bordered)
+    private let issueAuthCodeButton = HPNewButton(title: "인증번호 발송", style: .bordered)
     
-    private let authHStack = UIStackView().then {
+    private let authCodeHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.alignment = .fill
@@ -132,7 +132,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.placeholderText = "인증번호를 입력하세요"
         
     }
-    private let authCodeButton = HPNewButton(title: "인증확인", style: .bordered)
+    private let verifyAuthCodeButton = HPNewButton(title: "인증확인", style: .bordered)
     
     // MARK: - 약관
     private let termTitleLabel = UILabel().then {
@@ -200,7 +200,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     public override func viewDidLayoutSubviews() {
-        self.authCodeButton.layer.cornerRadius = 10
+        self.verifyAuthCodeButton.layer.cornerRadius = 10
     }
     
     // MARK: Configure
@@ -271,26 +271,26 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.leading.trailing.equalTo(nameView)
         }
         
-        [phoneView, certificationButton].forEach(phoneHStack.addArrangedSubview(_:))
+        [phoneView, issueAuthCodeButton].forEach(phoneHStack.addArrangedSubview(_:))
         
-        certificationButton.snp.makeConstraints {
+        issueAuthCodeButton.snp.makeConstraints {
             $0.width.equalTo(120)
             $0.height.equalTo(48)
         }
         
-        [authCodeView, authCodeButton].forEach(authHStack.addArrangedSubview(_:))
-        authHStack.snp.makeConstraints {
+        [authCodeView, verifyAuthCodeButton].forEach(authCodeHStack.addArrangedSubview(_:))
+        authCodeHStack.snp.makeConstraints {
             $0.height.equalTo(48)
         }
         
-        [phoneHStack, authHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
+        [phoneHStack, authCodeHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
         phoneAuthVStack.snp.makeConstraints {
             $0.top.equalTo(birthDayView.snp.bottom).offset(24)
             $0.leading.trailing.equalTo(nameView)
         }
         
-        authCodeButton.snp.makeConstraints {
-            $0.width.height.equalTo(certificationButton)
+        verifyAuthCodeButton.snp.makeConstraints {
+            $0.width.height.equalTo(issueAuthCodeButton)
         }
         
         termTitleLabel.snp.makeConstraints {
@@ -425,7 +425,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .map { !$0.showsAuthCodeView }
-            .bind(to: authHStack.rx.isHidden)
+            .bind(to: authCodeHStack.rx.isHidden)
             .disposed(by: disposeBag)
         
         Observable.combineLatest(
@@ -445,15 +445,141 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .map { $0.agreement1IsSelected }
-            .bind(to: collectInfoCheckbox.rx.isSelected)
+            .bind(to: receiveInfoCheckbox.rx.isSelected)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.agreement2IsSelected }
-            .bind(to: receiveInfoCheckbox.rx.isSelected)
+            .bind(to: collectInfoCheckbox.rx.isSelected)
             .disposed(by: disposeBag)
         
         // MARK: - VC -> Reactor
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
+        nameView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateName($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nickNameView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateNickName($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        genderOfManButton.rx.tap
+            .map { Reactor.Action.updateGender(.male) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        genderOfGirlButton.rx.tap
+            .map { Reactor.Action.updateGender(.female) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateBirthDay($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        phoneView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updatePhoneNumber($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        issueAuthCodeButton.rx.tap
+            .map { Reactor.Action.didTapIssueAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        verifyAuthCodeButton.rx.tap
+            .map { Reactor.Action.didTapVeirfyAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        allTermsCheckbox.rx.tap
+            .map { Reactor.Action.didTapAllTermsCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        receiveInfoCheckbox.rx.tap
+            .map { Reactor.Action.didTapReceiveInfoCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        collectInfoCheckbox.rx.tap
+            .map { Reactor.Action.didTapCollectInfoCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        confirmButton.rx.tap
+            .map { Reactor.Action.didTapCreateUserButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        // MARK: - Reactor -> Reactor
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.profile?.nickname }
+            .map { Reactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.name }
+            .map { Reactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .map { $0 == .Male ? HPGender.male : HPGender.female }
+            .map { Reactor.Action.updateGender($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.gender }
+            .map { $0 == "여성" ? HPGender.female : HPGender.male }
+            .map { Reactor.Action.updateGender($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .map { Reactor.Action.updateBirthDay($0?.kakaoAccount?.legalBirthDate ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        Observable.zip(
+            reactor.pulse(\.$naverUserEntity)
+                .compactMap { $0?.response?.birthyear },
+            reactor.pulse(\.$naverUserEntity)
+                .compactMap { $0?.response?.birthday }
+        )
+        .map { "\($0).\($1.replacingOccurrences(of: "-", with: "."))" }
+        .map { Reactor.Action.updateBirthDay($0) }
+        .bind(to: reactor.action)
+        .disposed(by: disposeBag)
+            
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .map { Reactor.Action.updatePhoneNumber($0?.kakaoAccount?.phoneNumber ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.mobile?.replacingOccurrences(of: "-", with: "") }
+            .map { Reactor.Action.updatePhoneNumber($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 }
