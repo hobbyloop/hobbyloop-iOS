@@ -54,9 +54,9 @@ public final class SignUpViewReactor: Reactor {
         var userNickName: String
         var userGender: HPGender
         var userBirthDay: String
-        var applefullName: String
         var phoneNumber: String
         var showsAuthCodeView: Bool
+        var authCode: String
         var isVaildPhoneNumber: Bool
         var agreement1IsSelected: Bool
         var agreement2IsSelected: Bool
@@ -64,15 +64,18 @@ public final class SignUpViewReactor: Reactor {
     
     public enum Action {
         case viewDidLoad
-        case didTapGenderButton(HPGender)
-        case didTapAuthCodeButton
-        case didTapCertificationButton
-        case didTapCreateUserButton(String, String, String, String, String)
-        case updateToName(String)
-        case updateToNickName(String)
-        case updateToBirthDay(String)
-        case updateToPhoneNumber(String)
-        case didChangePhoneNumber
+        case updateName(String)
+        case updateNickName(String)
+        case updateGender(HPGender)
+        case updateBirthDay(String)
+        case updatePhoneNumber(String)
+        case updateAuthCode(String)
+        case didTapIssueAuthCodeButton
+        case didTapVeirfyAuthCodeButton
+        case didTapAllTermsCheckbox
+        case didTapReceiveInfoCheckbox
+        case didTapCollectInfoCheckbox
+        case didTapCreateUserButton
     }
     
     public enum Mutation {
@@ -80,12 +83,13 @@ public final class SignUpViewReactor: Reactor {
         case setKakaoUserEntity(User)
         case setUserGender(HPGender)
         case setNaverUserEntity(NaverAccount)
-        case setCertificationState(Bool)
-        case setAppleUserFullName(String)
         case setUserName(String)
         case setUserNickName(String)
         case setUserBirthDay(String)
         case setUserPhoneNumber(String)
+        case setShowAuthCodeView(Bool)
+        case setAuthCode(String)
+        case setAgreeTerms(Bool, Bool)
         case setCreateUserInfo(UserAccount)
     }
     
@@ -101,9 +105,9 @@ public final class SignUpViewReactor: Reactor {
             userNickName: "",
             userGender: .male,
             userBirthDay: "",
-            applefullName: "",
             phoneNumber: "",
             showsAuthCodeView: false,
+            authCode: "",
             isVaildPhoneNumber: false,
             agreement1IsSelected: false,
             agreement2IsSelected: false
@@ -112,9 +116,7 @@ public final class SignUpViewReactor: Reactor {
     
     
     public func mutate(action: Action) -> Observable<Mutation> {
-    
         switch action {
-            
         case .viewDidLoad:
             var requestProfile = Observable<Mutation>.empty()
             if accountType == .kakao {
@@ -129,46 +131,54 @@ public final class SignUpViewReactor: Reactor {
                 .just(.setLoading(false))
             )
             
-        case let .updateToName(userName):
-            
+        case let .updateName(userName):
             return .just(.setUserName(userName))
             
-        case let .updateToNickName(userNickName):
-            
+        case let .updateNickName(userNickName):
             return .just(.setUserNickName(userNickName))
             
-        case let .updateToBirthDay(userBirthDay):
-            
+        case let .updateBirthDay(userBirthDay):
             return .just(.setUserBirthDay(userBirthDay))
             
-        case let .didTapGenderButton(gender):
-        
+        case let .updateGender(gender):
             return .just(.setUserGender(gender))
             
-        case .didTapAuthCodeButton:
-            
+        case .didTapVeirfyAuthCodeButton:
             return .empty()
             
-        case .didTapCertificationButton:
-            
+        case .didTapIssueAuthCodeButton:
             guard self.currentState.showsAuthCodeView else { return .empty() }
-            return .just(.setCertificationState(self.currentState.showsAuthCodeView))
+            return .just(.setShowAuthCodeView(self.currentState.showsAuthCodeView))
             
-        case let .didTapCreateUserButton(name, nickName, gender, birthDay, phoneNumber):
-            
-            return .concat(
-                .just(.setLoading(true)),
-                signUpRepository.createUserInformation(name: name, nickname: nickName, gender: gender, birthDay: birthDay, phoneNumber: phoneNumber),
-                .just(.setLoading(false))
-            )
-            
-        case let .updateToPhoneNumber(phoneNumber):
-            
+        case let .updatePhoneNumber(phoneNumber):
             return .just(.setUserPhoneNumber(phoneNumber))
             
-        case .didChangePhoneNumber:
+        case let .updateAuthCode(authCode):
+            return .just(.setAuthCode(authCode))
             
-            return .just(.setCertificationState(!self.currentState.showsAuthCodeView))
+        case .didTapAllTermsCheckbox:
+            let isChecked = currentState.agreement1IsSelected && currentState.agreement2IsSelected
+            return .just(.setAgreeTerms(!isChecked, !isChecked))
+            
+        case .didTapReceiveInfoCheckbox:
+            return .just(.setAgreeTerms(!currentState.agreement1IsSelected, currentState.agreement2IsSelected))
+            
+        case .didTapCollectInfoCheckbox:
+            return .just(.setAgreeTerms(currentState.agreement1IsSelected, !currentState.agreement2IsSelected))
+            
+        case .didTapCreateUserButton:
+            return .concat(
+                .just(.setLoading(true)),
+                signUpRepository.createUserInformation(
+                    name: currentState.userName,
+                    nickname: currentState.userNickName,
+                    gender: currentState.userGender.rawValue,
+                    birthDay: currentState.userBirthDay,
+                    phoneNumber: currentState.phoneNumber
+                ),
+                .just(.setLoading(false))
+            )
+        
         }
     }
     
@@ -199,16 +209,15 @@ public final class SignUpViewReactor: Reactor {
             newState.userBirthDay = userBirthDay
             
         case let .setKakaoUserEntity(kakaoEntity):
+            print("entity: \(kakaoEntity.kakaoAccount)")
             newState.kakaoUserEntity = kakaoEntity
             
         case let .setNaverUserEntity(naverEntity):
+            print("entity: \(naverEntity.response)")
             newState.naverUserEntity = naverEntity
             
-        case let .setCertificationState(certificationState):
+        case let .setShowAuthCodeView(certificationState):
             newState.showsAuthCodeView = certificationState
-            
-        case let .setAppleUserFullName(fullName):
-            newState.applefullName = fullName
             
         case let .setUserGender(gender):
             newState.userGender = gender
@@ -219,6 +228,13 @@ public final class SignUpViewReactor: Reactor {
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
             newState.isVaildPhoneNumber = phoneNumber.isValidPhoneNumber()
+            newState.showsAuthCodeView = false
+            newState.authCode = ""
+        case let .setAuthCode(authCode):
+            newState.authCode = authCode
+        case let .setAgreeTerms(agreement1Checked, agreement2Checked):
+            newState.agreement1IsSelected = agreement1Checked
+            newState.agreement2IsSelected = agreement2Checked
         }
         
         return newState
@@ -232,7 +248,7 @@ extension SignUpViewReactor {
     private func requestAppleUserProfile(from event: SignUpViewStream.Event) -> Observable<Mutation> {
         switch event {
         case let .requestAppleLogin(fullName):
-            return .just(.setAppleUserFullName(fullName))
+            return .just(.setUserName(fullName))
         }
     }
     
