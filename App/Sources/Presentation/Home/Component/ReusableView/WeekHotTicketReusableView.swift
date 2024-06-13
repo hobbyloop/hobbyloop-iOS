@@ -1,8 +1,8 @@
 //
-//  BenefitsReusableView.swift
+//  WeekHotTicketReusableView.swift
 //  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/07/20.
+//  Created by Kim JinWoo on 2024/06/09.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ import HPCommonUI
 import HPExtensions
 import Then
 
-final class BenefitsReusableView: UICollectionReusableView {
+final class WeekHotTicketReusableView: UICollectionReusableView {
     
     private let benefitsTitleLabel: UILabel = UILabel().then {
         $0.text = "오늘의 혜택"

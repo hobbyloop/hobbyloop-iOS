@@ -12,11 +12,6 @@ import Then
 import RxSwift
 import RxCocoa
 
-//MARK: Delegate
-public protocol ExplanationDelegate: AnyObject {
-    func showOnboardingView()
-}
-
 final class ExplanationCell: UICollectionViewCell {
     
     //MARK: Property

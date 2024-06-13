@@ -11,81 +11,89 @@ import HPCommonUI
 import RxSwift
 import RxCocoa
 
+public protocol ExplanationDelegate: AnyObject {
+    func showOnboardingView()
+}
+
 public final class UserInfoProvideCell: UICollectionViewCell {
     
     //MARK: Property
     
     private let disposeBag: DisposeBag = DisposeBag()
     
+    public weak var delegate: ExplanationDelegate?
+    
     private let nickNameLabel: UILabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 22)
         $0.textColor = HPCommonUIAsset.black.color
         $0.textAlignment = .justified
-        $0.text = "지원님, 반가워요!"
+        $0.text = "안녕하세요, 김하비님"
         $0.numberOfLines = 1
     }
     
-    private let scheduleButton: UIButton = UIButton(configuration: .plain(), primaryAction: nil).then {
-        $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: .normal)
-        $0.setImage(HPCommonUIAsset.calendarFilled.image, for: .selected)
-        $0.configuration?.baseBackgroundColor = HPCommonUIAsset.systemBackground.color
-        $0.configuration?.setDefaultContentInsets()
-        $0.configuration?.imagePlacement = .trailing
-        $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "예약된 수업", attributes: [
-            .foregroundColor: HPCommonUIAsset.black.color,
-            .font: HPCommonUIFontFamily.Pretendard.medium.font(size: 18)
-        ]))
+    private let ticketInfoView: HPReservedClassTicketView = HPReservedClassTicketView(
+        logo: HPCommonUIAsset.logo.image,
+        title: "6:1 체형교정 필라테스",
+        studioName: "필라피티 스튜디오",
+        instructor: "이민주 강사님",
+        timeString: Date().convertToString()
+    )
+    
+    private let explanationButton: UIButton = UIButton(type: .custom).then {
+        // UIButtonConfiguration 생성
+         var configuration = UIButton.Configuration.plain()
+         
+         // 배경 이미지 설정
+         let backgroundImage = HPCommonUIAsset.ticketBlind.image
+        configuration.background.image = backgroundImage
+        configuration.background.imageContentMode = .scaleAspectFill
+        configuration.background.backgroundInsets = NSDirectionalEdgeInsets(top: -2, leading: -10, bottom: -10, trailing: -10)
+        // 구성 설정
+        $0.configuration = configuration
+        
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
         self.layoutIfNeeded()
-        scheduleButton.configuration?.imagePadding = UIScreen.main.bounds.maxX - (58 + (scheduleButton.titleLabel?.frame.size.width ?? 0))
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     private func configure() {
         self.backgroundColor = HPCommonUIAsset.systemBackground.color
         
-        [nickNameLabel, scheduleButton].forEach {
+        [nickNameLabel, ticketInfoView, explanationButton].forEach {
             self.addSubview($0)
+        }
+        
+        ticketInfoView.snp.makeConstraints {
+            $0.height.equalTo(127)
+            $0.top.equalTo(nickNameLabel.snp.bottom)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
         }
         
         nickNameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(15)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview()
-            $0.height.equalTo(20)
+            $0.height.equalTo(62)
         }
         
-        scheduleButton.snp.makeConstraints {
-            $0.top.equalTo(nickNameLabel.snp.bottom).offset(10)
-            $0.left.equalToSuperview()
-            $0.right.equalTo(nickNameLabel)
-            $0.bottom.equalToSuperview()
+        explanationButton.snp.makeConstraints {
+            $0.top.bottom.left.right.equalTo(ticketInfoView)
         }
         
-        
-        scheduleButton
+        explanationButton
             .rx.tap
-            .scan(false) { lastState, newState in
-                return !lastState
-            }
-            .map { $0 }
-            .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isSelected in
-                guard let `self` = self else { return }
-                self.scheduleButton.isSelected = isSelected
-                HomeViewStream.event.onNext(.reloadHomeViewSection(isSelected: isSelected))
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                self.delegate?.showOnboardingView()
             }).disposed(by: disposeBag)
-
-        
     }
     
 }

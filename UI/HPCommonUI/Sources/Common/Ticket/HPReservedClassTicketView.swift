@@ -11,6 +11,8 @@ import Then
 
 /// 예약한 수업 정보를 보여주는 ticket view
 public final class HPReservedClassTicketView: UIView {
+    private let gradientBackgroundView = UIView()
+    
     private let logoImageView = UIImageView().then {
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 25
@@ -83,24 +85,29 @@ public final class HPReservedClassTicketView: UIView {
         }
     }
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    public init(
+        logo: UIImage,
+        title: String,
+        studioName: String,
+        instructor: String,
+        timeString: String
+    ) {
+        super.init(frame: .infinite)
+        className = title
+        self.studioName = studioName
+        instructorName = instructor
+        dateTimeString = timeString
+        logoImage = logo
         layout()
     }
     
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
-        addGradientBorder(
-            startColor: HPCommonUIAsset.gradientStart.color,
-            endColor: HPCommonUIAsset.gradientEnd.color,
-            startPoint: CGPoint(x: 0, y: 0),
-            endPoint: CGPoint(x: 1, y: 1),
-            lineWidth: 2,
-            topLeftRadius: 40,
-            topRightRadius: 10,
-            bottomLeftRadius: 40,
-            bottomRightRadius: 10
-        )
+        gradientBackgroundView.addGradientCornerRadius(2,
+                                                       [40, 10, 10, 40],
+                                                       gradientColor: [HPCommonUIAsset.gradientStart.color.cgColor,
+                                                                       HPCommonUIAsset.gradientEnd.color.cgColor],
+                                                       gradientLocation: [0, 1])
     }
     
     required init?(coder: NSCoder) {
@@ -112,8 +119,9 @@ public final class HPReservedClassTicketView: UIView {
         self.snp.makeConstraints {
             $0.height.equalTo(127)
         }
-
+        
         [
+            gradientBackgroundView,
             logoImageView,
             classNameLabel,
             studioNameLabel,
@@ -124,6 +132,10 @@ public final class HPReservedClassTicketView: UIView {
             qrCodeView,
             hpImageView
         ].forEach(self.addSubview(_:))
+        
+        gradientBackgroundView.snp.makeConstraints {
+            $0.left.right.top.bottom.equalToSuperview()
+        }
         
         logoImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)

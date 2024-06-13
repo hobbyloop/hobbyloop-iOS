@@ -50,7 +50,7 @@ public final class TicketView: TicketQRCodeView {
     }
     
     private let dividerLine = UIView().then {
-        $0.backgroundColor = HPCommonUIAsset.lightSeparator.color
+        $0.backgroundColor = UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1)
         $0.snp.makeConstraints {
             $0.width.equalTo(192)
             $0.height.equalTo(1)
@@ -68,6 +68,10 @@ public final class TicketView: TicketQRCodeView {
             $0.width.equalTo(33.58)
             $0.height.equalTo(23.7)
         }
+    }
+    
+    private lazy var gradientBackgroundView = UIView().then {
+        $0.backgroundColor = UIColor(cgColor: self.fillColor)
     }
     
     public init(
@@ -101,12 +105,16 @@ public final class TicketView: TicketQRCodeView {
     private func layout() {
         
         self.addSubview(containerView)
-        [photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, qrView].forEach(self.addSubview(_:))
+        [gradientBackgroundView, photoView, titleLabel, studioLabel, instructorLabel, dividerLine, timeLabel, qrView].forEach(self.addSubview(_:))
         
         qrView.addSubview(qrTitleLabel)
         //TODO: 추후에 Entity Parameter 추가
         createQRCode(entity: "", size: "L", type: .blur)
         setTitleLabel(text: "출석\nQR", textColor: HPCommonUIAsset.black.color, font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16))
+        
+        gradientBackgroundView.snp.makeConstraints {
+            $0.top.bottom.right.left.equalToSuperview()
+        }
         
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -158,29 +166,36 @@ public final class TicketView: TicketQRCodeView {
     }
     
     
-    private func createDashLineLayer(frame: CGRect) -> CAShapeLayer {
-        let midLineLayer = CAShapeLayer()
-        midLineLayer.strokeColor = self.textColor.cgColor
-        midLineLayer.lineWidth = 0.5
-        midLineLayer.lineDashPattern = [10, 10]
-        let cgPath = CGMutablePath()
-        midLineLayer.path = cgPath
-        
-        return midLineLayer
-    }
+//    private func createDashLineLayer(frame: CGRect) -> CAShapeLayer {
+//        let midLineLayer = CAShapeLayer()
+//        midLineLayer.strokeColor = self.textColor.cgColor
+//        midLineLayer.lineWidth = 0.5
+//        midLineLayer.lineDashPattern = [10, 10]
+//        let cgPath = CGMutablePath()
+//        midLineLayer.path = cgPath
+//        
+//        return midLineLayer
+//    }
     
     public override func draw(_ rect: CGRect) {
-        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
+//        let maskPath = UIBezierPath(shouldRoundRect: self.bounds, topLeftRadius: 40, topRightRadius: 10, bottomLeftRadius: 40, bottomRightRadius: 10)
+//        
+//        let maskLayer = CAShapeLayer()
+//        maskLayer.path = maskPath.cgPath
+//        
+//        maskLayer.fillColor = self.fillColor
+//        maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
+//        maskLayer.lineWidth = 1
+//        
+//        
+//        self.containerView.layer.addSublayer(maskLayer)
+//        self.containerView.layer.addSublayer(createDashLineLayer(frame: rect))
         
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = maskPath.cgPath
-        
-        maskLayer.fillColor = self.fillColor
-        maskLayer.strokeColor = HPCommonUIAsset.lightSeparator.color.cgColor
-        maskLayer.lineWidth = 1
-        
-        
-        self.containerView.layer.addSublayer(maskLayer)
-        self.containerView.layer.addSublayer(createDashLineLayer(frame: rect))
+        gradientBackgroundView.addGradientCornerRadius(2, [40, 10, 10, 40], gradientColor: [
+            CGColor(red: 255/255, green: 167/255, blue: 173/255, alpha: 1),
+            CGColor(red: 152/255, green: 184/255, blue: 255/255, alpha: 1),
+            CGColor(red: 165/255, green: 125/255, blue: 245/255, alpha: 1)
+            
+        ], gradientLocation: [0, 1])
     }
 }
