@@ -37,7 +37,7 @@ public final class HPTitledInputView: UIView {
         $0.alignment = .fill
     }
     
-    private let showDatePickerButton = UIButton(configuration: .plain()).then {
+    public let showDatePickerButton = UIButton(configuration: .plain()).then {
         $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: [])
         $0.configuration?.contentInsets = .zero
         $0.isHidden = true
