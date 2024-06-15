@@ -51,7 +51,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
-    public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
+    public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "895737876071-015c8r6g3mpv65hoe89elahead2snj9n.apps.googleusercontent.com")
     
     
     public override init() {
