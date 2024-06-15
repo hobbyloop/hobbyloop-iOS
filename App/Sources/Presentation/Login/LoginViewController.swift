@@ -180,28 +180,28 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         kakaoLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapKakaoLogin(.kakao) }
+            .map { Reactor.Action.didTapKakaoLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         naverLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapNaverLogin(.naver) }
+            .map { Reactor.Action.didTapNaverLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         googleLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapGoogleLogin(self, .google) }
+            .map { Reactor.Action.didTapGoogleLogin(self) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapAppleLogin(.apple) }
+            .map { Reactor.Action.didTapAppleLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
