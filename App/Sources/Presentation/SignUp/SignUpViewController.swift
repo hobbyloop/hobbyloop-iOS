@@ -481,6 +481,11 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: collectInfoCheckbox.rx.isSelected)
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map { !$0.showsDatePickerView }
+            .bind(to: backgroundView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         // MARK: - VC -> Reactor
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
@@ -552,6 +557,32 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         confirmButton.rx.tap
             .map { Reactor.Action.didTapCreateUserButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView.showDatePickerButton.rx.tap
+            .map { Reactor.Action.didTapDatePickerButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        backgroundView.rx.tapGesture()
+            .filter { [weak self] gesture in
+                guard let self else { return false }
+                let location = gesture.location(in: self.datePickerView)
+                return !self.datePickerView.bounds.contains(location)
+            }
+            .map { _ in Reactor.Action.didTapBackgroundView }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        datePickerView.rx.date
+            .map {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy.MM.dd"
+                
+                return formatter.string(from: $0)
+            }
+            .map { Reactor.Action.updateBirthDay($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         

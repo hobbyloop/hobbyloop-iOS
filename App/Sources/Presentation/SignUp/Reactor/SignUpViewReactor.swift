@@ -60,6 +60,7 @@ public final class SignUpViewReactor: Reactor {
         var isVaildPhoneNumber: Bool
         var agreement1IsSelected: Bool
         var agreement2IsSelected: Bool
+        var showsDatePickerView: Bool
     }
     
     public enum Action {
@@ -76,6 +77,8 @@ public final class SignUpViewReactor: Reactor {
         case didTapReceiveInfoCheckbox
         case didTapCollectInfoCheckbox
         case didTapCreateUserButton
+        case didTapDatePickerButton
+        case didTapBackgroundView
     }
     
     public enum Mutation {
@@ -91,6 +94,8 @@ public final class SignUpViewReactor: Reactor {
         case setAuthCode(String)
         case setAgreeTerms(Bool, Bool)
         case setCreateUserInfo(UserAccount)
+        case showDatePickerView
+        case hideDatePickerView
     }
     
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
@@ -110,7 +115,8 @@ public final class SignUpViewReactor: Reactor {
             authCode: "",
             isVaildPhoneNumber: false,
             agreement1IsSelected: false,
-            agreement2IsSelected: false
+            agreement2IsSelected: false,
+            showsDatePickerView: false
         )
     }
     
@@ -179,6 +185,10 @@ public final class SignUpViewReactor: Reactor {
                 .just(.setLoading(false))
             )
         
+        case .didTapDatePickerButton:
+            return .just(.showDatePickerView)
+        case .didTapBackgroundView:
+            return .just(.hideDatePickerView)
         }
     }
     
@@ -209,11 +219,9 @@ public final class SignUpViewReactor: Reactor {
             newState.userBirthDay = userBirthDay
             
         case let .setKakaoUserEntity(kakaoEntity):
-            print("entity: \(kakaoEntity.kakaoAccount)")
             newState.kakaoUserEntity = kakaoEntity
             
         case let .setNaverUserEntity(naverEntity):
-            print("entity: \(naverEntity.response)")
             newState.naverUserEntity = naverEntity
             
         case let .setShowAuthCodeView(certificationState):
@@ -235,6 +243,10 @@ public final class SignUpViewReactor: Reactor {
         case let .setAgreeTerms(agreement1Checked, agreement2Checked):
             newState.agreement1IsSelected = agreement1Checked
             newState.agreement2IsSelected = agreement2Checked
+        case .showDatePickerView:
+            newState.showsDatePickerView = true
+        case .hideDatePickerView:
+            newState.showsDatePickerView = false
         }
         
         return newState
