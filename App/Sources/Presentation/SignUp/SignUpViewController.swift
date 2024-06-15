@@ -180,6 +180,22 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let confirmButton = HPNewButton(title: "하비루프 시작", style: .primary)
     
+    // MARK: - date picker & background
+    private let datePickerView = UIDatePicker().then {
+        $0.datePickerMode = .date
+        $0.preferredDatePickerStyle = .wheels
+        $0.locale = .init(identifier: "ko-KR")
+        $0.backgroundColor = UIColor(red: 0xB2, green: 0xB2, blue: 0xB2, alpha: 1)
+        $0.isUserInteractionEnabled = true
+        $0.layer.cornerRadius = 13
+        $0.clipsToBounds = true
+    }
+    
+    private let backgroundView = UIView().then {
+        $0.backgroundColor = .black.withAlphaComponent(0.5)
+    }
+    
+    // MARK: - init
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -358,6 +374,18 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         view.addSubview(indicatorView)
         indicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        view.addSubview(backgroundView)
+        backgroundView.snp.makeConstraints {
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        backgroundView.addSubview(datePickerView)
+        datePickerView.snp.makeConstraints {
+            $0.width.equalTo(297)
+            $0.height.equalTo(213)
             $0.center.equalToSuperview()
         }
         
