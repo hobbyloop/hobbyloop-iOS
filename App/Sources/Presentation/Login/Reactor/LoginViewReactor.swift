@@ -30,10 +30,10 @@ public final class LoginViewReactor: Reactor {
     
     //MARK: Action
     public enum Action {
-        case didTapKakaoLogin(AccountType)
-        case didTapNaverLogin(AccountType)
-        case didTapGoogleLogin(AnyObject, AccountType)
-        case didTapAppleLogin(AccountType)
+        case didTapKakaoLogin
+        case didTapNaverLogin
+        case didTapGoogleLogin(AnyObject)
+        case didTapAppleLogin
     }
     
     public enum Mutation {
@@ -79,23 +79,20 @@ public final class LoginViewReactor: Reactor {
                 .just(.setLoading(false))
             ])
             
-        case let .didTapNaverLogin(type):
-            
+        case .didTapNaverLogin:
             return .concat([
                 .just(.setLoading(true)),
                 loginRepository.responseNaverLogin()
             ])
             
-        case let .didTapGoogleLogin(viewController, type):
-            
+        case let .didTapGoogleLogin(viewController):
             return .concat([
                 .just(.setLoading(true)),
                 loginRepository.responseGoogleLogin(to: viewController),
                 .just(.setLoading(false))
             ])
             
-        case let .didTapAppleLogin(type):
-            
+        case .didTapAppleLogin:
             return .concat([
                 .just(.setLoading(true)),
                 loginRepository.responseAppleLogin(),
