@@ -25,6 +25,6 @@ jobs:
           mise use tuist@4.16.1
       - name: generate & build project
         run: |
-          mise exec -- tuist fetch
           mise exec -- tuist install
+          mise exec -- tuist generate
           mise exec -- tuist build
