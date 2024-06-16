@@ -12,17 +12,18 @@ let thirdParty = Project.makeModule(
     name: "HPThirdParty",
     products: [.framework(.dynamic)],
     dependencies: [
-//        .ThirdParty.Reactive.reactorKit,
-//        .ThirdParty.Reactive.rxCocoa,
-//        .ThirdParty.Reactive.rxGesture,
-//        .ThirdParty.Reactive.rxDataSources,
-//        .ThirdParty.UI.then,
-//        .ThirdParty.UI.snapKit,
-//        .ThirdParty.UI.tabMan,
-//        .ThirdParty.Network.alamofire,
-//        .ThirdParty.SDK.kakao,
-//        .ThirdParty.SDK.google,
-//        .ThirdParty.Util.keychainAccess,
-//        .ThirdParty.Util.cryptoSwift
+        .ThirdParty.Reactive.rxSwift,
+        .ThirdParty.Reactive.reactorKit,
+        .ThirdParty.Reactive.rxCocoa,
+        .ThirdParty.Reactive.rxGesture,
+        .ThirdParty.Reactive.rxDataSources,
+        .ThirdParty.UI.then,
+        .ThirdParty.UI.snapKit,
+        .ThirdParty.UI.tabMan,
+        .ThirdParty.Network.alamofire,
+        .ThirdParty.SDK.kakao,
+        .ThirdParty.SDK.google,
+        .ThirdParty.Util.keychainAccess,
+        .ThirdParty.Util.cryptoSwift
     ]
 )
