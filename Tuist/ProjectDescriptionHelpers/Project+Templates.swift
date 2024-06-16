@@ -12,7 +12,7 @@ extension Project {
         bundleId: String = "",
         products: [HPProduct],
         isExcludedFramework: Bool = false,
-        infoExtensions: [String: InfoPlist.Value] = [:],
+        infoExtensions: [String: Plist.Value] = [:],
         settings: Settings? = .default,
         packages: [ProjectDescription.Package] = [],
         testDependencies: [TargetDependency] = [],
@@ -22,7 +22,7 @@ extension Project {
         var targets: [Target] = []
         var schemes: [Scheme] = []
         
-        var infoPlist: InfoPlist = .base(name: name)
+        let infoPlist: InfoPlist = .base(name: name)
         
         let targetSettings: Settings = .settings(
             base: [
@@ -35,16 +35,16 @@ extension Project {
         )
         
         if products.contains(.app) {
-            let appTarget: Target = .init(
+            let appTarget: Target = .target(
                 name: name,
-                platform: .iOS,
+                destinations: .iOS,
                 product: .app,
                 bundleId: bundleId.isEmpty ? "com.app.\(name.lowercased())" : bundleId,
-                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                deploymentTargets: .iOS("15.0"),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
-                entitlements: .relativeToRoot("Hobbyloop.entitlements"),
+                entitlements: .file(path: .relativeToRoot("Hobbyloop.entitlements")),
                 scripts: [],
                 dependencies: isExcludedFramework ? dependencies : dependencies + externalDependencies,
                 settings: targetSettings
@@ -52,11 +52,11 @@ extension Project {
             targets.append(appTarget)
         }
         
-        let appScheme: Scheme = .init(
+        let appScheme: Scheme = .scheme(
             name: name,
             shared: true,
             hidden: false,
-            buildAction: .init(targets: ["\(name)"]),
+            buildAction: .buildAction(targets: ["\(name)"]),
             runAction: .runAction(executable: "\(name)")
         )
         
@@ -66,9 +66,9 @@ extension Project {
           var dependencies: [TargetDependency] = [.target(name: name), .xctest]
           dependencies += testDependencies
           
-          let target: Target = .init(
+          let target: Target = .target(
             name: "\(name)Tests",
-            platform: .iOS,
+            destinations: .iOS,
             product: .unitTests,
             bundleId: "com.app.\(name.lowercased())Tests",
             infoPlist: .default,
@@ -80,9 +80,9 @@ extension Project {
         }
         
         if products.contains(.uiTests) {
-          let target: Target = .init(
+          let target: Target = .target(
             name: "\(name)UITests",
-            platform: .iOS,
+            destinations: .iOS,
             product: .uiTests,
             bundleId: "com.app.\(name.lowercased())UITests",
             sources: "\(name)UITests/**",
@@ -93,12 +93,12 @@ extension Project {
         
         
         if products.filter({ $0.isLibrary}).count != 0 {
-            let libraryTarget: Target = .init(
+            let libraryTarget: Target = .target(
                 name: name,
-                platform: .iOS,
+                destinations: .iOS,
                 product: products.contains(.library(.static)) ? .staticLibrary : .dynamicLibrary,
                 bundleId: "com.app.\(name)",
-                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                deploymentTargets: .iOS("15.0"),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],
@@ -110,12 +110,12 @@ extension Project {
         }
         
         if products.filter({ $0.isFramework }).count != 0 {
-            let frameworkTarget: Target = .init(
+            let frameworkTarget: Target = .target(
                 name: name,
-                platform: .iOS,
+                destinations: .iOS,
                 product: products.contains(.framework(.static)) ? .staticFramework : .framework,
                 bundleId: "com.app.\(name)",
-                deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+                deploymentTargets: .iOS("15.0"),
                 infoPlist: infoPlist,
                 sources: ["Sources/**"],
                 resources: products.contains(.framework(.dynamic)) ? ["Resources/**"] : nil,

@@ -69,6 +69,7 @@ master.key
 
 ### Tuist managed dependencies ###
 Tuist/Dependencies
+Tuist/.build
 
 ### TestFlight ###
 *.ipa
