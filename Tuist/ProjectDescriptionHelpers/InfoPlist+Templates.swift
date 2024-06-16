@@ -9,7 +9,7 @@ import ProjectDescription
 
 extension InfoPlist {
     
-    static func configure(name: String, bundleId: String = "") -> [String: Plist.Value] {
+    static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
             "ITSAppUsesNonExemptEncryption": .boolean(false),
