@@ -38,7 +38,7 @@ extension InfoPlist {
                     "CFBundleURLName": .string("hobbyloop")
                 ]),
                 .dictionary([
-                    "CFBundleURLSchemes": .array(["kakaoe8e2221cc437bed1a098ce95fee11f1d"])
+                    "CFBundleURLSchemes": .array(["kakao952e63b33ea5dd5fc5fbd0cf7b388dbb"])
                 ]),
                 .dictionary([
                     "CFBundleTypeRole": .string("Editor"),
