@@ -12,6 +12,9 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: InfoPlist.Value] {
         
         return [
+            "NSAppTransportSecurity": .dictionary([
+                "NSAllowsArbitraryLoads": .boolean(true)
+            ]),
             "ITSAppUsesNonExemptEncryption": .boolean(false),
             "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
@@ -39,7 +42,7 @@ extension InfoPlist {
                 ]),
                 .dictionary([
                     "CFBundleTypeRole": .string("Editor"),
-                    "CFBundleURLSchemes": .array([.string("com.googleusercontent.apps.565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a")])
+                    "CFBundleURLSchemes": .array([.string("com.googleusercontent.apps.895737876071-015c8r6g3mpv65hoe89elahead2snj9n")])
                 ])
             ]),
             "UIApplicationSceneManifest" : .dictionary([
