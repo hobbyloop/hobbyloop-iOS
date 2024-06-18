@@ -207,6 +207,7 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         
         
         reactor.pulse(\.$authToken)
+            .observe(on: MainScheduler.asyncInstance)
             .map { (reactor.currentState.accountType, $0) }
             .filter({ accountType, tokenResponseBody in
                 return accountType != .none && tokenResponseBody != nil && tokenResponseBody?.data.accessToken == nil
@@ -233,6 +234,7 @@ extension LoginViewController {
     }
     
     private func didShowSignUpController(accountType: AccountType) {
+        print("push!!!")
         let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
