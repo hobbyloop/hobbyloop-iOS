@@ -61,6 +61,7 @@ public final class SignUpViewReactor: Reactor {
         var agreement1IsSelected: Bool
         var agreement2IsSelected: Bool
         var showsDatePickerView: Bool
+        var verificationID: String
     }
     
     public enum Action {
@@ -91,6 +92,7 @@ public final class SignUpViewReactor: Reactor {
         case setUserBirthDay(String)
         case setUserPhoneNumber(String)
         case setShowAuthCodeView(Bool)
+        case setVerificationID(String)
         case setAuthCode(String)
         case setAgreeTerms(Bool, Bool)
         case setCreateUserInfo(UserAccount)
@@ -116,7 +118,8 @@ public final class SignUpViewReactor: Reactor {
             isVaildPhoneNumber: false,
             agreement1IsSelected: false,
             agreement2IsSelected: false,
-            showsDatePickerView: false
+            showsDatePickerView: false,
+            verificationID: ""
         )
     }
     
@@ -153,8 +156,11 @@ public final class SignUpViewReactor: Reactor {
             return .empty()
             
         case .didTapIssueAuthCodeButton:
-            guard self.currentState.showsAuthCodeView else { return .empty() }
-            return .just(.setShowAuthCodeView(self.currentState.showsAuthCodeView))
+            return .concat([
+                .just(.setLoading(true)),
+                signUpRepository.issueVerificationID(phoneNumber: currentState.phoneNumber),
+                .just(.setLoading(false))
+            ])
             
         case let .updatePhoneNumber(phoneNumber):
             return .just(.setUserPhoneNumber(phoneNumber))
@@ -227,6 +233,9 @@ public final class SignUpViewReactor: Reactor {
         case let .setShowAuthCodeView(certificationState):
             newState.showsAuthCodeView = certificationState
             
+        case let .setVerificationID(verificationID):
+            newState.verificationID = verificationID
+            
         case let .setUserGender(gender):
             newState.userGender = gender
             
@@ -247,6 +256,7 @@ public final class SignUpViewReactor: Reactor {
             newState.showsDatePickerView = true
         case .hideDatePickerView:
             newState.showsDatePickerView = false
+        
         }
         
         return newState

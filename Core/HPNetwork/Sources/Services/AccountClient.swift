@@ -12,11 +12,14 @@ import HPCommon
 import HPExtensions
 import Alamofire
 import RxSwift
+import FirebaseAuth
+import FirebaseMessaging
 
 public protocol AccountClientService: AnyObject {
     func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody>
     func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
     func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
+    func issueVerificationID(phoneNumber: String) -> Single<String>
 }
 
 
@@ -95,6 +98,22 @@ extension AccountClient {
             
             return Disposables.create()
         }
-
+    }
+    
+    public func issueVerificationID(phoneNumber: String) -> Single<String> {
+        return Single.create { single in
+            PhoneAuthProvider.provider()
+                .verifyPhoneNumber("+82 \(phoneNumber)", uiDelegate: nil) { verificationID, error in
+                    if let error {
+                        single(.failure(error))
+                    }
+                    
+                    if let verificationID {
+                        single(.success(verificationID))
+                    }
+                }
+            
+            return Disposables.create()
+        }
     }
 }
