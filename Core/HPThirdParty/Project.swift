@@ -12,6 +12,7 @@ let thirdParty = Project.makeModule(
     name: "HPThirdParty",
     products: [.framework(.dynamic)],
     dependencies: [
+        .ThirdParty.Reactive.rxSwift,
         .ThirdParty.Reactive.reactorKit,
         .ThirdParty.Reactive.rxCocoa,
         .ThirdParty.Reactive.rxGesture,
