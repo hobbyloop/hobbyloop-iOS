@@ -8,6 +8,7 @@ let network = Project.makeModule(
         .Project.Core.foundation,
         .Project.Core.common,
         .Project.Core.domain,
-        .Project.Core.extensions
+        .Project.Core.extensions,
+        .Project.Core.thirdParty
     ]
 )
