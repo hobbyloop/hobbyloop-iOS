@@ -43,6 +43,9 @@ extension InfoPlist {
                 .dictionary([
                     "CFBundleTypeRole": .string("Editor"),
                     "CFBundleURLSchemes": .array([.string("com.googleusercontent.apps.895737876071-015c8r6g3mpv65hoe89elahead2snj9n")])
+                ]),
+                .dictionary([
+                    "CFBundleURLSchemes": .array(["app-1-557614392787-ios-bf6c62aeac2a1181e6bb26"])
                 ])
             ]),
             "UIApplicationSceneManifest" : .dictionary([
