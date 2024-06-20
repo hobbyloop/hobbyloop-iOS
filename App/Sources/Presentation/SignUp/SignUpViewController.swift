@@ -152,21 +152,21 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.gray40.color
     }
     
-    private let receiveInfoCheckbox = HPCheckbox()
-    private let receiveInfoLabel = UILabel().then {
+    private let agreement1Checkbox = HPCheckbox()
+    private let agreement1Label = UILabel().then {
         $0.text = "마케팅 수신 정보 동의 [선택]"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private lazy var receiveInfoDetailButton = TermDetailButton()
+    private lazy var agreement1DetailButton = TermDetailButton()
     
-    private let collectInfoCheckbox = HPCheckbox()
-    private let collectInfoLabel = UILabel().then {
+    private let agreement2Checkbox = HPCheckbox()
+    private let agreement2Label = UILabel().then {
         $0.text = "마케팅 정보 수집 동의 [선택]"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private lazy var collectInfoDetailButton = TermDetailButton()
+    private lazy var agrement2DetailButton = TermDetailButton()
     
     
     // MARK: - 설명 + 입력 완료 버튼
@@ -245,8 +245,8 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
          genederDescriptionLabel, horizontalGenderStackView,
          phoneAuthVStack, confirmButton, modifyDescriptionLabel, birthDayView,
          termTitleLabel, allTermsCheckbox, allTermsLabel, termDividerView,
-         receiveInfoCheckbox, receiveInfoLabel, receiveInfoDetailButton,
-         collectInfoCheckbox, collectInfoLabel, collectInfoDetailButton
+         agreement1Checkbox, agreement1Label, agreement1DetailButton,
+         agreement2Checkbox, agreement2Label, agrement2DetailButton
         ].forEach {
             containerView.addSubview($0)
         }
@@ -330,38 +330,38 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.leading.trailing.equalTo(nameView)
         }
         
-        receiveInfoCheckbox.snp.makeConstraints {
+        agreement1Checkbox.snp.makeConstraints {
             $0.top.equalTo(termDividerView.snp.bottom).offset(12)
             $0.leading.equalTo(nameView)
         }
         
-        receiveInfoLabel.snp.makeConstraints {
-            $0.leading.equalTo(receiveInfoCheckbox.snp.trailing).offset(6)
-            $0.centerY.equalTo(receiveInfoCheckbox)
+        agreement1Label.snp.makeConstraints {
+            $0.leading.equalTo(agreement1Checkbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(agreement1Checkbox)
         }
         
-        receiveInfoDetailButton.snp.makeConstraints {
+        agreement1DetailButton.snp.makeConstraints {
             $0.trailing.equalTo(nameView)
-            $0.centerY.equalTo(receiveInfoCheckbox)
+            $0.centerY.equalTo(agreement1Checkbox)
         }
         
-        collectInfoCheckbox.snp.makeConstraints {
-            $0.top.equalTo(receiveInfoCheckbox.snp.bottom).offset(6)
+        agreement2Checkbox.snp.makeConstraints {
+            $0.top.equalTo(agreement1Checkbox.snp.bottom).offset(6)
             $0.leading.equalTo(nameView)
         }
         
-        collectInfoLabel.snp.makeConstraints {
-            $0.leading.equalTo(collectInfoCheckbox.snp.trailing).offset(6)
-            $0.centerY.equalTo(collectInfoCheckbox)
+        agreement2Label.snp.makeConstraints {
+            $0.leading.equalTo(agreement2Checkbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(agreement2Checkbox)
         }
         
-        collectInfoDetailButton.snp.makeConstraints {
+        agrement2DetailButton.snp.makeConstraints {
             $0.trailing.equalTo(nameView)
-            $0.centerY.equalTo(collectInfoCheckbox)
+            $0.centerY.equalTo(agreement2Checkbox)
         }
         
         modifyDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(collectInfoCheckbox.snp.bottom).offset(50)
+            $0.top.equalTo(agreement2Checkbox.snp.bottom).offset(50)
             $0.centerX.equalToSuperview()
         }
         
@@ -474,12 +474,12 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         reactor.state
             .map { $0.agreement1IsSelected }
-            .bind(to: receiveInfoCheckbox.rx.isSelected)
+            .bind(to: agreement1Checkbox.rx.isSelected)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.agreement2IsSelected }
-            .bind(to: collectInfoCheckbox.rx.isSelected)
+            .bind(to: agreement2Checkbox.rx.isSelected)
             .disposed(by: disposeBag)
         
         reactor.state
@@ -576,12 +576,12 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        receiveInfoCheckbox.rx.tap
+        agreement1Checkbox.rx.tap
             .map { Reactor.Action.didTapReceiveInfoCheckbox }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        collectInfoCheckbox.rx.tap
+        agreement2Checkbox.rx.tap
             .map { Reactor.Action.didTapCollectInfoCheckbox }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
