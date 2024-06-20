@@ -462,7 +462,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             reactor.state.map { $0.userBirthDay },
             reactor.state.map { $0.isVaildPhoneNumber }
         ).map {
-            !$0.0.isEmpty && $0.1.isEmpty && $0.2
+            !$0.0.isEmpty && !$0.1.isEmpty && $0.2
         }
         .bind(to: confirmButton.rx.isEnabled)
         .disposed(by: disposeBag)
