@@ -98,6 +98,8 @@ public final class SignUpViewReactor: Reactor {
         case setCreateUserInfo(UserAccount)
         case showDatePickerView
         case hideDatePickerView
+        case validatePhoneNumber
+        case invalidatePhoneNumber
     }
     
     public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
@@ -153,11 +155,16 @@ public final class SignUpViewReactor: Reactor {
             return .just(.setUserGender(gender))
             
         case .didTapVeirfyAuthCodeButton:
-            return .empty()
+            return .concat([
+                .just(.setLoading(true)),
+                signUpRepository.verifyPhoneNumber(authCode: currentState.authCode, verificationID: currentState.verificationID),
+                .just(.setLoading(false))
+            ])
             
         case .didTapIssueAuthCodeButton:
             return .concat([
                 .just(.setLoading(true)),
+                .just(.invalidatePhoneNumber),
                 signUpRepository.issueVerificationID(phoneNumber: currentState.phoneNumber),
                 .just(.setLoading(false))
             ])
@@ -244,19 +251,31 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber
-            newState.isVaildPhoneNumber = phoneNumber.isValidPhoneNumber()
+            newState.isVaildPhoneNumber = false
             newState.showsAuthCodeView = false
             newState.authCode = ""
+            newState.verificationID = ""
+            
         case let .setAuthCode(authCode):
             newState.authCode = authCode
+            
         case let .setAgreeTerms(agreement1Checked, agreement2Checked):
             newState.agreement1IsSelected = agreement1Checked
             newState.agreement2IsSelected = agreement2Checked
+            
         case .showDatePickerView:
             newState.showsDatePickerView = true
+            
         case .hideDatePickerView:
             newState.showsDatePickerView = false
         
+        case .validatePhoneNumber:
+            newState.isVaildPhoneNumber = true
+        case .invalidatePhoneNumber:
+            newState.isVaildPhoneNumber = false
+            newState.showsAuthCodeView = false
+            newState.authCode = ""
+            newState.verificationID = ""
         }
         
         return newState

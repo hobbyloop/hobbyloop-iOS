@@ -20,6 +20,7 @@ public protocol AccountClientService: AnyObject {
     func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
     func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
     func issueVerificationID(phoneNumber: String) -> Single<String>
+    func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void>
 }
 
 
@@ -106,12 +107,33 @@ extension AccountClient {
                 .verifyPhoneNumber("+82 \(phoneNumber)", uiDelegate: nil) { verificationID, error in
                     if let error {
                         single(.failure(error))
+                        print("issue error: \(error)")
                     }
                     
                     if let verificationID {
                         single(.success(verificationID))
                     }
                 }
+            
+            return Disposables.create()
+        }
+    }
+    
+    public func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void> {
+        let credential = PhoneAuthProvider.provider().credential(
+            withVerificationID: verificationID,
+            verificationCode: authCode
+        )
+        
+        return Single.create { single in
+            Auth.auth().signIn(with: credential) { authData, error in
+                if let error {
+                    single(.failure(error))
+                    return
+                }
+                
+                single(.success(()))
+            }
             
             return Disposables.create()
         }

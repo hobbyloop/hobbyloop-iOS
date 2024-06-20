@@ -22,6 +22,7 @@ public protocol SignUpViewRepo {
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
     func createUserInformation(name: String, nickname: String, gender: String, birthDay: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
     func issueVerificationID(phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
+    func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<SignUpViewReactor.Mutation>
 }
 
 
@@ -95,6 +96,17 @@ public final class SignUpViewRepository: SignUpViewRepo {
                     .just(SignUpViewReactor.Mutation.setShowAuthCodeView(true)),
                     .just(SignUpViewReactor.Mutation.setVerificationID(verificationID))
                 ])
+            }
+    }
+    
+    public func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<SignUpViewReactor.Mutation> {
+        return self.networkService.verifyPhoneNumber(authCode: authCode, verificationID: verificationID)
+            .asObservable()
+            .catch { _ in
+                return .empty()
+            }
+            .map {
+                .validatePhoneNumber
             }
     }
 }

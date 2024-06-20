@@ -417,6 +417,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     public override func bind(reactor: SignUpViewReactor) {
         // MARK: - Reactor -> VC
         reactor.state
+            .observe(on: MainScheduler.instance)
             .map { $0.isLoading }
             .bind(to: indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
@@ -486,6 +487,29 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .bind(to: backgroundView.rx.isHidden)
             .disposed(by: disposeBag)
         
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.showsAuthCodeView ? "인증번소 재발송" : "인증번호 발송" }
+            .bind(to: issueAuthCodeButton.rx.title(for: []))
+            .disposed(by: disposeBag)
+            
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { !$0.isVaildPhoneNumber }
+            .bind(to: verifyAuthCodeButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.isVaildPhoneNumber ? "인증 완료" : "인증 확인하기" }
+            .bind(to: verifyAuthCodeButton.rx.title(for: []))
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.authCode }
+            .bind(to: authCodeView.rx.text)
+            .disposed(by: disposeBag)
+        
         // MARK: - VC -> Reactor
         Observable.just(())
             .map { Reactor.Action.viewDidLoad }
@@ -532,6 +556,13 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         
         issueAuthCodeButton.rx.tap
             .map { Reactor.Action.didTapIssueAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        authCodeView.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateAuthCode($0 ?? "") }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
