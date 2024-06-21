@@ -12,9 +12,6 @@ extension InfoPlist {
     static func configure(name: String, bundleId: String = "") -> [String: Plist.Value] {
         
         return [
-            "NSAppTransportSecurity": .dictionary([
-                "NSAllowsArbitraryLoads": .boolean(true)
-            ]),
             "ITSAppUsesNonExemptEncryption": .boolean(false),
             "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),

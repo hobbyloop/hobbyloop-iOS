@@ -26,7 +26,7 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "https://openapi.naver.com"
         default:
-            return "http://ec2-52-78-56-136.ap-northeast-2.compute.amazonaws.com:8000"
+            return "https://hobbyloop.kr"
         }
     }
     
