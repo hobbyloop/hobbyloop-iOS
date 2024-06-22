@@ -206,15 +206,18 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
             .disposed(by: disposeBag)
         
         
-        reactor.pulse(\.$authToken)
+        let authTokenObservable = reactor.pulse(\.$authToken)
             .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        authTokenObservable
             .map { (reactor.currentState.accountType, $0) }
             .filter({ accountType, tokenResponseBody in
                 return accountType != .none && tokenResponseBody != nil && tokenResponseBody?.data.accessToken == nil
             })
             .withUnretained(self)
             .bind(onNext: { (owner, state) in
-                owner.didShowSignUpController(accountType: state.0)
+                owner.didShowSignUpController()
             }).disposed(by: disposeBag)
     }
 }
@@ -233,9 +236,18 @@ extension LoginViewController {
         return button
     }
     
-    private func didShowSignUpController(accountType: AccountType) {
-        print("push!!!")
-        let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
+    private func didShowSignUpController() {
+        guard let tokenResponseBody = reactor?.currentState.tokenResponseBody,
+              let accountType = reactor?.currentState.accountType else {
+            return
+        }
+        
+        let signUpContainer = SignUpDIContainer(
+            signUpAccountType: accountType,
+            subject: tokenResponseBody.data.subject,
+            oauth2AccessToken: tokenResponseBody.data.oauth2AccessToken,
+            email: tokenResponseBody.data.email
+        ).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     

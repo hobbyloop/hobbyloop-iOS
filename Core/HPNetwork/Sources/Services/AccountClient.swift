@@ -18,7 +18,7 @@ import FirebaseMessaging
 public protocol AccountClientService: AnyObject {
     func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody>
     func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
-    func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
+    func createUserInfo(_ userInfo: CreatedUserInfo) -> Single<UserAccount>
     func issueVerificationID(phoneNumber: String) -> Single<String>
     func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void>
 }
@@ -83,10 +83,10 @@ extension AccountClient {
 
     }
     
-    public func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount> {
+    public func createUserInfo(_ userInfo: CreatedUserInfo) -> Single<UserAccount> {
         return Single.create { [weak self] single -> Disposable in
             guard let self = `self` else { return Disposables.create() }
-            self.AFManager.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
+            self.AFManager.request(AccountRouter.createUserInfo(userInfo))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: UserAccount.self) { response in
                     switch response.result {

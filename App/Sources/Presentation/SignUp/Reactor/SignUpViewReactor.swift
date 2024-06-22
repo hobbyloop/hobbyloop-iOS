@@ -13,6 +13,7 @@ import HPExtensions
 import ReactorKit
 import KakaoSDKUser
 import GoogleSignIn
+import HPNetwork
 
 
 public enum SignUpViewStream: HPStreamType {
@@ -22,9 +23,9 @@ public enum SignUpViewStream: HPStreamType {
 }
 
 
-public enum HPGender: String, Equatable {
-    case male
-    case female
+public enum HPGender: Int, Equatable {
+    case male = 1
+    case female = 0
     
     func getGenderType() -> String {
         switch self {
@@ -43,13 +44,16 @@ public final class SignUpViewReactor: Reactor {
     // MARK: Property
     public var initialState: State
     private var signUpRepository: SignUpViewRepo
-    public var accountType: AccountType
+    public let accountType: AccountType
+    public let subject: String
+    public let oauth2AccessToken: String
+    public let email: String
     
     public struct State {
         var isLoading: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
-        var userAccountEntity: UserAccount?
+        @Pulse var userAccountEntity: UserAccount?
         var userName: String
         var userNickName: String
         var userGender: HPGender
@@ -61,7 +65,11 @@ public final class SignUpViewReactor: Reactor {
         var agreement1IsSelected: Bool
         var agreement2IsSelected: Bool
         var showsDatePickerView: Bool
+        
+        // TODO: 휴대폰번호 인증 API 교체 후 verificationID 제거
         var verificationID: String
+        var ci: String
+        var di: String
     }
     
     public enum Action {
@@ -102,9 +110,13 @@ public final class SignUpViewReactor: Reactor {
         case invalidatePhoneNumber
     }
     
-    public init(signUpRepository: SignUpViewRepo, accountType: AccountType) {
+    public init(signUpRepository: SignUpViewRepo, accountType: AccountType, subject: String, oauth2AccessToken: String, email: String) {
         self.signUpRepository = signUpRepository
         self.accountType = accountType
+        self.subject = subject
+        self.oauth2AccessToken = oauth2AccessToken
+        self.email = email
+        
         self.initialState = State(
             isLoading: false,
             kakaoUserEntity: nil,
@@ -121,10 +133,29 @@ public final class SignUpViewReactor: Reactor {
             agreement1IsSelected: false,
             agreement2IsSelected: false,
             showsDatePickerView: false,
-            verificationID: ""
+            verificationID: "",
+            ci: "",
+            di: ""
         )
     }
     
+    var userInfo: CreatedUserInfo {
+        CreatedUserInfo(
+            name: currentState.userName,
+            nickname: currentState.userNickName,
+            gender: currentState.userGender.rawValue,
+            birthday: currentState.userBirthDay.replacingOccurrences(of: ".", with: "-"),
+            email: email,
+            phoneNumber: currentState.phoneNumber.withHypen,
+            isOption1: currentState.agreement1IsSelected,
+            isOption2: currentState.agreement2IsSelected,
+            provider: accountType.rawValue.capitalized,
+            subject: subject,
+            oauth2AccessToken: oauth2AccessToken,
+            ci: currentState.ci,
+            di: currentState.di
+        )
+    }
     
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
@@ -188,13 +219,7 @@ public final class SignUpViewReactor: Reactor {
         case .didTapCreateUserButton:
             return .concat(
                 .just(.setLoading(true)),
-                signUpRepository.createUserInformation(
-                    name: currentState.userName,
-                    nickname: currentState.userNickName,
-                    gender: currentState.userGender.rawValue,
-                    birthDay: currentState.userBirthDay,
-                    phoneNumber: currentState.phoneNumber
-                ),
+                signUpRepository.createUserInformation(userInfo),
                 .just(.setLoading(false))
             )
         
@@ -248,6 +273,7 @@ public final class SignUpViewReactor: Reactor {
             
         case let .setCreateUserInfo(accountInfo):
             newState.userAccountEntity = accountInfo
+            LoginManager.shared.updateTokens(accessToken: accountInfo.data.accessToken, refreshToken: accountInfo.data.refreshToken)
             
         case let .setUserPhoneNumber(phoneNumber):
             newState.phoneNumber = phoneNumber

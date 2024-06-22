@@ -48,6 +48,7 @@ public final class LoginViewReactor: Reactor {
         @Pulse var authToken: TokenResponseBody?
         var accountType: AccountType
         var isShowNaverLogin: Void?
+        var tokenResponseBody: TokenResponseBody?
     }
     
     init(loginRepository: LoginViewRepo) {
@@ -111,6 +112,7 @@ public final class LoginViewReactor: Reactor {
         case let .setAccessToken(accountType, tokenResponseBody):
             newState.authToken = tokenResponseBody
             newState.accountType = accountType
+            newState.tokenResponseBody = tokenResponseBody
             
             if let accessToken = tokenResponseBody?.data.accessToken,
                let refreshToken = tokenResponseBody?.data.refreshToken {

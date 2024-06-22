@@ -15,6 +15,7 @@ import RxGesture
 import RxSwift
 import RxCocoa
 import ReactorKit
+import HPNetwork
 
 public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     // MARK: - 네비게이션 바
@@ -670,6 +671,14 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0?.response?.mobile?.replacingOccurrences(of: "-", with: "") }
             .map { Reactor.Action.updatePhoneNumber($0) }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$userAccountEntity)
+            .compactMap { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                // TODO: 회원가입 후. 넘어갈 view controller 수정
+                self?.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }

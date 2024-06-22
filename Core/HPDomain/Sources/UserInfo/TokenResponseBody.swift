@@ -18,4 +18,8 @@ public struct TokenInfo: Decodable {
     
     /// 하비루프 사용자 refreshToken 값
     public let refreshToken: String?
+    public let email: String
+    public let provider: String
+    public let subject: String
+    public let oauth2AccessToken: String
 }

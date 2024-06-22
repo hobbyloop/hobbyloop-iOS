@@ -58,7 +58,7 @@ extension Router {
             components?.queryItems = queryParams
             urlRequest.url = components?.url
         case .body(let data):
-            let params = data?.toDictionary() ?? [:]
+            let params = data
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
         case .none:
             break
