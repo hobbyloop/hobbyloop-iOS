@@ -20,9 +20,15 @@ public final class SignUpDIContainer: DIContainer {
     public typealias Reactor = SignUpViewReactor
     
     public var signUpAccountType: AccountType
+    public var subject: String
+    public var oauth2AccessToken: String
+    public var email: String
     
-    public init(signUpAccountType: AccountType) {
+    public init(signUpAccountType: AccountType, subject: String, oauth2AccessToken: String, email: String) {
         self.signUpAccountType = signUpAccountType
+        self.subject = subject
+        self.oauth2AccessToken = oauth2AccessToken
+        self.email = email
     }
     
     
@@ -35,7 +41,7 @@ public final class SignUpDIContainer: DIContainer {
     }
     
     public func makeReactor() -> SignUpViewReactor {
-        return SignUpViewReactor(signUpRepository: makeRepository(), accountType: signUpAccountType)
+        return SignUpViewReactor(signUpRepository: makeRepository(), accountType: signUpAccountType, subject: subject, oauth2AccessToken: oauth2AccessToken, email: email)
     }
     
 }

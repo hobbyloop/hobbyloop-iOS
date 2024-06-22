@@ -20,7 +20,9 @@ public protocol SignUpViewRepo {
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation>
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
-    func createUserInformation(name: String, nickname: String, gender: String, birthDay: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
+    func createUserInformation(_ userInfo: CreatedUserInfo) -> Observable<SignUpViewReactor.Mutation>
+    func issueVerificationID(phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
+    func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<SignUpViewReactor.Mutation>
 }
 
 
@@ -71,16 +73,36 @@ public final class SignUpViewRepository: SignUpViewRepo {
     ///   - gender 사용자 성별
     ///   - birth 사용자 출생년도
     ///   - phoneNumber 사용자 핸드폰 번호
-    public func createUserInformation(name: String, nickname: String, gender: String, birthDay: String, phoneNumber: String) -> Observable<SignUpViewReactor.Mutation> {
-        return self.networkService.createUserInfo(
-            birthDay: birthDay,
-            gender: gender,
-            name: name,
-            nickname: nickname,
-            phoneNumber: phoneNumber
-        ).asObservable().flatMap { (data: UserAccount) -> Observable<SignUpViewReactor.Mutation> in
-            .just(.setCreateUserInfo(data))
-        }
+    public func createUserInformation(_ userInfo: CreatedUserInfo) -> Observable<SignUpViewReactor.Mutation> {
+        return self.networkService.createUserInfo(userInfo)
+            .asObservable()
+            .flatMap { (account: UserAccount) -> Observable<SignUpViewReactor.Mutation> in
+                    .just(.setCreateUserInfo(account))
+            }
     }
     
+    public func issueVerificationID(phoneNumber: String) -> Observable<SignUpViewReactor.Mutation> {
+        return self.networkService.issueVerificationID(phoneNumber: phoneNumber.withHypen)
+            .asObservable()
+            .catch { _ in
+                return .empty()
+            }
+            .flatMap { verificationID in
+                return Observable.concat([
+                    .just(SignUpViewReactor.Mutation.setShowAuthCodeView(true)),
+                    .just(SignUpViewReactor.Mutation.setVerificationID(verificationID))
+                ])
+            }
+    }
+    
+    public func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<SignUpViewReactor.Mutation> {
+        return self.networkService.verifyPhoneNumber(authCode: authCode, verificationID: verificationID)
+            .asObservable()
+            .catch { _ in
+                return .empty()
+            }
+            .map {
+                .validatePhoneNumber
+            }
+    }
 }

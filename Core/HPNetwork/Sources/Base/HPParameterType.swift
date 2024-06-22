@@ -10,7 +10,7 @@ import Foundation
 
 public enum HPParameterType {
     case query(_ parameter: Encodable?)
-    case body(_ parameter: Encodable?)
+    case body(_ parameter: [String: any Encodable])
     case none
 }
 

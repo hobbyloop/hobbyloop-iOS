@@ -15,7 +15,7 @@ public final class HPRequestInterceptor: RequestInterceptor {
     
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-        guard urlRequest.url?.absoluteString.hasPrefix("http://13.125.114.152:8080") == true else {
+        guard urlRequest.url?.absoluteString.hasPrefix("https://hobbyloop.kr") == true else {
             completion(.success(urlRequest))
             return
         }

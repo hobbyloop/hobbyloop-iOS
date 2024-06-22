@@ -33,7 +33,7 @@ public protocol Router: URLRequestConvertible {
 extension Router {
     
     public var baseURL: String {
-        return "http://13.125.114.152:8080"
+        return "https://hobbyloop.kr"
     }
     
     public var parameters: HPParameterType {
@@ -58,7 +58,7 @@ extension Router {
             components?.queryItems = queryParams
             urlRequest.url = components?.url
         case .body(let data):
-            let params = data?.toDictionary() ?? [:]
+            let params = data
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
         case .none:
             break

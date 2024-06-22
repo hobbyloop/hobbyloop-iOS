@@ -11,10 +11,42 @@ import Alamofire
 import HPExtensions
 import HPCommon
 
+public struct CreatedUserInfo {
+    let name: String
+    let nickname: String
+    let gender: Int
+    let birthday: String
+    let email: String
+    let phoneNumber: String
+    let isOption1: Bool
+    let isOption2: Bool
+    let provider: String
+    let subject: String
+    let oauth2AccessToken: String
+    let ci: String
+    let di: String
+    
+    public init(name: String, nickname: String, gender: Int, birthday: String, email: String, phoneNumber: String, isOption1: Bool, isOption2: Bool, provider: String, subject: String, oauth2AccessToken: String, ci: String, di: String) {
+        self.name = name
+        self.nickname = nickname
+        self.gender = gender
+        self.birthday = birthday
+        self.email = email
+        self.phoneNumber = phoneNumber
+        self.isOption1 = isOption1
+        self.isOption2 = isOption2
+        self.provider = provider
+        self.subject = subject
+        self.oauth2AccessToken = oauth2AccessToken
+        self.ci = ci
+        self.di = di
+    }
+}
+
 public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
-    case createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String)
+    case createUserInfo(_ userInfo: CreatedUserInfo)
 }
 
 
@@ -26,16 +58,18 @@ extension AccountRouter: Router {
         case .getNaverUserInfo:
             return "https://openapi.naver.com"
         default:
-            return "http://13.125.114.152:8080"
+            return "https://hobbyloop.kr"
         }
     }
     
     public var method: Alamofire.HTTPMethod {
         switch self {
+        case .getNaverUserInfo:
+            return .get
+        case .getAccessToken:
+            return .post
         case .createUserInfo:
             return .post
-        default:
-            return .get
         }
     }
     
@@ -43,10 +77,10 @@ extension AccountRouter: Router {
         switch self {
         case .getNaverUserInfo:
             return "/v1/nid/me"
-        case let .getAccessToken(type, _):
-            return "/native/login/oauth2/\(type.rawValue)"
+        case .getAccessToken:
+            return "/company-service/api/v1/login/members"
         case .createUserInfo:
-            return "/api/v1/profile/create"
+            return "/company-service/api/v1/join"
         }
         
     }
@@ -60,34 +94,44 @@ extension AccountRouter: Router {
                 "Content-Type": "application/json"
             ]
             
-        case let .getAccessToken(_, accessToken):
+        case .getAccessToken:
             return [
-                "Authorization":"\(accessToken)",
-                "Accept": "*/*"
+                "Content-Type": "application/json"
             ]
             
-        case .createUserInfo:
+        case let .createUserInfo(userInfo):
             return [
-                "Authorization":"Bearer \(LoginManager.shared.readToken(key: .accessToken))",
+                // "Authorization":"Bearer \(userInfo.oauth2AccessToken))",
                 "Content-Type": "application/json"
             ]
         }
     }
     
     public var parameters: HPParameterType {
-        
         switch self {
-            
-        case let .createUserInfo(birthDay, gender, name, nickname, phoneNumber):
-            return .body([
-                "birth": birthDay,
-                "gender": gender,
-                "name": name,
-                "nickname": nickname,
-                "phoneNum": phoneNumber
-            ])
-        default:
+        case .getNaverUserInfo:
             return .none
+        case let .getAccessToken(type, token):
+            return .body([
+                "accessToken": token,
+                "provider": type.rawValue.capitalized
+            ])
+        case let .createUserInfo(userInfo):
+            return .body([
+                "name": userInfo.name,
+                "nickname": userInfo.nickname,
+                "gender": userInfo.gender,
+                "birthday": userInfo.birthday,
+                "email": userInfo.email,
+                "phoneNumber": userInfo.phoneNumber,
+                "isOption1": userInfo.isOption1,
+                "isOption2": userInfo.isOption2,
+                "provider": userInfo.provider,
+                "subject": userInfo.subject,
+                "oauth2AccessToken": userInfo.oauth2AccessToken,
+                "ci": userInfo.ci,
+                "di": userInfo.di
+            ])
         }
     }
     

@@ -12,11 +12,15 @@ import HPCommon
 import HPExtensions
 import Alamofire
 import RxSwift
+import FirebaseAuth
+import FirebaseMessaging
 
 public protocol AccountClientService: AnyObject {
-    func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token>
+    func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody>
     func requestNaverUserInfo(header type: String, accessToken: String) -> Single<NaverAccount>
-    func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount>
+    func createUserInfo(_ userInfo: CreatedUserInfo) -> Single<UserAccount>
+    func issueVerificationID(phoneNumber: String) -> Single<String>
+    func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void>
 }
 
 
@@ -40,12 +44,12 @@ public final class AccountClient: BaseNetworkable, AccountClientService {
 
 extension AccountClient {
     
-    public func requestUserToken(account type: AccountType, accessToken: String) -> Single<Token> {
+    public func requestUserToken(account type: AccountType, accessToken: String) -> Single<TokenResponseBody> {
         return Single.create { [weak self] single -> Disposable in
             guard let self = `self` else { return Disposables.create() }
             self.AFManager.request(AccountRouter.getAccessToken(type: type, token: accessToken))
                 .validate(statusCode: 200..<300)
-                .responseDecodable(of: Token.self) { response in
+                .responseDecodable(of: TokenResponseBody.self) { response in
                     switch response.result {
                     case let .success(data):
                         single(.success(data))
@@ -79,10 +83,10 @@ extension AccountClient {
 
     }
     
-    public func createUserInfo(birthDay: String, gender: String, name: String, nickname: String, phoneNumber: String) -> Single<UserAccount> {
+    public func createUserInfo(_ userInfo: CreatedUserInfo) -> Single<UserAccount> {
         return Single.create { [weak self] single -> Disposable in
             guard let self = `self` else { return Disposables.create() }
-            self.AFManager.request(AccountRouter.createUserInfo(birthDay: birthDay, gender: gender, name: name, nickname: nickname, phoneNumber: phoneNumber))
+            self.AFManager.request(AccountRouter.createUserInfo(userInfo))
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: UserAccount.self) { response in
                     switch response.result {
@@ -95,6 +99,43 @@ extension AccountClient {
             
             return Disposables.create()
         }
-
+    }
+    
+    public func issueVerificationID(phoneNumber: String) -> Single<String> {
+        return Single.create { single in
+            PhoneAuthProvider.provider()
+                .verifyPhoneNumber("+82 \(phoneNumber)", uiDelegate: nil) { verificationID, error in
+                    if let error {
+                        single(.failure(error))
+                        print("issue error: \(error)")
+                    }
+                    
+                    if let verificationID {
+                        single(.success(verificationID))
+                    }
+                }
+            
+            return Disposables.create()
+        }
+    }
+    
+    public func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void> {
+        let credential = PhoneAuthProvider.provider().credential(
+            withVerificationID: verificationID,
+            verificationCode: authCode
+        )
+        
+        return Single.create { single in
+            Auth.auth().signIn(with: credential) { authData, error in
+                if let error {
+                    single(.failure(error))
+                    return
+                }
+                
+                single(.success(()))
+            }
+            
+            return Disposables.create()
+        }
     }
 }

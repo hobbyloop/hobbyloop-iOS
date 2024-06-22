@@ -24,7 +24,7 @@ public final class HPTitledInputView: UIView {
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 16)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private let textfield = HPTextField()
+    public let textfield = HPTextField()
     private let errorMessageLabel = UILabel().then {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.error.color
@@ -37,21 +37,10 @@ public final class HPTitledInputView: UIView {
         $0.alignment = .fill
     }
     
-    private let showDatePickerButton = UIButton(configuration: .plain()).then {
+    public let showDatePickerButton = UIButton(configuration: .plain()).then {
         $0.setImage(HPCommonUIAsset.calendarOutlined.image, for: [])
         $0.configuration?.contentInsets = .zero
         $0.isHidden = true
-    }
-    
-    private let datePickerView = UIDatePicker().then {
-        $0.datePickerMode = .date
-        $0.preferredDatePickerStyle = .wheels
-        $0.locale = .init(identifier: "ko-KR")
-        $0.backgroundColor = HPCommonUIAsset.gray40.color
-        $0.isUserInteractionEnabled = true
-        $0.isHidden = true
-        $0.layer.cornerRadius = 10
-        $0.clipsToBounds = true
     }
     
     public var errorMessage: String? {
@@ -79,19 +68,6 @@ public final class HPTitledInputView: UIView {
         
         textfield.placeholderText = placeholder
         layout()
-        
-        showDatePickerButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .primaryActionTriggered)
-        
-        datePickerView.rx.date
-            .skip(1)
-            .map {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd"
-                
-                return dateFormatter.string(from: $0)
-            }
-            .bind(to: textfield.rx.text)
-            .disposed(by: bag)
     }
     
     required init?(coder: NSCoder) {
@@ -122,16 +98,6 @@ public final class HPTitledInputView: UIView {
             $0.trailing.equalTo(textfield.snp.trailing).offset(-12)
             $0.centerY.equalTo(textfield.snp.centerY)
         }
-        
-        self.addSubview(datePickerView)
-        datePickerView.snp.makeConstraints {
-            $0.top.equalTo(textfield.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview()
-        }
-    }
-    
-    @objc private func showOrHideDatePicker() {
-        datePickerView.isHidden.toggle()
     }
     
     private func setAttributedTitle(_ title: String, isRequired: Bool) {
