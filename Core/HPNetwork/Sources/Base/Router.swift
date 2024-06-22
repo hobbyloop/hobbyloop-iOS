@@ -33,7 +33,7 @@ public protocol Router: URLRequestConvertible {
 extension Router {
     
     public var baseURL: String {
-        return "http://13.125.114.152:8080"
+        return "https://hobbyloop.kr"
     }
     
     public var parameters: HPParameterType {

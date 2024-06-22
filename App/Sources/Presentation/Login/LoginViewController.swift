@@ -216,9 +216,19 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
                 return accountType != .none && tokenResponseBody != nil && tokenResponseBody?.data.accessToken == nil
             })
             .withUnretained(self)
-            .bind(onNext: { (owner, state) in
-                owner.didShowSignUpController()
+            .subscribe(onNext: { owner, state in
+                owner.showSignUpController()
             }).disposed(by: disposeBag)
+        
+        authTokenObservable
+            .filter { tokenResponseBody in
+                return tokenResponseBody?.data.accessToken != nil && tokenResponseBody?.data.refreshToken != nil
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { owner, tokenResponseBody in
+                return owner.showHomeViewController()
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -236,7 +246,7 @@ extension LoginViewController {
         return button
     }
     
-    private func didShowSignUpController() {
+    private func showSignUpController() {
         guard let tokenResponseBody = reactor?.currentState.tokenResponseBody,
               let accountType = reactor?.currentState.accountType else {
             return
@@ -244,11 +254,19 @@ extension LoginViewController {
         
         let signUpContainer = SignUpDIContainer(
             signUpAccountType: accountType,
-            subject: tokenResponseBody.data.subject,
-            oauth2AccessToken: tokenResponseBody.data.oauth2AccessToken,
-            email: tokenResponseBody.data.email
+            subject: tokenResponseBody.data.subject ?? "",
+            oauth2AccessToken: tokenResponseBody.data.oauth2AccessToken ?? "",
+            email: tokenResponseBody.data.email ?? ""
         ).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     
+    private func showHomeViewController() {
+        if UserDefaults.standard.bool(forKey: "onboarded") {
+            // TODO: 로그인 성공 시 넘어갈 view controller 수정
+            self.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
+        } else {
+            self.navigationController?.pushViewController(OnboardingViewController(reactor: nil), animated: true)
+        }
+    }
 }
