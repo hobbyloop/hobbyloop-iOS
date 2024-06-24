@@ -19,12 +19,10 @@ import RxDataSources
 private protocol HomeLayoutCreatable: AnyObject {
     
     func createUserInfoProvideLayout() -> NSCollectionLayoutSection
-    func createTicketLayout() -> NSCollectionLayoutSection
-    func createCalendarLayout() -> NSCollectionLayoutSection
-    func createSchedulClassLayout() -> NSCollectionLayoutSection
-    func createExplanationClassLayout() -> NSCollectionLayoutSection
+    func createSelectCategoryLayout(_ numberOfItems: CGFloat) -> NSCollectionLayoutSection
+    func createAdvertisementClassLayout() -> NSCollectionLayoutSection
     func createExerciseClassLayout() -> NSCollectionLayoutSection
-    func createBenefitsLayout() -> NSCollectionLayoutSection
+    func createWeekHotTicketLayout(_ numberOfItems: CGFloat) -> NSCollectionLayoutSection
     
 }
 
@@ -47,83 +45,73 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
         switch sectionItem {
         case .userInfoClassItem:
             guard let userInfoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserInfoProvideCell", for: indexPath) as? UserInfoProvideCell else { return UICollectionViewCell() }
+            userInfoCell.delegate = self
             return userInfoCell
             
-        case .calendarClassItem:
-            guard let calendarCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as? CalendarCell else { return UICollectionViewCell() }
+        case .selectCategoryClassItem:
+            guard let selectCategoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else { return UICollectionViewCell() }
             
-            return calendarCell
+            return selectCategoryCell
             
-        case .ticketClassItem:
-            guard let ticketCell = collectionView.dequeueReusableCell(withReuseIdentifier: "TicketCell", for: indexPath) as? TicketCell else { return UICollectionViewCell() }
-            
-            return ticketCell
-            
-            
-        case .schedulClassItem:
-            guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else { return UICollectionViewCell() }
+        case .advertisementClassItem:
+            guard let scheduleCell = collectionView.dequeueReusableCell(withReuseIdentifier: "AdvertisementCell", for: indexPath) as? AdvertisementCell else { return UICollectionViewCell() }
             
             return scheduleCell
             
-        case .explanationClassItem:
-            guard let explanationCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExplanationCell", for: indexPath) as? ExplanationCell else {
-                return UICollectionViewCell() }
+        case .weekHotTicketClassItem:
+            guard let weekHotTicketCell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeekHotTicketCell", for: indexPath) as? WeekHotTicketCell else { return UICollectionViewCell() }
             
-            explanationCell.delegate = self
-            return explanationCell
+            return weekHotTicketCell
+            
         case .exerciseClassItem:
             guard let exerciseCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExerciseCell", for: indexPath) as? ExerciseCell else { return UICollectionViewCell() }
             return exerciseCell
-        case .benefitsClassItem:
-            guard let benefitsCell = collectionView.dequeueReusableCell(withReuseIdentifier: "BenefitsCell", for: indexPath) as? BenefitsCell else { return UICollectionViewCell() }
-            
-            
-            return benefitsCell
+
         }
         
     } configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         let dataSource = dataSource[indexPath]
         
         switch dataSource {
+        case .selectCategoryClassItem:
+            guard let selectCategoryReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "EventResusableView", for: indexPath) as? EventResusableView else { return UICollectionReusableView () }
+            return selectCategoryReusableView
+            
         case .exerciseClassItem:
             guard let exerciseReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "ExerciseReusableView", for: indexPath) as? ExerciseReusableView else { return UICollectionReusableView() }
             return exerciseReusableView
             
-        case .benefitsClassItem:
-            guard let benefitsReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "BenefitsReusableView", for: indexPath) as? BenefitsReusableView else { return UICollectionReusableView () }
-            return benefitsReusableView
+        case .weekHotTicketClassItem:
+            guard let weekHotTicketReusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "WeekHotTicketReusableView", for: indexPath) as? WeekHotTicketReusableView else { return UICollectionReusableView () }
+            return weekHotTicketReusableView
             
         default:
             return UICollectionReusableView()
         }
     }
     
-    private lazy var homeCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { [weak self] section, env in
-        
-        let section = self?.homeDataSource.sectionModels[section]
+    private lazy var homeCollectionViewLayout: UICollectionViewCompositionalLayout = UICollectionViewCompositionalLayout { [weak self] (section: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        guard let self = self else { return nil }
+        let section = self.homeDataSource.sectionModels[section]
         
         switch section {
         case .userInfoClass:
-            return self?.createUserInfoProvideLayout()
-        case .calendarClass:
-            return self?.numberOfItems ?? 0 >= 36 ? self?.adjustCalendarLayout() : self?.createCalendarLayout()
+            return self.createUserInfoProvideLayout()
             
-        case .ticketClass:
-            return self?.createTicketLayout()
-        case .schedulClass:
-            return self?.createSchedulClassLayout()
+        case .selectCategoryClass:
+            guard let count = CGFloat(exactly: section.items.count) else { return nil }
+            return self.createSelectCategoryLayout(count)
             
-        case .explanationClass:
-            return self?.createExplanationClassLayout()
+        case .advertisementClass:
+            return self.createAdvertisementClassLayout()
             
         case .exerciseClass:
-            return self?.createExerciseClassLayout()
+            guard let count = CGFloat(exactly: section.items.count) else { return nil }
+            return self.createExerciseClassLayout()
             
-        case .benefitsClass:
-            return self?.createBenefitsLayout()
-        case .none:
-            //TODO: Empty Layout 추가 예정
-            return nil
+        case .weekHotTicketClass:
+            guard let count = CGFloat(exactly: section.items.count) else { return nil }
+            return self.createWeekHotTicketLayout(count)
         }
         
     }
@@ -132,16 +120,15 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
     private lazy var homeCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.homeCollectionViewLayout).then {
         $0.backgroundColor = HPCommonUIAsset.systemBackground.color
         $0.register(UserInfoProvideCell.self, forCellWithReuseIdentifier: "UserInfoProvideCell")
-        $0.register(TicketCell.self, forCellWithReuseIdentifier: "TicketCell")
-        $0.register(CalendarCell.self, forCellWithReuseIdentifier: "CalendarCell")
-        $0.register(ScheduleCell.self, forCellWithReuseIdentifier: "ScheduleCell")
-        $0.register(ExplanationCell.self, forCellWithReuseIdentifier: "ExplanationCell")
+        $0.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
+        $0.register(AdvertisementCell.self, forCellWithReuseIdentifier: "AdvertisementCell")
         $0.register(ExerciseCell.self, forCellWithReuseIdentifier: "ExerciseCell")
-        $0.register(BenefitsCell.self, forCellWithReuseIdentifier: "BenefitsCell")
+        $0.register(WeekHotTicketCell.self, forCellWithReuseIdentifier: "WeekHotTicketCell")
         $0.collectionViewLayout.register(SystemBackgroundDecorationView.self, forDecorationViewOfKind: "SystemBackgroundDecorationView")
         $0.collectionViewLayout.register(WhiteBackgroundDecorationView.self, forDecorationViewOfKind: "WhiteBackgroundDecorationView")
         $0.register(ExerciseReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ExerciseReusableView")
-        $0.register(BenefitsReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "BenefitsReusableView")
+        $0.register(WeekHotTicketReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WeekHotTicketReusableView")
+        $0.register(EventResusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "EventResusableView")
         $0.showsHorizontalScrollIndicator = false
         $0.showsVerticalScrollIndicator = false
         
@@ -204,26 +191,13 @@ public final class HomeViewController: BaseViewController<HomeViewReactor> {
     
 }
 
-
-
-extension HomeViewController: ExplanationDelegate {
-    
-    public func showOnboardingView() {
-        let onboardingController = OnboardingDIContainer().makeViewController()
-        onboardingController.modalPresentationStyle = .fullScreen
-        self.present(onboardingController, animated: true)
-    }
-    
-}
-
-
-
+// MARK: - Colletion View Layout
 extension HomeViewController: HomeLayoutCreatable {
     
     fileprivate func createUserInfoProvideLayout() -> NSCollectionLayoutSection {
         let userInfoProvideLayoutSize = NSCollectionLayoutSize(
             widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(90)
+            heightDimension: .estimated(90 + 140 /*티켓 높이까지 지정*/)
         )
         
         let userInfoProvideItem = NSCollectionLayoutItem(layoutSize: userInfoProvideLayoutSize)
@@ -239,34 +213,68 @@ extension HomeViewController: HomeLayoutCreatable {
         let userInfoProvideSection = NSCollectionLayoutSection(group: userInfoProvideGroup)
         userInfoProvideSection.decorationItems = [userInfoProvideSectionBackground]
         
-        userInfoProvideSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        userInfoProvideSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 24, trailing: 0)
         
         return userInfoProvideSection
     }
     
     
-    fileprivate func createTicketLayout() -> NSCollectionLayoutSection {
+    fileprivate func createSelectCategoryLayout(_ numberOfItems: CGFloat) -> NSCollectionLayoutSection {
         
-        let ticketLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(140)
+        let categoryItemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(56),
+            heightDimension: .absolute(80)
         )
         
-        let ticketLayoutItem = NSCollectionLayoutItem(layoutSize: ticketLayoutSize)
+        let categoryLayoutItem = NSCollectionLayoutItem(layoutSize: categoryItemLayoutSize)
         
-        let ticketLayoutGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: ticketLayoutSize,
-            subitems: [ticketLayoutItem]
+        // Calculate the width based on the number of items and inter-item spacing
+        let interItemSpacing: CGFloat = 24
+        let totalInterItemSpacing = interItemSpacing * (numberOfItems - 1)
+        let totalItemWidth = categoryItemLayoutSize.widthDimension.dimension * numberOfItems
+        let categoryGroupWidth = totalItemWidth + totalInterItemSpacing
+        
+        let categoryGroupLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(categoryGroupWidth),
+            heightDimension: .absolute(80)
         )
         
-        let ticketSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
+        // 설정한 간격을 포함하여 그룹 만들기
+        let categoryGroupLayout = NSCollectionLayoutGroup.horizontal(
+            layoutSize: categoryGroupLayoutSize,
+            subitems: [categoryLayoutItem]
+        )
         
-        let ticketSection = NSCollectionLayoutSection(group: ticketLayoutGroup)
-        ticketSection.decorationItems = [ticketSectionBackground]
-        ticketSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+        // 아이템 간의 간격을 24로 설정
+        categoryGroupLayout.interItemSpacing = .fixed(24)
+        
+        let categorySection = NSCollectionLayoutSection(group: categoryGroupLayout)
+        
+        categorySection.interGroupSpacing = 24
+        
+        categorySection.contentInsets = .init(top: 32, leading: 16, bottom: 24, trailing: 16)
+        categorySection.orthogonalScrollingBehavior = .continuous
+        
+        let categorySectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        categorySectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        
+        categorySection.decorationItems = [categorySectionBackground]
+        
+        let categoryHeaderLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(self.view.frame.size.width - 32),
+            heightDimension: .absolute(98 + 24)
+        )
+        
+        let categoryHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: categoryHeaderLayoutSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        
+        categorySection.boundarySupplementaryItems = [categoryHeader]
         
         
-        return ticketSection
+        return categorySection
         
     }
     
@@ -300,43 +308,12 @@ extension HomeViewController: HomeLayoutCreatable {
         
         return dynamicCalendarSection
     }
-    
-    fileprivate func createCalendarLayout() -> NSCollectionLayoutSection {
-        let calendarLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(self.view.frame.size.width - 32),
-            heightDimension: .estimated(280)
-        )
-        let calendarGroupSize = NSCollectionLayoutSize(
-            widthDimension: .estimated(self.view.frame.size.width),
-            heightDimension: .estimated(280)
-        )
-        
-        let calendarLayoutItem = NSCollectionLayoutItem(
-            layoutSize: calendarLayoutSize
-        )
-        
-        let calendarLayoutGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: calendarGroupSize,
-            subitem: calendarLayoutItem,
-            count: 1
-        )
-        
-        let calendarSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(SystemBackgroundDecorationView.self)")
-        
-        
-        let calendarSection = NSCollectionLayoutSection(group: calendarLayoutGroup)
-        
-        calendarSection.decorationItems = [calendarSectionBackground]
-                
-        
-        return calendarSection
-    }
-    
-    fileprivate func createSchedulClassLayout() -> NSCollectionLayoutSection {
+
+    fileprivate func createAdvertisementClassLayout() -> NSCollectionLayoutSection {
         
         let scheduleClassLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(160)
+            heightDimension: .absolute(82)
         )
         
         let scheduleClassItem = NSCollectionLayoutItem(layoutSize: scheduleClassLayoutSize)
@@ -354,40 +331,17 @@ extension HomeViewController: HomeLayoutCreatable {
         
     }
     
-    fileprivate func createExplanationClassLayout() -> NSCollectionLayoutSection {
-        
-        let explanationClassLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(386)
-        )
-        
-        let explanationClassItem = NSCollectionLayoutItem(layoutSize: explanationClassLayoutSize)
-        
-        let explanationClassGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: explanationClassLayoutSize,
-            subitems: [explanationClassItem]
-        )
-        
-        let explanationClassSection = NSCollectionLayoutSection(group: explanationClassGroup)
-        
-        
-        
-        
-        return explanationClassSection
-    }
-    
     fileprivate func createExerciseClassLayout() -> NSCollectionLayoutSection {
         let exerciseClassLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(327),
-            heightDimension: .absolute(200)
+            widthDimension: .absolute(280),
+            heightDimension: .absolute(246)
         )
         
         let exerciseClassItem = NSCollectionLayoutItem(layoutSize: exerciseClassLayoutSize)
-    
         
         let exerciseGroupLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(327),
-            heightDimension: .absolute(310)
+            widthDimension: .absolute(280),
+            heightDimension: .absolute(246)
         )
         
         let exerciseClassGroup = NSCollectionLayoutGroup.horizontal(
@@ -395,17 +349,17 @@ extension HomeViewController: HomeLayoutCreatable {
             subitems: [exerciseClassItem]
         )
         
-        
+         
         let exerciseSectionHeaderLayoutSize: NSCollectionLayoutSize = .init(
-            widthDimension: .absolute(self.view.frame.size.width),
-            heightDimension: .absolute(65)
+            widthDimension: .absolute(self.view.frame.size.width - 32),
+            heightDimension: .absolute(58)
         )
         
         let exerciseSection = NSCollectionLayoutSection(
             group: exerciseClassGroup
         )
         
-        exerciseSection.interGroupSpacing = 11
+        exerciseSection.interGroupSpacing = 12
         exerciseSection.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         let exerciseSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
@@ -413,7 +367,7 @@ extension HomeViewController: HomeLayoutCreatable {
         exerciseSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
         exerciseSection.decorationItems = [exerciseSectionBackground]
         
-        exerciseSection.orthogonalScrollingBehavior = .groupPagingCentered
+        exerciseSection.orthogonalScrollingBehavior = .continuous
         
         exerciseSection.boundarySupplementaryItems = [
             NSCollectionLayoutBoundarySupplementaryItem(
@@ -427,53 +381,70 @@ extension HomeViewController: HomeLayoutCreatable {
         return exerciseSection
     }
     
-    fileprivate func createBenefitsLayout() -> NSCollectionLayoutSection {
+    fileprivate func createWeekHotTicketLayout(_ numberOfItems: CGFloat) -> NSCollectionLayoutSection {
         
-        let benefitsItemLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(334),
-            heightDimension: .absolute(120)
+        let weekHotTicketItemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(173),
+            heightDimension: .absolute(267)
         )
         
-        let benefitsLayoutItem = NSCollectionLayoutItem(layoutSize: benefitsItemLayoutSize)
+        let weekHotTicketLayoutItem = NSCollectionLayoutItem(layoutSize: weekHotTicketItemLayoutSize)
         
-        let benefitsGroupLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(334),
-            heightDimension: .absolute(174)
+        // Calculate the width based on the number of items and inter-item spacing
+        let interItemSpacing: CGFloat = 12
+        let totalInterItemSpacing = interItemSpacing * (numberOfItems - 1)
+        let totalItemWidth = weekHotTicketItemLayoutSize.widthDimension.dimension * numberOfItems
+        let categoryGroupWidth = totalItemWidth + totalInterItemSpacing
+        
+        let weekHotTicketGroupLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(categoryGroupWidth),
+            heightDimension: .absolute(283)
         )
         
-        let benefitsGroupLayout = NSCollectionLayoutGroup.horizontal(
-            layoutSize: benefitsGroupLayoutSize,
-            subitems: [benefitsLayoutItem]
+        let weekHotTicketGroupLayout = NSCollectionLayoutGroup.horizontal(
+            layoutSize: weekHotTicketGroupLayoutSize,
+            subitems: [weekHotTicketLayoutItem]
         )
         
-        let benefitsSection = NSCollectionLayoutSection(
-            group: benefitsGroupLayout
+        weekHotTicketGroupLayout.interItemSpacing = .fixed(12)
+        
+        let weekHotTicketSection = NSCollectionLayoutSection(
+            group: weekHotTicketGroupLayout
         )
         
-        benefitsSection.interGroupSpacing = 12
-        benefitsSection.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+        weekHotTicketSection.contentInsets = .init(top: 0, leading: 16, bottom: 16, trailing: 16)
         
-        let benefitsSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
-        benefitsSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
-        benefitsSection
-            .orthogonalScrollingBehavior = .groupPagingCentered
+        let weekHotTicketSectionBackground = NSCollectionLayoutDecorationItem.background(elementKind: "\(WhiteBackgroundDecorationView.self)")
+        weekHotTicketSectionBackground.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0)
+        weekHotTicketSection.orthogonalScrollingBehavior = .continuous
         
-        benefitsSection.decorationItems = [benefitsSectionBackground]
+        weekHotTicketSection.decorationItems = [weekHotTicketSectionBackground]
         
-        let benefitsHeaderLayoutSize = NSCollectionLayoutSize(
+        let weekHotTicketHeaderLayoutSize = NSCollectionLayoutSize(
             widthDimension: .absolute(self.view.frame.size.width - 32),
-            heightDimension: .absolute(50)
+            heightDimension: .absolute(58)
         )
         
-        let benefitsHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: benefitsHeaderLayoutSize,
+        let weekHotTicketHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: weekHotTicketHeaderLayoutSize,
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
         
-        benefitsSection.boundarySupplementaryItems = [benefitsHeader]
+        weekHotTicketSection.boundarySupplementaryItems = [weekHotTicketHeader]
         
-        return benefitsSection
+        return weekHotTicketSection
+    }
+    
+}
+
+// MARK: - Delegate
+extension HomeViewController: ExplanationDelegate {
+    
+    public func showOnboardingView() {
+        let onboardingController = OnboardingDIContainer().makeViewController()
+        onboardingController.modalPresentationStyle = .fullScreen
+        self.present(onboardingController, animated: true)
     }
     
 }

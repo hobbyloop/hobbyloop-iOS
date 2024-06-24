@@ -121,19 +121,28 @@ extension HPNavigationController {
         let notificationbarButtonItem = UIBarButtonItem(customView: notificationButton)
         let searchbarButtonItem = UIBarButtonItem(customView: searchButton)
         let spacerbarButtonItem = UIBarButtonItem(systemItem: .fixedSpace)
-        spacerbarButtonItem.width = 13
+        spacerbarButtonItem.width = 12
         
         notificationbarButtonItem.customView?.snp.makeConstraints {
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(26)
         }
         
         searchbarButtonItem.customView?.snp.makeConstraints {
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(26)
         }
         
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 38, height: 32))
+        button.setImage(HPCommonUIAsset.logo.image.withRenderingMode(.alwaysOriginal), for: .normal)
+//        button.addTarget(target, action: action, for: .touchUpInside)
+        
+        let logoItem = UIBarButtonItem(customView: button)
+        logoItem.customView?.snp.makeConstraints {
+            $0.height.equalTo(32)
+            $0.width.equalTo(38)
+        }
         
         leftBarButtonItems = [
-            UIBarButtonItem(image: HPCommonUIAsset.hobbyloop.image.withRenderingMode(.alwaysOriginal), style: .plain, target: nil, action: nil)
+            logoItem
         ]
         
         

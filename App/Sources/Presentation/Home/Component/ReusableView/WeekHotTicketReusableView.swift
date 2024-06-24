@@ -1,34 +1,33 @@
 //
-//  ExerciseReusableView.swift
+//  WeekHotTicketReusableView.swift
 //  Hobbyloop
 //
-//  Created by Kim dohyun on 2023/07/19.
+//  Created by Kim JinWoo on 2024/06/09.
 //
 
 import UIKit
 
 import HPCommonUI
-import SnapKit
+import HPExtensions
 import Then
 
-
-final class ExerciseReusableView: UICollectionReusableView {
+final class WeekHotTicketReusableView: UICollectionReusableView {
     
-    private let titleStack: UIStackView = UIStackView().then {
+    private let ticketStack: UIStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.spacing = 6
     }
     
-    private let iconImage: UIImageView = UIImageView().then {
+    private let ticketImage: UIImageView = UIImageView().then {
         $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
     }
     
     private let benefitsTitleLabel: UILabel = UILabel().then {
-        $0.text = "헬스/PT 는 어떠세요?"
+        $0.text = "이번주 HOT 이용권"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.setSubScriptAttributed(
-            targetString: "헬스/PT",
+            targetString: "HOT",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
             color: HPCommonUIAsset.sub.color
         )
@@ -37,13 +36,13 @@ final class ExerciseReusableView: UICollectionReusableView {
     }
     
     private let openButton: UIButton = UIButton().then {
-        $0.setImage(HPCommonUIAsset.downarrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
+        $0.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
-        self.layoutIfNeeded()
     }
     
     required init?(coder: NSCoder) {
@@ -52,21 +51,22 @@ final class ExerciseReusableView: UICollectionReusableView {
     
     
     private func configure() {
-        [titleStack, openButton].forEach {
+        
+        [ticketStack, openButton].forEach {
             self.addSubview($0)
         }
         
-        [iconImage, benefitsTitleLabel].forEach {
-            titleStack.addArrangedSubview($0)
+        [ticketImage, benefitsTitleLabel].forEach {
+            ticketStack.addArrangedSubview($0)
         }
         
-        [iconImage, openButton].forEach {
+        [ticketImage, openButton].forEach {
             $0.snp.makeConstraints {
                 $0.height.width.equalTo(26)
             }
         }
         
-        titleStack.snp.makeConstraints {
+        ticketStack.snp.makeConstraints {
             $0.left.equalToSuperview()
             $0.top.equalToSuperview().offset(16)
         }
@@ -75,8 +75,7 @@ final class ExerciseReusableView: UICollectionReusableView {
             $0.right.equalToSuperview()
             $0.top.equalToSuperview().offset(16)
         }
-        
     }
-    
-    
 }
+
+
