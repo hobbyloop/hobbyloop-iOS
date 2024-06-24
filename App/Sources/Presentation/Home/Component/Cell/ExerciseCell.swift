@@ -17,7 +17,7 @@ public final class ExerciseCell: UICollectionViewCell {
     private let contentImageView: UIImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.layer.masksToBounds = true
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 8
         $0.backgroundColor = .cyan
     }
     
@@ -76,7 +76,7 @@ public final class ExerciseCell: UICollectionViewCell {
         
         contentImageView.snp.makeConstraints {
             $0.top.left.right.equalToSuperview()
-            $0.height.equalTo(197)
+            $0.height.equalTo(140)
         }
         
         contentTitleLabel.snp.makeConstraints {

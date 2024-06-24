@@ -54,17 +54,12 @@ public final class HomeViewReactor: Reactor {
                     .userInfoClassItem
                 ]),
                 
-                .calendarClass([]),
-                
                 .selectCategoryClass([
                     .selectCategoryClassItem
                 ]),
                 
                 .advertisementClass([
                     .advertisementClassItem
-                ]),
-                .explanationClass([
-                    .explanationClassItem
                 ]),
                 .weekHotTicketClass([
                     .weekHotTicketClassItem
@@ -117,15 +112,12 @@ public final class HomeViewReactor: Reactor {
         case .setEmptyClassItem:
             let userIndex = self.getIndex(section: .userInfoClass([]))
             let selectCategoryIndex = self.getIndex(section: .selectCategoryClass([]))
-            let calendarIndex = self.getIndex(section: .calendarClass([]))
             let advertisementIndex = self.getIndex(section: .advertisementClass([]))
-            let explanationIndex = self.getIndex(section: .explanationClass([]))
             let exerciseIndex = self.getIndex(section: .exerciseClass([]))
             let benefitsIndex = self.getIndex(section: .weekHotTicketClass([]))
             
             //TODO: Server API 구현시 데이터 Response 값으로 Cell Configure
             newState.section[userIndex] = .userInfoClass([HomeSectionItem.userInfoClassItem])
-            newState.section[calendarIndex] = .calendarClass([])
             newState.section[selectCategoryIndex] = .selectCategoryClass([
                 HomeSectionItem.selectCategoryClassItem,
                 HomeSectionItem.selectCategoryClassItem,
@@ -136,7 +128,6 @@ public final class HomeViewReactor: Reactor {
                 HomeSectionItem.selectCategoryClassItem
             ])
             newState.section[advertisementIndex] = .advertisementClass([HomeSectionItem.advertisementClassItem])
-//            newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
             newState.section[exerciseIndex] = .exerciseClass([
                 HomeSectionItem.exerciseClassItem,
                 HomeSectionItem.exerciseClassItem,
@@ -156,14 +147,11 @@ public final class HomeViewReactor: Reactor {
         case .reloadClassItem:
             let userIndex = self.getIndex(section: .userInfoClass([]))
             let selectCategoryIndex = self.getIndex(section: .selectCategoryClass([]))
-            let calendarIndex = self.getIndex(section: .calendarClass([]))
             let advertisementIndex = self.getIndex(section: .advertisementClass([]))
-            let explanationIndex = self.getIndex(section: .explanationClass([]))
             let exerciseIndex = self.getIndex(section: .exerciseClass([]))
             let benefitsIndex = self.getIndex(section: .weekHotTicketClass([]))
             
             newState.section[userIndex] = .userInfoClass([HomeSectionItem.userInfoClassItem])
-            newState.section[calendarIndex] = .calendarClass([HomeSectionItem.calendarClassItem])
             newState.section[selectCategoryIndex] = .selectCategoryClass([
                 HomeSectionItem.selectCategoryClassItem,
                 HomeSectionItem.selectCategoryClassItem,
@@ -174,7 +162,6 @@ public final class HomeViewReactor: Reactor {
                 HomeSectionItem.selectCategoryClassItem
             ])
             newState.section[advertisementIndex] = .advertisementClass([HomeSectionItem.advertisementClassItem])
-            newState.section[explanationIndex] = .explanationClass([HomeSectionItem.explanationClassItem])
             newState.section[exerciseIndex] = .exerciseClass([
                 HomeSectionItem.exerciseClassItem,
                 HomeSectionItem.exerciseClassItem,

@@ -8,6 +8,7 @@
 import UIKit
 
 import HPCommonUI
+import HPNetwork
 import RxSwift
 import RxCocoa
 
@@ -66,7 +67,7 @@ public final class UserInfoProvideCell: UICollectionViewCell {
     private func configure() {
         self.backgroundColor = HPCommonUIAsset.systemBackground.color
         
-        [nickNameLabel, ticketInfoView, explanationButton].forEach {
+        [nickNameLabel, ticketInfoView].forEach {
             self.addSubview($0)
         }
         
@@ -84,16 +85,20 @@ public final class UserInfoProvideCell: UICollectionViewCell {
             $0.height.equalTo(62)
         }
         
-        explanationButton.snp.makeConstraints {
-            $0.top.bottom.left.right.equalTo(ticketInfoView)
+        if LoginManager.shared.isLogin() {
+            self.addSubview(explanationButton)
+            
+            explanationButton.snp.makeConstraints {
+                $0.top.bottom.left.right.equalTo(ticketInfoView)
+            }
+            
+            explanationButton
+                .rx.tap
+                .throttle(.seconds(1), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {
+                    self.delegate?.showOnboardingView()
+                }).disposed(by: disposeBag)
         }
-        
-        explanationButton
-            .rx.tap
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: {
-                self.delegate?.showOnboardingView()
-            }).disposed(by: disposeBag)
     }
     
 }

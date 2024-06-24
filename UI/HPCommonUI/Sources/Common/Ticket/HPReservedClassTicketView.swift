@@ -8,14 +8,18 @@
 import UIKit
 import SnapKit
 import Then
+import HPExtensions
 
 /// 예약한 수업 정보를 보여주는 ticket view
 public final class HPReservedClassTicketView: UIView {
     private let gradientBackgroundView = UIView()
     
     private let logoImageView = UIImageView().then {
+        $0.clipsToBounds = false
         $0.backgroundColor = .black
+        $0.layer.masksToBounds = true
         $0.layer.cornerRadius = 25
+        $0.contentMode = .scaleAspectFit
     }
     public var logoImage: UIImage? {
         get { logoImageView.image }
@@ -69,21 +73,20 @@ public final class HPReservedClassTicketView: UIView {
     
     private let dashedLineView = DashedLineView(axis: .vertical, dashLength: 6, dashGap: 6, color: HPCommonUIAsset.gray40.color)
     
-    private let qrCodeView = UIImageView().then {
-        $0.image = HPCommonUIAsset.qrCode.image
-        $0.isHidden = true
-    }
-    private let hpImageView = UIImageView().then {
-        $0.image = HPCommonUIAsset.shortLogo.image
+    private let qrCodeView = UIButton().then {
+        $0.setImage(HPCommonUIAsset.hpTicket.image, for: .normal)
+        $0.isHidden = false
     }
     
-    private var showsQRCode: Bool {
-        get { !qrCodeView.isHidden }
+    private var showsQRCode: String {
+        get { qrData }
         set {
-            qrCodeView.isHidden = !newValue
-            hpImageView.isHidden = newValue
+            let qrImage = UIImage().generateQRCode(from: newValue)
+            qrCodeView.setImage(qrImage, for: .normal)
         }
     }
+    
+    private var qrData: String = ""
     
     public init(
         logo: UIImage,
@@ -108,6 +111,7 @@ public final class HPReservedClassTicketView: UIView {
                                                        gradientColor: [HPCommonUIAsset.gradientStart.color.cgColor,
                                                                        HPCommonUIAsset.gradientEnd.color.cgColor],
                                                        gradientLocation: [0, 1])
+        showsQRCode = "12345"
     }
     
     required init?(coder: NSCoder) {
@@ -129,8 +133,7 @@ public final class HPReservedClassTicketView: UIView {
             horizontalLineView,
             dateTimeLabel,
             dashedLineView,
-            qrCodeView,
-            hpImageView
+            qrCodeView
         ].forEach(self.addSubview(_:))
         
         gradientBackgroundView.snp.makeConstraints {
@@ -185,13 +188,6 @@ public final class HPReservedClassTicketView: UIView {
             $0.width.height.equalTo(68)
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-15)
-        }
-        
-        hpImageView.snp.makeConstraints {
-            $0.width.equalTo(38)
-            $0.height.equalTo(32)
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-28)
         }
     }
 }

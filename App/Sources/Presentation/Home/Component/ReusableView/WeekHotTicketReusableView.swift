@@ -13,16 +13,30 @@ import Then
 
 final class WeekHotTicketReusableView: UICollectionReusableView {
     
+    private let ticketStack: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 6
+    }
+    
+    private let ticketImage: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
+    }
+    
     private let benefitsTitleLabel: UILabel = UILabel().then {
-        $0.text = "오늘의 혜택"
+        $0.text = "이번주 HOT 이용권"
         $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
         $0.setSubScriptAttributed(
-            targetString: "혜택",
+            targetString: "HOT",
             font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
-            color: HPCommonUIAsset.deepOrange.color
+            color: HPCommonUIAsset.sub.color
         )
         $0.textAlignment = .left
         $0.numberOfLines = 1
+    }
+    
+    private let openButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.leftArrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
     
@@ -38,11 +52,28 @@ final class WeekHotTicketReusableView: UICollectionReusableView {
     
     private func configure() {
         
-        self.addSubview(benefitsTitleLabel)
+        [ticketStack, openButton].forEach {
+            self.addSubview($0)
+        }
         
-        benefitsTitleLabel.snp.makeConstraints {
-            $0.top.right.bottom.equalToSuperview()
-            $0.left.equalToSuperview().offset(16)
+        [ticketImage, benefitsTitleLabel].forEach {
+            ticketStack.addArrangedSubview($0)
+        }
+        
+        [ticketImage, openButton].forEach {
+            $0.snp.makeConstraints {
+                $0.height.width.equalTo(26)
+            }
+        }
+        
+        ticketStack.snp.makeConstraints {
+            $0.left.equalToSuperview()
+            $0.top.equalToSuperview().offset(16)
+        }
+        
+        openButton.snp.makeConstraints {
+            $0.right.equalToSuperview()
+            $0.top.equalToSuperview().offset(16)
         }
     }
 }

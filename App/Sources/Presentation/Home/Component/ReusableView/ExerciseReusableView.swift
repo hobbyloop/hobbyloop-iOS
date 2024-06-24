@@ -14,21 +14,36 @@ import Then
 
 final class ExerciseReusableView: UICollectionReusableView {
     
-    //MARK: Property
-    private lazy var exerciseButton: UIButton = UIButton(configuration: .plain()).then {
-        $0.configuration?.image = HPCommonUIAsset.rightArrow.image
-        $0.configuration?.imagePlacement = .trailing
-        $0.configuration?.attributedTitle = AttributedString(NSAttributedString(string: "오늘은 이 운동 어때요?", attributes: [
-            .foregroundColor: HPCommonUIAsset.black.color,
-            .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
-        ]))
+    private let titleStack: UIStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 6
+    }
+    
+    private let iconImage: UIImageView = UIImageView().then {
+        $0.image = HPCommonUIAsset.ticketOutlined.image.withRenderingMode(.alwaysOriginal)
+    }
+    
+    private let benefitsTitleLabel: UILabel = UILabel().then {
+        $0.text = "헬스/PT 는 어떠세요?"
+        $0.font = HPCommonUIFontFamily.Pretendard.bold.font(size: 18)
+        $0.setSubScriptAttributed(
+            targetString: "헬스/PT",
+            font: HPCommonUIFontFamily.Pretendard.bold.font(size: 18),
+            color: HPCommonUIAsset.sub.color
+        )
+        $0.textAlignment = .left
+        $0.numberOfLines = 1
+    }
+    
+    private let openButton: UIButton = UIButton().then {
+        $0.setImage(HPCommonUIAsset.downarrow.image.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
         self.layoutIfNeeded()
-        exerciseButton.configuration?.imagePadding = UIScreen.main.bounds.maxX - (80 + (exerciseButton.titleLabel?.frame.size.width ?? 0))
     }
     
     required init?(coder: NSCoder) {
@@ -37,16 +52,29 @@ final class ExerciseReusableView: UICollectionReusableView {
     
     
     private func configure() {
-        self.addSubview(exerciseButton)
-        self.backgroundColor = HPCommonUIAsset.white.color
-        
-        exerciseButton.snp.makeConstraints {
-            $0.right.equalToSuperview()
-            $0.top.equalToSuperview().offset(20)
-            $0.left.equalToSuperview().offset(16)
-            $0.height.equalTo(20)
+        [titleStack, openButton].forEach {
+            self.addSubview($0)
         }
         
+        [iconImage, benefitsTitleLabel].forEach {
+            titleStack.addArrangedSubview($0)
+        }
+        
+        [iconImage, openButton].forEach {
+            $0.snp.makeConstraints {
+                $0.height.width.equalTo(26)
+            }
+        }
+        
+        titleStack.snp.makeConstraints {
+            $0.left.equalToSuperview()
+            $0.top.equalToSuperview().offset(16)
+        }
+        
+        openButton.snp.makeConstraints {
+            $0.right.equalToSuperview()
+            $0.top.equalToSuperview().offset(16)
+        }
         
     }
     
