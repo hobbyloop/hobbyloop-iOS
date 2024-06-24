@@ -8,20 +8,7 @@ import PackageDescription
         // Customize the product types for specific package product
         // Default is .staticFramework
         // productTypes: ["Alamofire": .framework,] 
-        productTypes: [
-            "ReactorKit": .framework,
-            "RxSwift": .framework,
-            "RxGesture": .framework,
-            "RxDataSources": .framework,
-            "SnapKit": .framework,
-            "Then": .framework,
-            "TabMan": .framework,
-            "Alamofire": .framework,
-            "KakaoOpenSDK": .framework,
-            "GoogleSignIn": .framework,
-            "CryptoSwift": .framework,
-            "KeychainAccess": .framework
-        ]
+        productTypes: [:]
     )
 #endif
 
@@ -39,7 +26,8 @@ let package = Package(
         .kakaoSDK,
         .googleSDK,
         .cryptoSwift,
-        .keychainAccess
+        .keychainAccess,
+        .firebase
     ]
 )
 
@@ -63,4 +51,5 @@ extension PackageDescription.Package.Dependency {
     static let googleSDK = Dependency.remote(repo: "google/GoogleSignIn-iOS", version: "6.0.2")
     static let cryptoSwift = Dependency.remote(repo: "krzyzanowskim/CryptoSwift", version: "1.7.1")
     static let keychainAccess = Dependency.remote(repo: "kishikawakatsumi/KeychainAccess", version: "4.2.2")
+    static let firebase = Dependency.remote(repo: "firebase/firebase-ios-sdk", version: "8.6.0")
 }

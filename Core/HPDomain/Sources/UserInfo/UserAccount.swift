@@ -9,11 +9,10 @@ import Foundation
 
 
 public struct UserAccount: Decodable {
+    public var data: UserAccountData
     
-    /// UserAccount Entity의 StatusCode 값
-    public let statusCode: Int
-
-    public enum CodingKeys: String, CodingKey {
-        case statusCode = "status"
+    public struct UserAccountData: Decodable {
+        public var accessToken: String
+        public var refreshToken: String
     }
 }

@@ -28,8 +28,8 @@ public protocol LoginViewRepo {
     var googleLoginInstance: GIDConfiguration { get }
     
     /// 카카오 로그인을 위한 implementation
-    func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation>
-    func responseKakaoWebLogin() -> Observable<LoginViewReactor.Mutation>
+    func responseKakaoLogin() -> Observable<OAuthToken>
+    func responseKakaoWebLogin() -> Observable<OAuthToken>
     func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation>
     
     /// 네이버 로그인을 위한 implementation
@@ -51,7 +51,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     public var disposeBag: DisposeBag = DisposeBag()
     
     public let naverLoginInstance: NaverThirdPartyLoginConnection = NaverThirdPartyLoginConnection.getSharedInstance()
-    public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "565615287672-emohfjcbdultg158jdvjrbkuqsgbps8a.apps.googleusercontent.com")
+    public let googleLoginInstance: GIDConfiguration = GIDConfiguration(clientID: "895737876071-015c8r6g3mpv65hoe89elahead2snj9n.apps.googleusercontent.com")
     
     
     public override init() {
@@ -62,45 +62,41 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
     /// 최종적으로 카카오톡 실치 여부를 확인 하여 로그인을 실행하는 메서드
     /// - note: 카카오톡 설치 여부에 따라 웹 로그인 또는 in-App 로그인을 실행 하는 메서드
     /// - parameters: none Parameters
-    public func resultKakaoLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
-        if (UserApi.isKakaoTalkLoginAvailable()) {
-            return responseKakaoLogin()
-        } else {
-            return responseKakaoWebLogin()
-        }
+    public func resultKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
+        let loginObservable = UserApi.isKakaoTalkLoginAvailable() ? responseKakaoLogin() : responseKakaoWebLogin()
+        return loginObservable
+            .take(1)
+            .catch { error in
+                print("kakao error: \(error)")
+                return Observable.empty()
+            }
+            .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
+                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
+                    .asObservable()
+                    .flatMap { (data: TokenResponseBody) ->
+                        Observable<LoginViewReactor.Mutation> in
+                        
+                        .just(.setAccessToken(.kakao, data))
+                    }
+            }
     }
     
     /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드
     ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
-    ///  - parameters: Observable<LoginViewReactor.Mutation>
-    public func responseKakaoLogin() -> Observable<LoginViewReactor.Mutation> {
+    ///  - parameters: Observable<OAuthToken>
+    public func responseKakaoLogin() -> Observable<OAuthToken> {
         return UserApi.shared.rx.loginWithKakaoTalk()
             .asObservable()
-            .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
-                    .asObservable()
-                    .flatMap { (data: HPDomain.Token) ->
-                        Observable<LoginViewReactor.Mutation> in
-                        .just(.setAccessToken(data))
-                    }
-            }
+            
     }
     
     
     /// 카카오 사용자의 AccessToken 값을 이용하여 JWT 토큰 값을 발급하기 위한 메서드, 웹(safariViewController) 로그인 시 호출
     ///  - note: 카카오 서버에서 발급 받은 AccessToken 값을 통해 자체 서버의 AccessToken, RefreshToken 값을 발급 받기위한 Method
-    ///  - parameters: Observable<LoginViewReactor.Mutation>
-    public func responseKakaoWebLogin() -> RxSwift.Observable<LoginViewReactor.Mutation> {
+    ///  - parameters: Observable<OAuthToken>
+    public func responseKakaoWebLogin() -> Observable<OAuthToken> {
         return UserApi.shared.rx.loginWithKakaoAccount()
             .asObservable()
-            .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
-                self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
-                    .asObservable()
-                    .flatMap { (data: HPDomain.Token) ->
-                        Observable<LoginViewReactor.Mutation> in
-                        .just(.setAccessToken(data))
-                    }
-            }
     }
     
     /// 네이버 로그인창을 띄우기 위한 메서드
@@ -121,6 +117,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                     if let user = user {
                         observer.onNext(user)
                     }
+                    observer.onCompleted()
                 }
             }
             return Disposables.create()
@@ -135,10 +132,11 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
         responseGoogleUser(to: viewController)
             .flatMap { [weak self] user -> Observable<LoginViewReactor.Mutation> in
                 guard let self = `self` else { return .empty() }
+                print("google token: \(user.authentication.accessToken)")
                 return self.networkService.requestUserToken(account: .google, accessToken: user.authentication.accessToken)
                     .asObservable()
-                    .flatMap { (data: HPDomain.Token) -> Observable<LoginViewReactor.Mutation> in
-                        .just(.setAccessToken(data))
+                    .flatMap { (data: TokenResponseBody) -> Observable<LoginViewReactor.Mutation> in
+                            .just(.setAccessToken(.google, data))
                     }
             }
     }
@@ -193,6 +191,7 @@ extension LoginViewRepository: NaverThirdPartyLoginConnectionDelegate {
     /// 네이버 로그인 실패 시 호출되는 메서드
     public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
         print("Naver Login Error: \(error)")
+        LoginViewStream.event.onNext(.fail)
     }
 }
 

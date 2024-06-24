@@ -23,7 +23,7 @@ public enum TicketInfoRouter {
 extension TicketInfoRouter: Router {
     
     public var baseURL: String {
-        return "http://13.125.114.152:8080"
+        return "https://hobbyloop.kr"
     }
     
     public var method: HTTPMethod {

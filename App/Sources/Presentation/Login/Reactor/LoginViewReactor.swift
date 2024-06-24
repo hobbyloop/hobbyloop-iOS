@@ -16,7 +16,8 @@ import ReactorKit
 
 public enum LoginViewStream: HPStreamType {
     public enum Event {
-        case responseAccessToken(token: Token)
+        case responseAccessToken(token: TokenResponseBody)
+        case fail
     }
 }
 
@@ -29,25 +30,25 @@ public final class LoginViewReactor: Reactor {
     
     //MARK: Action
     public enum Action {
-        case didTapKakaoLogin(AccountType)
-        case didTapNaverLogin(AccountType)
-        case didTapGoogleLogin(AnyObject, AccountType)
-        case didTapAppleLogin(AccountType)
+        case didTapKakaoLogin
+        case didTapNaverLogin
+        case didTapGoogleLogin(AnyObject)
+        case didTapAppleLogin
     }
     
     public enum Mutation {
         case setLoading(Bool)
-        case setAccessToken(Token?)
-        case setAccountType(AccountType)
+        case setAccessToken(AccountType, TokenResponseBody?)
         case setNaverLogin(Void)
     }
     
     //MARK: State
     public struct State {
         var isLoading: Bool
-        @Pulse var authToken: Token?
+        @Pulse var authToken: TokenResponseBody?
         var accountType: AccountType
         var isShowNaverLogin: Void?
+        var tokenResponseBody: TokenResponseBody?
     }
     
     init(loginRepository: LoginViewRepo) {
@@ -72,37 +73,29 @@ public final class LoginViewReactor: Reactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
-        case let .didTapKakaoLogin(type):
-
+        case .didTapKakaoLogin:
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.resultKakaoLogin(),
                 .just(.setLoading(false))
             ])
             
-        case let .didTapNaverLogin(type):
-            
+        case .didTapNaverLogin:
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseNaverLogin()
             ])
             
-        case let .didTapGoogleLogin(viewController, type):
-            
+        case let .didTapGoogleLogin(viewController):
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseGoogleLogin(to: viewController),
                 .just(.setLoading(false))
             ])
             
-        case let .didTapAppleLogin(type):
-            
+        case .didTapAppleLogin:
             return .concat([
                 .just(.setLoading(true)),
-                .just(.setAccountType(type)),
                 loginRepository.responseAppleLogin(),
                 .just(.setLoading(false))
             ])
@@ -116,13 +109,16 @@ public final class LoginViewReactor: Reactor {
         switch mutation {
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
-        case let .setAccountType(accountType):
+        case let .setAccessToken(accountType, tokenResponseBody):
+            newState.authToken = tokenResponseBody
             newState.accountType = accountType
-        case let .setAccessToken(data):
-            guard let originalData = data else { return newState }
-            newState.authToken = data
-            LoginManager.shared.updateTokens(accessToken: originalData.userToken.accessToken, refreshToken: originalData.userToken.refreshToken)
-            UserDefaults.standard.set(Date(), forKey: .expiredAt)
+            newState.tokenResponseBody = tokenResponseBody
+            
+            if let accessToken = tokenResponseBody?.data.accessToken,
+               let refreshToken = tokenResponseBody?.data.refreshToken {
+                LoginManager.shared.updateTokens(accessToken: accessToken, refreshToken: refreshToken)
+                UserDefaults.standard.set(Date(), forKey: .expiredAt)
+            }
         case let .setNaverLogin(isShow):
             newState.isShowNaverLogin = isShow
         }
@@ -140,9 +136,11 @@ extension LoginViewReactor {
         switch event {
         case let .responseAccessToken(token):
             return .concat([
-                .just(.setAccessToken(token)),
+                .just(.setAccessToken(.naver, token)),
                 .just(.setLoading(false))
             ])
+        case .fail:
+            return .just(.setLoading(false))
         }
     }
     

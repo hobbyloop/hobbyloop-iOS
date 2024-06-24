@@ -24,6 +24,8 @@ let thirdParty = Project.makeModule(
         .ThirdParty.SDK.kakao,
         .ThirdParty.SDK.google,
         .ThirdParty.Util.keychainAccess,
-        .ThirdParty.Util.cryptoSwift
+        .ThirdParty.Util.cryptoSwift,
+        .ThirdParty.SDK.firebaseAuth,
+        .ThirdParty.SDK.firebaseMessaging
     ]
 )

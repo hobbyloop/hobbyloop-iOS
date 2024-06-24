@@ -88,6 +88,8 @@ extension TargetDependency.ThirdParty.Network {
 extension TargetDependency.ThirdParty.SDK {
     public static let kakao: TargetDependency = .external(name: "RxKakaoSDKUser")
     public static let google: TargetDependency = .external(name: "GoogleSignIn")
+    public static let firebaseAuth: TargetDependency = .external(name: "FirebaseAuth")
+    public static let firebaseMessaging: TargetDependency = .external(name: "FirebaseMessaging")
 }
 
 

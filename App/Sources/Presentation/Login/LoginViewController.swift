@@ -172,8 +172,6 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
     }
     
     public override func bind(reactor: LoginViewReactor) {
-        
-        
         reactor.state
             .map { $0.isLoading }
             .bind(to: indicatorView.rx.isAnimating)
@@ -182,41 +180,55 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
         kakaoLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapKakaoLogin(.kakao) }
+            .map { Reactor.Action.didTapKakaoLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         naverLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapNaverLogin(.naver) }
+            .map { Reactor.Action.didTapNaverLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         googleLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapGoogleLogin(self, .google) }
+            .map { Reactor.Action.didTapGoogleLogin(self) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         appleLoginButton
             .rx.tap
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .map { Reactor.Action.didTapAppleLogin(.apple) }
+            .map { Reactor.Action.didTapAppleLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         
-        Observable
-            .combineLatest(
-                reactor.state.map { $0.accountType }.distinctUntilChanged(),
-                reactor.pulse(\.$authToken)
-            ).filter { $0.1 != nil }
+        let authTokenObservable = reactor.pulse(\.$authToken)
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        authTokenObservable
+            .map { (reactor.currentState.accountType, $0) }
+            .filter({ accountType, tokenResponseBody in
+                return accountType != .none && tokenResponseBody != nil && tokenResponseBody?.data.accessToken == nil
+            })
             .withUnretained(self)
-            .bind(onNext: { (owner, state) in
-                owner.didShowSignUpController(accountType: state.0)
+            .subscribe(onNext: { owner, state in
+                owner.showSignUpController()
             }).disposed(by: disposeBag)
+        
+        authTokenObservable
+            .filter { tokenResponseBody in
+                return tokenResponseBody?.data.accessToken != nil && tokenResponseBody?.data.refreshToken != nil
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { owner, tokenResponseBody in
+                return owner.showHomeViewController()
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -234,9 +246,27 @@ extension LoginViewController {
         return button
     }
     
-    private func didShowSignUpController(accountType: AccountType) {
-        let signUpContainer = SignUpDIContainer(signUpAccountType: accountType).makeViewController()
+    private func showSignUpController() {
+        guard let tokenResponseBody = reactor?.currentState.tokenResponseBody,
+              let accountType = reactor?.currentState.accountType else {
+            return
+        }
+        
+        let signUpContainer = SignUpDIContainer(
+            signUpAccountType: accountType,
+            subject: tokenResponseBody.data.subject ?? "",
+            oauth2AccessToken: tokenResponseBody.data.oauth2AccessToken ?? "",
+            email: tokenResponseBody.data.email ?? ""
+        ).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
     }
     
+    private func showHomeViewController() {
+        if UserDefaults.standard.bool(forKey: "onboarded") {
+            // TODO: 로그인 성공 시 넘어갈 view controller 수정
+            self.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
+        } else {
+            self.navigationController?.pushViewController(OnboardingViewController(reactor: nil), animated: true)
+        }
+    }
 }

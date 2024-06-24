@@ -15,6 +15,7 @@ import RxGesture
 import RxSwift
 import RxCocoa
 import ReactorKit
+import HPNetwork
 
 public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     // MARK: - 네비게이션 바
@@ -35,6 +36,11 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let containerView: UIView = UIView().then {
         $0.backgroundColor = .systemBackground
+    }
+    
+    private lazy var indicatorView: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
+        $0.color = .gray
     }
     
     // MARK: - 인사 + 설명
@@ -114,9 +120,9 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         placeholder: "-를 제외한 번호를 입력해주세요"
     )
     
-    private let certificationButton = HPNewButton(title: "인증번호 발송", style: .bordered)
+    private let issueAuthCodeButton = HPNewButton(title: "인증번호 발송", style: .bordered)
     
-    private let authHStack = UIStackView().then {
+    private let authCodeHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.alignment = .fill
@@ -127,7 +133,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.placeholderText = "인증번호를 입력하세요"
         
     }
-    private let authCodeButton = HPNewButton(title: "인증확인", style: .bordered)
+    private let verifyAuthCodeButton = HPNewButton(title: "인증확인", style: .bordered)
     
     // MARK: - 약관
     private let termTitleLabel = UILabel().then {
@@ -147,21 +153,21 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         $0.backgroundColor = HPCommonUIAsset.gray40.color
     }
     
-    private let receiveInfoCheckbox = HPCheckbox()
-    private let receiveInfoLabel = UILabel().then {
+    private let agreement1Checkbox = HPCheckbox()
+    private let agreement1Label = UILabel().then {
         $0.text = "마케팅 수신 정보 동의 [선택]"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private lazy var receiveInfoDetailButton = TermDetailButton()
+    private lazy var agreement1DetailButton = TermDetailButton()
     
-    private let collectInfoCheckbox = HPCheckbox()
-    private let collectInfoLabel = UILabel().then {
+    private let agreement2Checkbox = HPCheckbox()
+    private let agreement2Label = UILabel().then {
         $0.text = "마케팅 정보 수집 동의 [선택]"
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 14)
         $0.textColor = HPCommonUIAsset.gray100.color
     }
-    private lazy var collectInfoDetailButton = TermDetailButton()
+    private lazy var agrement2DetailButton = TermDetailButton()
     
     
     // MARK: - 설명 + 입력 완료 버튼
@@ -175,6 +181,22 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     
     private let confirmButton = HPNewButton(title: "하비루프 시작", style: .primary)
     
+    // MARK: - date picker & background
+    private let datePickerView = UIDatePicker().then {
+        $0.datePickerMode = .date
+        $0.preferredDatePickerStyle = .wheels
+        $0.locale = .init(identifier: "ko-KR")
+        $0.backgroundColor = UIColor(red: 0xB2, green: 0xB2, blue: 0xB2, alpha: 1)
+        $0.isUserInteractionEnabled = true
+        $0.layer.cornerRadius = 13
+        $0.clipsToBounds = true
+    }
+    
+    private let backgroundView = UIView().then {
+        $0.backgroundColor = .black.withAlphaComponent(0.5)
+    }
+    
+    // MARK: - init
     override init(reactor: SignUpViewReactor?) {
         defer { self.reactor = reactor }
         super.init()
@@ -195,7 +217,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
     }
     
     public override func viewDidLayoutSubviews() {
-        self.authCodeButton.layer.cornerRadius = 10
+        self.verifyAuthCodeButton.layer.cornerRadius = 10
     }
     
     // MARK: Configure
@@ -224,8 +246,8 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
          genederDescriptionLabel, horizontalGenderStackView,
          phoneAuthVStack, confirmButton, modifyDescriptionLabel, birthDayView,
          termTitleLabel, allTermsCheckbox, allTermsLabel, termDividerView,
-         receiveInfoCheckbox, receiveInfoLabel, receiveInfoDetailButton,
-         collectInfoCheckbox, collectInfoLabel, collectInfoDetailButton
+         agreement1Checkbox, agreement1Label, agreement1DetailButton,
+         agreement2Checkbox, agreement2Label, agrement2DetailButton
         ].forEach {
             containerView.addSubview($0)
         }
@@ -266,26 +288,26 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.leading.trailing.equalTo(nameView)
         }
         
-        [phoneView, certificationButton].forEach(phoneHStack.addArrangedSubview(_:))
+        [phoneView, issueAuthCodeButton].forEach(phoneHStack.addArrangedSubview(_:))
         
-        certificationButton.snp.makeConstraints {
+        issueAuthCodeButton.snp.makeConstraints {
             $0.width.equalTo(120)
             $0.height.equalTo(48)
         }
         
-        [authCodeView, authCodeButton].forEach(authHStack.addArrangedSubview(_:))
-        authHStack.snp.makeConstraints {
+        [authCodeView, verifyAuthCodeButton].forEach(authCodeHStack.addArrangedSubview(_:))
+        authCodeHStack.snp.makeConstraints {
             $0.height.equalTo(48)
         }
         
-        [phoneHStack, authHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
+        [phoneHStack, authCodeHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
         phoneAuthVStack.snp.makeConstraints {
             $0.top.equalTo(birthDayView.snp.bottom).offset(24)
             $0.leading.trailing.equalTo(nameView)
         }
         
-        authCodeButton.snp.makeConstraints {
-            $0.width.height.equalTo(certificationButton)
+        verifyAuthCodeButton.snp.makeConstraints {
+            $0.width.height.equalTo(issueAuthCodeButton)
         }
         
         termTitleLabel.snp.makeConstraints {
@@ -309,38 +331,38 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.leading.trailing.equalTo(nameView)
         }
         
-        receiveInfoCheckbox.snp.makeConstraints {
+        agreement1Checkbox.snp.makeConstraints {
             $0.top.equalTo(termDividerView.snp.bottom).offset(12)
             $0.leading.equalTo(nameView)
         }
         
-        receiveInfoLabel.snp.makeConstraints {
-            $0.leading.equalTo(receiveInfoCheckbox.snp.trailing).offset(6)
-            $0.centerY.equalTo(receiveInfoCheckbox)
+        agreement1Label.snp.makeConstraints {
+            $0.leading.equalTo(agreement1Checkbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(agreement1Checkbox)
         }
         
-        receiveInfoDetailButton.snp.makeConstraints {
+        agreement1DetailButton.snp.makeConstraints {
             $0.trailing.equalTo(nameView)
-            $0.centerY.equalTo(receiveInfoCheckbox)
+            $0.centerY.equalTo(agreement1Checkbox)
         }
         
-        collectInfoCheckbox.snp.makeConstraints {
-            $0.top.equalTo(receiveInfoCheckbox.snp.bottom).offset(6)
+        agreement2Checkbox.snp.makeConstraints {
+            $0.top.equalTo(agreement1Checkbox.snp.bottom).offset(6)
             $0.leading.equalTo(nameView)
         }
         
-        collectInfoLabel.snp.makeConstraints {
-            $0.leading.equalTo(collectInfoCheckbox.snp.trailing).offset(6)
-            $0.centerY.equalTo(collectInfoCheckbox)
+        agreement2Label.snp.makeConstraints {
+            $0.leading.equalTo(agreement2Checkbox.snp.trailing).offset(6)
+            $0.centerY.equalTo(agreement2Checkbox)
         }
         
-        collectInfoDetailButton.snp.makeConstraints {
+        agrement2DetailButton.snp.makeConstraints {
             $0.trailing.equalTo(nameView)
-            $0.centerY.equalTo(collectInfoCheckbox)
+            $0.centerY.equalTo(agreement2Checkbox)
         }
         
         modifyDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(collectInfoCheckbox.snp.bottom).offset(50)
+            $0.top.equalTo(agreement2Checkbox.snp.bottom).offset(50)
             $0.centerX.equalToSuperview()
         }
         
@@ -351,7 +373,30 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             $0.height.equalTo(48)
         }
         
+        view.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        view.addSubview(backgroundView)
+        backgroundView.snp.makeConstraints {
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        backgroundView.addSubview(datePickerView)
+        datePickerView.snp.makeConstraints {
+            $0.width.equalTo(297)
+            $0.height.equalTo(213)
+            $0.center.equalToSuperview()
+        }
+        
         self.makeDismissKeyboardGesture()
+        
+        backButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func TermDetailButton() -> UIButton {
@@ -370,416 +415,270 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         }
     }
     
-    
     public override func bind(reactor: SignUpViewReactor) {
+        // MARK: - Reactor -> VC
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.isLoading }
+            .bind(to: indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
         
-//        Observable.just(())
-//            .map { Reactor.Action.viewDidLoad }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        birthDayView
-//            .rx.tapGesture()
-//            .when(.recognized)
-//            .observe(on: MainScheduler.instance)
-//            .withUnretained(self)
-//            .bind(onNext: { vc, _ in
-//                vc.showBottomSheetView()
-//            }).disposed(by: disposeBag)
-//        
-//        genderOfManButton
-//            .rx.tap
-//            .map { Reactor.Action.didTapGenderButton(.male) }
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        genderOfGirlButton
-//            .rx.tap
-//            .map { Reactor.Action.didTapGenderButton(.female) }
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        
-//        reactor.state
-//            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
-//            .filter { $0.userGender == .male }
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfManButton.isSelected = true
-//                self.genderOfGirlButton.isSelected = false
-//                HapticUtil.impact(.light).generate()
-//            }).disposed(by: disposeBag)
-//        
-//        reactor.state
-//            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
-//            .filter {  $0.userGender == .female }
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfGirlButton.isSelected = true
-//                self.genderOfManButton.isSelected = false
-//                HapticUtil.impact(.light).generate()
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        reactor.state
-//            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
-//            .filter {  $0.userGender != .male }
-//            .map { _ in HPCommonUIAsset.separator.color.cgColor }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfManButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-//                self.genderOfManButton.layer.borderColor = color
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        reactor.state
-//            .filter { $0.kakaoUserEntity == nil && $0.naverUserEntity == nil }
-//            .filter {  $0.userGender != .female }
-//            .map { _ in HPCommonUIAsset.separator.color.cgColor }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color.cgColor)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfGirlButton.setTitleColor(HPCommonUIAsset.boldSeparator.color, for: .normal)
-//                self.genderOfGirlButton.layer.borderColor = color
-//            }).disposed(by: disposeBag)
-//
-//        
-//        
-////        reactor.pulse(\.$kakaoUserEntity)
-////            .compactMap { $0?.kakaoAccount?.profile?.nickname}
-////            .filter { !($0?.isEmpty ?? false) }
-////            .observe(on: MainScheduler.asyncInstance)
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(nameView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//        
-//        reactor.pulse(\.$kakaoUserEntity)
-//            .compactMap { $0?.kakaoAccount?.gender }
-//            .filter { $0.rawValue == "male" }
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfManButton.isSelected = true
-//                self.genderOfGirlButton.isEnabled = false
-//            }).disposed(by: disposeBag)
-//        
-//        reactor.pulse(\.$kakaoUserEntity)
-//            .compactMap { $0?.kakaoAccount?.gender }
-//            .filter { $0.rawValue == "female" }
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .observe(on: MainScheduler.asyncInstance)
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfGirlButton.isSelected = true
-//                self.genderOfManButton.isEnabled = false
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        reactor.pulse(\.$kakaoUserEntity)
-//            .compactMap { $0?.kakaoAccount?.gender }
-//            .filter { $0.rawValue == "male" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in Reactor.Action.didTapGenderButton(.male)}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        reactor.pulse(\.$kakaoUserEntity)
-//            .compactMap { $0?.kakaoAccount?.gender }
-//            .filter { $0.rawValue == "female" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in Reactor.Action.didTapGenderButton(.female)}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-////        reactor.pulse(\.$naverUserEntity)
-////            .filter { $0?.response != nil }
-////            .compactMap { $0?.response }
-////            .map { $0.name }
-////            .observe(on: MainScheduler.asyncInstance)
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(nameView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//        
-//
-//        reactor.pulse(\.$naverUserEntity)
-//            .filter { $0?.response != nil }
-//            .compactMap { $0?.response }
-//            .filter { $0.gender == "M" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfManButton.isSelected = true
-//            }).disposed(by: disposeBag)
-//        
-//        reactor.pulse(\.$naverUserEntity)
-//            .filter { $0?.response != nil }
-//            .compactMap { $0?.response }
-//            .filter { $0.gender == "F" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in HPCommonUIAsset.deepOrange.color}
-//            .asDriver(onErrorJustReturn: HPCommonUIAsset.separator.color)
-//            .drive(onNext: { [weak self] color in
-//                guard let `self` = self else { return }
-//                self.genderOfManButton.isSelected = true
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        reactor.pulse(\.$naverUserEntity)
-//            .filter { $0?.response != nil }
-//            .compactMap { $0?.response }
-//            .filter { $0.gender == "M" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in Reactor.Action.didTapGenderButton(.male)}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        reactor.pulse(\.$naverUserEntity)
-//            .filter { $0?.response != nil }
-//            .compactMap { $0?.response }
-//            .filter { $0.gender == "F" }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .map { _ in Reactor.Action.didTapGenderButton(.female)}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-////        reactor.pulse(\.$naverUserEntity)
-////            .filter { $0?.response != nil }
-////            .compactMap { $0?.response }
-////            .map { $0.mobile }
-////            .observe(on: MainScheduler.asyncInstance)
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(phoneView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//
-//
-////        Observable.zip(
-////            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
-////            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
-////        ).filter { !$0.0.isEmpty && !$0.1.isEmpty  }
-////            .map { "\($0.1+"-"+$0.0)".birthdayToString() }
-////            .take(1)
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(birthDayView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//        
-//        
-////        Observable.zip(
-////            reactor.state.compactMap { $0.naverUserEntity?.response?.birthday },
-////            reactor.state.compactMap { $0.naverUserEntity?.response?.birthyear }
-////        ).filter { !$0.0.isEmpty && !$0.1.isEmpty }
-////            .map { "\($0.1+"-"+$0.0)".birthdayToString() }
-////            .take(1)
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(birthDayView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//            
-//
-//        NotificationCenter.default
-//            .rx.notification(UIResponder.keyboardWillShowNotification)
-//            .compactMap { $0.userInfo }
-//            .map { userInfo -> CGFloat in
-//                return (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height ?? 0
-//            }
-//            .observe(on: MainScheduler.instance)
-//            .withUnretained(self)
-//            .subscribe(onNext: { owner, height in
-//                if owner.phoneView.textFieldView.isEditing {
-//                    owner.containerView.frame.origin.y -= height
-//                }
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        NotificationCenter.default
-//            .rx.notification(UIResponder.keyboardWillHideNotification)
-//            .observe(on: MainScheduler.instance)
-//            .withUnretained(self)
-//            .subscribe(onNext: { owner, _ in
-//                owner.containerView.frame.origin.y = 0
-//            }).disposed(by: disposeBag)
-//
-//
-//    
-//        
-////        reactor.state
-////            .compactMap { $0.applefullName }
-////            .filter { !$0.isEmpty }
-////            .asDriver(onErrorJustReturn: "")
-////            .drive(nameView.textFieldView.rx.text)
-////            .disposed(by: disposeBag)
-//        
-//        
-////        nameView.textFieldView
-////            .rx.textChange
-////            .distinctUntilChanged()
-////            .observe(on: MainScheduler.instance)
-////            .map { Reactor.Action.updateToName($0 ?? "") }
-////            .bind(to: reactor.action)
-////            .disposed(by: disposeBag)
-//        
-//        nickNameView.textFieldView
-//            .rx.textChange
-//            .distinctUntilChanged()
-//            .observe(on: MainScheduler.instance)
-//            .map { Reactor.Action.updateToNickName($0 ?? "")}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//
-////        birthDayView.textFieldView
-////            .rx.textChange
-////            .distinctUntilChanged()
-////            .observe(on: MainScheduler.asyncInstance)
-////            .map { Reactor.Action.updateToBirthDay($0 ?? "")}
-////            .bind(to: reactor.action)
-////            .disposed(by: disposeBag)
-//        
-//        phoneView.textFieldView
-//            .rx.textChange
-//            .distinctUntilChanged()
-//            .observe(on: MainScheduler.instance)
-//            .map { Reactor.Action.updateToPhoneNumber($0 ?? "")}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        phoneView.textFieldView
-//            .rx.textChange
-//            .distinctUntilChanged()
-//            .map { $0?.count ?? 0 == 13 }
-//            .skip(1)
-//            .observe(on: MainScheduler.instance)
-//            .withUnretained(self)
-//            .bind(onNext: { (owner, isEnabled) in
-//                if isEnabled {
-//                    owner.certificationButton.isEnabled = isEnabled
-//                } else {
-//                    owner.certificationButton.layer.borderColor = HPCommonUIAsset.separator.color.cgColor
-//                    owner.certificationButton.isEnabled = isEnabled
-//                    owner.hideDropdownAnimation()
-//                }
-//            }).disposed(by: disposeBag)
-//        
-//        
-//        certificationButton
-//            .rx.tap
-//            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-//            .withUnretained(self)
-//            .bind(onNext: { owner, _ in
-//                HapticUtil.impact(.light).generate()
-//                owner.certificationButton.isSelected = true
-//                owner.showDropdownAnimation()
-//            }).disposed(by: disposeBag)
-//        
-//        reactor.state
-//            .map { $0.phoneNumber }
-//            .filter { $0.count == 11 }
-//            .map { $0.toPhoneNumber() }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .bind(to: phoneView.textFieldView.rx.text)
-//            .disposed(by: disposeBag)
-//            
-//        phoneView.textFieldView
-//            .rx.textChange
-//            .filter { !($0?.count ?? 0 <= 12) }
-//            .skip(1)
-//            .map { _ in Reactor.Action.didChangePhoneNumber}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        
-//        certificationButton
-//            .rx.tap
-//            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-//            .map { Reactor.Action.didTapCertificationButton }
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        
-//        reactor.state
-//            .filter { $0.ceritifcationState == false }
-//            .map { $0.ceritifcationState }
-//            .observe(on: MainScheduler.instance)
-//            .bind(to: certificationButton.rx.isSelected)
-//            .disposed(by: disposeBag)
-//        
-//        phoneView.textFieldView
-//            .rx.text.orEmpty
-//            .scan("") { previous, new -> String in
-//                if new.count > 13 {
-//                  return previous
-//                } else {
-//                  return new
-//                }
-//              }
-//            .bind(to: phoneView.textFieldView.rx.text)
-//            .disposed(by: disposeBag)
-//        
-////        nameView
-////            .textFieldView.rx.textChange
-////            .distinctUntilChanged()
-////            .compactMap { $0?.isEmpty ?? false || $0?.filter { $0.isNumber }.count ?? 0 >= 1 }
-////            .skip(1)
-////            .withUnretained(self)
-////            .bind(onNext: { owner, isError in
-////                owner.nameView.isError = isError
-////                if isError {
-////                    owner.nameView.snp.remakeConstraints {
-////                        $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
-////                        $0.left.equalToSuperview().offset(15)
-////                        $0.right.equalToSuperview().offset(-15)
-////                        $0.height.equalTo(110)
-////                    }
-////                } else {
-////                    owner.nameView.snp.remakeConstraints {
-////                        $0.bottom.equalTo(owner.nickNameView.snp.top).offset(-36)
-////                        $0.left.equalToSuperview().offset(15)
-////                        $0.right.equalToSuperview().offset(-15)
-////                        $0.height.equalTo(80)
-////                    }
-////                }
-////            }).disposed(by: disposeBag)
-//        
-//        
-//        Observable
-//            .combineLatest(
-//                reactor.state.map { $0.userName },
-//                reactor.state.map { $0.userGender },
-//                reactor.state.map { $0.userBirthDay },
-//                reactor.state.map { $0.phoneNumber }
-//            ).map { !$0.0.isEmpty && !$0.1.getGenderType().isEmpty && !$0.2.isEmpty && !$0.3.isEmpty }
-//            .bind(to: confirmButton.rx.isConfirm)
-//            .disposed(by: disposeBag)
-//        
-//        
-//        confirmButton
-//            .rx.tap
-//            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-//            .map { [weak self] in Reactor.Action.didTapCreateUserButton(self?.reactor?.currentState.userName ?? "", self?.reactor?.currentState.userNickName ?? "", self?.reactor?.currentState.userGender.getGenderType() ?? "", self?.reactor?.currentState.userBirthDay.birthdayDashSymbolToString() ?? "", self?.reactor?.currentState.phoneNumber ?? "")}
-//            .bind(to: reactor.action)
-//            .disposed(by: disposeBag)
-//        
-//        
-//        reactor.state
-//            .filter { $0.userAccountEntity?.statusCode == 201 }
-//            .bind(onNext: { _ in
-//                guard let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-//                scene.window?.rootViewController = CustomTabBarController()
-//                scene.window?.makeKeyAndVisible()
-//            }).disposed(by: disposeBag)
-//        
-//    
+        reactor.state
+            .map { $0.userName }
+            .bind(to: nameView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.userNickName }
+            .bind(to: nickNameView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.userGender == .male }
+            .bind(to: genderOfManButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.userGender == .female }
+            .bind(to: genderOfGirlButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.userBirthDay }
+            .bind(to: birthDayView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.phoneNumber }
+            .bind(to: phoneView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { !$0.showsAuthCodeView }
+            .bind(to: authCodeHStack.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(
+            reactor.state.map { $0.userName },
+            reactor.state.map { $0.userBirthDay },
+            reactor.state.map { $0.isVaildPhoneNumber }
+        ).map {
+            !$0.0.isEmpty && !$0.1.isEmpty && $0.2
+        }
+        .bind(to: confirmButton.rx.isEnabled)
+        .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.agreement1IsSelected && $0.agreement2IsSelected }
+            .bind(to: allTermsCheckbox.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.agreement1IsSelected }
+            .bind(to: agreement1Checkbox.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.agreement2IsSelected }
+            .bind(to: agreement2Checkbox.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { !$0.showsDatePickerView }
+            .bind(to: backgroundView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.showsAuthCodeView ? "인증번소 재발송" : "인증번호 발송" }
+            .bind(to: issueAuthCodeButton.rx.title(for: []))
+            .disposed(by: disposeBag)
+            
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { !$0.isVaildPhoneNumber }
+            .bind(to: verifyAuthCodeButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.isVaildPhoneNumber ? "인증 완료" : "인증 확인하기" }
+            .bind(to: verifyAuthCodeButton.rx.title(for: []))
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.authCode }
+            .bind(to: authCodeView.rx.text)
+            .disposed(by: disposeBag)
+        
+        // MARK: - VC -> Reactor
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nameView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateName($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nickNameView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateNickName($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        genderOfManButton.rx.tap
+            .map { Reactor.Action.updateGender(.male) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        genderOfGirlButton.rx.tap
+            .map { Reactor.Action.updateGender(.female) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateBirthDay($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        phoneView.textfield.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updatePhoneNumber($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        issueAuthCodeButton.rx.tap
+            .map { Reactor.Action.didTapIssueAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        authCodeView.rx.textChange
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.updateAuthCode($0 ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        verifyAuthCodeButton.rx.tap
+            .map { Reactor.Action.didTapVeirfyAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        allTermsCheckbox.rx.tap
+            .map { Reactor.Action.didTapAllTermsCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        agreement1Checkbox.rx.tap
+            .map { Reactor.Action.didTapReceiveInfoCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        agreement2Checkbox.rx.tap
+            .map { Reactor.Action.didTapCollectInfoCheckbox }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        confirmButton.rx.tap
+            .map { Reactor.Action.didTapCreateUserButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView.showDatePickerButton.rx.tap
+            .map { Reactor.Action.didTapDatePickerButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        backgroundView.rx.tapGesture()
+            .filter { [weak self] gesture in
+                guard let self else { return false }
+                let location = gesture.location(in: self.datePickerView)
+                return !self.datePickerView.bounds.contains(location)
+            }
+            .map { _ in Reactor.Action.didTapBackgroundView }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        datePickerView.rx.date
+            .map {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy.MM.dd"
+                
+                return formatter.string(from: $0)
+            }
+            .map { Reactor.Action.updateBirthDay($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        // MARK: - Reactor -> Reactor
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.profile?.nickname }
+            .map { Reactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.name }
+            .map { Reactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .compactMap { $0?.kakaoAccount?.gender }
+            .map { $0 == .Male ? HPGender.male : HPGender.female }
+            .map { Reactor.Action.updateGender($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.gender }
+            .map { $0 == "여성" ? HPGender.female : HPGender.male }
+            .map { Reactor.Action.updateGender($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .map { Reactor.Action.updateBirthDay($0?.kakaoAccount?.legalBirthDate ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        Observable.zip(
+            reactor.pulse(\.$naverUserEntity)
+                .compactMap { $0?.response?.birthyear },
+            reactor.pulse(\.$naverUserEntity)
+                .compactMap { $0?.response?.birthday }
+        )
+        .map { "\($0).\($1.replacingOccurrences(of: "-", with: "."))" }
+        .map { Reactor.Action.updateBirthDay($0) }
+        .bind(to: reactor.action)
+        .disposed(by: disposeBag)
+            
+        
+        reactor.pulse(\.$kakaoUserEntity)
+            .map { Reactor.Action.updatePhoneNumber($0?.kakaoAccount?.phoneNumber ?? "") }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$naverUserEntity)
+            .compactMap { $0?.response?.mobile?.replacingOccurrences(of: "-", with: "") }
+            .map { Reactor.Action.updatePhoneNumber($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$userAccountEntity)
+            .compactMap { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                // TODO: 회원가입 후. 넘어갈 view controller 수정
+                self?.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
