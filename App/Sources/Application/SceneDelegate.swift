@@ -26,9 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: scene)
         
-//        makeRootViewController()
-        window?.rootViewController = CustomTabBarController()
-        window?.makeKeyAndVisible()
+        makeRootViewController()
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
