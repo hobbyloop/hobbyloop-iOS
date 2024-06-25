@@ -76,7 +76,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
     public func createUserInformation(_ userInfo: CreatedUserInfo) -> Observable<SignUpViewReactor.Mutation> {
         return self.networkService.createUserInfo(userInfo)
             .asObservable()
-            .flatMap { (account: UserAccount) -> Observable<SignUpViewReactor.Mutation> in
+            .flatMap { (account: JoinResponseBody) -> Observable<SignUpViewReactor.Mutation> in
                     .just(.setCreateUserInfo(account))
             }
     }

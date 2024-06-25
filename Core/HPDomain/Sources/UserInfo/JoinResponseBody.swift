@@ -8,10 +8,10 @@
 import Foundation
 
 
-public struct UserAccount: Decodable {
-    public var data: UserAccountData
+public struct JoinResponseBody: Decodable {
+    public var data: JoinTokenData
     
-    public struct UserAccountData: Decodable {
+    public struct JoinTokenData: Decodable {
         public var accessToken: String
         public var refreshToken: String
     }

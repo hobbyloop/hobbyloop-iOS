@@ -53,7 +53,7 @@ public final class SignUpViewReactor: Reactor {
         var isLoading: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
-        @Pulse var userAccountEntity: UserAccount?
+        @Pulse var userAccountEntity: JoinResponseBody?
         var userName: String
         var userNickName: String
         var userGender: HPGender
@@ -103,7 +103,7 @@ public final class SignUpViewReactor: Reactor {
         case setVerificationID(String)
         case setAuthCode(String)
         case setAgreeTerms(Bool, Bool)
-        case setCreateUserInfo(UserAccount)
+        case setCreateUserInfo(JoinResponseBody)
         case showDatePickerView
         case hideDatePickerView
         case validatePhoneNumber
