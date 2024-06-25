@@ -262,11 +262,6 @@ extension LoginViewController {
     }
     
     private func showHomeViewController() {
-        if UserDefaults.standard.bool(forKey: "onboarded") {
-            // TODO: 로그인 성공 시 넘어갈 view controller 수정
-            self.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
-        } else {
-            self.navigationController?.pushViewController(OnboardingViewController(reactor: nil), animated: true)
-        }
+        self.navigationController?.viewControllers = [CustomTabBarController()]
     }
 }
