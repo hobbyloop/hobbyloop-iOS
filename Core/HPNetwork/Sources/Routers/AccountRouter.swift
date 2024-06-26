@@ -16,7 +16,7 @@ public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
     case createUserInfo(_ userInfo: CreatedUserInfo)
-    case getUserInfo
+    case getMyPageData
 }
 
 
@@ -40,7 +40,7 @@ extension AccountRouter: Router {
             return .post
         case .createUserInfo:
             return .post
-        case .getUserInfo:
+        case .getMyPageData:
             return .get
         }
     }
@@ -53,7 +53,7 @@ extension AccountRouter: Router {
             return "/company-service/api/v1/login/members"
         case .createUserInfo:
             return "/company-service/api/v1/join"
-        case .getUserInfo:
+        case .getMyPageData:
             return "/company-service/api/v1/members/my-page"
         }
         
@@ -77,7 +77,7 @@ extension AccountRouter: Router {
             return [
                 "Content-Type": "application/json"
             ]
-        case .getUserInfo:
+        case .getMyPageData:
             return [
                 "Content-Type": "application/json"
             ]
@@ -109,7 +109,7 @@ extension AccountRouter: Router {
                 "ci": userInfo.ci,
                 "di": userInfo.di
             ])
-        case .getUserInfo:
+        case .getMyPageData:
             return .none
         }
     }

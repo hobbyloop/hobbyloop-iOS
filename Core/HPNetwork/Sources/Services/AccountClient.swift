@@ -21,6 +21,7 @@ public protocol AccountClientService: AnyObject {
     func createUserInfo(_ userInfo: CreatedUserInfo) -> Single<JoinResponseBody>
     func issueVerificationID(phoneNumber: String) -> Single<String>
     func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void>
+    func getUserInfo() -> Single<MyPageData>
 }
 
 
@@ -135,6 +136,23 @@ extension AccountClient {
                 single(.success(()))
             }
             
+            return Disposables.create()
+        }
+    }
+    
+    public func getUserInfo() -> Single<MyPageData> {
+        return Single.create {[weak self] single -> Disposable in
+            guard let self = `self` else { return Disposables.create() }
+            self.AFManager.request(AccountRouter.getMyPageData, interceptor: HPRequestInterceptor())
+                .validate(statusCode: 200..<300)
+                .responseDecodable(of: MyPageResponseBody.self) { response in
+                    switch response.result {
+                    case .success(let myPageData):
+                        single(.success(myPageData.data))
+                    case .failure(let error):
+                        single(.failure(error))
+                    }
+                }
             return Disposables.create()
         }
     }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 회원가입 화면에서 사용되는 사용자 정보들을 담은 모델
 public struct CreatedUserInfo {
     public let name: String
     public let nickname: String
