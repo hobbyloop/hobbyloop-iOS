@@ -20,7 +20,7 @@ public protocol SignUpViewRepo {
     var naverLoginInstance: NaverThirdPartyLoginConnection { get }
     func responseKakaoProfile() -> Observable<SignUpViewReactor.Mutation>
     func responseNaverProfile() -> Observable<SignUpViewReactor.Mutation>
-    func createUserInformation(_ userInfo: CreatedUserInfo) -> Observable<SignUpViewReactor.Mutation>
+    func createUserInformation(_ userInfo: JoinRequestBody) -> Observable<SignUpViewReactor.Mutation>
     func issueVerificationID(phoneNumber: String) -> Observable<SignUpViewReactor.Mutation>
     func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<SignUpViewReactor.Mutation>
 }
@@ -73,7 +73,7 @@ public final class SignUpViewRepository: SignUpViewRepo {
     ///   - gender 사용자 성별
     ///   - birth 사용자 출생년도
     ///   - phoneNumber 사용자 핸드폰 번호
-    public func createUserInformation(_ userInfo: CreatedUserInfo) -> Observable<SignUpViewReactor.Mutation> {
+    public func createUserInformation(_ userInfo: JoinRequestBody) -> Observable<SignUpViewReactor.Mutation> {
         return self.networkService.createUserInfo(userInfo)
             .asObservable()
             .flatMap { (account: JoinResponseBody) -> Observable<SignUpViewReactor.Mutation> in
