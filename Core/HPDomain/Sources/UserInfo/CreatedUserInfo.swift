@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct JoinRequestBody {
+public struct CreatedUserInfo {
     public let name: String
     public let nickname: String
     public let gender: Int

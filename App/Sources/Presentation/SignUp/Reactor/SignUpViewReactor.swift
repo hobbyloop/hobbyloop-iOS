@@ -139,8 +139,8 @@ public final class SignUpViewReactor: Reactor {
         )
     }
     
-    var userInfo: JoinRequestBody {
-        JoinRequestBody(
+    var userInfo: CreatedUserInfo {
+        CreatedUserInfo(
             name: currentState.userName,
             nickname: currentState.userNickName,
             gender: currentState.userGender.rawValue,

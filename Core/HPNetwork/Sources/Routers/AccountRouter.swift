@@ -15,7 +15,7 @@ import HPDomain
 public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
-    case createUserInfo(_ userInfo: JoinRequestBody)
+    case createUserInfo(_ userInfo: CreatedUserInfo)
     case getUserInfo
 }
 
