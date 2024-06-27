@@ -262,6 +262,6 @@ extension LoginViewController {
     }
     
     private func showHomeViewController() {
-        self.navigationController?.viewControllers = [CustomTabBarController()]
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController = CustomTabBarController()
     }
 }

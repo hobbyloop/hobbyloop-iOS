@@ -443,8 +443,8 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
             .disposed(by: disposeBag)
         
         reactor.pulse(\.$logout)
-            .subscribe(onNext: { [weak self] in
-                self?.navigationController?.viewControllers = [LoginDIContainer().makeViewController()]
+            .subscribe(onNext: {
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController = LoginDIContainer().makeViewController()
             })
             .disposed(by: disposeBag)
         
