@@ -21,8 +21,8 @@ public final class MyPageViewRepository: MyPageViewRepo {
         return networkService.getUserInfo()
             .asObservable()
             .catch { error in
-                // TODO: 에러 핸들링
-                return .empty()
+                print("mypage error: \(error)")
+                return .error(error)
             }
             .map { myPageData in
                 return .setMyPageData(myPageData)
