@@ -119,6 +119,7 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
         view.backgroundColor = .systemBackground
         configureNavigationBar()
         layout()
+        configure()
     }
     
     private func configureNavigationBar() {
@@ -282,6 +283,14 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
                     .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
                     .foregroundColor: HPCommonUIAsset.gray100.color
                 ]))
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func configure() {
+        settingsButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(SettingsViewController(reactor: SettingsViewReactor()), animated: true)
             })
             .disposed(by: disposeBag)
     }

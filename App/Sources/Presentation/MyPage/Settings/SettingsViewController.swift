@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 import Then
 import HPCommonUI
+import ReactorKit
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: BaseViewController<SettingsViewReactor> {
     // MARK: - custom navigation bar
     private let backButton = UIButton(configuration: .plain()).then {
         $0.configuration?.image = HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14))
@@ -99,6 +100,15 @@ class SettingsViewController: UIViewController {
     // MARK: - bottom sheet background
     private let sheetBackgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
+    }
+    
+    override init(reactor: SettingsViewReactor?) {
+        super.init()
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - life cycle
@@ -418,5 +428,40 @@ class SettingsViewController: UIViewController {
             self.view.layoutIfNeeded()
             
         }
+    }
+    
+    override func bind(reactor: SettingsViewReactor) {
+        // MARK: - reactor -> view
+        reactor.state
+            .map { $0.receivesAppAlarm }
+            .bind(to: appAlarmSwitch.rx.isOn)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.receivesAdAlarm }
+            .bind(to: adAlarmSwitch.rx.isOn)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$logout)
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.viewControllers = [LoginDIContainer().makeViewController()]
+            })
+            .disposed(by: disposeBag)
+        
+        // MARK: - view -> reactor
+        appAlarmSwitch.rx.isOn
+            .map { _ in Reactor.Action.didToggleAppAlarmSwitch }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        adAlarmSwitch.rx.isOn
+            .map { _ in Reactor.Action.didToggleAdAlarmSwitch }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        logoutConfirmButton.rx.tap
+            .map { Reactor.Action.didTapLogoutButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 }
