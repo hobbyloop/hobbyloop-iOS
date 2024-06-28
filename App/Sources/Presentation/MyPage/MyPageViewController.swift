@@ -293,5 +293,11 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
                 self?.navigationController?.pushViewController(SettingsViewController(reactor: SettingsViewReactor()), animated: true)
             })
             .disposed(by: disposeBag)
+        
+        pointButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(PointViewController(reactor: PointViewReactor(pointRepository: PointViewRepository())), animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
