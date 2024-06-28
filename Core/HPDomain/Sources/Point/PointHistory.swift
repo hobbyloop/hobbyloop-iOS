@@ -41,18 +41,18 @@ public struct PointHistory: Decodable {
 }
 
 public struct PointHistoryResponseBody: Decodable {
-    let data: PointHistoryData
+    public let data: PointHistoryData
 }
 
 public struct PointHistoryData: Decodable {
-    let totalPoints: Int
-    let pointHistories: [MonthlyPointHistory]
+    public let totalPoints: Int
+    public let pointHistories: [MonthlyPointHistory]
 }
 
 public struct MonthlyPointHistory: Decodable {
-    let year: String
-    let month: String
-    let pointHistories: [PointHistory]
+    public let year: String
+    public let month: String
+    public let pointHistories: [PointHistory]
     
     enum CodingKeys: CodingKey {
         case yearMonth
