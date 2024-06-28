@@ -146,6 +146,11 @@ final class PointViewController: BaseViewController<PointViewReactor> {
         navigationItem.title = "포인트"
         navigationItem.setHidesBackButton(true, animated: false)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        backButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func layout() {
