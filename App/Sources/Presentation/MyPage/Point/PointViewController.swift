@@ -299,18 +299,15 @@ final class PointViewController: BaseViewController<PointViewReactor> {
             .bind(to: pointHistoryContainerView.rx.isHidden)
             .disposed(by: disposeBag)
         
-        let pointHistoryData = reactor.pulse(\.$pointHistoryData)
-            .compactMap { $0 }
-            .observe(on: MainScheduler.asyncInstance)
-            .share()
-        
-        pointHistoryData
-            .filter { _ in reactor.currentState.section == .totalPoints }
-            .map { "\($0.totalPoints.currencyString) P" }
+        reactor.state
+            .compactMap { $0.section == .totalPoints ? $0.pointHistoryData?.totalPoints : $0.expiredPointInfo?.totalPoints }
+            .map { "\($0.currencyString) P" }
             .bind(to: pointLabel.rx.text)
             .disposed(by: disposeBag)
         
-        pointHistoryData
+        reactor.pulse(\.$pointHistoryData)
+            .compactMap { $0 }
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] _ in
                 self?.pointHistoryTableView.reloadData()
             })

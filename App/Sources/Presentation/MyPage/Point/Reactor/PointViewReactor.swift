@@ -21,6 +21,7 @@ public final class PointViewReactor: Reactor {
     public struct State {
         var isLoading = false
         @Pulse var pointHistoryData: PointHistoryData? = nil
+        @Pulse var expiredPointInfo: PointHistoryData? = nil
         var section: Section = .totalPoints
     }
     
@@ -33,6 +34,7 @@ public final class PointViewReactor: Reactor {
     public enum Mutation {
         case setLoading(Bool)
         case setPointHistoryData(PointHistoryData)
+        case setExpriedPointInfo(PointHistoryData)
         case setSection(Section)
     }
     
@@ -45,7 +47,10 @@ public final class PointViewReactor: Reactor {
         case .viewDidLoad:
             return .concat([
                 .just(.setLoading(true)),
-                pointRepository.getPointHisotryData(),
+                .merge([
+                    pointRepository.getPointHisotryData(),
+                    pointRepository.getExpiredPointInfo()
+                ]),
                 .just(.setLoading(false))
             ])
         case .didTapTotalPointButton:
@@ -64,6 +69,8 @@ public final class PointViewReactor: Reactor {
             newState.pointHistoryData = pointHistoryData
         case .setSection(let section):
             newState.section = section
+        case .setExpriedPointInfo(let expiredPointInfo):
+            newState.expiredPointInfo = expiredPointInfo
         }
         
         return newState

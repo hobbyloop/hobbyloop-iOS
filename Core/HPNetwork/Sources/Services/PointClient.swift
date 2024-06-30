@@ -12,6 +12,7 @@ import Alamofire
 
 public protocol PointClientService: AnyObject {
     func getPointHistory() -> Single<PointHistoryData>
+    func getExpriedPointInfo() -> Single<PointHistoryData>
 }
 
 public final class PointClient: BaseNetworkable, PointClientService {
@@ -32,6 +33,24 @@ public final class PointClient: BaseNetworkable, PointClientService {
             guard let self else { return Disposables.create() }
             
             self.AFManager.request(PointRouter.getPointHistory, interceptor: HPRequestInterceptor())
+                .validate(statusCode: 200..<300)
+                .responseDecodable(of: PointHistoryResponseBody.self) { response in
+                    switch response.result {
+                    case let.success(responseBody):
+                        single(.success(responseBody.data))
+                    case let .failure(error):
+                        single(.failure(error))
+                    }
+                }
+            return Disposables.create()
+        }
+    }
+    
+    public func getExpriedPointInfo() -> Single<PointHistoryData> {
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            
+            self.AFManager.request(PointRouter.getExpiredPoint, interceptor: HPRequestInterceptor())
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: PointHistoryResponseBody.self) { response in
                     switch response.result {

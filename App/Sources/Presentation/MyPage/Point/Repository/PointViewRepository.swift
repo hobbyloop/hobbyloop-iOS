@@ -13,6 +13,7 @@ public protocol PointViewRepo {
     var networkService: PointClientService { get }
     
     func getPointHisotryData() -> Observable<PointViewReactor.Mutation>
+    func getExpiredPointInfo() -> Observable<PointViewReactor.Mutation>
 }
 
 public final class PointViewRepository: PointViewRepo {
@@ -27,6 +28,18 @@ public final class PointViewRepository: PointViewRepo {
             }
             .map { historyData in
                 return .setPointHistoryData(historyData)
+            }
+    }
+    
+    public func getExpiredPointInfo() -> Observable<PointViewReactor.Mutation> {
+        networkService.getExpriedPointInfo()
+            .asObservable()
+            .catch { error in
+                // TODO: 에러 핸들링
+                return .empty()
+            }
+            .map { expiredPointInfo in
+                return .setExpriedPointInfo(expiredPointInfo)
             }
     }
 }

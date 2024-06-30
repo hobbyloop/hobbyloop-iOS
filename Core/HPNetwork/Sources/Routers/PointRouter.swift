@@ -10,6 +10,7 @@ import Alamofire
 
 public enum PointRouter: Router {
     case getPointHistory
+    case getExpiredPoint
     
     public var baseURL: String {
         return "https://hobbyloop.kr"
@@ -19,6 +20,8 @@ public enum PointRouter: Router {
         switch self {
         case .getPointHistory:
             return .get
+        case .getExpiredPoint:
+            return .get
         }
     }
     
@@ -26,6 +29,8 @@ public enum PointRouter: Router {
         switch self {
         case .getPointHistory:
             return "ticket-service/api/v1/points/histories"
+        case .getExpiredPoint:
+            return "ticket-service/api/v1/points/histories/expiring-soon"
         }
     }
     
@@ -35,12 +40,18 @@ public enum PointRouter: Router {
             return [
                 "Content-Type": "application/json"
             ]
+        case .getExpiredPoint:
+            return [
+                "Content-Type": "application/json"
+            ]
         }
     }
     
     public var parameters: HPParameterType {
         switch self {
         case .getPointHistory:
+            return .none
+        case .getExpiredPoint:
             return .none
         }
     }
