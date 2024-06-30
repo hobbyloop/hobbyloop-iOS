@@ -125,6 +125,16 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
         addActions()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     override func viewDidLayoutSubviews() {
         [logoutBottomSheet, secessionBottomSheet].forEach {
             let bezierPath = UIBezierPath(shouldRoundRect: $0.bounds, topLeftRadius: 20, topRightRadius: 20, bottomLeftRadius: 0, bottomRightRadius: 0)
