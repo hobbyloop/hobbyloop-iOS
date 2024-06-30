@@ -677,7 +677,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0 }
             .subscribe(onNext: { [weak self] _ in
                 // TODO: 회원가입 후. 넘어갈 view controller 수정
-                self?.navigationController?.viewControllers = [CustomTabBarController()]
+                self?.setRootViewController(CustomTabBarController())
             })
             .disposed(by: disposeBag)
     }

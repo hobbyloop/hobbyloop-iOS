@@ -443,8 +443,15 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
             .disposed(by: disposeBag)
         
         reactor.pulse(\.$logout)
-            .subscribe(onNext: {
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController = LoginDIContainer().makeViewController()
+            .skip(1)
+            .subscribe(onNext: { [weak self] in
+                self?.setRootViewController(
+                    HPNavigationController(
+                        rootViewController: LoginDIContainer().makeViewController(),
+                        defaultBarAppearance: UINavigationBarAppearance(),
+                        scrollBarAppearance: UINavigationBarAppearance()
+                    )
+                )
             })
             .disposed(by: disposeBag)
         
