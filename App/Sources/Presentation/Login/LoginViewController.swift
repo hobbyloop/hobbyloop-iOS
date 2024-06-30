@@ -226,7 +226,7 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
             }
             .withUnretained(self)
             .subscribe(onNext: { owner, tokenResponseBody in
-                return owner.showHomeViewController()
+                return owner.setRootViewController(CustomTabBarController())
             })
             .disposed(by: disposeBag)
     }
@@ -259,9 +259,5 @@ extension LoginViewController {
             email: tokenResponseBody.data.email ?? ""
         ).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
-    }
-    
-    private func showHomeViewController() {
-        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController = CustomTabBarController()
     }
 }
