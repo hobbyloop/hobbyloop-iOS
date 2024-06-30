@@ -17,6 +17,7 @@ public enum AccountRouter {
     case getAccessToken(type: AccountType, token: String)
     case createUserInfo(_ userInfo: CreatedUserInfo)
     case getMyPageData
+    case quitAccount
 }
 
 
@@ -42,6 +43,8 @@ extension AccountRouter: Router {
             return .post
         case .getMyPageData:
             return .get
+        case .quitAccount:
+            return .delete
         }
     }
     
@@ -55,6 +58,8 @@ extension AccountRouter: Router {
             return "/company-service/api/v1/join"
         case .getMyPageData:
             return "/company-service/api/v1/members/my-page"
+        case .quitAccount:
+            return "/company-service/api/v1/members"
         }
         
     }
@@ -78,6 +83,10 @@ extension AccountRouter: Router {
                 "Content-Type": "application/json"
             ]
         case .getMyPageData:
+            return [
+                "Content-Type": "application/json"
+            ]
+        case .quitAccount:
             return [
                 "Content-Type": "application/json"
             ]
@@ -110,6 +119,8 @@ extension AccountRouter: Router {
                 "di": userInfo.di
             ])
         case .getMyPageData:
+            return .none
+        case .quitAccount:
             return .none
         }
     }

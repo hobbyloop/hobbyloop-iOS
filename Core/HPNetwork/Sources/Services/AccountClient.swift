@@ -22,6 +22,7 @@ public protocol AccountClientService: AnyObject {
     func issueVerificationID(phoneNumber: String) -> Single<String>
     func verifyPhoneNumber(authCode: String, verificationID: String) -> Single<Void>
     func getUserInfo() -> Single<MyPageData>
+    func quitAccount() -> Single<Void>
 }
 
 
@@ -149,6 +150,23 @@ extension AccountClient {
                     switch response.result {
                     case .success(let myPageData):
                         single(.success(myPageData.data))
+                    case .failure(let error):
+                        single(.failure(error))
+                    }
+                }
+            return Disposables.create()
+        }
+    }
+    
+    public func quitAccount() -> Single<Void> {
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            self.AFManager.request(AccountRouter.quitAccount, interceptor: HPRequestInterceptor())
+                .validate(statusCode: 200..<300)
+                .response { response in
+                    switch response.result {
+                    case .success:
+                        single(.success(()))
                     case .failure(let error):
                         single(.failure(error))
                     }

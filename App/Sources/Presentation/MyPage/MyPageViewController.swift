@@ -290,7 +290,7 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
     private func configure() {
         settingsButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.navigationController?.pushViewController(SettingsViewController(reactor: SettingsViewReactor()), animated: true)
+                self?.navigationController?.pushViewController(SettingsViewController(reactor: SettingsViewReactor(settingsRepository: SettingsViewRepository())), animated: true)
             })
             .disposed(by: disposeBag)
         

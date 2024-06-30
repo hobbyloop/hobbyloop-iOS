@@ -11,17 +11,20 @@ import RxSwift
 import HPNetwork
 
 public final class SettingsViewReactor: Reactor {
+    private var settingsRepository: SettingsViewRepo
     public var initialState: State = State(
         isLoading: false,
         receivesAppAlarm: UserDefaults.standard.bool(forKey: .receivesAppAlarm),
         receivesAdAlarm: UserDefaults.standard.bool(forKey: .receivesAdAlarm),
-        logout: ()
+        logout: (),
+        quit: ()
     )
     
     public enum Action {
         case didToggleAppAlarmSwitch
         case didToggleAdAlarmSwitch
         case didTapLogoutButton
+        case didTapQuitButton
     }
     
     public enum Mutation {
@@ -29,6 +32,7 @@ public final class SettingsViewReactor: Reactor {
         case setReceivesAppAlarm(Bool)
         case setReceivesAdAlarm(Bool)
         case logout
+        case quit
     }
     
     public struct State {
@@ -36,6 +40,11 @@ public final class SettingsViewReactor: Reactor {
         var receivesAppAlarm: Bool
         var receivesAdAlarm: Bool
         @Pulse var logout: Void
+        @Pulse var quit: Void
+    }
+    
+    init(settingsRepository: SettingsViewRepo) {
+        self.settingsRepository = settingsRepository
     }
     
     public func mutate(action: Action) -> Observable<Mutation> {
@@ -46,6 +55,12 @@ public final class SettingsViewReactor: Reactor {
             return .just(.setReceivesAdAlarm(!currentState.receivesAdAlarm))
         case .didTapLogoutButton:
             return .just(.logout)
+        case .didTapQuitButton:
+            return .concat([
+                .just(.setLoading(true)),
+                settingsRepository.quitAccount(),
+                .just(.setLoading(false))
+            ])
         }
     }
     
@@ -63,6 +78,8 @@ public final class SettingsViewReactor: Reactor {
         case .logout:
             LoginManager.shared.removeAll()
             newState.logout = ()
+        case .quit:
+            newState.quit = ()
         }
         
         return newState

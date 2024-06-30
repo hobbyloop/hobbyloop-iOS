@@ -88,12 +88,12 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
     private lazy var secessionBottomSheet = bottomSheet(
         title: "탈퇴 할까요?",
         description: "탈퇴하시면 서비스를 이용하실 수 없어요.",
-        closeButton: secessionCloseButton,
-        confirmButton: secessionConfirmButton
+        closeButton: quitCloseButton,
+        confirmButton: quitConfirmButton
     )
     
-    private let secessionCloseButton = HPNewButton(title: "닫기", style: .secondary)
-    private let secessionConfirmButton = HPNewButton(title: "탈퇴하기", style: .primary)
+    private let quitCloseButton = HPNewButton(title: "닫기", style: .secondary)
+    private let quitConfirmButton = HPNewButton(title: "탈퇴하기", style: .primary)
     
     private var secessionBottomSheetTopConstraint: Constraint?
     
@@ -101,6 +101,9 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
     private let sheetBackgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0, alpha: 0.5)
     }
+    
+    // MARK: - activity indicator
+    private let activityIndicator = UIActivityIndicatorView()
     
     override init(reactor: SettingsViewReactor?) {
         super.init()
@@ -122,6 +125,10 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
         layoutSheetBackground()
         layoutLogoutBottomSheet()
         layoutSecessionBottomSheet()
+        view.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
         addActions()
     }
     
@@ -266,9 +273,9 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
         // TODO: 로그아웃 하기 버튼 action 수정
         logoutConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
         
-        secessionCloseButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
+        quitCloseButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
         // TODO: 탈퇴하기 버튼 action 수정
-        secessionConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
+        quitConfirmButton.addTarget(self, action: #selector(hideSheets), for: .touchUpInside)
     }
     
     // MARK: - view generating methods
@@ -443,6 +450,11 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
     override func bind(reactor: SettingsViewReactor) {
         // MARK: - reactor -> view
         reactor.state
+            .map { $0.isLoading }
+            .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .map { $0.receivesAppAlarm }
             .bind(to: appAlarmSwitch.rx.isOn)
             .disposed(by: disposeBag)
@@ -453,6 +465,19 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
             .disposed(by: disposeBag)
         
         reactor.pulse(\.$logout)
+            .skip(1)
+            .subscribe(onNext: { [weak self] in
+                self?.setRootViewController(
+                    HPNavigationController(
+                        rootViewController: LoginDIContainer().makeViewController(),
+                        defaultBarAppearance: UINavigationBarAppearance(),
+                        scrollBarAppearance: UINavigationBarAppearance()
+                    )
+                )
+            })
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$quit)
             .skip(1)
             .subscribe(onNext: { [weak self] in
                 self?.setRootViewController(
@@ -478,6 +503,11 @@ class SettingsViewController: BaseViewController<SettingsViewReactor> {
         
         logoutConfirmButton.rx.tap
             .map { Reactor.Action.didTapLogoutButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        quitConfirmButton.rx.tap
+            .map { Reactor.Action.didTapQuitButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
