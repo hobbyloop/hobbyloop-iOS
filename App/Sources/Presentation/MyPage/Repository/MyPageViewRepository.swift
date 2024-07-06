@@ -18,7 +18,7 @@ public final class MyPageViewRepository: MyPageViewRepo {
     public var networkService: AccountClientService = AccountClient.shared
     
     public func getMyPageData() -> Observable<MyPageViewReactor.Mutation> {
-        return networkService.getUserInfo()
+        return networkService.getMyPageData()
             .asObservable()
             .catch { error in
                 print("mypage error: \(error)")
