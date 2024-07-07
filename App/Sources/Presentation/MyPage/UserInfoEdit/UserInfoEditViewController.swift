@@ -139,6 +139,17 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
         
         configureNavigationBar()
         layout()
+        configure()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
     }
     
     private func configureNavigationBar() {
@@ -377,6 +388,14 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
             }
             .map { _ in Reactor.Action.tapBackgroundView }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    private func configure() {
+        backButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }
