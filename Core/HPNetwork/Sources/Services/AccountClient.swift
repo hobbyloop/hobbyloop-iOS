@@ -181,10 +181,10 @@ extension AccountClient {
             guard let self else { return Disposables.create() }
             self.AFManager.request(AccountRouter.getUserInfo, interceptor: HPRequestInterceptor())
                 .validate(statusCode: 200..<300)
-                .responseDecodable(of: HPUserInfo.self) { response in
+                .responseDecodable(of: UserInfoResponseBody.self) { response in
                     switch response.result {
-                    case .success(let userInfo):
-                        single(.success(userInfo))
+                    case .success(let responseBody):
+                        single(.success(responseBody.data))
                     case .failure(let error):
                         single(.failure(error))
                     }

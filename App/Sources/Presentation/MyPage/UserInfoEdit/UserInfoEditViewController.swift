@@ -9,9 +9,9 @@ import UIKit
 import HPCommon
 import HPCommonUI
 import RxSwift
+import RxGesture
 
-final class UserInfoEditViewController: UIViewController {
-    let disposeBag = DisposeBag()
+final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReactor> {
     
     // MARK: - 네비게이션 바
     private let backButton = UIButton(configuration: .plain()).then {
@@ -43,24 +43,46 @@ final class UserInfoEditViewController: UIViewController {
         }
     }
     
-    private let nameView = SignUpInfoView(titleType: .name)
-    private let nickNameView = SignUpInfoView(titleType: .nickname)
-    private let birthDayView = SignUpInfoView(titleType: .birthDay)
-    // TODO: picker view를 SignUpInfoView 안에 포함시키기
+    private let nameView = HPTitledInputView(
+        title: "이름",
+        isRequired: false,
+        inputType: .text,
+        placeholder: "회원님의 이름을 입력하세요"
+    )
+    private let nickNameView = HPTitledInputView(
+        title: "닉네임",
+        isRequired: false,
+        inputType: .text,
+        placeholder: "자신만의 닉네임을 입력하세요!"
+    )
+    private let birthDayView = HPTitledInputView(
+        title: "생년월일",
+        isRequired: false,
+        inputType: .date,
+        placeholder: "태어난 생년월일을 선택해주세요"
+    )
+
     private let birthDayPickerView = UIDatePicker().then {
         $0.datePickerMode = .date
         $0.preferredDatePickerStyle = .wheels
-        $0.backgroundColor = .clear
         $0.locale = .init(identifier: "ko-KR")
-        $0.timeZone = .autoupdatingCurrent
-        $0.backgroundColor = HPCommonUIAsset.gray20.color
-        $0.layer.cornerRadius = 8
+        $0.backgroundColor = UIColor(red: 0xB2, green: 0xB2, blue: 0xB2, alpha: 1)
+        $0.isUserInteractionEnabled = true
+        $0.layer.cornerRadius = 13
         $0.clipsToBounds = true
-        $0.isHidden = true
     }
     
-    private let phoneView: SignUpInfoView = SignUpInfoView(titleType: .phone)
-    private let certificateButton = HPNewButton(title: "인증번호 발송", style: .bordered)
+    private let backgroundView = UIView().then {
+        $0.backgroundColor = .black.withAlphaComponent(0.5)
+    }
+    
+    private let phoneView = HPTitledInputView(
+        title: "전화번호 인증",
+        isRequired: false,
+        inputType: .number,
+        placeholder: "-를 제외한 전화번호를 입력하세요"
+    )
+    private let issueAuthCodeButton = HPNewButton(title: "인증번호 발송", style: .bordered)
     private let phoneHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
@@ -68,8 +90,10 @@ final class UserInfoEditViewController: UIViewController {
         $0.distribution = .fill
     }
     
-    private let authCodeView: SignUpInfoView = SignUpInfoView(titleType: .authcode)
-    private let authCodeButton = HPNewButton(title: "인증번호 확인", style: .bordered).then {
+    private let authCodeView = HPTextField().then {
+        $0.placeholderText = "인증번호를 입력하세요"
+    }
+    private let confirmAuthCodeButton = HPNewButton(title: "인증번호 확인", style: .bordered).then {
         $0.isEnabled = false
     }
     
@@ -92,8 +116,20 @@ final class UserInfoEditViewController: UIViewController {
         $0.alignment = .fill
     }
     
-    private let editButton = HPNewButton(title: "수정완료", style: .primary).then {
+    private let updateUserInfoButton = HPNewButton(title: "수정완료", style: .primary).then {
         $0.isEnabled = false
+    }
+    
+    private let activityIndicator = UIActivityIndicatorView()
+    
+    // MARK: - init
+    override init(reactor: UserInfoEditViewReactor?) {
+        super.init()
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - life cycle
@@ -132,13 +168,17 @@ final class UserInfoEditViewController: UIViewController {
             $0.trailing.equalTo(view.snp.trailing)
         }
         
-        [phoneView, certificateButton].forEach(phoneHStack.addArrangedSubview(_:))
+        [phoneView, issueAuthCodeButton].forEach(phoneHStack.addArrangedSubview(_:))
         
-        authCodeButton.snp.makeConstraints {
+        confirmAuthCodeButton.snp.makeConstraints {
             $0.width.equalTo(120)
         }
         
-        [authCodeView, authCodeButton].forEach(authHStack.addArrangedSubview(_:))
+        [authCodeView, confirmAuthCodeButton].forEach(authHStack.addArrangedSubview(_:))
+        
+        authHStack.snp.makeConstraints {
+            $0.height.equalTo(48)
+        }
         [phoneHStack, authHStack].forEach(phoneAuthVStack.addArrangedSubview(_:))
         
         [
@@ -162,8 +202,7 @@ final class UserInfoEditViewController: UIViewController {
         [
             profileImageView,
             photoEditButton,
-            inputFieldsVStack,
-            birthDayPickerView,
+            inputFieldsVStack
         ].forEach(scrolledContainerView.addSubview(_:))
         
         profileImageView.snp.makeConstraints {
@@ -176,7 +215,7 @@ final class UserInfoEditViewController: UIViewController {
             $0.trailing.equalTo(profileImageView.snp.trailing).offset(7)
         }
         
-        certificateButton.snp.makeConstraints {
+        issueAuthCodeButton.snp.makeConstraints {
             $0.width.equalTo(120)
             $0.height.equalTo(48)
         }
@@ -187,17 +226,157 @@ final class UserInfoEditViewController: UIViewController {
             $0.bottom.equalToSuperview().offset(-189)
         }
         
-        birthDayPickerView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalTo(birthDayView.snp.bottom).offset(4)
-        }
+        view.addSubview(updateUserInfoButton)
         
-        view.addSubview(editButton)
-        
-        editButton.snp.makeConstraints {
+        updateUserInfoButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-32)
             $0.height.equalTo(48)
         }
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        view.addSubview(backgroundView)
+        backgroundView.snp.makeConstraints {
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        backgroundView.addSubview(birthDayPickerView)
+        birthDayPickerView.snp.makeConstraints {
+            $0.width.equalTo(297)
+            $0.height.equalTo(213)
+            $0.center.equalToSuperview()
+        }
+    }
+    
+    override func bind(reactor: UserInfoEditViewReactor) {
+        // MARK: - reactor -> view
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.isLoading }
+            .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.name }
+            .bind(to: nameView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.nickname }
+            .bind(to: nickNameView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.birthday }
+            .bind(to: birthDayView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { $0.phoneNumber }
+            .bind(to: phoneView.textfield.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.authCode }
+            .bind(to: authCodeView.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { !$0.showsAuthCodeView }
+            .bind(to: authHStack.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { !$0.isValidPhoneNumber }
+            .bind(to: confirmAuthCodeButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .observe(on: MainScheduler.instance)
+            .map { !$0.isValidPhoneNumber }
+            .bind(to: authCodeView.rx.isUserInteractionEnabled)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { !$0.showsBirthdayPicker }
+            .bind(to: backgroundView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        // MARK: - view -> reactor
+        Observable.of(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nameView.textfield.rx.text.orEmpty
+            .map { Reactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        nickNameView.textfield.rx.text.orEmpty
+            .map { Reactor.Action.updateNickname($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayPickerView.rx.date
+            .map {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy.MM.dd"
+                
+                return formatter.string(from: $0)
+            }
+            .map { Reactor.Action.updateBirthday($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        phoneView.textfield.rx.text.orEmpty
+            .map { Reactor.Action.updatePhoneNumber($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        issueAuthCodeButton.rx.tap
+            .map { Reactor.Action.tapIssueAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        authCodeView.rx.text.orEmpty
+            .map { Reactor.Action.updateAuthCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        confirmAuthCodeButton.rx.tap
+            .map { Reactor.Action.tapVerifyAuthCodeButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        updateUserInfoButton.rx.tap
+            .map { Reactor.Action.tapUpdateButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        birthDayView.showDatePickerButton.rx.tap
+            .map { Reactor.Action.tapBirthdayPickerButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        backgroundView.rx.tapGesture()
+            .filter { [weak self] gesture in
+                guard let self else { return false }
+                let location = gesture.location(in: self.birthDayPickerView)
+                return !self.birthDayPickerView.bounds.contains(location)
+            }
+            .map { _ in Reactor.Action.tapBackgroundView }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 }

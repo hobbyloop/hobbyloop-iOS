@@ -9,9 +9,21 @@ import Foundation
 
 /// 내 정보 수정 화면에서 사용되는 데이터
 public struct HPUserInfo: Decodable {
-    var name: String
-    var nickname: String
-    var birthday: String
-    var phoneNumber: String
-    var profileImageUrl: URL
+    public var name: String
+    public var nickname: String
+    public var birthday: String
+    public var phoneNumber: String
+    public var profileImageUrl: URL?
+    
+    enum CodingKeys: CodingKey {
+        case name
+        case nickname
+        case birthday
+        case phoneNumber
+        case profileImageUrl
+    }
+}
+
+public struct UserInfoResponseBody: Decodable {
+    public let data: HPUserInfo
 }

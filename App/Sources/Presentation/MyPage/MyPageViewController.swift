@@ -299,5 +299,11 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
                 self?.navigationController?.pushViewController(PointViewController(reactor: PointViewReactor(pointRepository: PointViewRepository())), animated: true)
             })
             .disposed(by: disposeBag)
+        
+        editProfileButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(UserInfoEditViewController(reactor: UserInfoEditViewReactor(repository: UserInfoEditViewRepository())), animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
