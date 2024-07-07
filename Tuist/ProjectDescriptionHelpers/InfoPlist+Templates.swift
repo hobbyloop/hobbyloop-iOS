@@ -15,6 +15,7 @@ extension InfoPlist {
             "ITSAppUsesNonExemptEncryption": .boolean(false),
             "NSLocationWhenInUseUsageDescription" : .string("위치가 필요하다"),
             "NSLocationAlwaysAndWhenInUseUsageDescription" : .string("위치가 필요하다"),
+            "NSPhotoLibraryAddUsageDescription": .string("하비루프(이)가 사용자의 사진에 접근하려고 합니다."),
             "NMFClientId" : .string("0q2nxzajdq"),
             "CFBundleName" : .string(name),
             "CFBundleIconName": .string("AppIcon"),
