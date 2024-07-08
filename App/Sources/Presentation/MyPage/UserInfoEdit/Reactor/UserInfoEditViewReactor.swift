@@ -40,6 +40,7 @@ public final class UserInfoEditViewReactor: Reactor {
         case tapUpdateButton
         case tapBirthdayPickerButton
         case tapBackgroundView
+        case updateProfileImage(UIImage)
     }
     
     public enum Mutation {
@@ -104,6 +105,8 @@ public final class UserInfoEditViewReactor: Reactor {
             return .just(.setShowsBirthdayPicker(true))
         case .tapBackgroundView:
             return .just(.setShowsBirthdayPicker(false))
+        case .updateProfileImage(let image):
+            return .just(.setProfileImage(image))
         }
     }
     

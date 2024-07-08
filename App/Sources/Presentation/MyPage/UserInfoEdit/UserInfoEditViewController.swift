@@ -323,6 +323,11 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
             .bind(to: backgroundView.rx.isHidden)
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map { $0.profileImage }
+            .bind(to: profileImageView.rx.image)
+            .disposed(by: disposeBag)
+        
         // MARK: - view -> reactor
         Observable.of(())
             .map { Reactor.Action.viewDidLoad }
@@ -397,5 +402,35 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
+        
+        photoEditButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.openPhotosApp()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func openPhotosApp() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.delegate = self
+        present(imagePicker, animated: true)
+    }
+}
+
+extension UserInfoEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage,
+           let reactor {
+            Observable.of(pickedImage)
+                .map { Reactor.Action.updateProfileImage($0) }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }
