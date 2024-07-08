@@ -29,11 +29,13 @@ public final class UserInfoEditViewRepository: UserInfoEditViewRepo {
                 return .empty()
             }
             .flatMap { userInfo -> Observable<UserInfoEditViewReactor.Mutation> in
+                let birthdayArr = userInfo.birthday.components(separatedBy: "-")
+                
                 return .of(
                     .setName(userInfo.name),
                     .setNickname(userInfo.nickname),
                     .setPhoneNumber(userInfo.phoneNumber.replacingOccurrences(of: "-", with: "")),
-                    .setBirthday(userInfo.birthday.replacingOccurrences(of: "-", with: ".")),
+                    .setBirthday(birthdayArr[0] + "년 " + birthdayArr[1] + "월 " + birthdayArr[2] + "일"),
                     .setProfileImageUrl(userInfo.profileImageUrl)
                 )
             }

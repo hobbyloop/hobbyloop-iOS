@@ -347,7 +347,7 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
         birthDayPickerView.rx.date
             .map {
                 let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy.MM.dd"
+                formatter.dateFormat = "yyyy년 MM월 dd일"
                 
                 return formatter.string(from: $0)
             }

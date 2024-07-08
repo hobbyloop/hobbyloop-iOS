@@ -144,7 +144,10 @@ public final class SignUpViewReactor: Reactor {
             name: currentState.userName,
             nickname: currentState.userNickName,
             gender: currentState.userGender.rawValue,
-            birthday: currentState.userBirthDay.replacingOccurrences(of: ".", with: "-"),
+            birthday: currentState.userBirthDay
+                .replacingOccurrences(of: "년 ", with: "-")
+                .replacingOccurrences(of: "월 ", with: "-")
+                .replacingOccurrences(of: "일", with: ""),
             email: email,
             phoneNumber: currentState.phoneNumber.withHypen,
             isOption1: currentState.agreement1IsSelected,
