@@ -19,6 +19,7 @@ public enum AccountRouter {
     case getMyPageData
     case quitAccount
     case getUserInfo
+    case updateUserInfo
 }
 
 
@@ -48,6 +49,8 @@ extension AccountRouter: Router {
             return .delete
         case .getUserInfo:
             return .get
+        case .updateUserInfo:
+            return .patch
         }
     }
     
@@ -64,6 +67,8 @@ extension AccountRouter: Router {
         case .quitAccount:
             return "/company-service/api/v1/members"
         case .getUserInfo:
+            return "company-service/api/v1/members"
+        case .updateUserInfo:
             return "company-service/api/v1/members"
         }
         
@@ -99,6 +104,10 @@ extension AccountRouter: Router {
             return [
                 "Content-Type": "application/json"
             ]
+        case .updateUserInfo:
+            return [
+                "Content-Type": "multipart/form-data"
+            ]
         }
     }
     
@@ -133,6 +142,8 @@ extension AccountRouter: Router {
             return .none
         case .getUserInfo:
             return .none
+        case .updateUserInfo:
+            return .body([:])
         }
     }
 }

@@ -14,6 +14,7 @@ import Alamofire
 import RxSwift
 import FirebaseAuth
 import FirebaseMessaging
+import UIKit
 
 public protocol AccountClientService: AnyObject {
     func requestUserToken(account type: AccountType, accessToken: String) -> Single<LoginResponseBody>
@@ -24,6 +25,7 @@ public protocol AccountClientService: AnyObject {
     func getMyPageData() -> Single<MyPageData>
     func quitAccount() -> Single<Void>
     func getUserInfo() -> Single<HPUserInfo>
+    func updateUserInfo(name: String, nickname: String, birthday: String, phoneNumber: String, profileImage: UIImage?) -> Single<Void>
 }
 
 
@@ -189,6 +191,42 @@ extension AccountClient {
                         single(.failure(error))
                     }
                 }
+            return Disposables.create()
+        }
+    }
+    
+    public func updateUserInfo(name: String, nickname: String, birthday: String, phoneNumber: String, profileImage: UIImage?) -> Single<Void> {
+        let requestDto = [
+            "name": name,
+            "nickname": nickname,
+            "birthday": birthday,
+            "phoneNumber": phoneNumber
+        ]
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "multipart/form-data"
+        ]
+        
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            self.AFManager.upload(multipartFormData: { formData in
+                formData.append(try! JSONSerialization.data(withJSONObject: requestDto), withName: "requestDto", mimeType: "application/json")
+                
+                if let imageData = profileImage?.resizeImage(newWidth: min(profileImage?.size.width ?? 0, 500)).pngData() ?? profileImage?.jpegData(compressionQuality: 1) {
+                    formData.append(imageData, withName: "profileImage", fileName: "\(name).png", mimeType: "image/png")
+                }
+            }, to: "https://hobbyloop.kr/company-service/api/v1/members", method: .patch, headers: headers, interceptor: HPRequestInterceptor())
+                .validate(statusCode: 200..<300)
+                .response { response in
+                    switch response.result {
+                    case .success:
+                        single(.success(()))
+                    case .failure(let error):
+                        print("edit: failed: \(error)")
+                        single(.failure(error))
+                    }
+                }
+            
             return Disposables.create()
         }
     }

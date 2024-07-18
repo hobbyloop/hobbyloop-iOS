@@ -116,9 +116,7 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
         $0.alignment = .fill
     }
     
-    private let updateUserInfoButton = HPNewButton(title: "수정완료", style: .primary).then {
-        $0.isEnabled = false
-    }
+    private let updateUserInfoButton = HPNewButton(title: "수정완료", style: .primary)
     
     private let activityIndicator = UIActivityIndicatorView()
     
@@ -318,6 +316,14 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
             .bind(to: authCodeView.rx.isUserInteractionEnabled)
             .disposed(by: disposeBag)
         
+        reactor.pulse(\.$userInfoSubmit)
+            .skip(1)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         reactor.state
             .map { !$0.showsBirthdayPicker }
             .bind(to: backgroundView.rx.isHidden)
@@ -326,6 +332,13 @@ final class UserInfoEditViewController: BaseViewController<UserInfoEditViewReact
         reactor.state
             .map { $0.profileImage }
             .bind(to: profileImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map {
+                return !$0.name.isEmpty && $0.isValidPhoneNumber
+            }
+            .bind(to: updateUserInfoButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
         // MARK: - view -> reactor

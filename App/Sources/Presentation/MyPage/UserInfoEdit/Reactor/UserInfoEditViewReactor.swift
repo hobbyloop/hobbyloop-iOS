@@ -26,6 +26,7 @@ public final class UserInfoEditViewReactor: Reactor {
         var verificationID: String = ""
         var authCode: String = ""
         var isValidPhoneNumber: Bool = true
+        @Pulse var userInfoSubmit: Void = ()
     }
     
     public enum Action {
@@ -56,6 +57,7 @@ public final class UserInfoEditViewReactor: Reactor {
         case setAuthCode(String)
         case setIsValidPhoneNumber(Bool)
         case setShowsBirthdayPicker(Bool)
+        case userInfoSubmitted
     }
     
     init(repository: UserInfoEditViewRepo) {
@@ -100,7 +102,17 @@ public final class UserInfoEditViewReactor: Reactor {
             ])
         case .tapUpdateButton:
             // TODO: 정보 수정 버튼 클릭 기능 구현
-            return .empty()
+            return .concat([
+                .just(.setLoading(true)),
+                repository.updateUserInfo(
+                    name: currentState.name,
+                    nickname: currentState.nickname,
+                    birthday: currentState.birthday,
+                    phoneNumber: currentState.phoneNumber,
+                    profileImage: currentState.profileImage
+                ),
+                .just(.setLoading(false))
+            ])
         case .tapBirthdayPickerButton:
             return .just(.setShowsBirthdayPicker(true))
         case .tapBackgroundView:
@@ -137,6 +149,8 @@ public final class UserInfoEditViewReactor: Reactor {
             newState.isValidPhoneNumber = isValidPhoneNumber
         case .setShowsBirthdayPicker(let showsBirthdayPicker):
             newState.showsBirthdayPicker = showsBirthdayPicker
+        case .userInfoSubmitted:
+            newState.userInfoSubmit = ()
         }
         
         return newState
