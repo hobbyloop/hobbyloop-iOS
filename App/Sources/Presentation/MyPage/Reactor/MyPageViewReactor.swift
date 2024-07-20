@@ -8,6 +8,7 @@
 import Foundation
 import ReactorKit
 import HPDomain
+import UIKit
 
 public final class MyPageViewReactor: Reactor {
     public var initialState: State =
@@ -21,11 +22,13 @@ public final class MyPageViewReactor: Reactor {
     public enum Mutation {
         case setLoading(Bool)
         case setMyPageData(MyPageData)
+        case setProfileImage(UIImage?)
     }
     
     public struct State {
         var data: MyPageData
         var isLoading: Bool
+        var profileImage: UIImage?
     }
     
     init(repository: MyPageViewRepo) {
@@ -50,6 +53,8 @@ public final class MyPageViewReactor: Reactor {
             newState.isLoading = isLoading
         case .setMyPageData(let myPageData):
             newState.data = myPageData
+        case .setProfileImage(let image):
+            newState.profileImage = image
         }
         
         return newState

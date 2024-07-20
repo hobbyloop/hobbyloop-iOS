@@ -248,6 +248,11 @@ final class MyPageViewController: BaseViewController<MyPageViewReactor> {
             .bind(to: phoneNumberLabel.rx.text)
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map { $0.profileImage }
+            .bind(to: profileImageView.rx.image)
+            .disposed(by: disposeBag)
+        
         myPageData
             .map { $0.points }
             .subscribe(onNext: { [weak self] point in

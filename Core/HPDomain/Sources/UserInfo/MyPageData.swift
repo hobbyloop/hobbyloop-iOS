@@ -12,12 +12,12 @@ public struct MyPageData: Decodable {
     public var name: String
     public var nickname: String
     public var phoneNumber: String
-    public var profileImageUrl: URL?
+    public var profileImageUrl: String?
     public var points: Int
     public var ticketCount: Int
     public var couponCount: Int
     
-    public init(name: String, nickname: String, phoneNumber: String, profileImageUrl: URL? = nil, points: Int, ticketCount: Int, couponCount: Int) {
+    public init(name: String, nickname: String, phoneNumber: String, profileImageUrl: String? = nil, points: Int, ticketCount: Int, couponCount: Int) {
         self.name = name
         self.nickname = nickname
         self.phoneNumber = phoneNumber
