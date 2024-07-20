@@ -13,7 +13,7 @@ public struct HPUserInfo: Decodable {
     public var nickname: String
     public var birthday: String
     public var phoneNumber: String
-    public var profileImageUrl: URL?
+    public var profileImageUrl: String?
     
     enum CodingKeys: CodingKey {
         case name

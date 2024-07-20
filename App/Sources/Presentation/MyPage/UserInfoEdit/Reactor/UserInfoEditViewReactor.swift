@@ -20,7 +20,7 @@ public final class UserInfoEditViewReactor: Reactor {
         var showsBirthdayPicker: Bool = false
         var birthday: String = ""
         var phoneNumber: String = ""
-        var profileImageUrl: URL? = nil
+        var profileImageUrl: String? = nil
         var profileImage: UIImage? = nil
         var showsAuthCodeView: Bool = false
         var verificationID: String = ""
@@ -50,7 +50,7 @@ public final class UserInfoEditViewReactor: Reactor {
         case setNickname(String)
         case setBirthday(String)
         case setPhoneNumber(String)
-        case setProfileImageUrl(URL?)
+        case setProfileImageUrl(String?)
         case setProfileImage(UIImage)
         case setShowsAuthCodeView(Bool)
         case setVerificationID(String)

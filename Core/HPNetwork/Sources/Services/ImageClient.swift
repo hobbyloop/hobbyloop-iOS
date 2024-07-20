@@ -11,7 +11,7 @@ import Alamofire
 import RxSwift
 
 public protocol ImageClientService: AnyObject {
-    func fetchHPImage(url: URL) -> Single<UIImage>
+    func fetchHPImage(url: String) -> Single<UIImage>
 }
 
 public final class ImageClient: BaseNetworkable, ImageClientService {
@@ -27,10 +27,10 @@ public final class ImageClient: BaseNetworkable, ImageClientService {
     
     private init () {}
     
-    public func fetchHPImage(url: URL) -> Single<UIImage> {
+    public func fetchHPImage(url: String) -> Single<UIImage> {
         Single.create { [weak self] single in
             guard let self else { return Disposables.create() }
-            self.AFManager.request(url.absoluteString, interceptor: HPRequestInterceptor()).response { response in
+            self.AFManager.request(url, interceptor: HPRequestInterceptor()).response { response in
                 switch response.result {
                 case .success(let data):
                     if let data,

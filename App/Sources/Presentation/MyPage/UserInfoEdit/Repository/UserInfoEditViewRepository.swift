@@ -18,7 +18,7 @@ public protocol UserInfoEditViewRepo {
     func issueVerificationID(phoneNumber: String) -> Observable<UserInfoEditViewReactor.Mutation>
     func verifyPhoneNumber(authCode: String, verificationID: String) -> Observable<UserInfoEditViewReactor.Mutation>
     func updateUserInfo(name: String, nickname: String, birthday: String, phoneNumber: String, profileImage: UIImage?) -> Observable<UserInfoEditViewReactor.Mutation>
-    func fetchImage(url: URL) -> Observable<UserInfoEditViewReactor.Mutation>
+    func fetchImage(url: String) -> Observable<UserInfoEditViewReactor.Mutation>
 }
 
 public final class UserInfoEditViewRepository: UserInfoEditViewRepo {
@@ -106,7 +106,7 @@ public final class UserInfoEditViewRepository: UserInfoEditViewRepo {
         }
     }
     
-    public func fetchImage(url: URL) -> Observable<UserInfoEditViewReactor.Mutation> {
+    public func fetchImage(url: String) -> Observable<UserInfoEditViewReactor.Mutation> {
         return self.imageService.fetchHPImage(url: url)
             .asObservable()
             .catch { _ in
