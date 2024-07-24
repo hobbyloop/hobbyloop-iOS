@@ -10,43 +10,15 @@ import Foundation
 import Alamofire
 import HPExtensions
 import HPCommon
-
-public struct CreatedUserInfo {
-    let name: String
-    let nickname: String
-    let gender: Int
-    let birthday: String
-    let email: String
-    let phoneNumber: String
-    let isOption1: Bool
-    let isOption2: Bool
-    let provider: String
-    let subject: String
-    let oauth2AccessToken: String
-    let ci: String
-    let di: String
-    
-    public init(name: String, nickname: String, gender: Int, birthday: String, email: String, phoneNumber: String, isOption1: Bool, isOption2: Bool, provider: String, subject: String, oauth2AccessToken: String, ci: String, di: String) {
-        self.name = name
-        self.nickname = nickname
-        self.gender = gender
-        self.birthday = birthday
-        self.email = email
-        self.phoneNumber = phoneNumber
-        self.isOption1 = isOption1
-        self.isOption2 = isOption2
-        self.provider = provider
-        self.subject = subject
-        self.oauth2AccessToken = oauth2AccessToken
-        self.ci = ci
-        self.di = di
-    }
-}
+import HPDomain
 
 public enum AccountRouter {
     case getNaverUserInfo(type: String, accessToken: String)
     case getAccessToken(type: AccountType, token: String)
     case createUserInfo(_ userInfo: CreatedUserInfo)
+    case getMyPageData
+    case quitAccount
+    case getUserInfo
 }
 
 
@@ -70,6 +42,12 @@ extension AccountRouter: Router {
             return .post
         case .createUserInfo:
             return .post
+        case .getMyPageData:
+            return .get
+        case .quitAccount:
+            return .delete
+        case .getUserInfo:
+            return .get
         }
     }
     
@@ -81,6 +59,12 @@ extension AccountRouter: Router {
             return "/company-service/api/v1/login/members"
         case .createUserInfo:
             return "/company-service/api/v1/join"
+        case .getMyPageData:
+            return "/company-service/api/v1/members/my-page"
+        case .quitAccount:
+            return "/company-service/api/v1/members"
+        case .getUserInfo:
+            return "company-service/api/v1/members"
         }
         
     }
@@ -99,9 +83,20 @@ extension AccountRouter: Router {
                 "Content-Type": "application/json"
             ]
             
-        case let .createUserInfo(userInfo):
+        case .createUserInfo:
             return [
-                // "Authorization":"Bearer \(userInfo.oauth2AccessToken))",
+                "Content-Type": "application/json"
+            ]
+        case .getMyPageData:
+            return [
+                "Content-Type": "application/json"
+            ]
+        case .quitAccount:
+            return [
+                "Content-Type": "application/json"
+            ]
+        case .getUserInfo:
+            return [
                 "Content-Type": "application/json"
             ]
         }
@@ -132,8 +127,12 @@ extension AccountRouter: Router {
                 "ci": userInfo.ci,
                 "di": userInfo.di
             ])
+        case .getMyPageData:
+            return .none
+        case .quitAccount:
+            return .none
+        case .getUserInfo:
+            return .none
         }
     }
-    
-    
 }

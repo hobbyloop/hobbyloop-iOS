@@ -9,8 +9,13 @@ import UIKit
 import SnapKit
 import HPCommonUI
 import Then
+import ReactorKit
+import RxSwift
 
-final class MyPageViewController: UIViewController {
+final class MyPageViewController: BaseViewController<MyPageViewReactor> {
+    // MARK: - activity indicator
+    private let activityIndicator = UIActivityIndicatorView()
+    
     // MARK: - 네비게이션 버튼
     private let settingsButton = UIButton().then {
         $0.setImage(HPCommonUIAsset.settingOutlind.image, for: [])
@@ -98,12 +103,23 @@ final class MyPageViewController: UIViewController {
         $0.alignment = .fill
     }
     
+    // MARK: - init
+    override init(reactor: MyPageViewReactor?) {
+        super.init()
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureNavigationBar()
         layout()
+        configure()
     }
     
     private func configureNavigationBar() {
@@ -156,7 +172,8 @@ final class MyPageViewController: UIViewController {
             nicknamePhoneNumberStack,
             keyValueButtonsStack,
             bottomMarginView,
-            arrowedButtonsStack
+            arrowedButtonsStack,
+            activityIndicator
         ].forEach(view.addSubview(_:))
         
         profileImageView.snp.makeConstraints {
@@ -189,5 +206,109 @@ final class MyPageViewController: UIViewController {
             $0.top.equalTo(bottomMarginView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
+        
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let reactor else { return }
+        
+        Observable.just(())
+            .map { Reactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    override func bind(reactor: MyPageViewReactor) {
+        reactor.state
+            .map { $0.isLoading }
+            .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        let myPageData = reactor.state
+            .map { $0.data }
+            .observe(on: MainScheduler.instance)
+            .share()
+        
+        myPageData
+            .map { $0.name }
+            .bind(to: nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        myPageData
+            .map { $0.nickname }
+            .bind(to: nicknameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.data.phoneNumber }
+            .bind(to: phoneNumberLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.profileImage }
+            .bind(to: profileImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        myPageData
+            .map { $0.points }
+            .subscribe(onNext: { [weak self] point in
+                guard let self else { return }
+                
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                
+                guard let formattedPointString = numberFormatter.string(from: NSNumber(value: point)) else { return }
+                self.pointButton.configuration?.attributedSubtitle = AttributedString.init("\(formattedPointString) P", attributes: .init([
+                    .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+                    .foregroundColor: HPCommonUIAsset.gray100.color
+                ]))
+            })
+            .disposed(by: disposeBag)
+        
+        myPageData
+            .map { $0.ticketCount }
+            .subscribe(onNext: { [weak self] ticketCount in
+                guard let self else { return }
+                self.ticketButton.configuration?.attributedSubtitle = AttributedString.init("\(ticketCount)개", attributes: .init([
+                    .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+                    .foregroundColor: HPCommonUIAsset.gray100.color
+                ]))
+            })
+            .disposed(by: disposeBag)
+        
+        myPageData
+            .map { $0.couponCount }
+            .subscribe(onNext: { [weak self] couponCount in
+                guard let self else { return }
+                self.discountCouponButton.configuration?.attributedSubtitle = AttributedString.init("\(couponCount)개", attributes: .init([
+                    .font: HPCommonUIFontFamily.Pretendard.bold.font(size: 16),
+                    .foregroundColor: HPCommonUIAsset.gray100.color
+                ]))
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func configure() {
+        settingsButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(SettingsViewController(reactor: SettingsViewReactor(settingsRepository: SettingsViewRepository())), animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        pointButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(PointViewController(reactor: PointViewReactor(pointRepository: PointViewRepository())), animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        editProfileButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.pushViewController(UserInfoEditViewController(reactor: UserInfoEditViewReactor(repository: UserInfoEditViewRepository())), animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }

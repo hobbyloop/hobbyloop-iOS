@@ -226,7 +226,7 @@ public final class LoginViewController: BaseViewController<LoginViewReactor> {
             }
             .withUnretained(self)
             .subscribe(onNext: { owner, tokenResponseBody in
-                return owner.showHomeViewController()
+                return owner.setRootViewController(CustomTabBarController())
             })
             .disposed(by: disposeBag)
     }
@@ -259,14 +259,5 @@ extension LoginViewController {
             email: tokenResponseBody.data.email ?? ""
         ).makeViewController()
         self.navigationController?.pushViewController(signUpContainer, animated: true)
-    }
-    
-    private func showHomeViewController() {
-        if UserDefaults.standard.bool(forKey: "onboarded") {
-            // TODO: 로그인 성공 시 넘어갈 view controller 수정
-            self.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
-        } else {
-            self.navigationController?.pushViewController(OnboardingViewController(reactor: nil), animated: true)
-        }
     }
 }

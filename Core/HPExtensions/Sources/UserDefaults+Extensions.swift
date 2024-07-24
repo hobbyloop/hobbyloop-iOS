@@ -13,6 +13,8 @@ public enum UserDefaultsKeys: String {
     case accessId
     case userInfo
     case expiredAt
+    case receivesAppAlarm
+    case receivesAdAlarm
 }
 
 

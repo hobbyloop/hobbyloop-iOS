@@ -610,7 +610,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
         datePickerView.rx.date
             .map {
                 let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy.MM.dd"
+                formatter.dateFormat = "yyyy년 MM월 dd일"
                 
                 return formatter.string(from: $0)
             }
@@ -677,7 +677,7 @@ public final class SignUpViewController: BaseViewController<SignUpViewReactor> {
             .compactMap { $0 }
             .subscribe(onNext: { [weak self] _ in
                 // TODO: 회원가입 후. 넘어갈 view controller 수정
-                self?.navigationController?.pushViewController(HomeViewController(reactor: nil), animated: true)
+                self?.setRootViewController(CustomTabBarController())
             })
             .disposed(by: disposeBag)
     }

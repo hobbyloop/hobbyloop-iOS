@@ -16,7 +16,7 @@ import ReactorKit
 
 public enum LoginViewStream: HPStreamType {
     public enum Event {
-        case responseAccessToken(token: TokenResponseBody)
+        case responseAccessToken(token: LoginResponseBody)
         case fail
     }
 }
@@ -38,17 +38,17 @@ public final class LoginViewReactor: Reactor {
     
     public enum Mutation {
         case setLoading(Bool)
-        case setAccessToken(AccountType, TokenResponseBody?)
+        case setAccessToken(AccountType, LoginResponseBody?)
         case setNaverLogin(Void)
     }
     
     //MARK: State
     public struct State {
         var isLoading: Bool
-        @Pulse var authToken: TokenResponseBody?
+        @Pulse var authToken: LoginResponseBody?
         var accountType: AccountType
         var isShowNaverLogin: Void?
-        var tokenResponseBody: TokenResponseBody?
+        var tokenResponseBody: LoginResponseBody?
     }
     
     init(loginRepository: LoginViewRepo) {

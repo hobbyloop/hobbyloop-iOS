@@ -15,8 +15,7 @@ public final class HPAPIEventLogger: EventMonitor {
     
     public let queue: DispatchQueue = DispatchQueue(label: "HPAPIEventLogger")
     
-    
-    public func requestDidFinish(_ request: Request) {
+    public func requestDidResume(_ request: Request) {
         print("🚀 HPAPI NETWORK REQUEST LOG 🚀")
         print(request.description)
         
@@ -25,7 +24,6 @@ public final class HPAPIEventLogger: EventMonitor {
         
         print("💁‍♂️ AUTHORIZATION: " + (request.request?.headers["Authorization"] ?? ""))
         print("🗣️ BODY: " + (request.request?.httpBody?.toPrettyPrintedString ?? ""))
-        
     }
     
     public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {

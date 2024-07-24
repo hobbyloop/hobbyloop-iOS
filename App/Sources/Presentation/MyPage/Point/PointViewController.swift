@@ -7,8 +7,10 @@
 
 import UIKit
 import HPCommonUI
+import HPNetwork
+import RxSwift
 
-final class PointViewController: UIViewController {
+final class PointViewController: BaseViewController<PointViewReactor> {
     // MARK: - 네비게이션 바
     private let backButton = UIButton(configuration: .plain()).then {
         $0.setImage(HPCommonUIAsset.leftarrow.image.imageWith(newSize: CGSize(width: 8, height: 14)), for: [])
@@ -48,6 +50,12 @@ final class PointViewController: UIViewController {
         $0.font = HPCommonUIFontFamily.Pretendard.medium.font(size: 12)
         $0.textColor = HPCommonUIAsset.gray60.color
         $0.isHidden = true
+    }
+    
+    private let pointDateStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 8
     }
     
     private let pointPartBottomMarginView = UIView().then {
@@ -112,6 +120,18 @@ final class PointViewController: UIViewController {
         $0.attributedText = NSAttributedString(string: text, attributes: attributes)
     }
     
+    private let activityIndicator = UIActivityIndicatorView()
+    
+    // MARK: - init
+    override init(reactor: PointViewReactor?) {
+        super.init()
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,25 +141,46 @@ final class PointViewController: UIViewController {
         configureTableView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     private func configureNavigationBar() {
         navigationController?.navigationBar.backgroundColor = .systemBackground
         navigationItem.title = "포인트"
         navigationItem.setHidesBackButton(true, animated: false)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        backButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func layout() {
+        [
+            pointLabel,
+            expiredDateLabel
+        ].forEach(pointDateStack.addArrangedSubview(_:))
+        
+        
         [
             ownedPointButton,
             expiredPointButton,
             pointImageView,
             pointTitleLabel,
-            pointLabel,
-            expiredDateLabel,
+            pointDateStack,
             pointPartBottomMarginView,
             pointHistoryContainerView,
             noticeTitleLabel,
-            noticeDescriptionLabel
+            noticeDescriptionLabel,
+            activityIndicator
         ].forEach(view.addSubview(_:))
         
         ownedPointButton.snp.makeConstraints {
@@ -167,18 +208,13 @@ final class PointViewController: UIViewController {
             $0.leading.equalTo(pointImageView.snp.trailing).offset(6)
         }
         
-        pointLabel.snp.makeConstraints {
+        pointDateStack.snp.makeConstraints {
             $0.top.equalTo(pointImageView.snp.bottom).offset(14)
-            $0.leading.equalToSuperview().offset(20)
-        }
-        
-        expiredDateLabel.snp.makeConstraints {
-            $0.top.equalTo(pointLabel.snp.bottom).offset(8)
-            $0.leading.equalToSuperview().offset(20)
+            $0.leading.equalTo(pointImageView.snp.leading)
         }
         
         pointPartBottomMarginView.snp.makeConstraints {
-            $0.top.equalTo(pointLabel.snp.bottom).offset(24)
+            $0.top.equalTo(pointDateStack.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(16)
         }
@@ -187,6 +223,10 @@ final class PointViewController: UIViewController {
             $0.top.equalTo(pointPartBottomMarginView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(288)
+        }
+        
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         [
@@ -236,24 +276,94 @@ final class PointViewController: UIViewController {
         pointHistoryTableView.dataSource = self
         pointHistoryTableView.delegate = self
     }
+    
+    override func bind(reactor: PointViewReactor) {
+        // MARK: - reactor -> view
+        reactor.state
+            .map { $0.isLoading }
+            .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.section == .totalPoints }
+            .bind(to: ownedPointButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.section == .expiredPoints }
+            .bind(to: expiredPointButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.section == .totalPoints ? "보유 포인트" : "소멸 예정 포인트" }
+            .bind(to: pointTitleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.section != .expiredPoints }
+            .bind(to: expiredDateLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.section == .expiredPoints }
+            .bind(to: pointHistoryContainerView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.section == .totalPoints ? $0.pointHistoryData?.totalPoints : $0.expiredPointInfo?.totalPoints }
+            .map { "\($0.currencyString) P" }
+            .bind(to: pointLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$pointHistoryData)
+            .compactMap { $0 }
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(onNext: { [weak self] _ in
+                self?.pointHistoryTableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+        
+        // MARK: - view -> reactor
+        Observable.just(())
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        ownedPointButton.rx.tap
+            .map { Reactor.Action.didTapTotalPointButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        expiredPointButton.rx.tap
+            .map { Reactor.Action.didTapExpiredPointButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
 }
 
 // MARK: - table view data source
 extension PointViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return reactor?.currentState.pointHistoryData?.pointHistories.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return reactor?.currentState.pointHistoryData?.pointHistories[section].pointHistories.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let pointHistory = reactor?.currentState.pointHistoryData?.pointHistories[indexPath.section].pointHistories[indexPath.row] else {
+            return UITableViewCell()
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: HPHistoryCell.identifier) as! HPHistoryCell
-        cell.dateText = "03.10"
-        cell.title = "필라피티 스튜디오"
-        cell.historyContent = "+30,000P"
-        cell.remainingAmountText = "70,000P"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM.dd"
+        
+        cell.dateText = dateFormatter.string(from: pointHistory.createdAt)
+        cell.title = pointHistory.description
+        cell.historyContent = "\(pointHistory.type == .earn ? "+" : "-")\(pointHistory.amount.currencyString)P"
+        cell.remainingAmountText = "\(pointHistory.balance.currencyString)P"
         
         return cell
     }
@@ -263,7 +373,14 @@ extension PointViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return tableView.dequeueReusableHeaderFooterView(withIdentifier: HPHistoryTableViewHeader.identifier)
+        guard let monthlyPointHistory = reactor?.currentState.pointHistoryData?.pointHistories[section] else {
+            return UIView()
+        }
+        
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HPHistoryTableViewHeader.identifier) as! HPHistoryTableViewHeader
+        
+        header.title = "\(monthlyPointHistory.year)년 \(monthlyPointHistory.month)월"
+        return header
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {

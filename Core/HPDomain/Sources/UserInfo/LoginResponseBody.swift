@@ -8,11 +8,11 @@
 import Foundation
 
 
-public struct TokenResponseBody: Decodable {
-    public let data: TokenInfo
+public struct LoginResponseBody: Decodable {
+    public let data: LoginTokenData
 }
 
-public struct TokenInfo: Decodable {
+public struct LoginTokenData: Decodable {
     /// 하비루프 사용자 accessToken 값
     public let accessToken: String?
     

@@ -38,7 +38,7 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     )
     
     private let dummyView4 = HPNavigationController(
-        rootViewController: UIViewController(),
+        rootViewController: MyPageViewController(reactor: MyPageViewReactor(repository: MyPageViewRepository())),
         defaultBarAppearance: UINavigationBarAppearance(),
         scrollBarAppearance: UINavigationBarAppearance()
     )
@@ -72,7 +72,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         dummyView3.tabBarItem.image = HPCommonUIAsset.archiveOutlined.image.withRenderingMode(.alwaysOriginal)
 
         dummyView4.tabBarItem.selectedImage = HPCommonUIAsset.myFilled.image.withRenderingMode(.alwaysOriginal)
-        dummyView4.view.backgroundColor = .green
         dummyView4.tabBarItem.title = "마이페이지"
         dummyView4.tabBarItem.image = HPCommonUIAsset.myOutlined.image.withRenderingMode(.alwaysOriginal)
         

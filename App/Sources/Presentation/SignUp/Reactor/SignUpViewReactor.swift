@@ -53,7 +53,7 @@ public final class SignUpViewReactor: Reactor {
         var isLoading: Bool
         @Pulse var kakaoUserEntity: User?
         @Pulse var naverUserEntity: NaverAccount?
-        @Pulse var userAccountEntity: UserAccount?
+        @Pulse var userAccountEntity: JoinResponseBody?
         var userName: String
         var userNickName: String
         var userGender: HPGender
@@ -103,7 +103,7 @@ public final class SignUpViewReactor: Reactor {
         case setVerificationID(String)
         case setAuthCode(String)
         case setAgreeTerms(Bool, Bool)
-        case setCreateUserInfo(UserAccount)
+        case setCreateUserInfo(JoinResponseBody)
         case showDatePickerView
         case hideDatePickerView
         case validatePhoneNumber
@@ -144,7 +144,10 @@ public final class SignUpViewReactor: Reactor {
             name: currentState.userName,
             nickname: currentState.userNickName,
             gender: currentState.userGender.rawValue,
-            birthday: currentState.userBirthDay.replacingOccurrences(of: ".", with: "-"),
+            birthday: currentState.userBirthDay
+                .replacingOccurrences(of: "년 ", with: "-")
+                .replacingOccurrences(of: "월 ", with: "-")
+                .replacingOccurrences(of: "일", with: ""),
             email: email,
             phoneNumber: currentState.phoneNumber.withHypen,
             isOption1: currentState.agreement1IsSelected,

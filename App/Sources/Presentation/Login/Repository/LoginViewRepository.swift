@@ -73,7 +73,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
             .flatMap { accessToken -> Observable<LoginViewReactor.Mutation> in
                 self.networkService.requestUserToken(account: AccountType.kakao, accessToken: accessToken.accessToken)
                     .asObservable()
-                    .flatMap { (data: TokenResponseBody) ->
+                    .flatMap { (data: LoginResponseBody) ->
                         Observable<LoginViewReactor.Mutation> in
                         
                         .just(.setAccessToken(.kakao, data))
@@ -135,7 +135,7 @@ public final class LoginViewRepository: NSObject, LoginViewRepo {
                 print("google token: \(user.authentication.accessToken)")
                 return self.networkService.requestUserToken(account: .google, accessToken: user.authentication.accessToken)
                     .asObservable()
-                    .flatMap { (data: TokenResponseBody) -> Observable<LoginViewReactor.Mutation> in
+                    .flatMap { (data: LoginResponseBody) -> Observable<LoginViewReactor.Mutation> in
                             .just(.setAccessToken(.google, data))
                     }
             }
